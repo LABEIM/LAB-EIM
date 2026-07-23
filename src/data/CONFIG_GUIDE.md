@@ -2,6 +2,8 @@
 
 This guide explains how to update the laboratory divisions, staff members, and recruitment registration details using the JSON files in the `src/data/` directory.
 
+Admin Portal: https://lab-eim.vercel.app/keystatic
+
 ---
 
 ## 1. Divisions Configuration (`src/data/divisions.json`)

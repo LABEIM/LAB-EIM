@@ -1,11 +1,20 @@
 {
-  "deadline": "2026-07-22T23:59:59",
+  "status": "closed",
+  "openDate": "2026-07-01T00:00:00",
+  "deadline": "2026-07-25T23:59:59",
+  "extendedDeadline": "2026-07-31T23:59:59",
+  "selectionEndDate": "2026-08-05T23:59:59",
+  "selectionResultsDate": "2026-08-06T00:00:00",
+  "technicalTestEndDate": "2026-08-10T23:59:59",
+  "technicalTestResultsDate": "2026-08-11T00:00:00",
+  "interviewEndDate": "2026-08-15T23:59:59",
+  "announcementDate": "2026-08-17T00:00:00",
   "title": "Assistant Registration Form",
   "subtitle": "Complete the form below with valid and correct information.",
-  "closedMessage": "Sorry, the assistant registration form is currently closed.",
   "heroTag": "Assistant Recruitment",
   "heroTitle": "Assistant Lab Registration",
   "heroDescription": "Join us and become a part of EIM Research Lab. Develop your potential in IT infrastructure, networks, and technology research.",
+  "closedMessage": "Sorry, the assistant registration form is currently closed.",
   "studentYears": [
     "2022",
     "2023",
@@ -19,5 +28,55 @@
     "mlMb": 2,
     "cvMb": 3,
     "piMb": 2
+  },
+  "upcomingConfig": {
+    "title": "Recruitment Opening Soon!",
+    "subtitle": "Get your documents ready. Registration will officially open soon.",
+    "prepNotice": "Prepare the required files in advance so you can apply as soon as registration opens."
+  },
+  "extendedConfig": {
+    "bannerTitle": "Pendaftaran Diperpanjang! (Registration Extended)",
+    "bannerMessage": "Good news! The assistant registration deadline has been extended. Don't miss this opportunity to submit your application."
+  },
+  "selectionConfig": {
+    "title": "Document Screening In Progress",
+    "subtitle": "Our team is currently evaluating all submitted administrative documents.",
+    "message": "Thank you for registering! Document verification and administrative screening are underway.",
+    "estimatedAnnouncementDate": "06 August 2026"
+  },
+  "selectionResultsConfig": {
+    "title": "Pengumuman Seleksi Berkas (Document Screening Results)",
+    "subtitle": "Check if you passed document screening and qualify for the Technical Test.",
+    "newsUrl": "/news/pengumuman-rekrutmen-2026"
+  },
+  "technicalTestConfig": {
+    "title": "Technical Test Phase In Progress",
+    "subtitle": "Practical skills assessment and technical challenge in progress.",
+    "message": "Please check your registered email for your technical test instructions and submission brief.",
+    "scheduleInfo": "07 - 10 August 2026",
+    "locationInfo": "EIM Research Lab / Online Submission"
+  },
+  "technicalTestResultsConfig": {
+    "title": "Pengumuman Tes Teknikal (Technical Test Results)",
+    "subtitle": "Check if you passed the Technical Test and qualify for the Interview phase.",
+    "newsUrl": "/news/pengumuman-rekrutmen-2026"
+  },
+  "interviewConfig": {
+    "title": "Interview Phase In Progress",
+    "subtitle": "Candidate interview sessions in progress with EIM Research Lab team.",
+    "message": "Please check your registered email for your assigned interview time slot and Zoom call details.",
+    "scheduleInfo": "12 - 15 August 2026",
+    "locationInfo": "EIM Research Lab / Online Zoom Room"
+  },
+  "announcementConfig": {
+    "title": "Final Selection Announcement",
+    "subtitle": "Check your final selection status below. Congratulations to all accepted candidates!",
+    "newsUrl": "/news/pengumuman-rekrutmen-2026"
+  },
+  "closedConfig": {
+    "title": "Recruitment Period Ended",
+    "subtitle": "Assistant recruitment for this batch is officially closed.",
+    "message": "Thank you to everyone who applied. Follow our social media for future recruitment cycles!",
+    "nextBatchInfo": "Next recruitment expected in early 2027."
   }
 }

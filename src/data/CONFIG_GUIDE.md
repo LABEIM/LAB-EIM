@@ -65,25 +65,41 @@ This file contains the list of all active laboratory assistants.
 ---
 
 ## 3. Registration Settings (`src/data/registration.json`)
-This file configures the recruitment registration landing page.
+This file configures the 10-stage recruitment pipeline landing page (`/registration`).
 
 ### Fields Explanation
-* **`deadline`** (String): ISO date string (`YYYY-MM-DDTHH:mm:ss`) representing when the registration closes and the countdown ends.
-* **`title`** (String): The main header title for the registration box.
-* **`subtitle`** (String): Subtitle or instructions below the title.
-* **`closedMessage`** (String): Message shown to users after the deadline has expired.
-
-### Registration Template
-```json
-{
-  "deadline": "2026-08-17T23:59:59",
-  "title": "Assistant Registration Form",
-  "subtitle": "Complete the form below with valid and correct information.",
-  "closedMessage": "Sorry, the assistant registration form is currently closed."
-}
-```
+* **`status`** (String): Active recruitment stage override. Supported values:
+  * `"auto"`: Automatically determines stage based on system dates.
+  * `"upcoming"`: Opening Soon view (countdown to `openDate` & prep guide).
+  * `"open"`: Registration Open view (displays form & countdown to `deadline`).
+  * `"extended"`: Extended Registration view (displays form + "Pendaftaran Diperpanjang!" banner & countdown to `extendedDeadline`).
+  * `"selection"`: Document Screening In Progress view.
+  * `"selection_results"`: Document Screening Announcement view (NIM search for screening results).
+  * `"technical_test"`: Technical Test Phase In Progress view.
+  * `"technical_test_results"`: Technical Test Announcement view (NIM search for technical test results).
+  * `"interview"`: Interview Phase In Progress view.
+  * `"announcement"`: Final Selection Announcement view (NIM search & accepted candidate directory).
+  * `"closed"`: Recruitment Closed view.
+* **Date Pipeline Fields**: `openDate`, `deadline`, `extendedDeadline`, `selectionEndDate`, `selectionResultsDate`, `technicalTestEndDate`, `technicalTestResultsDate`, `interviewEndDate`, `announcementDate`.
+* **Stage Configurations**: `upcomingConfig`, `extendedConfig`, `selectionConfig`, `selectionResultsConfig`, `technicalTestConfig`, `technicalTestResultsConfig`, `interviewConfig`, `announcementConfig`, `closedConfig`.
 
 ---
+
+## 4. Candidate Recruitment Results (`src/data/recruitment_results.json`)
+This file manages candidate evaluation status entries across all announcement checkpoints.
+
+### Fields Explanation
+* **`batch`** (String): Name of the recruitment batch (e.g. `"Recruitment Assistant 2026"`).
+* **`publishedDate`** (String): Announcement release date.
+* **`candidates`** (Array of Objects): List of candidate status entries:
+  * `nim` (String): Student ID (e.g. `"1202210001"`).
+  * `name` (String): Full name of the candidate.
+  * `division` (String): Division name.
+  * `screeningStatus` (String): `"passed"` or `"failed"`.
+  * `technicalTestStatus` (String): `"passed"` or `"failed"`.
+  * `finalStatus` (String): `"accepted"`, `"waitlist"`, or `"rejected"`.
+  * `notes` (String): Custom congratulations or feedback note.
+
 
 ## 4. News Articles (`src/content/news/`)
 News articles are stored as Markdown (`.md`) files in `src/content/news/`.

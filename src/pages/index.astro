@@ -10,8 +10,53 @@ const latestNews = allNews
   .sort((a, b) => new Date(b.data.news_date).getTime() - new Date(a.data.news_date).getTime())
   .slice(0, 3);
 
-// Check if registration is open
-const isRegistrationOpen = new Date().getTime() < new Date(registrationConfig.deadline).getTime();
+// Calculate active recruitment stage
+const openDateStr = registrationConfig.openDate || "2026-07-01T00:00:00";
+const deadlineStr = registrationConfig.deadline || "2026-07-25T23:59:59";
+const extendedDeadlineStr = registrationConfig.extendedDeadline || "";
+const selectionEndDateStr = registrationConfig.selectionEndDate || "2026-08-05T23:59:59";
+const selectionResultsDateStr = (registrationConfig as any).selectionResultsDate || "2026-08-06T00:00:00";
+const technicalTestEndDateStr = (registrationConfig as any).technicalTestEndDate || "2026-08-10T23:59:59";
+const technicalTestResultsDateStr = (registrationConfig as any).technicalTestResultsDate || "2026-08-11T00:00:00";
+const interviewEndDateStr = (registrationConfig as any).interviewEndDate || "2026-08-15T23:59:59";
+const announcementDateStr = registrationConfig.announcementDate || "2026-08-17T00:00:00";
+
+const nowTime = new Date().getTime();
+const openTime = new Date(openDateStr).getTime();
+const deadlineTime = new Date(deadlineStr).getTime();
+const extendedTime = extendedDeadlineStr ? new Date(extendedDeadlineStr).getTime() : 0;
+const selectionEndTime = new Date(selectionEndDateStr).getTime();
+const selectionResultsTime = new Date(selectionResultsDateStr).getTime();
+const technicalTestEndTime = new Date(technicalTestEndDateStr).getTime();
+const technicalTestResultsTime = new Date(technicalTestResultsDateStr).getTime();
+const interviewEndTime = new Date(interviewEndDateStr).getTime();
+const announcementTime = new Date(announcementDateStr).getTime();
+
+let currentStage = registrationConfig.status || "auto";
+
+if (currentStage === "auto") {
+  if (nowTime < openTime) {
+    currentStage = "upcoming";
+  } else if (nowTime < deadlineTime) {
+    currentStage = "open";
+  } else if (extendedTime > 0 && nowTime < extendedTime) {
+    currentStage = "extended";
+  } else if (nowTime < selectionEndTime) {
+    currentStage = "selection";
+  } else if (nowTime < selectionResultsTime) {
+    currentStage = "selection_results";
+  } else if (nowTime < technicalTestEndTime) {
+    currentStage = "technical_test";
+  } else if (nowTime < technicalTestResultsTime) {
+    currentStage = "technical_test_results";
+  } else if (nowTime < interviewEndTime) {
+    currentStage = "interview";
+  } else if (nowTime >= announcementTime) {
+    currentStage = "announcement";
+  } else {
+    currentStage = "closed";
+  }
+}
 ---
 
 <Layout title="EIM Research Lab - Enterprise Infrastructure Management">
@@ -29,9 +74,44 @@ const isRegistrationOpen = new Date().getTime() < new Date(registrationConfig.de
             We conduct research, in-depth studies, and training in enterprise network technology, data center optimization, cloud computing, and infrastructure automation.
           </p>
           <div class="hero-actions">
-            {isRegistrationOpen && (
+            {currentStage === 'upcoming' && (
+              <a href="/registration" class="btn btn-primary" style="box-shadow: var(--glow-cyan-intense); transform: scale(1.05);">
+                Recruitment Opening Soon <i class="fa-solid fa-clock"></i>
+              </a>
+            )}
+            {(currentStage === 'open' || currentStage === 'extended') && (
               <a href="/registration" class="btn btn-primary" style="box-shadow: var(--glow-cyan-intense); transform: scale(1.05);">
                 Register as Assistant Now <i class="fa-solid fa-user-plus"></i>
+              </a>
+            )}
+            {currentStage === 'selection' && (
+              <a href="/registration" class="btn btn-primary" style="box-shadow: var(--glow-cyan-intense); transform: scale(1.05);">
+                Check Screening Status <i class="fa-solid fa-spinner"></i>
+              </a>
+            )}
+            {currentStage === 'selection_results' && (
+              <a href="/registration" class="btn btn-primary" style="box-shadow: var(--glow-cyan-intense); transform: scale(1.05);">
+                Check Screening Results <i class="fa-solid fa-square-poll-vertical"></i>
+              </a>
+            )}
+            {currentStage === 'technical_test' && (
+              <a href="/registration" class="btn btn-primary" style="box-shadow: var(--glow-cyan-intense); transform: scale(1.05);">
+                Check Technical Test Info <i class="fa-solid fa-laptop-code"></i>
+              </a>
+            )}
+            {currentStage === 'technical_test_results' && (
+              <a href="/registration" class="btn btn-primary" style="box-shadow: var(--glow-cyan-intense); transform: scale(1.05);">
+                Check Technical Test Results <i class="fa-solid fa-square-poll-vertical"></i>
+              </a>
+            )}
+            {currentStage === 'interview' && (
+              <a href="/registration" class="btn btn-primary" style="box-shadow: var(--glow-cyan-intense); transform: scale(1.05);">
+                Check Interview Info <i class="fa-solid fa-comments"></i>
+              </a>
+            )}
+            {currentStage === 'announcement' && (
+              <a href="/registration" class="btn btn-primary" style="box-shadow: var(--glow-cyan-intense); transform: scale(1.05);">
+                Check Final Results <i class="fa-solid fa-award"></i>
               </a>
             )}
             <a href="/structure" class="btn btn-secondary">

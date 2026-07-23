@@ -1,0 +1,42 @@
+{
+  "batch": "Recruitment Assistant 2026",
+  "publishedDate": "2026-08-01",
+  "candidates": [
+    {
+      "nim": "1202210001",
+      "name": "Jane Doe",
+      "division": "Web Development",
+      "screeningStatus": "passed",
+      "technicalTestStatus": "passed",
+      "finalStatus": "accepted",
+      "notes": "Congratulations! Please check your email for onboarding details."
+    },
+    {
+      "nim": "1202210002",
+      "name": "John Smith",
+      "division": "Network & Infrastructure",
+      "screeningStatus": "passed",
+      "technicalTestStatus": "passed",
+      "finalStatus": "accepted",
+      "notes": "Congratulations! Please check your email for onboarding details."
+    },
+    {
+      "nim": "1202210003",
+      "name": "Alex Johnson",
+      "division": "Media & Humas",
+      "screeningStatus": "passed",
+      "technicalTestStatus": "passed",
+      "finalStatus": "accepted",
+      "notes": "Congratulations! Please check your email for onboarding details."
+    },
+    {
+      "nim": "1202210004",
+      "name": "Michael Brown",
+      "division": "Cyber Security",
+      "screeningStatus": "passed",
+      "technicalTestStatus": "failed",
+      "finalStatus": "rejected",
+      "notes": "Thank you for participating in the Technical Test. Keep striving for future opportunities!"
+    }
+  ]
+}

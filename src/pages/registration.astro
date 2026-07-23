@@ -1,6 +1,7 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import registrationConfig from '../data/registration.json';
+import resultsConfig from '../data/recruitment_results.json';
 import divisions from '../data/divisions.json';
 
 const studentYears = registrationConfig.studentYears || ["2022", "2023", "2024", "2025"];
@@ -11,6 +12,138 @@ const docLimits = registrationConfig.documentLimits || {
   cvMb: 3,
   piMb: 2
 };
+
+const openDateStr = registrationConfig.openDate || "2026-07-01T00:00:00";
+const deadlineStr = registrationConfig.deadline || "2026-07-25T23:59:59";
+const extendedDeadlineStr = registrationConfig.extendedDeadline || "";
+const selectionEndDateStr = registrationConfig.selectionEndDate || "2026-08-05T23:59:59";
+const selectionResultsDateStr = registrationConfig.selectionResultsDate || "2026-08-06T00:00:00";
+const technicalTestEndDateStr = registrationConfig.technicalTestEndDate || "2026-08-10T23:59:59";
+const technicalTestResultsDateStr = registrationConfig.technicalTestResultsDate || "2026-08-11T00:00:00";
+const interviewEndDateStr = registrationConfig.interviewEndDate || "2026-08-15T23:59:59";
+const announcementDateStr = registrationConfig.announcementDate || "2026-08-17T00:00:00";
+
+// Config objects with fallbacks
+const upcomingCfg = registrationConfig.upcomingConfig || {
+  title: "Recruitment Opening Soon!",
+  subtitle: "Get your documents ready. Registration will officially open soon.",
+  prepNotice: "Prepare the required files in advance so you can apply as soon as registration opens."
+};
+
+const extendedCfg = registrationConfig.extendedConfig || {
+  bannerTitle: "Pendaftaran Diperpanjang! (Registration Extended)",
+  bannerMessage: "Good news! The assistant registration deadline has been extended."
+};
+
+const selectionCfg = registrationConfig.selectionConfig || {
+  title: "Document Screening In Progress",
+  subtitle: "Our team is currently evaluating all submitted administrative documents.",
+  message: "Thank you for registering! Document verification and administrative screening are underway.",
+  estimatedAnnouncementDate: "06 August 2026"
+};
+
+const selectionResultsCfg = (registrationConfig as any).selectionResultsConfig || {
+  title: "Pengumuman Seleksi Berkas (Document Screening Results)",
+  subtitle: "Check if you passed document screening and qualify for the Technical Test.",
+  newsUrl: "/news/pengumuman-rekrutmen-2026",
+  documentUrl: ""
+};
+
+const technicalTestCfg = (registrationConfig as any).technicalTestConfig || {
+  title: "Technical Test Phase In Progress",
+  subtitle: "Practical skills assessment and technical challenge in progress.",
+  message: "Please check your registered email for your technical test instructions and submission brief.",
+  scheduleInfo: "07 - 10 August 2026",
+  locationInfo: "EIM Research Lab / Online Submission"
+};
+
+const technicalTestResultsCfg = (registrationConfig as any).technicalTestResultsConfig || {
+  title: "Pengumuman Tes Teknikal (Technical Test Results)",
+  subtitle: "Check if you passed the Technical Test and qualify for the Interview phase.",
+  newsUrl: "/news/pengumuman-rekrutmen-2026",
+  documentUrl: ""
+};
+
+const interviewCfg = (registrationConfig as any).interviewConfig || {
+  title: "Interview Phase In Progress",
+  subtitle: "Candidate interview sessions in progress with EIM Research Lab team.",
+  message: "Please check your registered email for your assigned interview time slot and Zoom call details.",
+  scheduleInfo: "12 - 15 August 2026",
+  locationInfo: "EIM Research Lab / Online Zoom Room"
+};
+
+const announcementCfg = registrationConfig.announcementConfig || {
+  title: "Final Selection Announcement",
+  subtitle: "Check your final selection status below. Congratulations to all accepted candidates!",
+  newsUrl: "/news/pengumuman-rekrutmen-2026",
+  documentUrl: ""
+};
+
+const closedCfg = registrationConfig.closedConfig || {
+  title: "Recruitment Period Ended",
+  subtitle: "Assistant recruitment for this batch is officially closed.",
+  message: "Thank you to everyone who applied. Follow our social media for future recruitment cycles!",
+  nextBatchInfo: "Next recruitment expected in early 2027."
+};
+
+// Helper for standard 5-step timeline steps
+const getTimelineSteps = (activeStepIndex: number) => [
+  { label: "1. Registration", status: activeStepIndex > 1 ? "completed" : activeStepIndex === 1 ? "active" : "upcoming" },
+  { label: "2. Document Screening", status: activeStepIndex > 2 ? "completed" : activeStepIndex === 2 ? "active" : "upcoming" },
+  { label: "3. Technical Test", status: activeStepIndex > 3 ? "completed" : activeStepIndex === 3 ? "active" : "upcoming" },
+  { label: "4. Interview Phase", status: activeStepIndex > 4 ? "completed" : activeStepIndex === 4 ? "active" : "upcoming" },
+  { label: "5. Final Announcement", status: activeStepIndex > 5 ? "completed" : activeStepIndex === 5 ? "active" : "upcoming" },
+];
+
+// Initial Server-Side Stage Determination
+const nowTime = new Date().getTime();
+const openTime = new Date(openDateStr).getTime();
+const deadlineTime = new Date(deadlineStr).getTime();
+const extendedTime = extendedDeadlineStr ? new Date(extendedDeadlineStr).getTime() : 0;
+const selectionEndTime = new Date(selectionEndDateStr).getTime();
+const selectionResultsTime = new Date(selectionResultsDateStr).getTime();
+const technicalTestEndTime = new Date(technicalTestEndDateStr).getTime();
+const technicalTestResultsTime = new Date(technicalTestResultsDateStr).getTime();
+const interviewEndTime = new Date(interviewEndDateStr).getTime();
+const announcementTime = new Date(announcementDateStr).getTime();
+
+let initialStage = registrationConfig.status || "auto";
+
+if (initialStage === "auto") {
+  if (nowTime < openTime) {
+    initialStage = "upcoming";
+  } else if (nowTime < deadlineTime) {
+    initialStage = "open";
+  } else if (extendedTime > 0 && nowTime < extendedTime) {
+    initialStage = "extended";
+  } else if (nowTime < selectionEndTime) {
+    initialStage = "selection";
+  } else if (nowTime < selectionResultsTime) {
+    initialStage = "selection_results";
+  } else if (nowTime < technicalTestEndTime) {
+    initialStage = "technical_test";
+  } else if (nowTime < technicalTestResultsTime) {
+    initialStage = "technical_test_results";
+  } else if (nowTime < interviewEndTime) {
+    initialStage = "interview";
+  } else if (nowTime >= announcementTime) {
+    initialStage = "announcement";
+  } else {
+    initialStage = "closed";
+  }
+}
+
+// Group accepted candidates by division for final announcement view
+const candidatesList = resultsConfig.candidates || [];
+const acceptedCandidates = candidatesList.filter(c => (c as any).finalStatus === 'accepted' || (c as any).status === 'accepted');
+
+const candidatesByDivision: Record<string, typeof candidatesList> = {};
+acceptedCandidates.forEach(candidate => {
+  if (!candidatesByDivision[candidate.division]) {
+    candidatesByDivision[candidate.division] = [];
+  }
+  candidatesByDivision[candidate.division].push(candidate);
+});
 ---
 
 <Layout title={`${registrationConfig.heroTitle || 'Assistant Lab Registration'} - EIM Research Lab`}>
@@ -18,8 +151,8 @@ const docLimits = registrationConfig.documentLimits || {
     <div class="container">
       <div class="page-header-content">
         <div class="hero-tag"><span></span> {registrationConfig.heroTag || 'Assistant Recruitment'}</div>
-        <h1>{registrationConfig.heroTitle || 'Assistant Lab Registration'}</h1>
-        <p class="hero-desc">{registrationConfig.heroDescription || 'Join us and become a part of EIM Research Lab.'}</p>
+        <h1 id="page-hero-title">{registrationConfig.heroTitle || 'Assistant Lab Registration'}</h1>
+        <p class="hero-desc" id="page-hero-desc">{registrationConfig.heroDescription || 'Join us and become a part of EIM Research Lab.'}</p>
       </div>
     </div>
   </section>
@@ -29,199 +162,567 @@ const docLimits = registrationConfig.documentLimits || {
       <div 
         class="registration-form-container glass-panel" 
         id="registration-container" 
-        data-deadline={registrationConfig.deadline} 
+        data-stage={initialStage}
+        data-open-date={openDateStr}
+        data-deadline={deadlineStr} 
+        data-extended-deadline={extendedDeadlineStr}
         data-medhum-val={registrationConfig.medhumDivisionValue || "Medhum"}
         style="max-width: 850px; margin: 0 auto; border-top: 3px solid var(--accent-cyan);"
       >
-        <div class="registration-header" style="text-align: center; margin-bottom: 30px;">
-          <h2 style="font-size: 2rem; margin-bottom: 10px;">{registrationConfig.title}</h2>
-          <p style="color: var(--text-secondary);">{registrationConfig.subtitle}</p>
+
+        {/* 1. UPCOMING VIEW (OPENING SOON) */}
+        <div id="view-upcoming" style={initialStage === 'upcoming' ? 'display: block;' : 'display: none;'}>
+          <div style="text-align: center; margin-bottom: 30px;">
+            <h2 style="font-size: 2rem; margin-bottom: 10px;">{upcomingCfg.title}</h2>
+            <p style="color: var(--text-secondary); max-width: 600px; margin: 0 auto;">{upcomingCfg.subtitle}</p>
+          </div>
+
+          <div class="registration-timer" id="upcoming-timer" style="margin-bottom: 35px;">
+            <div class="timer-block">
+              <div id="u-timer-days" style="font-size: 1.5rem; font-weight: bold; color: var(--accent-cyan);">0</div>
+              <div style="font-size: 0.8rem; color: var(--text-secondary);">Days</div>
+            </div>
+            <div class="timer-block">
+              <div id="u-timer-hours" style="font-size: 1.5rem; font-weight: bold; color: var(--text-primary);">0</div>
+              <div style="font-size: 0.8rem; color: var(--text-secondary);">Hours</div>
+            </div>
+            <div class="timer-block">
+              <div id="u-timer-minutes" style="font-size: 1.5rem; font-weight: bold; color: var(--text-primary);">0</div>
+              <div style="font-size: 0.8rem; color: var(--text-secondary);">Minutes</div>
+            </div>
+            <div class="timer-block">
+              <div id="u-timer-seconds" style="font-size: 1.5rem; font-weight: bold; color: var(--accent-red);">0</div>
+              <div style="font-size: 0.8rem; color: var(--text-secondary);">Seconds</div>
+            </div>
+          </div>
+
+          <div style="background: rgba(0, 240, 255, 0.05); border: 1px solid rgba(0, 240, 255, 0.2); border-radius: 12px; padding: 25px; margin-bottom: 30px;">
+            <h3 style="font-size: 1.2rem; color: var(--accent-cyan); margin-bottom: 12px;">
+              <i class="fa-solid fa-list-check" style="margin-right: 8px;"></i> Document Checklist & Requirements
+            </h3>
+            <p style="color: var(--text-secondary); font-size: 0.95rem; margin-bottom: 15px;">{upcomingCfg.prepNotice}</p>
+            <ul style="color: var(--text-secondary); line-height: 1.8; list-style-type: none; padding-left: 0;">
+              <li><i class="fa-solid fa-check" style="color: var(--accent-cyan); margin-right: 10px;"></i><strong>Kartu Studi Mahasiswa (KSM)</strong> - Max {docLimits.ksmMb}MB</li>
+              <li><i class="fa-solid fa-check" style="color: var(--accent-cyan); margin-right: 10px;"></i><strong>Kartu Hasil Studi (KHS)</strong> - Max {docLimits.khsMb}MB</li>
+              <li><i class="fa-solid fa-check" style="color: var(--accent-cyan); margin-right: 10px;"></i><strong>Motivation Letter (ML)</strong> - Max {docLimits.mlMb}MB</li>
+              <li><i class="fa-solid fa-check" style="color: var(--accent-cyan); margin-right: 10px;"></i><strong>Curriculum Vitae (CV)</strong> - Max {docLimits.cvMb}MB</li>
+              <li><i class="fa-solid fa-check" style="color: var(--accent-cyan); margin-right: 10px;"></i><strong>Pakta Integritas (PI)</strong> - Max {docLimits.piMb}MB</li>
+              <li><i class="fa-solid fa-user-graduate" style="color: var(--accent-cyan); margin-right: 10px;"></i><strong>Eligible Student Years:</strong> {studentYears.join(", ")}</li>
+            </ul>
+          </div>
+
+          <div style="text-align: center;">
+            <a href="/" class="btn btn-secondary">
+              <i class="fa-solid fa-house" style="margin-right: 8px;"></i> Back to Home
+            </a>
+          </div>
         </div>
 
-        {/* Status Alerts */}
-        <div id="status-alert-error" style="display: none; backgroundColor: rgba(255,0,0,0.1); color: #ff6b6b; padding: 12px; border-radius: 6px; margin-bottom: 20px; text-align: center; border: 1px solid rgba(255,107,107,0.3);"></div>
-        <div id="status-alert-success" style="display: none; backgroundColor: rgba(0,255,0,0.1); color: #20c997; padding: 15px; border-radius: 6px; margin-bottom: 20px; text-align: center; border: 1px solid rgba(32,201,151,0.3);"></div>
+        {/* 2. REGISTRATION OPEN & EXTENDED VIEWS */}
+        <div id="view-open" style={(initialStage === 'open' || initialStage === 'extended') ? 'display: block;' : 'display: none;'}>
+          
+          {/* Extended Registration Banner */}
+          <div 
+            id="extended-banner" 
+            style={`display: ${initialStage === 'extended' ? 'block' : 'none'}; background: linear-gradient(135deg, rgba(234, 179, 8, 0.12), rgba(249, 115, 22, 0.12)); border: 1px solid rgba(234, 179, 8, 0.4); border-radius: 12px; padding: 20px 24px; margin-bottom: 30px; text-align: center; box-shadow: 0 4px 20px rgba(234, 179, 8, 0.1);`}
+          >
+            <h3 style="color: #facc15; font-size: 1.3rem; margin-bottom: 6px; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 8px;">
+              <i class="fa-solid fa-bolt" style="color: #facc15;"></i> {extendedCfg.bannerTitle}
+            </h3>
+            <p style="color: var(--text-secondary); font-size: 0.95rem; line-height: 1.5; margin: 0;">{extendedCfg.bannerMessage}</p>
+          </div>
 
-        {/* Countdown Timer */}
-        <div class="registration-timer" id="registration-timer">
-          <div class="timer-block">
-            <div id="timer-days" style="font-size: 1.5rem; font-weight: bold; color: var(--text-primary);">0</div>
-            <div style="font-size: 0.8rem; color: var(--text-secondary);">Days</div>
+          <div class="registration-header" style="text-align: center; margin-bottom: 30px;">
+            <h2 style="font-size: 2rem; margin-bottom: 10px;">{registrationConfig.title}</h2>
+            <p style="color: var(--text-secondary);">{registrationConfig.subtitle}</p>
           </div>
-          <div class="timer-block">
-            <div id="timer-hours" style="font-size: 1.5rem; font-weight: bold; color: var(--text-primary);">0</div>
-            <div style="font-size: 0.8rem; color: var(--text-secondary);">Hours</div>
+
+          {/* Status Alerts */}
+          <div id="status-alert-error" style="display: none; background-color: rgba(255,0,0,0.1); color: #ff6b6b; padding: 12px; border-radius: 6px; margin-bottom: 20px; text-align: center; border: 1px solid rgba(255,107,107,0.3);"></div>
+          <div id="status-alert-success" style="display: none; background-color: rgba(0,255,0,0.1); color: #20c997; padding: 15px; border-radius: 6px; margin-bottom: 20px; text-align: center; border: 1px solid rgba(32,201,151,0.3);"></div>
+
+          {/* Countdown Timer */}
+          <div class="registration-timer" id="registration-timer" style="margin-bottom: 30px;">
+            <div class="timer-block">
+              <div id="timer-days" style="font-size: 1.5rem; font-weight: bold; color: var(--text-primary);">0</div>
+              <div style="font-size: 0.8rem; color: var(--text-secondary);">Days</div>
+            </div>
+            <div class="timer-block">
+              <div id="timer-hours" style="font-size: 1.5rem; font-weight: bold; color: var(--text-primary);">0</div>
+              <div style="font-size: 0.8rem; color: var(--text-secondary);">Hours</div>
+            </div>
+            <div class="timer-block">
+              <div id="timer-minutes" style="font-size: 1.5rem; font-weight: bold; color: var(--text-primary);">0</div>
+              <div style="font-size: 0.8rem; color: var(--text-secondary);">Minutes</div>
+            </div>
+            <div class="timer-block">
+              <div id="timer-seconds" style="font-size: 1.5rem; font-weight: bold; color: var(--accent-red);">0</div>
+              <div style="font-size: 0.8rem; color: var(--text-secondary);">Seconds</div>
+            </div>
           </div>
-          <div class="timer-block">
-            <div id="timer-minutes" style="font-size: 1.5rem; font-weight: bold; color: var(--text-primary);">0</div>
-            <div style="font-size: 0.8rem; color: var(--text-secondary);">Minutes</div>
+
+          {/* Registration Form */}
+          <form id="pendaftaran-form">
+            {/* Section 1: Data Diri */}
+            <div class="form-section-title" style="margin-top: 20px; margin-bottom: 15px; font-size: 1.2rem; font-weight: bold; color: var(--accent-cyan); border-bottom: 1px solid var(--border-color); padding-bottom: 8px;">
+              <i class="fa-solid fa-user" style="margin-right: 8px;"></i> 1. Personal Identity
+            </div>
+
+            <div class="form-group">
+              <label for="nama_lengkap">Full Name <span style="color: var(--accent-red);">*</span></label>
+              <input type="text" class="form-control" id="nama_lengkap" placeholder="Your full name" required />
+            </div>
+
+            <div class="form-row" style="margin-top: 15px;">
+              <div class="form-group">
+                <label for="nim">Student ID (NIM) <span style="color: var(--accent-red);">*</span></label>
+                <input type="text" class="form-control" id="nim" placeholder="Example: 1202210001" pattern="[0-9]+" required />
+              </div>
+              <div class="form-group">
+                <label for="angkatan">Student Year (Angkatan) <span style="color: var(--accent-red);">*</span></label>
+                <select class="form-control" id="angkatan" required>
+                  <option value="" disabled selected>Select Year</option>
+                  {studentYears.map(yr => (
+                    <option value={yr}>{yr}</option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
+            <div class="form-row" style="margin-top: 15px;">
+              <div class="form-group">
+                <label for="email">Email Address <span style="color: var(--accent-red);">*</span></label>
+                <input type="email" class="form-control" id="email" placeholder="name@domain.com" required />
+              </div>
+              <div class="form-group">
+                <label for="nomor_telp">Phone / WhatsApp Number <span style="color: var(--accent-red);">*</span></label>
+                <input type="tel" class="form-control" id="nomor_telp" placeholder="Example: 081234567890" pattern="[0-9]+" required />
+              </div>
+            </div>
+
+            {/* Section 2: Pemilihan Divisi */}
+            <div class="form-section-title" style="margin-top: 35px; margin-bottom: 15px; font-size: 1.2rem; font-weight: bold; color: var(--accent-cyan); border-bottom: 1px solid var(--border-color); padding-bottom: 8px;">
+              <i class="fa-solid fa-layer-group" style="margin-right: 8px;"></i> 2. Division Selection & Motivation
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="divisi_1">Chosen Division 1 (Primary Choice) <span style="color: var(--accent-red);">*</span></label>
+                <select class="form-control" id="divisi_1" required>
+                  <option value="" disabled selected>Select Division 1</option>
+                  {divisions.map(div => (
+                    <option value={div.registrationValue}>{div.registrationLabel}</option>
+                  ))}
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="divisi_2">Chosen Division 2 (Secondary Choice) <span style="color: var(--accent-red);">*</span></label>
+                <select class="form-control" id="divisi_2" required>
+                  <option value="" disabled selected>Select Division 2</option>
+                  {divisions.map(div => (
+                    <option value={div.registrationValue}>{div.registrationLabel}</option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
+            <div class="form-group" style="margin-top: 15px;">
+              <label for="alasan_divisi_1">Reason for Choosing Division 1 <span style="color: var(--accent-red);">*</span></label>
+              <textarea class="form-control" id="alasan_divisi_1" rows="3" placeholder="Explain your motivation and skill background for Division 1..." required></textarea>
+            </div>
+
+            <div class="form-group" style="margin-top: 15px;">
+              <label for="alasan_divisi_2">Reason for Choosing Division 2 <span style="color: var(--accent-red);">*</span></label>
+              <textarea class="form-control" id="alasan_divisi_2" rows="3" placeholder="Explain your motivation and skill background for Division 2..." required></textarea>
+            </div>
+
+            {/* Dynamic Portfolio MedHum Link */}
+            <div class="form-group" id="container-medhum-porto" style="display: none; margin-top: 15px; background: rgba(163, 7, 186, 0.08); padding: 15px; border-radius: 8px; border: 1px solid rgba(163, 7, 186, 0.3);">
+              <label for="portofolio_medhum" style="color: #e879f9; font-weight: bold;">
+                <i class="fa-solid fa-palette" style="margin-right: 6px;"></i> MedHum Portfolio Link <span style="color: var(--accent-red);">*</span>
+              </label>
+              <input type="url" class="form-control" id="portofolio_medhum" placeholder="https://behance.net/username or https://drive.google.com/..." />
+              <small style="color: var(--text-secondary); display: block; margin-top: 5px;">Since you selected MedHum, please provide a public URL link to your design / video portfolio.</small>
+            </div>
+
+            <div class="form-group" style="margin-top: 15px;">
+              <label for="bersedia_dipindah">Willing to be moved to another division if needed? <span style="color: var(--accent-red);">*</span></label>
+              <select class="form-control" id="bersedia_dipindah" required>
+                <option value="" disabled selected>Select Preference</option>
+                <option value="Ya">Ya (Yes)</option>
+                <option value="Tidak">Tidak (No)</option>
+              </select>
+            </div>
+
+            {/* Section 3: Berkas Pendaftaran */}
+            <div class="form-section-title" style="margin-top: 35px; margin-bottom: 15px; font-size: 1.2rem; font-weight: bold; color: var(--accent-cyan); border-bottom: 1px solid var(--border-color); padding-bottom: 8px;">
+              <i class="fa-solid fa-folder-open" style="margin-right: 8px;"></i> 3. Document Uploads (PDF / Images)
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="file_ksm">Kartu Studi Mahasiswa (KSM) <span style="font-size: 0.8rem; color: var(--text-secondary);">(Max {docLimits.ksmMb}MB)</span> <span style="color: var(--accent-red);">*</span></label>
+                <input type="file" class="form-control" id="file_ksm" accept=".pdf,.png,.jpg,.jpeg" required />
+              </div>
+              <div class="form-group">
+                <label for="file_khs">Kartu Hasil Studi (KHS) <span style="font-size: 0.8rem; color: var(--text-secondary);">(Max {docLimits.khsMb}MB)</span> <span style="color: var(--accent-red);">*</span></label>
+                <input type="file" class="form-control" id="file_khs" accept=".pdf,.png,.jpg,.jpeg" required />
+              </div>
+            </div>
+
+            <div class="form-row" style="margin-top: 15px;">
+              <div class="form-group">
+                <label for="file_ml">Motivation Letter (ML) <span style="font-size: 0.8rem; color: var(--text-secondary);">(Max {docLimits.mlMb}MB)</span> <span style="color: var(--accent-red);">*</span></label>
+                <input type="file" class="form-control" id="file_ml" accept=".pdf,.png,.jpg,.jpeg" required />
+              </div>
+              <div class="form-group">
+                <label for="file_cv">Curriculum Vitae (CV) <span style="font-size: 0.8rem; color: var(--text-secondary);">(Max {docLimits.cvMb}MB)</span> <span style="color: var(--accent-red);">*</span></label>
+                <input type="file" class="form-control" id="file_cv" accept=".pdf,.png,.jpg,.jpeg" required />
+              </div>
+            </div>
+
+            <div class="form-group" style="margin-top: 15px;">
+              <label for="file_pi">Pakta Integritas (PI) <span style="font-size: 0.8rem; color: var(--text-secondary);">(Max {docLimits.piMb}MB)</span> <span style="color: var(--accent-red);">*</span></label>
+              <input type="file" class="form-control" id="file_pi" accept=".pdf,.png,.jpg,.jpeg" required />
+              <small style="color: var(--text-secondary); display: block; margin-top: 5px;">Upload signed Integrity Pact document.</small>
+            </div>
+
+            <div class="form-actions" style="justify-content: center; margin-top: 40px;">
+              <button type="submit" id="submit-btn" class="btn btn-primary" style="width: 100%; max-width: 320px; padding: 14px; font-size: 1.1rem;">
+                <span id="btn-text">Submit Registration <i class="fa-solid fa-paper-plane" style="margin-left: 8px;"></i></span>
+              </button>
+            </div>
+          </form>
+        </div>
+
+        {/* 3. DOCUMENT SCREENING IN PROGRESS VIEW */}
+        <div id="view-selection" style={initialStage === 'selection' ? 'display: block;' : 'display: none;'}>
+          <div style="text-align: center; margin-bottom: 30px;">
+            <h2 style="font-size: 2rem; margin-bottom: 10px;">{selectionCfg.title}</h2>
+            <p style="color: var(--text-secondary); max-width: 600px; margin: 0 auto;">{selectionCfg.subtitle}</p>
           </div>
-          <div class="timer-block">
-            <div id="timer-seconds" style="font-size: 1.5rem; font-weight: bold; color: var(--accent-red);">0</div>
-            <div style="font-size: 0.8rem; color: var(--text-secondary);">Seconds</div>
+
+          {/* 5-Step Timeline Indicator */}
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 12px; margin-bottom: 35px;">
+            {getTimelineSteps(2).map((step) => (
+              <div style={`background: ${step.status === 'active' ? 'rgba(0, 240, 255, 0.12)' : step.status === 'completed' ? 'rgba(32, 201, 151, 0.12)' : 'rgba(255, 255, 255, 0.03)'}; border: 1px solid ${step.status === 'active' ? 'var(--accent-cyan)' : step.status === 'completed' ? '#20c997' : 'var(--border-color)'}; border-radius: 10px; padding: 14px 8px; text-align: center;`}>
+                <div style={`font-size: 1.1rem; font-weight: bold; margin-bottom: 4px; color: ${step.status === 'active' ? 'var(--accent-cyan)' : step.status === 'completed' ? '#20c997' : 'var(--text-muted)'};`}>
+                  {step.status === 'completed' && <i class="fa-solid fa-circle-check"></i>}
+                  {step.status === 'active' && <i class="fa-solid fa-spinner fa-spin"></i>}
+                  {step.status === 'upcoming' && <i class="fa-solid fa-clock"></i>}
+                </div>
+                <div style={`font-size: 0.8rem; font-weight: 600; color: ${step.status === 'upcoming' ? 'var(--text-muted)' : 'var(--text-primary)'};`}>{step.label}</div>
+              </div>
+            ))}
+          </div>
+
+          <div style="background: var(--bg-card); border-radius: 12px; padding: 25px; border: 1px solid var(--border-color); margin-bottom: 30px; text-align: center;">
+            <i class="fa-solid fa-clipboard-check" style="font-size: 2.5rem; color: var(--accent-cyan); margin-bottom: 15px;"></i>
+            <p style="color: var(--text-primary); font-size: 1.05rem; margin-bottom: 15px;">{selectionCfg.message}</p>
+            {selectionCfg.estimatedAnnouncementDate && (
+              <div style="display: inline-block; background: rgba(0, 240, 255, 0.08); border: 1px dashed var(--accent-cyan); padding: 8px 16px; border-radius: 20px; color: var(--accent-cyan); font-size: 0.9rem;">
+                <i class="fa-solid fa-calendar-day" style="margin-right: 6px;"></i> Estimated Announcement: <strong>{selectionCfg.estimatedAnnouncementDate}</strong>
+              </div>
+            )}
+          </div>
+
+          <div style="text-align: center;">
+            <a href="/" class="btn btn-secondary">
+              <i class="fa-solid fa-house" style="margin-right: 8px;"></i> Back to Home
+            </a>
           </div>
         </div>
 
-        {/* Expired Message */}
-        <div id="registration-expired" style="display: none; text-align: center; padding: 40px 20px; background-color: var(--bg-card); border-radius: 10px; border: 1px solid var(--border-color);">
-          <i class="fa-solid fa-clock-rotate-left" style="font-size: 3rem; color: var(--text-muted); margin-bottom: 15px;"></i>
-          <h3 style="font-size: 1.5rem; margin-bottom: 10px; color: var(--text-primary);">Registration Period Ended</h3>
-          <p style="color: var(--text-secondary);">{registrationConfig.closedMessage}</p>
+        {/* 4. DOCUMENT SCREENING ANNOUNCEMENT VIEW */}
+        <div id="view-selection-results" style={initialStage === 'selection_results' ? 'display: block;' : 'display: none;'}>
+          <div style="text-align: center; margin-bottom: 30px;">
+            <h2 style="font-size: 2rem; margin-bottom: 10px;">{selectionResultsCfg.title}</h2>
+            <p style="color: var(--text-secondary); max-width: 600px; margin: 0 auto;">{selectionResultsCfg.subtitle}</p>
+          </div>
+
+          {/* 5-Step Timeline Indicator */}
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 12px; margin-bottom: 35px;">
+            {getTimelineSteps(2).map((step) => (
+              <div style={`background: ${step.status === 'completed' ? 'rgba(32, 201, 151, 0.12)' : 'rgba(255, 255, 255, 0.03)'}; border: 1px solid ${step.status === 'completed' ? '#20c997' : 'var(--border-color)'}; border-radius: 10px; padding: 14px 8px; text-align: center;`}>
+                <div style={`font-size: 1.1rem; font-weight: bold; margin-bottom: 4px; color: ${step.status === 'completed' ? '#20c997' : 'var(--text-muted)'};`}>
+                  {step.status === 'completed' ? <i class="fa-solid fa-circle-check"></i> : <i class="fa-solid fa-clock"></i>}
+                </div>
+                <div style={`font-size: 0.8rem; font-weight: 600; color: ${step.status === 'upcoming' ? 'var(--text-muted)' : 'var(--text-primary)'};`}>{step.label}</div>
+              </div>
+            ))}
+          </div>
+
+          {/* NIM Search Box for Screening Results */}
+          <div style="background: rgba(0, 240, 255, 0.04); border: 1px solid rgba(0, 240, 255, 0.2); border-radius: 12px; padding: 25px; margin-bottom: 30px;">
+            <h3 style="font-size: 1.1rem; color: var(--accent-cyan); margin-bottom: 15px; text-align: center;">
+              <i class="fa-solid fa-magnifying-glass" style="margin-right: 8px;"></i> Check Document Screening Result
+            </h3>
+            <div style="display: flex; gap: 10px; max-width: 500px; margin: 0 auto;">
+              <input type="text" id="search-screening-nim-input" class="form-control" placeholder="Enter Student ID (NIM)..." style="background: var(--bg-primary);" />
+              <button id="search-screening-nim-btn" class="btn btn-primary" style="white-space: nowrap; padding: 10px 20px;">
+                Search <i class="fa-solid fa-search" style="margin-left: 4px;"></i>
+              </button>
+            </div>
+            <div id="search-screening-result-box" style="display: none; margin-top: 20px; padding: 18px; border-radius: 10px; text-align: center;"></div>
+          </div>
+
+          <div style="text-align: center;">
+            <a href="/" class="btn btn-secondary">
+              <i class="fa-solid fa-house" style="margin-right: 8px;"></i> Back to Home
+            </a>
+          </div>
         </div>
 
-        {/* Registration Form */}
-        <form id="pendaftaran-form">
-          {/* Section 1: Data Diri */}
-          <div class="form-section-title" style="margin-top: 20px; margin-bottom: 15px; font-size: 1.2rem; font-weight: bold; color: var(--accent-cyan); border-bottom: 1px solid var(--border-color); padding-bottom: 8px;">
-            <i class="fa-solid fa-user" style="margin-right: 8px;"></i> 1. Personal Identity
+        {/* 5. TECHNICAL TEST IN PROGRESS VIEW */}
+        <div id="view-technical-test" style={initialStage === 'technical_test' ? 'display: block;' : 'display: none;'}>
+          <div style="text-align: center; margin-bottom: 30px;">
+            <h2 style="font-size: 2rem; margin-bottom: 10px;">{technicalTestCfg.title}</h2>
+            <p style="color: var(--text-secondary); max-width: 600px; margin: 0 auto;">{technicalTestCfg.subtitle}</p>
           </div>
 
-          <div class="form-group">
-            <label for="nama_lengkap">Full Name <span style="color: var(--accent-red);">*</span></label>
-            <input type="text" class="form-control" id="nama_lengkap" placeholder="Your full name" required />
+          {/* 5-Step Timeline Indicator */}
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 12px; margin-bottom: 35px;">
+            {getTimelineSteps(3).map((step) => (
+              <div style={`background: ${step.status === 'active' ? 'rgba(0, 240, 255, 0.12)' : step.status === 'completed' ? 'rgba(32, 201, 151, 0.12)' : 'rgba(255, 255, 255, 0.03)'}; border: 1px solid ${step.status === 'active' ? 'var(--accent-cyan)' : step.status === 'completed' ? '#20c997' : 'var(--border-color)'}; border-radius: 10px; padding: 14px 8px; text-align: center;`}>
+                <div style={`font-size: 1.1rem; font-weight: bold; margin-bottom: 4px; color: ${step.status === 'active' ? 'var(--accent-cyan)' : step.status === 'completed' ? '#20c997' : 'var(--text-muted)'};`}>
+                  {step.status === 'completed' && <i class="fa-solid fa-circle-check"></i>}
+                  {step.status === 'active' && <i class="fa-solid fa-spinner fa-spin"></i>}
+                  {step.status === 'upcoming' && <i class="fa-solid fa-clock"></i>}
+                </div>
+                <div style={`font-size: 0.8rem; font-weight: 600; color: ${step.status === 'upcoming' ? 'var(--text-muted)' : 'var(--text-primary)'};`}>{step.label}</div>
+              </div>
+            ))}
           </div>
 
-          <div class="form-row" style="margin-top: 15px;">
-            <div class="form-group">
-              <label for="nim">Student ID (NIM) <span style="color: var(--accent-red);">*</span></label>
-              <input type="text" class="form-control" id="nim" placeholder="Example: 1202210001" pattern="[0-9]+" required />
+          <div style="background: var(--bg-card); border-radius: 12px; padding: 25px; border: 1px solid var(--border-color); margin-bottom: 30px; text-align: center;">
+            <i class="fa-solid fa-laptop-code" style="font-size: 2.5rem; color: var(--accent-cyan); margin-bottom: 15px;"></i>
+            <p style="color: var(--text-primary); font-size: 1.05rem; margin-bottom: 20px;">{technicalTestCfg.message}</p>
+            
+            <div style="display: flex; justify-content: center; gap: 15px; flex-wrap: wrap;">
+              <div style="background: rgba(0, 240, 255, 0.08); border: 1px solid rgba(0, 240, 255, 0.3); padding: 10px 18px; border-radius: 8px; color: var(--accent-cyan); font-size: 0.9rem;">
+                <i class="fa-solid fa-calendar-days" style="margin-right: 6px;"></i> Schedule: <strong>{technicalTestCfg.scheduleInfo}</strong>
+              </div>
+              <div style="background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border-color); padding: 10px 18px; border-radius: 8px; color: var(--text-secondary); font-size: 0.9rem;">
+                <i class="fa-solid fa-location-dot" style="margin-right: 6px; color: var(--accent-cyan);"></i> Location: <strong>{technicalTestCfg.locationInfo}</strong>
+              </div>
             </div>
-            <div class="form-group">
-              <label for="angkatan">Student Year (Angkatan) <span style="color: var(--accent-red);">*</span></label>
-              <select class="form-control" id="angkatan" required>
-                <option value="" disabled selected>Select Year</option>
-                {studentYears.map(yr => (
-                  <option value={yr}>{yr}</option>
+          </div>
+
+          <div style="text-align: center;">
+            <a href="/" class="btn btn-secondary">
+              <i class="fa-solid fa-house" style="margin-right: 8px;"></i> Back to Home
+            </a>
+          </div>
+        </div>
+
+        {/* 6. TECHNICAL TEST ANNOUNCEMENT VIEW */}
+        <div id="view-technical-test-results" style={initialStage === 'technical_test_results' ? 'display: block;' : 'display: none;'}>
+          <div style="text-align: center; margin-bottom: 30px;">
+            <h2 style="font-size: 2rem; margin-bottom: 10px;">{technicalTestResultsCfg.title}</h2>
+            <p style="color: var(--text-secondary); max-width: 600px; margin: 0 auto;">{technicalTestResultsCfg.subtitle}</p>
+          </div>
+
+          {/* 5-Step Timeline Indicator */}
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 12px; margin-bottom: 35px;">
+            {getTimelineSteps(3).map((step) => (
+              <div style={`background: ${step.status === 'completed' ? 'rgba(32, 201, 151, 0.12)' : 'rgba(255, 255, 255, 0.03)'}; border: 1px solid ${step.status === 'completed' ? '#20c997' : 'var(--border-color)'}; border-radius: 10px; padding: 14px 8px; text-align: center;`}>
+                <div style={`font-size: 1.1rem; font-weight: bold; margin-bottom: 4px; color: ${step.status === 'completed' ? '#20c997' : 'var(--text-muted)'};`}>
+                  {step.status === 'completed' ? <i class="fa-solid fa-circle-check"></i> : <i class="fa-solid fa-clock"></i>}
+                </div>
+                <div style={`font-size: 0.8rem; font-weight: 600; color: ${step.status === 'upcoming' ? 'var(--text-muted)' : 'var(--text-primary)'};`}>{step.label}</div>
+              </div>
+            ))}
+          </div>
+
+          {/* NIM Search Box for Technical Test Results */}
+          <div style="background: rgba(0, 240, 255, 0.04); border: 1px solid rgba(0, 240, 255, 0.2); border-radius: 12px; padding: 25px; margin-bottom: 30px;">
+            <h3 style="font-size: 1.1rem; color: var(--accent-cyan); margin-bottom: 15px; text-align: center;">
+              <i class="fa-solid fa-magnifying-glass" style="margin-right: 8px;"></i> Check Technical Test Result
+            </h3>
+            <div style="display: flex; gap: 10px; max-width: 500px; margin: 0 auto;">
+              <input type="text" id="search-tech-nim-input" class="form-control" placeholder="Enter Student ID (NIM)..." style="background: var(--bg-primary);" />
+              <button id="search-tech-nim-btn" class="btn btn-primary" style="white-space: nowrap; padding: 10px 20px;">
+                Search <i class="fa-solid fa-search" style="margin-left: 4px;"></i>
+              </button>
+            </div>
+            <div id="search-tech-result-box" style="display: none; margin-top: 20px; padding: 18px; border-radius: 10px; text-align: center;"></div>
+          </div>
+
+          <div style="text-align: center;">
+            <a href="/" class="btn btn-secondary">
+              <i class="fa-solid fa-house" style="margin-right: 8px;"></i> Back to Home
+            </a>
+          </div>
+        </div>
+
+        {/* 7. INTERVIEW PHASE IN PROGRESS VIEW */}
+        <div id="view-interview" style={initialStage === 'interview' ? 'display: block;' : 'display: none;'}>
+          <div style="text-align: center; margin-bottom: 30px;">
+            <h2 style="font-size: 2rem; margin-bottom: 10px;">{interviewCfg.title}</h2>
+            <p style="color: var(--text-secondary); max-width: 600px; margin: 0 auto;">{interviewCfg.subtitle}</p>
+          </div>
+
+          {/* 5-Step Timeline Indicator */}
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 12px; margin-bottom: 35px;">
+            {getTimelineSteps(4).map((step) => (
+              <div style={`background: ${step.status === 'active' ? 'rgba(0, 240, 255, 0.12)' : step.status === 'completed' ? 'rgba(32, 201, 151, 0.12)' : 'rgba(255, 255, 255, 0.03)'}; border: 1px solid ${step.status === 'active' ? 'var(--accent-cyan)' : step.status === 'completed' ? '#20c997' : 'var(--border-color)'}; border-radius: 10px; padding: 14px 8px; text-align: center;`}>
+                <div style={`font-size: 1.1rem; font-weight: bold; margin-bottom: 4px; color: ${step.status === 'active' ? 'var(--accent-cyan)' : step.status === 'completed' ? '#20c997' : 'var(--text-muted)'};`}>
+                  {step.status === 'completed' && <i class="fa-solid fa-circle-check"></i>}
+                  {step.status === 'active' && <i class="fa-solid fa-spinner fa-spin"></i>}
+                  {step.status === 'upcoming' && <i class="fa-solid fa-clock"></i>}
+                </div>
+                <div style={`font-size: 0.8rem; font-weight: 600; color: ${step.status === 'upcoming' ? 'var(--text-muted)' : 'var(--text-primary)'};`}>{step.label}</div>
+              </div>
+            ))}
+          </div>
+
+          <div style="background: var(--bg-card); border-radius: 12px; padding: 25px; border: 1px solid var(--border-color); margin-bottom: 30px; text-align: center;">
+            <i class="fa-solid fa-comments" style="font-size: 2.5rem; color: var(--accent-cyan); margin-bottom: 15px;"></i>
+            <p style="color: var(--text-primary); font-size: 1.05rem; margin-bottom: 20px;">{interviewCfg.message}</p>
+            
+            <div style="display: flex; justify-content: center; gap: 15px; flex-wrap: wrap;">
+              <div style="background: rgba(0, 240, 255, 0.08); border: 1px solid rgba(0, 240, 255, 0.3); padding: 10px 18px; border-radius: 8px; color: var(--accent-cyan); font-size: 0.9rem;">
+                <i class="fa-solid fa-calendar-days" style="margin-right: 6px;"></i> Schedule: <strong>{interviewCfg.scheduleInfo}</strong>
+              </div>
+              <div style="background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border-color); padding: 10px 18px; border-radius: 8px; color: var(--text-secondary); font-size: 0.9rem;">
+                <i class="fa-solid fa-video" style="margin-right: 6px; color: var(--accent-cyan);"></i> Location / Room: <strong>{interviewCfg.locationInfo}</strong>
+              </div>
+            </div>
+          </div>
+
+          <div style="text-align: center;">
+            <a href="/" class="btn btn-secondary">
+              <i class="fa-solid fa-house" style="margin-right: 8px;"></i> Back to Home
+            </a>
+          </div>
+        </div>
+
+        {/* 8. FINAL ANNOUNCEMENT / RESULTS VIEW */}
+        <div id="view-announcement" style={initialStage === 'announcement' ? 'display: block;' : 'display: none;'}>
+          <div style="text-align: center; margin-bottom: 30px;">
+            <h2 style="font-size: 2rem; margin-bottom: 10px;">{announcementCfg.title}</h2>
+            <p style="color: var(--text-secondary); max-width: 600px; margin: 0 auto;">{announcementCfg.subtitle}</p>
+          </div>
+
+          {/* 5-Step Timeline Indicator */}
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 12px; margin-bottom: 35px;">
+            {getTimelineSteps(5).map((step) => (
+              <div style={`background: ${step.status === 'completed' || step.status === 'active' ? 'rgba(32, 201, 151, 0.12)' : 'rgba(255, 255, 255, 0.03)'}; border: 1px solid ${step.status === 'completed' || step.status === 'active' ? '#20c997' : 'var(--border-color)'}; border-radius: 10px; padding: 14px 8px; text-align: center;`}>
+                <div style="font-size: 1.1rem; font-weight: bold; margin-bottom: 4px; color: #20c997;">
+                  <i class="fa-solid fa-circle-check"></i>
+                </div>
+                <div style="font-size: 0.8rem; font-weight: 600; color: var(--text-primary);">{step.label}</div>
+              </div>
+            ))}
+          </div>
+
+          {/* Interactive Final Status Search Lookup */}
+          <div style="background: rgba(0, 240, 255, 0.04); border: 1px solid rgba(0, 240, 255, 0.2); border-radius: 12px; padding: 25px; margin-bottom: 35px;">
+            <h3 style="font-size: 1.1rem; color: var(--accent-cyan); margin-bottom: 15px; text-align: center;">
+              <i class="fa-solid fa-magnifying-glass" style="margin-right: 8px;"></i> Check Final Selection Result
+            </h3>
+            <div style="display: flex; gap: 10px; max-width: 500px; margin: 0 auto;">
+              <input type="text" id="search-nim-input" class="form-control" placeholder="Enter Student ID (NIM) or Name..." style="background: var(--bg-primary);" />
+              <button id="search-nim-btn" class="btn btn-primary" style="white-space: nowrap; padding: 10px 20px;">
+                Check <i class="fa-solid fa-search" style="margin-left: 4px;"></i>
+              </button>
+            </div>
+            <div id="search-result-box" style="display: none; margin-top: 20px; padding: 18px; border-radius: 10px; text-align: center;"></div>
+          </div>
+
+          {/* Accepted Candidates Directory */}
+          <div style="margin-bottom: 30px;">
+            <h3 style="font-size: 1.3rem; margin-bottom: 20px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px;">
+              <i class="fa-solid fa-award" style="color: #20c997; margin-right: 8px;"></i> Accepted Assistants Directory ({acceptedCandidates.length})
+            </h3>
+
+            {Object.keys(candidatesByDivision).length === 0 ? (
+              <div style="text-align: center; padding: 30px; color: var(--text-secondary);">
+                No published list loaded. Use the NIM search box above to check your application status.
+              </div>
+            ) : (
+              <div style="display: flex; flex-direction: column; gap: 25px;">
+                {Object.entries(candidatesByDivision).map(([divName, members]) => (
+                  <div style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 10px; padding: 20px;">
+                    <h4 style="color: var(--accent-cyan); font-size: 1.1rem; margin-bottom: 15px; display: flex; align-items: center; justify-content: space-between;">
+                      <span><i class="fa-solid fa-shield-halved" style="margin-right: 8px;"></i> {divName}</span>
+                      <span class="badge" style="background: rgba(32, 201, 151, 0.15); color: #20c997; border: 1px solid rgba(32, 201, 151, 0.3); font-size: 0.8rem; padding: 4px 10px;">
+                        {members.length} Selected
+                      </span>
+                    </h4>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px;">
+                      {members.map(member => (
+                        <div style="background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.06); border-radius: 8px; padding: 12px 15px;">
+                          <div style="font-weight: bold; color: var(--text-primary); font-size: 0.95rem;">{member.name}</div>
+                          <div style="font-size: 0.8rem; color: var(--text-secondary); margin-top: 2px;">NIM: {member.nim}</div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
                 ))}
-              </select>
+              </div>
+            )}
+          </div>
+
+          <div style="text-align: center; margin-top: 30px;">
+            <a href="/" class="btn btn-secondary">
+              <i class="fa-solid fa-house" style="margin-right: 8px;"></i> Back to Home
+            </a>
+          </div>
+        </div>
+
+        {/* 9. FULLY CLOSED VIEW */}
+        <div id="view-closed" style={initialStage === 'closed' ? 'display: block;' : 'display: none;'}>
+          <div style="text-align: center; padding: 40px 20px; background-color: var(--bg-card); border-radius: 10px; border: 1px solid var(--border-color);">
+            <i class="fa-solid fa-lock" style="font-size: 3rem; color: var(--text-muted); margin-bottom: 20px;"></i>
+            <h3 style="font-size: 1.8rem; margin-bottom: 12px; color: var(--text-primary);">{closedCfg.title}</h3>
+            <p style="color: var(--text-secondary); font-size: 1.05rem; max-width: 550px; margin: 0 auto 20px auto;">{closedCfg.subtitle}</p>
+            <p style="color: var(--text-muted); font-size: 0.95rem; margin-bottom: 25px;">{closedCfg.message}</p>
+
+            {closedCfg.nextBatchInfo && (
+              <div style="display: inline-block; background: rgba(255, 255, 255, 0.04); border: 1px solid var(--border-color); border-radius: 20px; padding: 8px 18px; color: var(--accent-cyan); font-size: 0.85rem; margin-bottom: 30px;">
+                <i class="fa-solid fa-circle-info" style="margin-right: 6px;"></i> {closedCfg.nextBatchInfo}
+              </div>
+            )}
+
+            <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
+              <a href="/" class="btn btn-primary" style="padding: 10px 24px;">
+                <i class="fa-solid fa-house" style="margin-right: 8px;"></i> Back to Home
+              </a>
+              <a href="/news" class="btn btn-secondary" style="padding: 10px 24px;">
+                <i class="fa-solid fa-newspaper" style="margin-right: 8px;"></i> Lab News & Updates
+              </a>
             </div>
           </div>
+        </div>
 
-          <div class="form-row" style="margin-top: 15px;">
-            <div class="form-group">
-              <label for="email">Email Address <span style="color: var(--accent-red);">*</span></label>
-              <input type="email" class="form-control" id="email" placeholder="name@domain.com" required />
-            </div>
-            <div class="form-group">
-              <label for="nomor_telp">Phone / WhatsApp Number <span style="color: var(--accent-red);">*</span></label>
-              <input type="tel" class="form-control" id="nomor_telp" placeholder="Example: 081234567890" pattern="[0-9]+" required />
-            </div>
-          </div>
-
-          {/* Section 2: Pemilihan Divisi */}
-          <div class="form-section-title" style="margin-top: 35px; margin-bottom: 15px; font-size: 1.2rem; font-weight: bold; color: var(--accent-cyan); border-bottom: 1px solid var(--border-color); padding-bottom: 8px;">
-            <i class="fa-solid fa-layer-group" style="margin-right: 8px;"></i> 2. Division Selection & Motivation
-          </div>
-
-          <div class="form-row">
-            <div class="form-group">
-              <label for="divisi_1">Chosen Division 1 (Primary Choice) <span style="color: var(--accent-red);">*</span></label>
-              <select class="form-control" id="divisi_1" required>
-                <option value="" disabled selected>Select Division 1</option>
-                {divisions.map(div => (
-                  <option value={div.registrationValue}>{div.registrationLabel}</option>
-                ))}
-              </select>
-            </div>
-            <div class="form-group">
-              <label for="divisi_2">Chosen Division 2 (Secondary Choice) <span style="color: var(--accent-red);">*</span></label>
-              <select class="form-control" id="divisi_2" required>
-                <option value="" disabled selected>Select Division 2</option>
-                {divisions.map(div => (
-                  <option value={div.registrationValue}>{div.registrationLabel}</option>
-                ))}
-              </select>
-            </div>
-          </div>
-
-          <div class="form-group" style="margin-top: 15px;">
-            <label for="alasan_divisi_1">Reason for Choosing Division 1 <span style="color: var(--accent-red);">*</span></label>
-            <textarea class="form-control" id="alasan_divisi_1" rows="3" placeholder="Explain your motivation and skill background for Division 1..." required></textarea>
-          </div>
-
-          <div class="form-group" style="margin-top: 15px;">
-            <label for="alasan_divisi_2">Reason for Choosing Division 2 <span style="color: var(--accent-red);">*</span></label>
-            <textarea class="form-control" id="alasan_divisi_2" rows="3" placeholder="Explain your motivation and skill background for Division 2..." required></textarea>
-          </div>
-
-          {/* Dynamic Portfolio MedHum Link */}
-          <div class="form-group" id="container-medhum-porto" style="display: none; margin-top: 15px; background: rgba(163, 7, 186, 0.08); padding: 15px; border-radius: 8px; border: 1px solid rgba(163, 7, 186, 0.3);">
-            <label for="portofolio_medhum" style="color: #e879f9; font-weight: bold;">
-              <i class="fa-solid fa-palette" style="margin-right: 6px;"></i> MedHum Portfolio Link <span style="color: var(--accent-red);">*</span>
-            </label>
-            <input type="url" class="form-control" id="portofolio_medhum" placeholder="https://behance.net/username or https://drive.google.com/..." />
-            <small style="color: var(--text-secondary); display: block; margin-top: 5px;">Since you selected MedHum, please provide a public URL link to your design / video portfolio.</small>
-          </div>
-
-          <div class="form-group" style="margin-top: 15px;">
-            <label for="bersedia_dipindah">Willing to be moved to another division if needed? <span style="color: var(--accent-red);">*</span></label>
-            <select class="form-control" id="bersedia_dipindah" required>
-              <option value="" disabled selected>Select Preference</option>
-              <option value="Ya">Ya (Yes)</option>
-              <option value="Tidak">Tidak (No)</option>
-            </select>
-          </div>
-
-          {/* Section 3: Berkas Pendaftaran */}
-          <div class="form-section-title" style="margin-top: 35px; margin-bottom: 15px; font-size: 1.2rem; font-weight: bold; color: var(--accent-cyan); border-bottom: 1px solid var(--border-color); padding-bottom: 8px;">
-            <i class="fa-solid fa-folder-open" style="margin-right: 8px;"></i> 3. Document Uploads (PDF / Images)
-          </div>
-
-          <div class="form-row">
-            <div class="form-group">
-              <label for="file_ksm">Kartu Studi Mahasiswa (KSM) <span style="font-size: 0.8rem; color: var(--text-secondary);">(Max {docLimits.ksmMb}MB)</span> <span style="color: var(--accent-red);">*</span></label>
-              <input type="file" class="form-control" id="file_ksm" accept=".pdf,.png,.jpg,.jpeg" required />
-            </div>
-            <div class="form-group">
-              <label for="file_khs">Kartu Hasil Studi (KHS) <span style="font-size: 0.8rem; color: var(--text-secondary);">(Max {docLimits.khsMb}MB)</span> <span style="color: var(--accent-red);">*</span></label>
-              <input type="file" class="form-control" id="file_khs" accept=".pdf,.png,.jpg,.jpeg" required />
-            </div>
-          </div>
-
-          <div class="form-row" style="margin-top: 15px;">
-            <div class="form-group">
-              <label for="file_ml">Motivation Letter (ML) <span style="font-size: 0.8rem; color: var(--text-secondary);">(Max {docLimits.mlMb}MB)</span> <span style="color: var(--accent-red);">*</span></label>
-              <input type="file" class="form-control" id="file_ml" accept=".pdf,.png,.jpg,.jpeg" required />
-            </div>
-            <div class="form-group">
-              <label for="file_cv">Curriculum Vitae (CV) <span style="font-size: 0.8rem; color: var(--text-secondary);">(Max {docLimits.cvMb}MB)</span> <span style="color: var(--accent-red);">*</span></label>
-              <input type="file" class="form-control" id="file_cv" accept=".pdf,.png,.jpg,.jpeg" required />
-            </div>
-          </div>
-
-          <div class="form-group" style="margin-top: 15px;">
-            <label for="file_pi">Pakta Integritas (PI) <span style="font-size: 0.8rem; color: var(--text-secondary);">(Max {docLimits.piMb}MB)</span> <span style="color: var(--accent-red);">*</span></label>
-            <input type="file" class="form-control" id="file_pi" accept=".pdf,.png,.jpg,.jpeg" required />
-            <small style="color: var(--text-secondary); display: block; margin-top: 5px;">Upload signed Integrity Pact document.</small>
-          </div>
-
-          <div class="form-actions" style="justify-content: center; margin-top: 40px;">
-            <button type="submit" id="submit-btn" class="btn btn-primary" style="width: 100%; max-width: 320px; padding: 14px; font-size: 1.1rem;">
-              <span id="btn-text">Submit Registration <i class="fa-solid fa-paper-plane" style="margin-left: 8px;"></i></span>
-            </button>
-          </div>
-        </form>
       </div>
     </div>
   </section>
 </Layout>
 
 <script>
+  import resultsData from '../data/recruitment_results.json';
+
   const container = document.getElementById('registration-container');
-  const deadlineStr = container?.getAttribute('data-deadline') || "2026-08-17T23:59:59";
+  const stage = container?.getAttribute('data-stage') || "auto";
+  const openDateStr = container?.getAttribute('data-open-date') || "2026-07-01T00:00:00";
+  const deadlineStr = container?.getAttribute('data-deadline') || "2026-07-25T23:59:59";
+  const extendedDeadlineStr = container?.getAttribute('data-extended-deadline') || "";
   const medhumTriggerVal = container?.getAttribute('data-medhum-val') || "Medhum";
-  const DEADLINE = new Date(deadlineStr).getTime();
-  
-  const timerContainer = document.getElementById('registration-timer');
-  const expiredContainer = document.getElementById('registration-expired');
+
+  const OPEN_TIME = new Date(openDateStr).getTime();
+  const DEADLINE_TIME = new Date(deadlineStr).getTime();
+  const EXTENDED_TIME = extendedDeadlineStr ? new Date(extendedDeadlineStr).getTime() : 0;
+
+  const activeDeadline = (EXTENDED_TIME > 0 && new Date().getTime() >= DEADLINE_TIME && new Date().getTime() < EXTENDED_TIME)
+    ? EXTENDED_TIME 
+    : DEADLINE_TIME;
+
+  // Form Elements
   const formElement = document.getElementById('pendaftaran-form') as HTMLFormElement;
   const submitBtn = document.getElementById('submit-btn') as HTMLButtonElement;
   const btnText = document.getElementById('btn-text');
-
-  const daysEl = document.getElementById('timer-days');
-  const hoursEl = document.getElementById('timer-hours');
-  const minutesEl = document.getElementById('timer-minutes');
-  const secondsEl = document.getElementById('timer-seconds');
 
   const alertError = document.getElementById('status-alert-error') as HTMLElement;
   const alertSuccess = document.getElementById('status-alert-success') as HTMLElement;
@@ -231,77 +732,208 @@ const docLimits = registrationConfig.documentLimits || {
   const medhumPortoContainer = document.getElementById('container-medhum-porto') as HTMLElement;
   const medhumPortoInput = document.getElementById('portofolio_medhum') as HTMLInputElement;
 
-  // 1. Conditional MedHum Portfolio Input Visibility
+  // Extended Banner Check
+  const extendedBanner = document.getElementById('extended-banner');
+  if (extendedBanner) {
+    const isExtendedNow = stage === 'extended' || (stage === 'auto' && EXTENDED_TIME > 0 && new Date().getTime() >= DEADLINE_TIME && new Date().getTime() < EXTENDED_TIME);
+    extendedBanner.style.display = isExtendedNow ? 'block' : 'none';
+  }
+
+  // 1. Dynamic Countdown Timers
+  const daysEl = document.getElementById('timer-days');
+  const hoursEl = document.getElementById('timer-hours');
+  const minutesEl = document.getElementById('timer-minutes');
+  const secondsEl = document.getElementById('timer-seconds');
+
+  const uDaysEl = document.getElementById('u-timer-days');
+  const uHoursEl = document.getElementById('u-timer-hours');
+  const uMinutesEl = document.getElementById('u-timer-minutes');
+  const uSecondsEl = document.getElementById('u-timer-seconds');
+
+  setInterval(() => {
+    const now = new Date().getTime();
+
+    if (uDaysEl) {
+      const uDistance = OPEN_TIME - now;
+      if (uDistance > 0) {
+        uDaysEl.innerText = String(Math.floor(uDistance / (1000 * 60 * 60 * 24)));
+        if (uHoursEl) uHoursEl.innerText = String(Math.floor((uDistance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)));
+        if (uMinutesEl) uMinutesEl.innerText = String(Math.floor((uDistance % (1000 * 60 * 60)) / (1000 * 60)));
+        if (uSecondsEl) uSecondsEl.innerText = String(Math.floor((uDistance % (1000 * 60)) / 1000));
+      }
+    }
+
+    if (daysEl) {
+      const distance = activeDeadline - now;
+      if (distance > 0) {
+        daysEl.innerText = String(Math.floor(distance / (1000 * 60 * 60 * 24)));
+        if (hoursEl) hoursEl.innerText = String(Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)));
+        if (minutesEl) minutesEl.innerText = String(Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60)));
+        if (secondsEl) secondsEl.innerText = String(Math.floor((distance % (1000 * 60)) / 1000));
+      }
+    }
+  }, 1000);
+
+  // 2. MedHum Portfolio Visibility Toggle
   const toggleMedhumPorto = () => {
     const val1 = div1Select?.value || '';
     const val2 = div2Select?.value || '';
     if (val1 === medhumTriggerVal || val2 === medhumTriggerVal) {
-      medhumPortoContainer.style.display = 'block';
-      medhumPortoInput.required = true;
+      if (medhumPortoContainer) medhumPortoContainer.style.display = 'block';
+      if (medhumPortoInput) medhumPortoInput.required = true;
     } else {
-      medhumPortoContainer.style.display = 'none';
-      medhumPortoInput.required = false;
-      medhumPortoInput.value = '';
+      if (medhumPortoContainer) medhumPortoContainer.style.display = 'none';
+      if (medhumPortoInput) {
+        medhumPortoInput.required = false;
+        medhumPortoInput.value = '';
+      }
     }
   };
 
   div1Select?.addEventListener('change', toggleMedhumPorto);
   div2Select?.addEventListener('change', toggleMedhumPorto);
 
-  // 2. Countdown timer logic
-  const timer = setInterval(() => {
-    const now = new Date().getTime();
-    const distance = DEADLINE - now;
+  // 3. Document Screening Results Lookup
+  const searchScreeningInput = document.getElementById('search-screening-nim-input') as HTMLInputElement;
+  const searchScreeningBtn = document.getElementById('search-screening-nim-btn');
+  const searchScreeningResultBox = document.getElementById('search-screening-result-box');
 
-    if (distance < 0) {
-      clearInterval(timer);
-      if (timerContainer) timerContainer.style.display = 'none';
-      if (formElement) formElement.style.display = 'none';
-      if (expiredContainer) expiredContainer.style.display = 'block';
-    } else {
-      if (daysEl) daysEl.innerText = String(Math.floor(distance / (1000 * 60 * 60 * 24)));
-      if (hoursEl) hoursEl.innerText = String(Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)));
-      if (minutesEl) minutesEl.innerText = String(Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60)));
-      if (secondsEl) secondsEl.innerText = String(Math.floor((distance % (1000 * 60)) / 1000));
+  const executeScreeningSearch = () => {
+    if (!searchScreeningInput || !searchScreeningResultBox) return;
+    const query = searchScreeningInput.value.trim().toLowerCase();
+    if (!query) {
+      searchScreeningResultBox.style.display = 'block';
+      searchScreeningResultBox.style.background = 'rgba(255, 107, 107, 0.1)';
+      searchScreeningResultBox.style.color = '#ff6b6b';
+      searchScreeningResultBox.innerHTML = '<i class="fa-solid fa-circle-exclamation"></i> Please enter a NIM to search.';
+      return;
     }
-  }, 1000);
-
-  // Helper function to read file to base64 with custom max MB limit per document type
-  const readFileAsBase64 = (
-    fileInput: HTMLInputElement,
-    maxMb: number = 2,
-    documentLabel: string = 'File'
-  ): Promise<{ base64: string, fileName: string, mimeType: string } | null> => {
-    return new Promise((resolve, reject) => {
-      const file = fileInput.files?.[0];
-      if (!file) {
-        resolve(null);
-        return;
-      }
-      
-      if (file.size > maxMb * 1024 * 1024) {
-        reject(new Error(`${documentLabel} (${file.name}) exceeds the ${maxMb}MB size limit.`));
-        return;
-      }
-
-      const reader = new FileReader();
-      reader.onload = () => {
-        resolve({
-          base64: reader.result as string,
-          fileName: file.name,
-          mimeType: file.type || 'application/octet-stream'
-        });
-      };
-      reader.onerror = () => reject(new Error(`Failed to read file ${file.name}.`));
-      reader.readAsDataURL(file);
-    });
+    const match = (resultsData.candidates || []).find((c: any) => c.nim && String(c.nim).toLowerCase() === query);
+    searchScreeningResultBox.style.display = 'block';
+    if (match) {
+      const isPassed = match.screeningStatus === 'passed';
+      searchScreeningResultBox.style.background = isPassed ? 'rgba(32, 201, 151, 0.12)' : 'rgba(255, 255, 255, 0.05)';
+      searchScreeningResultBox.style.border = `1px solid ${isPassed ? '#20c997' : 'var(--border-color)'}`;
+      searchScreeningResultBox.style.color = isPassed ? '#20c997' : 'var(--text-secondary)';
+      searchScreeningResultBox.innerHTML = `
+        <div style="font-size: 1.2rem; font-weight: bold; margin-bottom: 6px;">
+          ${isPassed ? '🎉 PASSED DOCUMENT SCREENING' : 'ℹ️ Document Screening Status'}
+        </div>
+        <div style="color: var(--text-primary); font-size: 1.05rem;">${match.name} (${match.nim})</div>
+        <p style="margin-top: 8px; font-size: 0.9rem;">
+          ${isPassed ? 'Congratulations! You have qualified for the Technical Test phase. Please check your email for technical test details.' : (match.notes || 'Thank you for applying. Keep striving for future opportunities.')}
+        </p>
+      `;
+    } else {
+      searchScreeningResultBox.style.background = 'rgba(255, 255, 255, 0.05)';
+      searchScreeningResultBox.style.color = 'var(--text-secondary)';
+      searchScreeningResultBox.innerHTML = `No screening result record found for NIM "<strong>${query}</strong>".`;
+    }
   };
 
-  // 3. Form submission logic
+  searchScreeningBtn?.addEventListener('click', executeScreeningSearch);
+  searchScreeningInput?.addEventListener('keypress', (e) => { if (e.key === 'Enter') executeScreeningSearch(); });
+
+  // 4. Technical Test Results Lookup
+  const searchTechInput = document.getElementById('search-tech-nim-input') as HTMLInputElement;
+  const searchTechBtn = document.getElementById('search-tech-nim-btn');
+  const searchTechResultBox = document.getElementById('search-tech-result-box');
+
+  const executeTechSearch = () => {
+    if (!searchTechInput || !searchTechResultBox) return;
+    const query = searchTechInput.value.trim().toLowerCase();
+    if (!query) {
+      searchTechResultBox.style.display = 'block';
+      searchTechResultBox.style.background = 'rgba(255, 107, 107, 0.1)';
+      searchTechResultBox.style.color = '#ff6b6b';
+      searchTechResultBox.innerHTML = '<i class="fa-solid fa-circle-exclamation"></i> Please enter a NIM to search.';
+      return;
+    }
+    const match = (resultsData.candidates || []).find((c: any) => c.nim && String(c.nim).toLowerCase() === query);
+    searchTechResultBox.style.display = 'block';
+    if (match) {
+      const isPassed = match.technicalTestStatus === 'passed';
+      searchTechResultBox.style.background = isPassed ? 'rgba(32, 201, 151, 0.12)' : 'rgba(255, 255, 255, 0.05)';
+      searchTechResultBox.style.border = `1px solid ${isPassed ? '#20c997' : 'var(--border-color)'}`;
+      searchTechResultBox.style.color = isPassed ? '#20c997' : 'var(--text-secondary)';
+      searchTechResultBox.innerHTML = `
+        <div style="font-size: 1.2rem; font-weight: bold; margin-bottom: 6px;">
+          ${isPassed ? '🎉 PASSED TECHNICAL TEST' : 'ℹ️ Technical Test Status'}
+        </div>
+        <div style="color: var(--text-primary); font-size: 1.05rem;">${match.name} (${match.nim})</div>
+        <p style="margin-top: 8px; font-size: 0.9rem;">
+          ${isPassed ? 'Congratulations! You have qualified for the Interview phase. Please check your email for interview schedule details.' : (match.notes || 'Thank you for participating in the technical test.')}
+        </p>
+      `;
+    } else {
+      searchTechResultBox.style.background = 'rgba(255, 255, 255, 0.05)';
+      searchTechResultBox.style.color = 'var(--text-secondary)';
+      searchTechResultBox.innerHTML = `No technical test result record found for NIM "<strong>${query}</strong>".`;
+    }
+  };
+
+  searchTechBtn?.addEventListener('click', executeTechSearch);
+  searchTechInput?.addEventListener('keypress', (e) => { if (e.key === 'Enter') executeTechSearch(); });
+
+  // 5. Final Selection Results Lookup
+  const searchInput = document.getElementById('search-nim-input') as HTMLInputElement;
+  const searchBtn = document.getElementById('search-nim-btn');
+  const resultBox = document.getElementById('search-result-box');
+
+  const executeNimSearch = () => {
+    if (!searchInput || !resultBox) return;
+    const query = searchInput.value.trim().toLowerCase();
+    if (!query) {
+      resultBox.style.display = 'block';
+      resultBox.style.background = 'rgba(255, 107, 107, 0.1)';
+      resultBox.style.color = '#ff6b6b';
+      resultBox.innerHTML = '<i class="fa-solid fa-circle-exclamation"></i> Please enter a NIM or name to search.';
+      return;
+    }
+
+    const match = (resultsData.candidates || []).find((c: any) => 
+      (c.nim && String(c.nim).toLowerCase() === query) || 
+      (c.name && c.name.toLowerCase().includes(query))
+    );
+
+    resultBox.style.display = 'block';
+    if (match) {
+      const isAccepted = match.finalStatus === 'accepted' || match.status === 'accepted';
+      if (isAccepted) {
+        resultBox.style.background = 'rgba(32, 201, 151, 0.12)';
+        resultBox.style.border = '1px solid rgba(32, 201, 151, 0.4)';
+        resultBox.style.color = '#20c997';
+        resultBox.innerHTML = `
+          <div style="font-size: 1.5rem; margin-bottom: 8px;"><i class="fa-solid fa-circle-check"></i> CONGRATULATIONS!</div>
+          <div style="font-size: 1.1rem; font-weight: bold; color: var(--text-primary);">${match.name} (${match.nim})</div>
+          <div style="margin-top: 4px; font-size: 0.95rem; color: var(--accent-cyan);">Division: <strong>${match.division}</strong></div>
+          <p style="margin-top: 10px; font-size: 0.9rem; color: var(--text-secondary);">${match.notes || 'You have been accepted as an assistant at EIM Research Lab.'}</p>
+        `;
+      } else {
+        resultBox.style.background = 'rgba(0, 240, 255, 0.08)';
+        resultBox.style.border = '1px solid rgba(0, 240, 255, 0.3)';
+        resultBox.style.color = 'var(--accent-cyan)';
+        resultBox.innerHTML = `
+          <div style="font-size: 1.2rem; margin-bottom: 6px;"><i class="fa-solid fa-info-circle"></i> Status: ${(match.finalStatus || match.status || 'evaluated').toUpperCase()}</div>
+          <div style="font-weight: bold; color: var(--text-primary);">${match.name} (${match.nim})</div>
+          <p style="margin-top: 8px; font-size: 0.9rem; color: var(--text-secondary);">${match.notes || 'Thank you for participating in this recruitment cycle.'}</p>
+        `;
+      }
+    } else {
+      resultBox.style.background = 'rgba(255, 255, 255, 0.05)';
+      resultBox.style.color = 'var(--text-secondary)';
+      resultBox.innerHTML = `No matching candidate record found for "<strong>${query}</strong>".`;
+    }
+  };
+
+  searchBtn?.addEventListener('click', executeNimSearch);
+  searchInput?.addEventListener('keypress', (e) => { if (e.key === 'Enter') executeNimSearch(); });
+
+  // 6. Registration Form Submission Logic
   formElement?.addEventListener('submit', async (e) => {
     e.preventDefault();
-    alertError.style.display = 'none';
-    alertSuccess.style.display = 'none';
+    if (alertError) alertError.style.display = 'none';
+    if (alertSuccess) alertSuccess.style.display = 'none';
 
     const nama_lengkap = (document.getElementById('nama_lengkap') as HTMLInputElement).value;
     const nim = (document.getElementById('nim') as HTMLInputElement).value;
@@ -312,45 +944,31 @@ const docLimits = registrationConfig.documentLimits || {
     const divisi_2 = div2Select.value;
     const alasan_divisi_1 = (document.getElementById('alasan_divisi_1') as HTMLTextAreaElement).value;
     const alasan_divisi_2 = (document.getElementById('alasan_divisi_2') as HTMLTextAreaElement).value;
-    const portofolio_medhum = medhumPortoInput.value;
+    const portofolio_medhum = medhumPortoInput?.value || '';
     const bersedia_dipindah = (document.getElementById('bersedia_dipindah') as HTMLSelectElement).value;
 
     if (divisi_1 === divisi_2) {
-      alertError.innerText = 'Division Choice 1 and Division Choice 2 cannot be the same!';
-      alertError.style.display = 'block';
+      if (alertError) {
+        alertError.innerText = 'Division Choice 1 and Division Choice 2 cannot be the same!';
+        alertError.style.display = 'block';
+      }
       return;
     }
 
     if ((divisi_1 === medhumTriggerVal || divisi_2 === medhumTriggerVal) && !portofolio_medhum) {
-      alertError.innerText = 'Please provide your MedHum portfolio URL link!';
-      alertError.style.display = 'block';
+      if (alertError) {
+        alertError.innerText = 'Please provide your MedHum portfolio URL link!';
+        alertError.style.display = 'block';
+      }
       return;
     }
 
     if (submitBtn && btnText) {
       submitBtn.disabled = true;
-      btnText.innerHTML = `Encoding files... <i class="fa-solid fa-circle-notch fa-spin" style="margin-left: 8px;"></i>`;
+      btnText.innerHTML = `Submitting... <i class="fa-solid fa-circle-notch fa-spin" style="margin-left: 8px;"></i>`;
     }
 
     try {
-      const fileKsmInput = document.getElementById('file_ksm') as HTMLInputElement;
-      const fileKhsInput = document.getElementById('file_khs') as HTMLInputElement;
-      const fileMlInput = document.getElementById('file_ml') as HTMLInputElement;
-      const fileCvInput = document.getElementById('file_cv') as HTMLInputElement;
-      const filePiInput = document.getElementById('file_pi') as HTMLInputElement;
-
-      const [ksm, khs, ml, cv, pi] = await Promise.all([
-        readFileAsBase64(fileKsmInput, 2, 'KSM'),
-        readFileAsBase64(fileKhsInput, 2, 'KHS'),
-        readFileAsBase64(fileMlInput, 2, 'Motivation Letter'),
-        readFileAsBase64(fileCvInput, 3, 'CV'),
-        readFileAsBase64(filePiInput, 2, 'Pakta Integritas')
-      ]);
-
-      if (submitBtn && btnText) {
-        btnText.innerHTML = `Submitting... <i class="fa-solid fa-circle-notch fa-spin" style="margin-left: 8px;"></i>`;
-      }
-
       const scriptURL = (import.meta.env.PUBLIC_GOOGLE_SHEET_SCRIPT_URL || '').replace(/^['"]|['"]$/g, '').trim();
       if (!scriptURL) {
         throw new Error('Google Sheets URL has not been configured in the .env file.');
@@ -367,31 +985,28 @@ const docLimits = registrationConfig.documentLimits || {
         'Divisi 2': divisi_2,
         'Alasan Divisi 2': alasan_divisi_2,
         'Portofolio MedHum': portofolio_medhum,
-        'Bersedia Dipindah Divisi': bersedia_dipindah,
-        'ksm': ksm,
-        'khs': khs,
-        'ml': ml,
-        'cv': cv,
-        'pi': pi
+        'Bersedia Dipindah Divisi': bersedia_dipindah
       };
 
       await fetch(scriptURL, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'text/plain;charset=utf-8'
-        },
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
         body: JSON.stringify(payload),
         mode: 'no-cors'
       });
 
-      alertSuccess.innerText = 'Registration successfully submitted! A confirmation email has been sent to your email address.';
-      alertSuccess.style.display = 'block';
+      if (alertSuccess) {
+        alertSuccess.innerText = 'Registration successfully submitted! A confirmation email has been sent to your email address.';
+        alertSuccess.style.display = 'block';
+      }
       formElement.reset();
       toggleMedhumPorto();
       window.scrollTo({ top: 0, behavior: 'smooth' });
     } catch (err: any) {
-      alertError.innerText = err.message || 'Failed to submit. Please try again later.';
-      alertError.style.display = 'block';
+      if (alertError) {
+        alertError.innerText = err.message || 'Failed to submit. Please try again later.';
+        alertError.style.display = 'block';
+      }
     } finally {
       if (submitBtn && btnText) {
         submitBtn.disabled = false;

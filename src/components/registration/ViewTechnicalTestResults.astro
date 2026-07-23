@@ -1,0 +1,44 @@
+---
+import TimelineSteps from './TimelineSteps.astro';
+
+interface Props {
+  initialStage: string;
+  technicalTestResultsCfg: {
+    title: string;
+    subtitle: string;
+    newsUrl?: string;
+    documentUrl?: string;
+  };
+}
+
+const { initialStage, technicalTestResultsCfg } = Astro.props;
+---
+
+<div id="view-technical-test-results" style={initialStage === 'technical_test_results' ? 'display: block;' : 'display: none;'}>
+  <div class="registration-header">
+    <h2>{technicalTestResultsCfg.title}</h2>
+    <p style="color: var(--text-secondary); max-width: 600px; margin: 0 auto;">{technicalTestResultsCfg.subtitle}</p>
+  </div>
+
+  <TimelineSteps activeStepIndex={3} />
+
+  {/* NIM Search Box for Technical Test Results */}
+  <div class="search-lookup-box">
+    <h3 class="search-lookup-title">
+      <i class="fa-solid fa-magnifying-glass" style="margin-right: 8px;"></i> Check Technical Test Result
+    </h3>
+    <div class="search-lookup-form">
+      <input type="text" id="search-tech-nim-input" class="form-control" placeholder="Enter Student ID (NIM)..." style="background: var(--bg-primary);" />
+      <button id="search-tech-nim-btn" class="btn btn-primary" style="white-space: nowrap; padding: 10px 20px;">
+        Search <i class="fa-solid fa-search" style="margin-left: 4px;"></i>
+      </button>
+    </div>
+    <div id="search-tech-result-box" class="search-result-display"></div>
+  </div>
+
+  <div style="text-align: center;">
+    <a href="/" class="btn btn-secondary">
+      <i class="fa-solid fa-house" style="margin-right: 8px;"></i> Back to Home
+    </a>
+  </div>
+</div>

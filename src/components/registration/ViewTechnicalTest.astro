@@ -1,0 +1,49 @@
+---
+import TimelineSteps from './TimelineSteps.astro';
+
+interface Props {
+  initialStage: string;
+  technicalTestCfg: {
+    title: string;
+    subtitle: string;
+    message: string;
+    scheduleInfo?: string;
+    locationInfo?: string;
+  };
+}
+
+const { initialStage, technicalTestCfg } = Astro.props;
+---
+
+<div id="view-technical-test" style={initialStage === 'technical_test' ? 'display: block;' : 'display: none;'}>
+  <div class="registration-header">
+    <h2>{technicalTestCfg.title}</h2>
+    <p style="color: var(--text-secondary); max-width: 600px; margin: 0 auto;">{technicalTestCfg.subtitle}</p>
+  </div>
+
+  <TimelineSteps activeStepIndex={3} />
+
+  <div class="info-card-panel">
+    <i class="fa-solid fa-laptop-code info-card-icon"></i>
+    <p style="color: var(--text-primary); font-size: 1.05rem; margin-bottom: 20px;">{technicalTestCfg.message}</p>
+    
+    <div style="display: flex; justify-content: center; gap: 15px; flex-wrap: wrap;">
+      {technicalTestCfg.scheduleInfo && (
+        <div class="badge-date-info">
+          <i class="fa-solid fa-calendar-days" style="margin-right: 6px;"></i> Schedule: <strong>{technicalTestCfg.scheduleInfo}</strong>
+        </div>
+      )}
+      {technicalTestCfg.locationInfo && (
+        <div class="badge-location-info">
+          <i class="fa-solid fa-location-dot" style="margin-right: 6px; color: var(--accent-cyan);"></i> Location: <strong>{technicalTestCfg.locationInfo}</strong>
+        </div>
+      )}
+    </div>
+  </div>
+
+  <div style="text-align: center;">
+    <a href="/" class="btn btn-secondary">
+      <i class="fa-solid fa-house" style="margin-right: 8px;"></i> Back to Home
+    </a>
+  </div>
+</div>

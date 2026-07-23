@@ -1,0 +1,201 @@
+---
+interface Props {
+  initialStage: string;
+  registrationConfig: any;
+  extendedCfg: {
+    bannerTitle: string;
+    bannerMessage: string;
+  };
+  studentYears: string[];
+  docLimits: {
+    ksmMb: number;
+    khsMb: number;
+    mlMb: number;
+    cvMb: number;
+    piMb: number;
+  };
+  divisions: Array<{
+    registrationValue: string;
+    registrationLabel: string;
+  }>;
+}
+
+const { initialStage, registrationConfig, extendedCfg, studentYears, docLimits, divisions } = Astro.props;
+---
+
+<div id="view-open" style={(initialStage === 'open' || initialStage === 'extended') ? 'display: block;' : 'display: none;'}>
+  
+  {/* Extended Registration Banner */}
+  <div 
+    id="extended-banner" 
+    class="extended-banner"
+    style={`display: ${initialStage === 'extended' ? 'block' : 'none'};`}
+  >
+    <h3 class="extended-banner-title">
+      <i class="fa-solid fa-bolt"></i> {extendedCfg.bannerTitle}
+    </h3>
+    <p class="extended-banner-desc">{extendedCfg.bannerMessage}</p>
+  </div>
+
+  <div class="registration-header">
+    <h2>{registrationConfig.title}</h2>
+    <p style="color: var(--text-secondary);">{registrationConfig.subtitle}</p>
+  </div>
+
+  {/* Status Alerts */}
+  <div id="status-alert-error" class="status-alert-error"></div>
+  <div id="status-alert-success" class="status-alert-success"></div>
+
+  {/* Countdown Timer */}
+  <div class="registration-timer" id="registration-timer" style="margin-bottom: 30px;">
+    <div class="timer-block">
+      <div id="timer-days" style="font-size: 1.5rem; font-weight: bold; color: var(--text-primary);">0</div>
+      <div style="font-size: 0.8rem; color: var(--text-secondary);">Days</div>
+    </div>
+    <div class="timer-block">
+      <div id="timer-hours" style="font-size: 1.5rem; font-weight: bold; color: var(--text-primary);">0</div>
+      <div style="font-size: 0.8rem; color: var(--text-secondary);">Hours</div>
+    </div>
+    <div class="timer-block">
+      <div id="timer-minutes" style="font-size: 1.5rem; font-weight: bold; color: var(--text-primary);">0</div>
+      <div style="font-size: 0.8rem; color: var(--text-secondary);">Minutes</div>
+    </div>
+    <div class="timer-block">
+      <div id="timer-seconds" style="font-size: 1.5rem; font-weight: bold; color: var(--accent-red);">0</div>
+      <div style="font-size: 0.8rem; color: var(--text-secondary);">Seconds</div>
+    </div>
+  </div>
+
+  {/* Registration Form */}
+  <form id="pendaftaran-form">
+    {/* Section 1: Data Diri */}
+    <div class="form-section-heading">
+      <i class="fa-solid fa-user" style="margin-right: 8px;"></i> 1. Personal Identity
+    </div>
+
+    <div class="form-group">
+      <label for="nama_lengkap">Full Name <span class="required-asterisk">*</span></label>
+      <input type="text" class="form-control" id="nama_lengkap" placeholder="Your full name" required />
+    </div>
+
+    <div class="form-row" style="margin-top: 15px;">
+      <div class="form-group">
+        <label for="nim">Student ID (NIM) <span class="required-asterisk">*</span></label>
+        <input type="text" class="form-control" id="nim" placeholder="Example: 1202210001" pattern="[0-9]+" required />
+      </div>
+      <div class="form-group">
+        <label for="angkatan">Student Year (Angkatan) <span class="required-asterisk">*</span></label>
+        <select class="form-control" id="angkatan" required>
+          <option value="" disabled selected>Select Year</option>
+          {studentYears.map(yr => (
+            <option value={yr}>{yr}</option>
+          ))}
+        </select>
+      </div>
+    </div>
+
+    <div class="form-row" style="margin-top: 15px;">
+      <div class="form-group">
+        <label for="email">Email Address <span class="required-asterisk">*</span></label>
+        <input type="email" class="form-control" id="email" placeholder="name@domain.com" required />
+      </div>
+      <div class="form-group">
+        <label for="nomor_telp">Phone / WhatsApp Number <span class="required-asterisk">*</span></label>
+        <input type="tel" class="form-control" id="nomor_telp" placeholder="Example: 081234567890" pattern="[0-9]+" required />
+      </div>
+    </div>
+
+    {/* Section 2: Pemilihan Divisi */}
+    <div class="form-section-heading">
+      <i class="fa-solid fa-layer-group" style="margin-right: 8px;"></i> 2. Division Selection & Motivation
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label for="divisi_1">Chosen Division 1 (Primary Choice) <span class="required-asterisk">*</span></label>
+        <select class="form-control" id="divisi_1" required>
+          <option value="" disabled selected>Select Division 1</option>
+          {divisions.map(div => (
+            <option value={div.registrationValue}>{div.registrationLabel}</option>
+          ))}
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="divisi_2">Chosen Division 2 (Secondary Choice) <span class="required-asterisk">*</span></label>
+        <select class="form-control" id="divisi_2" required>
+          <option value="" disabled selected>Select Division 2</option>
+          {divisions.map(div => (
+            <option value={div.registrationValue}>{div.registrationLabel}</option>
+          ))}
+        </select>
+      </div>
+    </div>
+
+    <div class="form-group" style="margin-top: 15px;">
+      <label for="alasan_divisi_1">Reason for Choosing Division 1 <span class="required-asterisk">*</span></label>
+      <textarea class="form-control" id="alasan_divisi_1" rows="3" placeholder="Explain your motivation and skill background for Division 1..." required></textarea>
+    </div>
+
+    <div class="form-group" style="margin-top: 15px;">
+      <label for="alasan_divisi_2">Reason for Choosing Division 2 <span class="required-asterisk">*</span></label>
+      <textarea class="form-control" id="alasan_divisi_2" rows="3" placeholder="Explain your motivation and skill background for Division 2..." required></textarea>
+    </div>
+
+    {/* Dynamic Portfolio MedHum Link */}
+    <div class="form-group medhum-porto-container" id="container-medhum-porto">
+      <label for="portofolio_medhum" class="medhum-porto-label">
+        <i class="fa-solid fa-palette" style="margin-right: 6px;"></i> MedHum Portfolio Link <span class="required-asterisk">*</span>
+      </label>
+      <input type="url" class="form-control" id="portofolio_medhum" placeholder="https://behance.net/username or https://drive.google.com/..." />
+      <small style="color: var(--text-secondary); display: block; margin-top: 5px;">Since you selected MedHum, please provide a public URL link to your design / video portfolio.</small>
+    </div>
+
+    <div class="form-group" style="margin-top: 15px;">
+      <label for="bersedia_dipindah">Willing to be moved to another division if needed? <span class="required-asterisk">*</span></label>
+      <select class="form-control" id="bersedia_dipindah" required>
+        <option value="" disabled selected>Select Preference</option>
+        <option value="Ya">Ya (Yes)</option>
+        <option value="Tidak">Tidak (No)</option>
+      </select>
+    </div>
+
+    {/* Section 3: Berkas Pendaftaran */}
+    <div class="form-section-heading">
+      <i class="fa-solid fa-folder-open" style="margin-right: 8px;"></i> 3. Document Uploads (PDF / Images)
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label for="file_ksm">Kartu Studi Mahasiswa (KSM) <span style="font-size: 0.8rem; color: var(--text-secondary);">(Max {docLimits.ksmMb}MB)</span> <span class="required-asterisk">*</span></label>
+        <input type="file" class="form-control" id="file_ksm" accept=".pdf,.png,.jpg,.jpeg" required />
+      </div>
+      <div class="form-group">
+        <label for="file_khs">Kartu Hasil Studi (KHS) <span style="font-size: 0.8rem; color: var(--text-secondary);">(Max {docLimits.khsMb}MB)</span> <span class="required-asterisk">*</span></label>
+        <input type="file" class="form-control" id="file_khs" accept=".pdf,.png,.jpg,.jpeg" required />
+      </div>
+    </div>
+
+    <div class="form-row" style="margin-top: 15px;">
+      <div class="form-group">
+        <label for="file_ml">Motivation Letter (ML) <span style="font-size: 0.8rem; color: var(--text-secondary);">(Max {docLimits.mlMb}MB)</span> <span class="required-asterisk">*</span></label>
+        <input type="file" class="form-control" id="file_ml" accept=".pdf,.png,.jpg,.jpeg" required />
+      </div>
+      <div class="form-group">
+        <label for="file_cv">Curriculum Vitae (CV) <span style="font-size: 0.8rem; color: var(--text-secondary);">(Max {docLimits.cvMb}MB)</span> <span class="required-asterisk">*</span></label>
+        <input type="file" class="form-control" id="file_cv" accept=".pdf,.png,.jpg,.jpeg" required />
+      </div>
+    </div>
+
+    <div class="form-group" style="margin-top: 15px;">
+      <label for="file_pi">Pakta Integritas (PI) <span style="font-size: 0.8rem; color: var(--text-secondary);">(Max {docLimits.piMb}MB)</span> <span class="required-asterisk">*</span></label>
+      <input type="file" class="form-control" id="file_pi" accept=".pdf,.png,.jpg,.jpeg" required />
+      <small style="color: var(--text-secondary); display: block; margin-top: 5px;">Upload signed Integrity Pact document.</small>
+    </div>
+
+    <div class="form-actions form-actions-submit">
+      <button type="submit" id="submit-btn" class="btn btn-primary btn-submit-registration">
+        <span id="btn-text">Submit Registration <i class="fa-solid fa-paper-plane" style="margin-left: 8px;"></i></span>
+      </button>
+    </div>
+  </form>
+</div>

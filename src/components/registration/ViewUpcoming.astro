@@ -1,0 +1,67 @@
+---
+interface Props {
+  initialStage: string;
+  upcomingCfg: {
+    title: string;
+    subtitle: string;
+    prepNotice: string;
+  };
+  docLimits: {
+    ksmMb: number;
+    khsMb: number;
+    mlMb: number;
+    cvMb: number;
+    piMb: number;
+  };
+  studentYears: string[];
+}
+
+const { initialStage, upcomingCfg, docLimits, studentYears } = Astro.props;
+---
+
+<div id="view-upcoming" style={initialStage === 'upcoming' ? 'display: block;' : 'display: none;'}>
+  <div class="registration-header">
+    <h2>{upcomingCfg.title}</h2>
+    <p class="hero-desc" style="max-width: 600px; margin: 0 auto;">{upcomingCfg.subtitle}</p>
+  </div>
+
+  <div class="registration-timer" id="upcoming-timer" style="margin-bottom: 35px;">
+    <div class="timer-block">
+      <div id="u-timer-days" style="font-size: 1.5rem; font-weight: bold; color: var(--accent-cyan);">0</div>
+      <div style="font-size: 0.8rem; color: var(--text-secondary);">Days</div>
+    </div>
+    <div class="timer-block">
+      <div id="u-timer-hours" style="font-size: 1.5rem; font-weight: bold; color: var(--text-primary);">0</div>
+      <div style="font-size: 0.8rem; color: var(--text-secondary);">Hours</div>
+    </div>
+    <div class="timer-block">
+      <div id="u-timer-minutes" style="font-size: 1.5rem; font-weight: bold; color: var(--text-primary);">0</div>
+      <div style="font-size: 0.8rem; color: var(--text-secondary);">Minutes</div>
+    </div>
+    <div class="timer-block">
+      <div id="u-timer-seconds" style="font-size: 1.5rem; font-weight: bold; color: var(--accent-red);">0</div>
+      <div style="font-size: 0.8rem; color: var(--text-secondary);">Seconds</div>
+    </div>
+  </div>
+
+  <div class="checklist-box">
+    <h3 class="checklist-title">
+      <i class="fa-solid fa-list-check" style="margin-right: 8px;"></i> Document Checklist & Requirements
+    </h3>
+    <p style="color: var(--text-secondary); font-size: 0.95rem; margin-bottom: 15px;">{upcomingCfg.prepNotice}</p>
+    <ul class="checklist-list">
+      <li><i class="fa-solid fa-check" style="color: var(--accent-cyan); margin-right: 10px;"></i><strong>Kartu Studi Mahasiswa (KSM)</strong> - Max {docLimits.ksmMb}MB</li>
+      <li><i class="fa-solid fa-check" style="color: var(--accent-cyan); margin-right: 10px;"></i><strong>Kartu Hasil Studi (KHS)</strong> - Max {docLimits.khsMb}MB</li>
+      <li><i class="fa-solid fa-check" style="color: var(--accent-cyan); margin-right: 10px;"></i><strong>Motivation Letter (ML)</strong> - Max {docLimits.mlMb}MB</li>
+      <li><i class="fa-solid fa-check" style="color: var(--accent-cyan); margin-right: 10px;"></i><strong>Curriculum Vitae (CV)</strong> - Max {docLimits.cvMb}MB</li>
+      <li><i class="fa-solid fa-check" style="color: var(--accent-cyan); margin-right: 10px;"></i><strong>Pakta Integritas (PI)</strong> - Max {docLimits.piMb}MB</li>
+      <li><i class="fa-solid fa-user-graduate" style="color: var(--accent-cyan); margin-right: 10px;"></i><strong>Eligible Student Years:</strong> {studentYears.join(", ")}</li>
+    </ul>
+  </div>
+
+  <div style="text-align: center;">
+    <a href="/" class="btn btn-secondary">
+      <i class="fa-solid fa-house" style="margin-right: 8px;"></i> Back to Home
+    </a>
+  </div>
+</div>

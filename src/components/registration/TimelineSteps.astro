@@ -1,0 +1,31 @@
+---
+interface Props {
+  activeStepIndex: number;
+}
+
+const { activeStepIndex } = Astro.props;
+
+const steps = [
+  { label: "1. Registration", index: 1 },
+  { label: "2. Document Screening", index: 2 },
+  { label: "3. Technical Test", index: 3 },
+  { label: "4. Interview Phase", index: 4 },
+  { label: "5. Final Announcement", index: 5 },
+];
+---
+
+<div class="timeline-indicator-grid">
+  {steps.map((step) => {
+    const status = activeStepIndex > step.index ? "completed" : activeStepIndex === step.index ? "active" : "upcoming";
+    return (
+      <div class={`timeline-step-card ${status}`}>
+        <div class={`timeline-step-icon ${status}`}>
+          {status === 'completed' && <i class="fa-solid fa-circle-check"></i>}
+          {status === 'active' && <i class="fa-solid fa-spinner fa-spin"></i>}
+          {status === 'upcoming' && <i class="fa-solid fa-clock"></i>}
+        </div>
+        <div class={`timeline-step-label ${status === 'upcoming' ? 'muted' : 'primary'}`}>{step.label}</div>
+      </div>
+    );
+  })}
+</div>

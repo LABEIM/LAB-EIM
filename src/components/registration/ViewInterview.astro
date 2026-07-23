@@ -1,0 +1,49 @@
+---
+import TimelineSteps from './TimelineSteps.astro';
+
+interface Props {
+  initialStage: string;
+  interviewCfg: {
+    title: string;
+    subtitle: string;
+    message: string;
+    scheduleInfo?: string;
+    locationInfo?: string;
+  };
+}
+
+const { initialStage, interviewCfg } = Astro.props;
+---
+
+<div id="view-interview" style={initialStage === 'interview' ? 'display: block;' : 'display: none;'}>
+  <div class="registration-header">
+    <h2>{interviewCfg.title}</h2>
+    <p style="color: var(--text-secondary); max-width: 600px; margin: 0 auto;">{interviewCfg.subtitle}</p>
+  </div>
+
+  <TimelineSteps activeStepIndex={4} />
+
+  <div class="info-card-panel">
+    <i class="fa-solid fa-comments info-card-icon"></i>
+    <p style="color: var(--text-primary); font-size: 1.05rem; margin-bottom: 20px;">{interviewCfg.message}</p>
+    
+    <div style="display: flex; justify-content: center; gap: 15px; flex-wrap: wrap;">
+      {interviewCfg.scheduleInfo && (
+        <div class="badge-date-info">
+          <i class="fa-solid fa-calendar-days" style="margin-right: 6px;"></i> Schedule: <strong>{interviewCfg.scheduleInfo}</strong>
+        </div>
+      )}
+      {interviewCfg.locationInfo && (
+        <div class="badge-location-info">
+          <i class="fa-solid fa-video" style="margin-right: 6px; color: var(--accent-cyan);"></i> Location / Room: <strong>{interviewCfg.locationInfo}</strong>
+        </div>
+      )}
+    </div>
+  </div>
+
+  <div style="text-align: center;">
+    <a href="/" class="btn btn-secondary">
+      <i class="fa-solid fa-house" style="margin-right: 8px;"></i> Back to Home
+    </a>
+  </div>
+</div>

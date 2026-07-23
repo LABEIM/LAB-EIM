@@ -1,0 +1,40 @@
+---
+import TimelineSteps from './TimelineSteps.astro';
+
+interface Props {
+  initialStage: string;
+  selectionCfg: {
+    title: string;
+    subtitle: string;
+    message: string;
+    estimatedAnnouncementDate?: string;
+  };
+}
+
+const { initialStage, selectionCfg } = Astro.props;
+---
+
+<div id="view-selection" style={initialStage === 'selection' ? 'display: block;' : 'display: none;'}>
+  <div class="registration-header">
+    <h2>{selectionCfg.title}</h2>
+    <p style="color: var(--text-secondary); max-width: 600px; margin: 0 auto;">{selectionCfg.subtitle}</p>
+  </div>
+
+  <TimelineSteps activeStepIndex={2} />
+
+  <div class="info-card-panel">
+    <i class="fa-solid fa-clipboard-check info-card-icon"></i>
+    <p style="color: var(--text-primary); font-size: 1.05rem; margin-bottom: 15px;">{selectionCfg.message}</p>
+    {selectionCfg.estimatedAnnouncementDate && (
+      <div class="badge-date-info">
+        <i class="fa-solid fa-calendar-day" style="margin-right: 6px;"></i> Estimated Announcement: <strong>{selectionCfg.estimatedAnnouncementDate}</strong>
+      </div>
+    )}
+  </div>
+
+  <div style="text-align: center;">
+    <a href="/" class="btn btn-secondary">
+      <i class="fa-solid fa-house" style="margin-right: 8px;"></i> Back to Home
+    </a>
+  </div>
+</div>

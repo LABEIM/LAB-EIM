@@ -30,7 +30,7 @@ const { initialStage, announcementCfg, acceptedCandidates, candidatesByDivision 
     <p style="color: var(--text-secondary); max-width: 600px; margin: 0 auto;">{announcementCfg.subtitle}</p>
   </div>
 
-  <TimelineSteps activeStepIndex={5} />
+  <TimelineSteps activeStepIndex={5} markCurrentAsCompleted={true} />
 
   {/* Interactive Final Status Search Lookup */}
   <div class="search-lookup-box" style="margin-bottom: 35px;">
@@ -46,43 +46,9 @@ const { initialStage, announcementCfg, acceptedCandidates, candidatesByDivision 
     <div id="search-result-box" class="search-result-display"></div>
   </div>
 
-  {/* Accepted Candidates Directory */}
-  <div style="margin-bottom: 30px;">
-    <h3 style="font-size: 1.3rem; margin-bottom: 20px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px;">
-      <i class="fa-solid fa-award" style="color: #20c997; margin-right: 8px;"></i> Accepted Assistants Directory ({acceptedCandidates.length})
-    </h3>
-
-    {Object.keys(candidatesByDivision).length === 0 ? (
-      <div style="text-align: center; padding: 30px; color: var(--text-secondary);">
-        No published list loaded. Use the NIM search box above to check your application status.
-      </div>
-    ) : (
-      <div style="display: flex; flex-direction: column; gap: 25px;">
-        {Object.entries(candidatesByDivision).map(([divName, members]) => (
-          <div class="accepted-division-card">
-            <h4 class="accepted-division-header">
-              <span><i class="fa-solid fa-shield-halved" style="margin-right: 8px;"></i> {divName}</span>
-              <span class="badge" style="background: rgba(32, 201, 151, 0.15); color: #20c997; border: 1px solid rgba(32, 201, 151, 0.3); font-size: 0.8rem; padding: 4px 10px;">
-                {members.length} Selected
-              </span>
-            </h4>
-            <div class="accepted-member-grid">
-              {members.map(member => (
-                <div class="accepted-member-card">
-                  <div style="font-weight: bold; color: var(--text-primary); font-size: 0.95rem;">{member.name}</div>
-                  <div style="font-size: 0.8rem; color: var(--text-secondary); margin-top: 2px;">NIM: {member.nim}</div>
-                </div>
-              ))}
-            </div>
-          </div>
-        ))}
-      </div>
-    )}
-  </div>
-
-  <div style="text-align: center; margin-top: 30px;">
-    <a href="/" class="btn btn-secondary">
-      <i class="fa-solid fa-house" style="margin-right: 8px;"></i> Back to Home
+  <div style="display: flex; justify-content: center; margin-top: 30px;">
+    <a href="/" class="btn btn-secondary" style="position: relative; padding-left: 45px; padding-right: 45px;">
+      <i class="fa-solid fa-house" style="position: absolute; left: 24px;"></i>Back to Home
     </a>
   </div>
 </div>

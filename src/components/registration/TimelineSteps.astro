@@ -1,9 +1,10 @@
 ---
 interface Props {
   activeStepIndex: number;
+  markCurrentAsCompleted?: boolean;
 }
 
-const { activeStepIndex } = Astro.props;
+const { activeStepIndex, markCurrentAsCompleted = false } = Astro.props;
 
 const steps = [
   { label: "1. Registration", index: 1 },
@@ -16,7 +17,12 @@ const steps = [
 
 <div class="timeline-indicator-grid">
   {steps.map((step) => {
-    const status = activeStepIndex > step.index ? "completed" : activeStepIndex === step.index ? "active" : "upcoming";
+    const isCompleted = activeStepIndex > step.index || (markCurrentAsCompleted && activeStepIndex === step.index);
+    const status = isCompleted
+      ? "completed" 
+      : activeStepIndex === step.index 
+        ? "active" 
+        : "upcoming";
     return (
       <div class={`timeline-step-card ${status}`}>
         <div class={`timeline-step-icon ${status}`}>

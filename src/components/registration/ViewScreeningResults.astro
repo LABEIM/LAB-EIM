@@ -20,7 +20,7 @@ const { initialStage, selectionResultsCfg } = Astro.props;
     <p style="color: var(--text-secondary); max-width: 600px; margin: 0 auto;">{selectionResultsCfg.subtitle}</p>
   </div>
 
-  <TimelineSteps activeStepIndex={2} />
+  <TimelineSteps activeStepIndex={2} markCurrentAsCompleted={true} />
 
   {/* NIM Search Box for Screening Results */}
   <div class="search-lookup-box">
@@ -36,9 +36,9 @@ const { initialStage, selectionResultsCfg } = Astro.props;
     <div id="search-screening-result-box" class="search-result-display"></div>
   </div>
 
-  <div style="text-align: center;">
-    <a href="/" class="btn btn-secondary">
-      <i class="fa-solid fa-house" style="margin-right: 8px;"></i> Back to Home
+  <div style="display: flex; justify-content: center; text-align: center;">
+    <a href="/" class="btn btn-secondary" style="position: relative; padding-left: 45px; padding-right: 45px;">
+      <i class="fa-solid fa-house" style="position: absolute; left: 24px;"></i>Back to Home
     </a>
   </div>
 </div>

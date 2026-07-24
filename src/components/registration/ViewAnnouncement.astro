@@ -21,7 +21,7 @@ interface Props {
   candidatesByDivision: Record<string, Candidate[]>;
 }
 
-const { initialStage, announcementCfg, acceptedCandidates, candidatesByDivision } = Astro.props;
+const { initialStage, announcementCfg } = Astro.props;
 ---
 
 <div id="view-announcement" style={initialStage === 'announcement' ? 'display: block;' : 'display: none;'}>

@@ -212,7 +212,8 @@ export function initRegistrationScript() {
 
     resultBox.style.display = 'block';
     if (match) {
-      const isAccepted = match.finalStatus === 'accepted' || match.status === 'accepted';
+      const matchObj = match as Record<string, any>;
+      const isAccepted = match.finalStatus === 'accepted' || matchObj.status === 'accepted';
       if (isAccepted) {
         resultBox.style.background = 'rgba(32, 201, 151, 0.12)';
         resultBox.style.border = '1px solid rgba(32, 201, 151, 0.4)';
@@ -228,7 +229,7 @@ export function initRegistrationScript() {
         resultBox.style.border = '1px solid rgba(0, 240, 255, 0.3)';
         resultBox.style.color = 'var(--accent-cyan)';
         resultBox.innerHTML = `
-          <div style="font-size: 1.2rem; margin-bottom: 6px;"><i class="fa-solid fa-info-circle"></i> Status: ${(match.finalStatus || match.status || 'evaluated').toUpperCase()}</div>
+          <div style="font-size: 1.2rem; margin-bottom: 6px;"><i class="fa-solid fa-info-circle"></i> Status: ${(match.finalStatus || matchObj.status || 'evaluated').toUpperCase()}</div>
           <div style="font-weight: bold; color: var(--text-primary);">${match.name} (${match.nim})</div>
           <p style="margin-top: 8px; font-size: 0.9rem; color: var(--text-secondary);">${match.notes || 'Thank you for participating in this recruitment cycle.'}</p>
         `;

@@ -1,0 +1,237 @@
+---
+import siteData from '../../data/site.json';
+
+interface Props {
+  title?: string;
+  subtitle?: string;
+  compact?: boolean;
+}
+
+const {
+  title = "Follow Our Social Media for Real-Time Updates",
+  subtitle = "Recruitment announcements, schedule updates, and lab news are published first on our official social channels.",
+  compact = false
+} = Astro.props;
+
+const socials = siteData.socials || {};
+
+interface SocialItem {
+  key: string;
+  label: string;
+  url: string;
+  icon: string;
+  handle: string;
+  color: string;
+  bgColor: string;
+}
+
+const items: SocialItem[] = [];
+
+if (socials.instagram) {
+  items.push({
+    key: 'instagram',
+    label: 'Instagram',
+    url: socials.instagram,
+    icon: 'fa-brands fa-instagram',
+    handle: '@eimresearchlab',
+    color: '#E4405F',
+    bgColor: 'rgba(228, 64, 95, 0.12)'
+  });
+}
+
+if (socials.linkedin) {
+  items.push({
+    key: 'linkedin',
+    label: 'LinkedIn',
+    url: socials.linkedin,
+    icon: 'fa-brands fa-linkedin-in',
+    handle: 'EIM Research Lab',
+    color: '#0A66C2',
+    bgColor: 'rgba(10, 102, 194, 0.12)'
+  });
+}
+
+if (socials.line) {
+  items.push({
+    key: 'line',
+    label: 'LINE OA',
+    url: socials.line,
+    icon: 'fa-brands fa-line',
+    handle: '@eimresearchlab',
+    color: '#00C300',
+    bgColor: 'rgba(0, 195, 0, 0.12)'
+  });
+}
+
+if (socials.youtube) {
+  items.push({
+    key: 'youtube',
+    label: 'YouTube',
+    url: socials.youtube,
+    icon: 'fa-brands fa-youtube',
+    handle: 'EIM Research Lab',
+    color: '#FF0000',
+    bgColor: 'rgba(255, 0, 0, 0.12)'
+  });
+}
+---
+
+<div class={`social-media-box ${compact ? 'compact' : ''}`}>
+  <div class="social-media-header">
+    <div class="social-media-badge">
+      <i class="fa-solid fa-bullhorn" style="margin-right: 6px;"></i> Latest News Channel
+    </div>
+    <h3 class="social-media-title">{title}</h3>
+    {subtitle && <p class="social-media-subtitle">{subtitle}</p>}
+  </div>
+
+  <div class="social-cards-grid">
+    {items.map((item) => (
+      <a
+        href={item.url}
+        target="_blank"
+        rel="noopener noreferrer"
+        class="social-card"
+        style={`--social-color: ${item.color}; --social-bg: ${item.bgColor};`}
+      >
+        <div class="social-icon-wrapper">
+          <i class={item.icon}></i>
+        </div>
+        <div class="social-info">
+          <span class="social-platform">{item.label}</span>
+          <span class="social-handle">{item.handle}</span>
+        </div>
+        <i class="fa-solid fa-arrow-up-right-from-square social-external-icon"></i>
+      </a>
+    ))}
+  </div>
+</div>
+
+<style>
+  .social-media-box {
+    margin-top: 30px;
+    padding: 28px 24px;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .social-media-box.compact {
+    padding: 20px 16px;
+    margin-top: 20px;
+  }
+
+  .social-media-badge {
+    display: inline-flex;
+    align-items: center;
+    background: rgba(224, 30, 90, 0.12);
+    color: var(--accent-red);
+    border: 1px solid rgba(224, 30, 90, 0.3);
+    font-size: 0.78rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 4px 12px;
+    border-radius: 20px;
+    margin-bottom: 12px;
+  }
+
+  .social-media-title {
+    font-size: 1.35rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 8px;
+  }
+
+  .social-media-subtitle {
+    font-size: 0.92rem;
+    color: var(--text-secondary);
+    max-width: 540px;
+    margin: 0 auto 22px auto;
+    line-height: 1.5;
+  }
+
+  .social-cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 14px;
+    max-width: 850px;
+    margin: 0 auto;
+  }
+
+  .social-card {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    background: var(--bg-card, rgba(20, 20, 25, 0.7));
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    text-decoration: none;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+  }
+
+  .social-card:hover {
+    transform: translateY(-3px);
+    border-color: var(--social-color);
+    box-shadow: 0 8px 24px -6px var(--social-bg);
+  }
+
+  .social-icon-wrapper {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    background: var(--social-bg);
+    color: var(--social-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3rem;
+    flex-shrink: 0;
+    transition: transform 0.25s ease;
+  }
+
+  .social-card:hover .social-icon-wrapper {
+    transform: scale(1.1);
+  }
+
+  .social-info {
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    overflow: hidden;
+  }
+
+  .social-platform {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    line-height: 1.2;
+  }
+
+  .social-handle {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .social-external-icon {
+    margin-left: auto;
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    opacity: 0.6;
+    transition: all 0.2s ease;
+  }
+
+  .social-card:hover .social-external-icon {
+    color: var(--social-color);
+    opacity: 1;
+    transform: translate(2px, -2px);
+  }
+</style>

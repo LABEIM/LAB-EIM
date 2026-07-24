@@ -41,10 +41,28 @@ const currentYear = new Date().getFullYear();
         </ul>
         <h4 class="footer-title" style="margin-bottom: 12px; font-size: 0.95rem;">Follow Our Social Media</h4>
         <div class="footer-socials">
-          <a href={siteData.socials.instagram} target="_blank" rel="noopener noreferrer" class="footer-social-btn" title={`Instagram @${siteData.name.toLowerCase()}researchlab`}>
-            <i class="fa-brands fa-instagram"></i>
-          </a>
+          {siteData.socials.instagram && (
+            <a href={siteData.socials.instagram} target="_blank" rel="noopener noreferrer" class="footer-social-btn" title="Instagram @eimresearchlab">
+              <i class="fa-brands fa-instagram"></i>
+            </a>
+          )}
+          {siteData.socials.linkedin && (
+            <a href={siteData.socials.linkedin} target="_blank" rel="noopener noreferrer" class="footer-social-btn" title="LinkedIn EIM Research Lab">
+              <i class="fa-brands fa-linkedin-in"></i>
+            </a>
+          )}
+          {siteData.socials.line && (
+            <a href={siteData.socials.line} target="_blank" rel="noopener noreferrer" class="footer-social-btn" title="LINE Official Account">
+              <i class="fa-brands fa-line"></i>
+            </a>
+          )}
+          {siteData.socials.youtube && (
+            <a href={siteData.socials.youtube} target="_blank" rel="noopener noreferrer" class="footer-social-btn" title="YouTube EIM Research Lab">
+              <i class="fa-brands fa-youtube"></i>
+            </a>
+          )}
         </div>
+
       </div>
     </div>
 

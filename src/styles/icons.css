@@ -89,7 +89,15 @@
 .fa-university::before { content: "\f19c"; }
 .fa-envelope::before { content: "\f0e0"; }
 .fa-instagram::before { content: "\f16d"; }
+.fa-linkedin::before, .fa-linkedin-in::before { content: "\f0e1"; }
+.fa-line::before { content: "\f3c0"; }
+.fa-youtube::before { content: "\f167"; }
+.fa-tiktok::before { content: "\e07b"; }
+.fa-x-twitter::before { content: "\e61b"; }
+.fa-telegram::before { content: "\f2c6"; }
+.fa-whatsapp::before { content: "\f232"; }
 .fa-heart::before { content: "\f004"; }
 .fa-folder-open::before { content: "\f07c"; }
 .fa-graduation-cap::before { content: "\f19d"; }
 .fa-building-columns::before { content: "\f19c"; }
+

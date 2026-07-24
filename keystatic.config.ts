@@ -165,6 +165,7 @@ export default config({
           itemLabel: props => props.value,
         }),
         medhumDivisionValue: fields.text({ label: 'MedHum Division Trigger Value', defaultValue: 'Medhum' }),
+        piTemplateUrl: fields.text({ label: 'Pakta Integritas (PI) Template Link', defaultValue: 'https://bit.ly/Template-PI-EIM' }),
         documentLimits: fields.object({
           ksmMb: fields.number({ label: 'KSM File Limit (MB)', defaultValue: 2 }),
           khsMb: fields.number({ label: 'KHS File Limit (MB)', defaultValue: 2 }),

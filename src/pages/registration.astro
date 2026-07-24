@@ -25,6 +25,7 @@ const docLimits = registrationConfig.documentLimits || {
 
 const piTemplateUrl = (registrationConfig as any).piTemplateUrl || "";
 
+const upcomingStartDateStr = (registrationConfig as any).upcomingStartDate || "2026-08-01T00:00:00";
 const openDateStr = registrationConfig.openDate || "2026-08-13T00:00:00";
 const deadlineStr = registrationConfig.deadline || "2026-08-20T23:59:59";
 const extendedDeadlineStr = registrationConfig.extendedDeadline || "2026-08-23T23:59:59";
@@ -102,6 +103,7 @@ const closedCfg = registrationConfig.closedConfig || {
 
 // Initial Server-Side Stage Determination
 const nowTime = new Date().getTime();
+const upcomingStartTime = new Date(upcomingStartDateStr).getTime();
 const openTime = new Date(openDateStr).getTime();
 const deadlineTime = new Date(deadlineStr).getTime();
 const extendedTime = extendedDeadlineStr ? new Date(extendedDeadlineStr).getTime() : 0;
@@ -117,7 +119,9 @@ const announcementTime = new Date(announcementDateStr).getTime();
 let initialStage = registrationConfig.status || "auto";
 
 if (initialStage === "auto") {
-  if (nowTime < openTime) {
+  if (nowTime < upcomingStartTime) {
+    initialStage = "closed";
+  } else if (nowTime < openTime) {
     initialStage = "upcoming";
   } else if (nowTime < deadlineTime) {
     initialStage = "open";

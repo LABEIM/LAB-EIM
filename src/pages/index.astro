@@ -11,10 +11,11 @@ const latestNews = allNews
   .slice(0, 3);
 
 // Calculate active recruitment stage
+const upcomingStartDateStr = (registrationConfig as any).upcomingStartDate || "2026-08-01T00:00:00";
 const openDateStr = registrationConfig.openDate || "2026-08-13T00:00:00";
 const deadlineStr = registrationConfig.deadline || "2026-08-20T23:59:59";
 const extendedDeadlineStr = registrationConfig.extendedDeadline || "2026-08-23T23:59:59";
-const selectionEndDateStr = registrationConfig.selectionEndDate || "2026-08-25T23:59:59";
+const selectionEndDateStr = (registrationConfig as any).selectionEndDate || "2026-08-25T23:59:59";
 const selectionResultsDateStr = (registrationConfig as any).selectionResultsDate || "2026-08-26T00:00:00";
 const technicalTestStartDateStr = (registrationConfig as any).technicalTestStartDate || "2026-08-29T00:00:00";
 const technicalTestEndDateStr = (registrationConfig as any).technicalTestEndDate || "2026-08-30T23:59:59";
@@ -24,6 +25,7 @@ const interviewEndDateStr = (registrationConfig as any).interviewEndDate || "202
 const announcementDateStr = registrationConfig.announcementDate || "2026-09-09T00:00:00";
 
 const nowTime = new Date().getTime();
+const upcomingStartTime = new Date(upcomingStartDateStr).getTime();
 const openTime = new Date(openDateStr).getTime();
 const deadlineTime = new Date(deadlineStr).getTime();
 const extendedTime = extendedDeadlineStr ? new Date(extendedDeadlineStr).getTime() : 0;
@@ -39,7 +41,9 @@ const announcementTime = new Date(announcementDateStr).getTime();
 let currentStage = registrationConfig.status || "auto";
 
 if (currentStage === "auto") {
-  if (nowTime < openTime) {
+  if (nowTime < upcomingStartTime) {
+    currentStage = "closed";
+  } else if (nowTime < openTime) {
     currentStage = "upcoming";
   } else if (nowTime < deadlineTime) {
     currentStage = "open";

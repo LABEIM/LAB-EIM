@@ -43,16 +43,16 @@ The compiled static files will be exported to the `dist/` directory.
 
 ---
 
-## Google Sheets Integration (Registration)
+## Google Sheets Integration & Security (`code.gs`)
 
-The assistant registration form submits data asynchronously to a Google Sheets Apps Script URL. 
+The assistant registration form submits data asynchronously to a Google Apps Script endpoint (`code.gs`).
 
-To configure this locally:
-1. Create a `.env` file in the root directory (this file is excluded from Git).
-2. Add the following environment variable:
-   ```env
-   PUBLIC_GOOGLE_SHEET_SCRIPT_URL=your_script_apps_url_here
-   ```
+### Public Repository Safety
+This codebase is designed with **Defense in Depth**. Storing `code.gs` or frontend form logic in a **public repository** is completely safe because:
+1. **Server-Side Deadline Enforcement**: Google's servers calculate timestamps against `DEADLINE` using Google's clock. Attackers cannot bypass deadlines via client-side request tampering.
+2. **Secret Signature Key (`SECRET_KEY`)**: Secret keys are kept exclusively in Vercel Environment Variables and Google Script Properties—never committed to Git.
+3. **Google Drive File Isolation**: Files uploaded to Google Drive inherit private owner-only permissions. Direct link sharing (`ANYONE_WITH_LINK`) is disabled.
+4. **HTML Sanitization**: All incoming inputs are escaped before rendering confirmation emails or updating Google Sheets.
 
 ---
 
@@ -76,16 +76,23 @@ To enable login on your live website (e.g., `https://your-site.vercel.app/keysta
 4. Generate a **Client Secret** and copy both the **Client ID** and **Client Secret**.
 
 ### 3. Adding Vercel Environment Variables
-In your Vercel project dashboard, go to **Settings** -> **Environment Variables** and add:
+In your Vercel project dashboard, go to **Settings** -> **Environment Variables** and add the following variables:
 
 | Key | Value | Description |
 | --- | --- | --- |
-| `PUBLIC_GOOGLE_SHEET_SCRIPT_URL` | `https://script.google.com/macros/...` | The URL of your Google Apps Script handler |
+| `PUBLIC_GOOGLE_SHEET_SCRIPT_URL` | `https://script.google.com/macros/s/.../exec` | The Web App deployment URL of your Google Apps Script handler |
+| `PUBLIC_RECRUITMENT_SECRET` | `your_secret_passphrase_here` | *(Optional)* Secret signature key matching `SECRET_KEY` in Google Apps Script properties |
 | `KEYSTATIC_GITHUB_CLIENT_ID` | `Iv1.xxxxxxxxxxxx` | The Client ID from your GitHub OAuth App |
 | `KEYSTATIC_GITHUB_CLIENT_SECRET` | `xxxxxxxxxxxxxxxxxxxxxxxx` | The Client Secret from your GitHub OAuth App |
 | `KEYSTATIC_SECRET` | `any_long_random_string` | A secret key used to sign the Keystatic session cookie |
 
-Deploy/Redeploy the project. Administrators can now access the CMS at `https://your-site.vercel.app/keystatic` and log in via GitHub to manage the site!
+### 4. Setting Script Properties in Google Apps Script
+1. Open your Google Apps Script project at [script.google.com](https://script.google.com/).
+2. Click **Project Settings** ⚙️ on the left menu.
+3. Under **Script Properties**, add:
+   - `DEADLINE`: e.g. `2026-08-23T23:59:59+07:00`
+   - `SECRET_KEY`: `your_secret_passphrase_here` *(must match `PUBLIC_RECRUITMENT_SECRET` in Vercel)*
+4. Save properties and re-deploy a new Web App version (**Deploy > Manage Deployments > Edit > New Version > Deploy**).
 
 ---
 

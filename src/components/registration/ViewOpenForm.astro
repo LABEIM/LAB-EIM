@@ -69,6 +69,9 @@ const { initialStage, registrationConfig, extendedCfg, studentYears, docLimits, 
 
   {/* Registration Form */}
   <form id="pendaftaran-form">
+    {/* Anti-bot Honeypot Field (Hidden from legitimate users) */}
+    <input type="text" id="website_hp" name="website_hp" style="display:none !important;" tabindex="-1" autocomplete="off" aria-hidden="true" />
+
     {/* Section 1: Data Diri */}
     <div class="form-section-heading">
       <i class="fa-solid fa-user" style="margin-right: 8px;"></i> 1. Personal Identity

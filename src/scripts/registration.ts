@@ -288,6 +288,9 @@ export function initRegistrationScript() {
         throw new Error('Google Sheets URL has not been configured in the .env file.');
       }
 
+      const website_hp = (document.getElementById('website_hp') as HTMLInputElement)?.value || '';
+      const secret_token = ((import.meta as any).env?.PUBLIC_RECRUITMENT_SECRET || '').replace(/^['"]|['"]$/g, '').trim();
+
       const payload = {
         'Nama Lengkap': nama_lengkap,
         'NIM': nim,
@@ -299,7 +302,9 @@ export function initRegistrationScript() {
         'Divisi 2': divisi_2,
         'Alasan Divisi 2': alasan_divisi_2,
         'Portofolio MedHum': portofolio_medhum,
-        'Bersedia Dipindah Divisi': bersedia_dipindah
+        'Bersedia Dipindah Divisi': bersedia_dipindah,
+        'website_hp': website_hp,
+        'secret_token': secret_token
       };
 
       await fetch(scriptURL, {

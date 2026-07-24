@@ -11,15 +11,17 @@ const latestNews = allNews
   .slice(0, 3);
 
 // Calculate active recruitment stage
-const openDateStr = registrationConfig.openDate || "2026-07-01T00:00:00";
-const deadlineStr = registrationConfig.deadline || "2026-07-25T23:59:59";
-const extendedDeadlineStr = registrationConfig.extendedDeadline || "";
-const selectionEndDateStr = registrationConfig.selectionEndDate || "2026-08-05T23:59:59";
-const selectionResultsDateStr = (registrationConfig as any).selectionResultsDate || "2026-08-06T00:00:00";
-const technicalTestEndDateStr = (registrationConfig as any).technicalTestEndDate || "2026-08-10T23:59:59";
-const technicalTestResultsDateStr = (registrationConfig as any).technicalTestResultsDate || "2026-08-11T00:00:00";
-const interviewEndDateStr = (registrationConfig as any).interviewEndDate || "2026-08-15T23:59:59";
-const announcementDateStr = registrationConfig.announcementDate || "2026-08-17T00:00:00";
+const openDateStr = registrationConfig.openDate || "2026-08-13T00:00:00";
+const deadlineStr = registrationConfig.deadline || "2026-08-20T23:59:59";
+const extendedDeadlineStr = registrationConfig.extendedDeadline || "2026-08-23T23:59:59";
+const selectionEndDateStr = registrationConfig.selectionEndDate || "2026-08-25T23:59:59";
+const selectionResultsDateStr = (registrationConfig as any).selectionResultsDate || "2026-08-26T00:00:00";
+const technicalTestStartDateStr = (registrationConfig as any).technicalTestStartDate || "2026-08-29T00:00:00";
+const technicalTestEndDateStr = (registrationConfig as any).technicalTestEndDate || "2026-08-30T23:59:59";
+const technicalTestResultsDateStr = (registrationConfig as any).technicalTestResultsDate || "2026-09-01T00:00:00";
+const interviewStartDateStr = (registrationConfig as any).interviewStartDate || "2026-09-05T00:00:00";
+const interviewEndDateStr = (registrationConfig as any).interviewEndDate || "2026-09-06T23:59:59";
+const announcementDateStr = registrationConfig.announcementDate || "2026-09-09T00:00:00";
 
 const nowTime = new Date().getTime();
 const openTime = new Date(openDateStr).getTime();
@@ -27,8 +29,10 @@ const deadlineTime = new Date(deadlineStr).getTime();
 const extendedTime = extendedDeadlineStr ? new Date(extendedDeadlineStr).getTime() : 0;
 const selectionEndTime = new Date(selectionEndDateStr).getTime();
 const selectionResultsTime = new Date(selectionResultsDateStr).getTime();
+const technicalTestStartTime = new Date(technicalTestStartDateStr).getTime();
 const technicalTestEndTime = new Date(technicalTestEndDateStr).getTime();
 const technicalTestResultsTime = new Date(technicalTestResultsDateStr).getTime();
+const interviewStartTime = new Date(interviewStartDateStr).getTime();
 const interviewEndTime = new Date(interviewEndDateStr).getTime();
 const announcementTime = new Date(announcementDateStr).getTime();
 
@@ -41,15 +45,15 @@ if (currentStage === "auto") {
     currentStage = "open";
   } else if (extendedTime > 0 && nowTime < extendedTime) {
     currentStage = "extended";
-  } else if (nowTime < selectionEndTime) {
-    currentStage = "selection";
   } else if (nowTime < selectionResultsTime) {
+    currentStage = "selection";
+  } else if (nowTime < technicalTestStartTime) {
     currentStage = "selection_results";
-  } else if (nowTime < technicalTestEndTime) {
+  } else if (nowTime <= technicalTestEndTime) {
     currentStage = "technical_test";
-  } else if (nowTime < technicalTestResultsTime) {
+  } else if (nowTime < interviewStartTime) {
     currentStage = "technical_test_results";
-  } else if (nowTime < interviewEndTime) {
+  } else if (nowTime <= interviewEndTime) {
     currentStage = "interview";
   } else if (nowTime >= announcementTime) {
     currentStage = "announcement";

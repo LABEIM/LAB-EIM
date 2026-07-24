@@ -5,8 +5,10 @@
   "extendedDeadline": "2026-08-23T23:59:59",
   "selectionEndDate": "2026-08-25T23:59:59",
   "selectionResultsDate": "2026-08-26T00:00:00",
+  "technicalTestStartDate": "2026-08-29T00:00:00",
   "technicalTestEndDate": "2026-08-30T23:59:59",
   "technicalTestResultsDate": "2026-09-01T00:00:00",
+  "interviewStartDate": "2026-09-05T00:00:00",
   "interviewEndDate": "2026-09-06T23:59:59",
   "announcementDate": "2026-09-09T00:00:00",
   "title": "Assistant Registration Form",
@@ -41,7 +43,7 @@
     "title": "Document Screening In Progress",
     "subtitle": "Our team is currently evaluating all submitted administrative documents.",
     "message": "Thank you for registering! Document verification and administrative screening are underway.",
-    "estimatedAnnouncementDate": "06 August 2026"
+    "estimatedAnnouncementDate": "26 Agustus 2026"
   },
   "selectionResultsConfig": {
     "title": "Pengumuman Seleksi Berkas (Document Screening Results)",
@@ -52,7 +54,7 @@
     "title": "Technical Test Phase In Progress",
     "subtitle": "Practical skills assessment and technical challenge in progress.",
     "message": "Please check your registered email for your technical test instructions and submission brief.",
-    "scheduleInfo": "07 - 10 August 2026",
+    "scheduleInfo": "29 - 30 Agustus 2026",
     "locationInfo": "EIM Research Lab / Online Submission"
   },
   "technicalTestResultsConfig": {
@@ -64,7 +66,7 @@
     "title": "Interview Phase In Progress",
     "subtitle": "Candidate interview sessions in progress with EIM Research Lab team.",
     "message": "Please check your registered email for your assigned interview time slot and Zoom call details.",
-    "scheduleInfo": "12 - 15 August 2026",
+    "scheduleInfo": "05 - 06 September 2026",
     "locationInfo": "EIM Research Lab / Online Zoom Room"
   },
   "announcementConfig": {

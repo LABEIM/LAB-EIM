@@ -245,47 +245,159 @@ export function initRegistrationScript() {
   searchInput?.addEventListener('keypress', (e) => { if (e.key === 'Enter') executeNimSearch(); });
 
   // 6. Registration Form Submission Logic
+  let isSubmitting = false;
+  const DRAFT_KEY = 'eim_registration_draft';
+
+  const saveDraft = () => {
+    if (!formElement) return;
+    const draft = {
+      nama_lengkap: (document.getElementById('nama_lengkap') as HTMLInputElement)?.value || '',
+      nim: (document.getElementById('nim') as HTMLInputElement)?.value || '',
+      angkatan: (document.getElementById('angkatan') as HTMLSelectElement)?.value || '',
+      email: (document.getElementById('email') as HTMLInputElement)?.value || '',
+      nomor_telp: (document.getElementById('nomor_telp') as HTMLInputElement)?.value || '',
+      divisi_1: div1Select?.value || '',
+      alasan_divisi_1: (document.getElementById('alasan_divisi_1') as HTMLTextAreaElement)?.value || '',
+      divisi_2: div2Select?.value || '',
+      alasan_divisi_2: (document.getElementById('alasan_divisi_2') as HTMLTextAreaElement)?.value || '',
+      portofolio_medhum: medhumPortoInput?.value || '',
+      bersedia_dipindah: (document.getElementById('bersedia_dipindah') as HTMLSelectElement)?.value || ''
+    };
+    try {
+      localStorage.setItem(DRAFT_KEY, JSON.stringify(draft));
+    } catch (e) {}
+  };
+
+  const restoreDraft = () => {
+    try {
+      const saved = localStorage.getItem(DRAFT_KEY);
+      if (!saved) return;
+      const draft = JSON.parse(saved);
+      if (draft.nama_lengkap && document.getElementById('nama_lengkap')) (document.getElementById('nama_lengkap') as HTMLInputElement).value = draft.nama_lengkap;
+      if (draft.nim && document.getElementById('nim')) (document.getElementById('nim') as HTMLInputElement).value = draft.nim;
+      if (draft.angkatan && document.getElementById('angkatan')) (document.getElementById('angkatan') as HTMLSelectElement).value = draft.angkatan;
+      if (draft.email && document.getElementById('email')) (document.getElementById('email') as HTMLInputElement).value = draft.email;
+      if (draft.nomor_telp && document.getElementById('nomor_telp')) (document.getElementById('nomor_telp') as HTMLInputElement).value = draft.nomor_telp;
+      if (draft.divisi_1 && div1Select) div1Select.value = draft.divisi_1;
+      if (draft.alasan_divisi_1 && document.getElementById('alasan_divisi_1')) (document.getElementById('alasan_divisi_1') as HTMLTextAreaElement).value = draft.alasan_divisi_1;
+      if (draft.divisi_2 && div2Select) div2Select.value = draft.divisi_2;
+      if (draft.alasan_divisi_2 && document.getElementById('alasan_divisi_2')) (document.getElementById('alasan_divisi_2') as HTMLTextAreaElement).value = draft.alasan_divisi_2;
+      if (draft.portofolio_medhum && medhumPortoInput) medhumPortoInput.value = draft.portofolio_medhum;
+      if (draft.bersedia_dipindah && document.getElementById('bersedia_dipindah')) (document.getElementById('bersedia_dipindah') as HTMLSelectElement).value = draft.bersedia_dipindah;
+      
+      toggleMedhumPorto();
+    } catch (e) {}
+  };
+
+  const clearDraft = () => {
+    try {
+      localStorage.removeItem(DRAFT_KEY);
+    } catch (e) {}
+  };
+
+  formElement?.addEventListener('input', saveDraft);
+  formElement?.addEventListener('change', saveDraft);
+  restoreDraft();
+
+  // Modal element references & progress management helpers
+  const progressModal = document.getElementById('registration-progress-modal') as HTMLElement | null;
+  const modalIcon = document.getElementById('progress-modal-icon') as HTMLElement | null;
+  const modalTitle = document.getElementById('progress-modal-title') as HTMLElement | null;
+  const modalSubtitle = document.getElementById('progress-modal-subtitle') as HTMLElement | null;
+  const progressDetail = document.getElementById('submit-progress-detail') as HTMLElement | null;
+  const progressPercent = document.getElementById('submit-progress-percent') as HTMLElement | null;
+  const progressBar = document.getElementById('submit-progress-bar') as HTMLElement | null;
+  const modalActions = document.getElementById('progress-modal-actions') as HTMLElement | null;
+  const modalCloseBtn = document.getElementById('modal-close-btn') as HTMLButtonElement | null;
+
+  const updateModalStage = (activeStage: number, percent: number, detailText: string) => {
+    if (!progressModal) return;
+    if (progressBar) progressBar.style.width = `${percent}%`;
+    if (progressPercent) progressPercent.innerText = `${percent}%`;
+    if (progressDetail) progressDetail.innerText = detailText;
+
+    for (let i = 1; i <= 4; i++) {
+      const item = document.getElementById(`stage-item-${i}`);
+      const icon = document.getElementById(`stage-${i}-icon`);
+      if (!item || !icon) continue;
+
+      if (i < activeStage) {
+        item.className = 'progress-stage-item stage-completed';
+        icon.innerHTML = `<i class="fa-solid fa-circle-check"></i>`;
+      } else if (i === activeStage) {
+        item.className = 'progress-stage-item stage-active';
+        icon.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i>`;
+      } else {
+        item.className = 'progress-stage-item stage-pending';
+        icon.innerHTML = `<i class="fa-regular fa-circle"></i>`;
+      }
+    }
+  };
+
+  const showModalError = (errorMsg: string, failedStage: number = 1) => {
+    if (!progressModal) return;
+    if (modalIcon) modalIcon.innerHTML = `<i class="fa-solid fa-triangle-exclamation" style="color: #ff6b6b;"></i>`;
+    if (modalTitle) modalTitle.innerText = 'Submission Failed';
+    if (modalSubtitle) modalSubtitle.innerText = 'An error occurred while submitting your registration.';
+    if (progressDetail) progressDetail.innerText = errorMsg;
+
+    const item = document.getElementById(`stage-item-${failedStage}`);
+    const icon = document.getElementById(`stage-${failedStage}-icon`);
+    if (item) item.className = 'progress-stage-item stage-failed';
+    if (icon) icon.innerHTML = `<i class="fa-solid fa-circle-xmark"></i>`;
+
+    if (modalActions) modalActions.style.display = 'block';
+    if (modalCloseBtn) modalCloseBtn.innerText = 'Close & Edit Form';
+  };
+
+  const showModalSuccess = (isRevision: boolean) => {
+    if (!progressModal) return;
+    updateModalStage(5, 100, isRevision ? 'Revision completed successfully!' : 'Registration completed successfully!');
+    if (modalIcon) modalIcon.innerHTML = `<i class="fa-solid fa-circle-check" style="color: #20c997; font-size: 3rem;"></i>`;
+    if (modalTitle) modalTitle.innerText = isRevision ? 'Revision Submitted!' : 'Registration Successful!';
+    if (modalSubtitle) modalSubtitle.innerText = isRevision 
+      ? 'Your revised registration details [REVISI] have been recorded, and a confirmation email has been sent.'
+      : 'Thank you! Your registration details have been recorded, and a confirmation email has been sent.';
+
+    if (modalActions) modalActions.style.display = 'block';
+    if (modalCloseBtn) modalCloseBtn.innerText = 'Done';
+  };
+
+  const hideProgressModal = () => {
+    if (progressModal) progressModal.style.display = 'none';
+    if (modalActions) modalActions.style.display = 'none';
+  };
+
+  modalCloseBtn?.addEventListener('click', hideProgressModal);
+
   formElement?.addEventListener('submit', async (e) => {
     e.preventDefault();
+    if (isSubmitting) return;
+    isSubmitting = true;
+
+    if (submitBtn && btnText) {
+      submitBtn.disabled = true;
+      btnText.innerHTML = `Processing... <i class="fa-solid fa-circle-notch fa-spin" style="margin-left: 8px;"></i>`;
+    }
+
     if (alertError) alertError.style.display = 'none';
     if (alertSuccess) alertSuccess.style.display = 'none';
 
-    // Helper: Convert File object to Base64 object for code.gs Drive upload
-    const fileToBase64 = (fileInput: HTMLInputElement): Promise<{ fileName: string; mimeType: string; base64: string } | null> => {
-      return new Promise((resolve) => {
-        if (!fileInput || !fileInput.files || fileInput.files.length === 0) {
-          resolve(null);
-          return;
-        }
-        const file = fileInput.files[0];
-        const reader = new FileReader();
-        reader.onload = () => {
-          const result = reader.result as string;
-          resolve({
-            fileName: file.name,
-            mimeType: file.type || 'application/octet-stream',
-            base64: result
-          });
-        };
-        reader.onerror = () => resolve(null);
-        reader.readAsDataURL(file);
-      });
-    };
+    // Show initial Progress Modal (Stage 1: Validation)
+    if (progressModal) progressModal.style.display = 'flex';
+    if (modalIcon) modalIcon.innerHTML = `<i class="fa-solid fa-cloud-arrow-up fa-bounce" style="color: var(--accent-cyan);"></i>`;
+    if (modalTitle) modalTitle.innerText = 'Submitting Registration';
+    if (modalSubtitle) modalSubtitle.innerText = 'Please stay on this page while we process your documents and transmit data.';
+    if (modalActions) modalActions.style.display = 'none';
 
-    // Helper: Validate individual file size (in MB) and format (.pdf, .png, .jpg, .jpeg)
-    const validateFileInput = (fileInput: HTMLInputElement, label: string, maxMb: number): string | null => {
-      if (!fileInput || !fileInput.files || fileInput.files.length === 0) return null;
-      const file = fileInput.files[0];
-      const maxBytes = maxMb * 1024 * 1024;
-      if (file.size > maxBytes) {
-        return `File ${label} exceeds the maximum size limit of ${maxMb}MB. (Current file size: ${(file.size / (1024 * 1024)).toFixed(2)}MB)`;
+    updateModalStage(1, 5, 'Validating candidate details & document inputs...');
+
+    const resetState = () => {
+      isSubmitting = false;
+      if (submitBtn && btnText) {
+        submitBtn.disabled = false;
+        btnText.innerHTML = `Submit Registration <i class="fa-solid fa-paper-plane" style="margin-left: 8px;"></i>`;
       }
-      const allowedExts = ['pdf', 'png', 'jpg', 'jpeg'];
-      const fileExt = file.name.split('.').pop()?.toLowerCase() || '';
-      if (!allowedExts.includes(fileExt)) {
-        return `File ${label} must be a valid PDF, PNG, JPG, or JPEG file.`;
-      }
-      return null;
     };
 
     const nama_lengkap = (document.getElementById('nama_lengkap') as HTMLInputElement).value.trim();
@@ -306,63 +418,120 @@ export function initRegistrationScript() {
     const fileCvInput = document.getElementById('file_cv') as HTMLInputElement | null;
     const filePiInput = document.getElementById('file_pi') as HTMLInputElement | null;
 
+    if (!/^\d{9,15}$/.test(nim)) {
+      const msg = 'Please enter a valid numeric NIM (9 to 15 digits)!';
+      if (alertError) { alertError.innerText = msg; alertError.style.display = 'block'; }
+      showModalError(msg, 1);
+      resetState();
+      return;
+    }
+
+    const cleanPhone = nomor_telp.replace(/\s+/g, '');
+    if (!/^(08|\+?628)\d{7,11}$/.test(cleanPhone)) {
+      const msg = 'Please enter a valid Indonesian phone number starting with 08 or +628!';
+      if (alertError) { alertError.innerText = msg; alertError.style.display = 'block'; }
+      showModalError(msg, 1);
+      resetState();
+      return;
+    }
+
     if (divisi_1 === divisi_2) {
-      if (alertError) {
-        alertError.innerText = 'Division Choice 1 and Division Choice 2 cannot be the same!';
-        alertError.style.display = 'block';
-      }
+      const msg = 'Division Choice 1 and Division Choice 2 cannot be the same!';
+      if (alertError) { alertError.innerText = msg; alertError.style.display = 'block'; }
+      showModalError(msg, 1);
+      resetState();
       return;
     }
 
     if ((divisi_1 === medhumTriggerVal || divisi_2 === medhumTriggerVal) && !portofolio_medhum) {
-      if (alertError) {
-        alertError.innerText = 'Please provide your MedHum portfolio URL link!';
-        alertError.style.display = 'block';
-      }
+      const msg = 'Please provide your MedHum portfolio URL link!';
+      if (alertError) { alertError.innerText = msg; alertError.style.display = 'block'; }
+      showModalError(msg, 1);
+      resetState();
       return;
     }
 
-    // Validate uploaded file sizes and formats
-    if (fileKsmInput) {
-      const err = validateFileInput(fileKsmInput, 'KSM', 2);
-      if (err) {
-        if (alertError) { alertError.innerText = err; alertError.style.display = 'block'; }
-        return;
+    // Validate file sizes
+    let totalBytes = 0;
+    const validateFileInput = (fileInput: HTMLInputElement, label: string, maxMb: number): string | null => {
+      if (!fileInput || !fileInput.files || fileInput.files.length === 0) return null;
+      const file = fileInput.files[0];
+      if (file.size === 0) {
+        return `File ${label} is empty (0 bytes). Please upload a valid non-empty document.`;
       }
-    }
-    if (fileKhsInput) {
-      const err = validateFileInput(fileKhsInput, 'KHS', 2);
-      if (err) {
-        if (alertError) { alertError.innerText = err; alertError.style.display = 'block'; }
-        return;
+      totalBytes += file.size;
+      const maxBytes = maxMb * 1024 * 1024;
+      if (file.size > maxBytes) {
+        return `File ${label} exceeds maximum size limit of ${maxMb}MB. (${(file.size / (1024 * 1024)).toFixed(2)}MB)`;
       }
-    }
-    if (fileMlInput) {
-      const err = validateFileInput(fileMlInput, 'Motivation Letter (ML)', 2);
-      if (err) {
-        if (alertError) { alertError.innerText = err; alertError.style.display = 'block'; }
-        return;
+      const allowedExts = ['pdf', 'png', 'jpg', 'jpeg'];
+      const fileExt = file.name.split('.').pop()?.toLowerCase() || '';
+      if (!allowedExts.includes(fileExt)) {
+        return `File ${label} must be a valid PDF, PNG, JPG, or JPEG file.`;
       }
-    }
-    if (fileCvInput) {
-      const err = validateFileInput(fileCvInput, 'Curriculum Vitae (CV)', 3);
-      if (err) {
-        if (alertError) { alertError.innerText = err; alertError.style.display = 'block'; }
-        return;
-      }
-    }
-    if (filePiInput) {
-      const err = validateFileInput(filePiInput, 'Pakta Integritas (PI)', 2);
-      if (err) {
-        if (alertError) { alertError.innerText = err; alertError.style.display = 'block'; }
-        return;
+      return null;
+    };
+
+    const docChecks = [
+      { input: fileKsmInput, label: 'KSM', max: 1.0 },
+      { input: fileKhsInput, label: 'KHS', max: 1.0 },
+      { input: fileMlInput, label: 'Motivation Letter (ML)', max: 1.0 },
+      { input: fileCvInput, label: 'Curriculum Vitae (CV)', max: 1.5 },
+      { input: filePiInput, label: 'Pakta Integritas (PI)', max: 1.0 }
+    ];
+
+    for (const item of docChecks) {
+      if (item.input) {
+        const err = validateFileInput(item.input, item.label, item.max);
+        if (err) {
+          if (alertError) { alertError.innerText = err; alertError.style.display = 'block'; }
+          showModalError(err, 1);
+          resetState();
+          return;
+        }
       }
     }
 
-    if (submitBtn && btnText) {
-      submitBtn.disabled = true;
-      btnText.innerHTML = `Processing & Uploading... <i class="fa-solid fa-circle-notch fa-spin" style="margin-left: 8px;"></i>`;
+    const MAX_TOTAL_BYTES = 6.0 * 1024 * 1024;
+    if (totalBytes > MAX_TOTAL_BYTES) {
+      const err = `Total size of all 5 uploaded files (${(totalBytes / (1024 * 1024)).toFixed(2)}MB) exceeds 6.0MB limit. Please compress your files.`;
+      if (alertError) { alertError.innerText = err; alertError.style.display = 'block'; }
+      showModalError(err, 1);
+      resetState();
+      return;
     }
+
+    updateModalStage(1, 15, 'Validation passed! Preparing to encode files...');
+
+    // Stage 2: Encoding Base64 Files
+    updateModalStage(2, 18, 'Encoding uploaded files...');
+
+    let loadedFilesCount = 0;
+    const fileListToRead = docChecks.filter(d => d.input && d.input.files && d.input.files.length > 0);
+    const totalFilesToRead = fileListToRead.length;
+
+    const fileToBase64WithProgress = (fileInput: HTMLInputElement | null, docLabel: string): Promise<{ fileName: string; mimeType: string; base64: string } | null> => {
+      return new Promise((resolve) => {
+        if (!fileInput || !fileInput.files || fileInput.files.length === 0) {
+          resolve(null);
+          return;
+        }
+        const file = fileInput.files[0];
+        const reader = new FileReader();
+        reader.onload = () => {
+          loadedFilesCount++;
+          const percent = Math.min(40, 18 + Math.round((loadedFilesCount / (totalFilesToRead || 1)) * 22));
+          updateModalStage(2, percent, `Encoded document ${loadedFilesCount}/${totalFilesToRead} (${docLabel})`);
+          resolve({
+            fileName: file.name,
+            mimeType: file.type || 'application/octet-stream',
+            base64: reader.result as string
+          });
+        };
+        reader.onerror = () => resolve(null);
+        reader.readAsDataURL(file);
+      });
+    };
 
     try {
       const scriptURL = ((import.meta as any).env?.PUBLIC_GOOGLE_SHEET_SCRIPT_URL || '').replace(/^['"]|['"]$/g, '').trim();
@@ -373,13 +542,12 @@ export function initRegistrationScript() {
       const website_hp = (document.getElementById('website_hp') as HTMLInputElement)?.value || '';
       const secret_token = ((import.meta as any).env?.PUBLIC_RECRUITMENT_SECRET || '').replace(/^['"]|['"]$/g, '').trim();
 
-      // Read files as Base64 asynchronously
       const [ksmObj, khsObj, mlObj, cvObj, piObj] = await Promise.all([
-        fileKsmInput ? fileToBase64(fileKsmInput) : Promise.resolve(null),
-        fileKhsInput ? fileToBase64(fileKhsInput) : Promise.resolve(null),
-        fileMlInput ? fileToBase64(fileMlInput) : Promise.resolve(null),
-        fileCvInput ? fileToBase64(fileCvInput) : Promise.resolve(null),
-        filePiInput ? fileToBase64(filePiInput) : Promise.resolve(null)
+        fileToBase64WithProgress(fileKsmInput, 'KSM'),
+        fileToBase64WithProgress(fileKhsInput, 'KHS'),
+        fileToBase64WithProgress(fileMlInput, 'ML'),
+        fileToBase64WithProgress(fileCvInput, 'CV'),
+        fileToBase64WithProgress(filePiInput, 'PI')
       ]);
 
       const payload: Record<string, any> = {
@@ -404,39 +572,83 @@ export function initRegistrationScript() {
       if (cvObj) payload['cv'] = cvObj;
       if (piObj) payload['pi'] = piObj;
 
-      await fetch(scriptURL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-        body: JSON.stringify(payload),
-        mode: 'no-cors'
+      // Stage 3: Transmitting Payload via XHR with Upload Progress
+      updateModalStage(3, 40, 'Starting data transmission to server...');
+
+      const jsonPayloadString = JSON.stringify(payload);
+
+      const responseData: any = await new Promise((resolve, reject) => {
+        const xhr = new XMLHttpRequest();
+        xhr.open('POST', scriptURL, true);
+        xhr.setRequestHeader('Content-Type', 'text/plain;charset=utf-8');
+
+        if (xhr.upload) {
+          xhr.upload.addEventListener('progress', (evt) => {
+            if (evt.lengthComputable && evt.total > 0) {
+              const uploadRatio = evt.loaded / evt.total;
+              const currentPercent = 40 + Math.round(uploadRatio * 48); // 40% to 88%
+              const loadedMb = (evt.loaded / (1024 * 1024)).toFixed(2);
+              const totalMb = (evt.total / (1024 * 1024)).toFixed(2);
+              updateModalStage(3, currentPercent, `Uploading payload: ${loadedMb} MB / ${totalMb} MB (${Math.round(uploadRatio * 100)}%)`);
+            }
+          });
+        }
+
+        xhr.onload = () => {
+          // Stage 4: Processing on server
+          updateModalStage(4, 92, 'Server received data. Processing entry & sending confirmation email...');
+          let parsedData = null;
+          try {
+            parsedData = JSON.parse(xhr.responseText);
+          } catch (err) {
+            // Response parsing fallback
+          }
+          resolve(parsedData);
+        };
+
+        xhr.onerror = () => {
+          reject(new Error('Network transmission error. Please check your internet connection.'));
+        };
+
+        xhr.ontimeout = () => {
+          reject(new Error('Request timed out. Please try again.'));
+        };
+
+        xhr.send(jsonPayloadString);
       });
 
+      if (responseData && responseData.result === 'error') {
+        const errText = responseData.error || 'Failed to submit registration. Please try again.';
+        if (alertError) { alertError.innerText = errText; alertError.style.display = 'block'; }
+        showModalError(errText, 4);
+        return;
+      }
+
+      clearDraft();
+      const isRevision = Boolean(responseData && responseData.isRevision);
       if (alertSuccess) {
-        alertSuccess.innerText = 'Registration successfully submitted! A confirmation email has been sent to your email address.';
+        alertSuccess.innerText = isRevision
+          ? 'Revised registration successfully submitted! Your updated details [REVISI] have been recorded, and a confirmation email has been sent.'
+          : 'Registration successfully submitted! A confirmation email has been sent to your email address.';
         alertSuccess.style.display = 'block';
       }
+
+      showModalSuccess(isRevision);
       formElement.reset();
       toggleMedhumPorto();
       window.scrollTo({ top: 0, behavior: 'smooth' });
     } catch (err: any) {
+      const errMsg = err.message || 'Failed to submit. Please try again later.';
       if (alertError) {
-        alertError.innerText = err.message || 'Failed to submit. Please try again later.';
+        alertError.innerText = errMsg;
         alertError.style.display = 'block';
       }
+      showModalError(errMsg, 3);
     } finally {
-      if (submitBtn && btnText) {
-        submitBtn.disabled = false;
-        btnText.innerHTML = `Submit Registration <i class="fa-solid fa-paper-plane" style="margin-left: 8px;"></i>`;
-      }
+      resetState();
     }
   });
 }
 
-// Auto-run if DOM loaded
-if (typeof document !== 'undefined') {
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initRegistrationScript);
-  } else {
-    initRegistrationScript();
-  }
-}
+
+

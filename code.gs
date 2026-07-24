@@ -4,6 +4,69 @@ const scriptProp = PropertiesService.getScriptProperties()
 // Fallback registration deadline (ISO format with timezone offset)
 const DEFAULT_DEADLINE_STR = '2026-08-23T23:59:59+07:00';
 
+/**
+  Pemetaan alias kolom: nama kolom di sheet (kustom) → kunci dataData internal
+  Digunakan agar script bisa menulis ke kolom dengan nama berbeda dari standar.
+  Tambahkan entri baru jika sheet menggunakan nama kolom lain.
+ */
+const COLUMN_ALIASES = {
+  // Nomor Urut / Row Number
+  'No': 'No',
+  'No.': 'No',
+  'Nomor': 'No',
+  // Nomor Telepon
+  'No. HP': 'Nomor Telepon',
+  'Nomor HP': 'Nomor Telepon',
+  'No HP': 'Nomor Telepon',
+  'No Hp': 'Nomor Telepon',
+  'Phone': 'Nomor Telepon',
+  'Telepon': 'Nomor Telepon',
+  // Alasan Divisi 1
+  'Alasan Memilih Divisi Pertama': 'Alasan Divisi 1',
+  'Alasan Divisi Pertama': 'Alasan Divisi 1',
+  'Alasan 1': 'Alasan Divisi 1',
+  // Alasan Divisi 2
+  'Alasan Memilih Divisi Kedua': 'Alasan Divisi 2',
+  'Alasan Divisi Kedua': 'Alasan Divisi 2',
+  'Alasan 2': 'Alasan Divisi 2',
+  // Bersedia Dipindah
+  'Bersedia di Pindahkan': 'Bersedia Dipindah Divisi',
+  'Bersedia Dipindahkan': 'Bersedia Dipindah Divisi',
+  'Bersedia Pindah': 'Bersedia Dipindah Divisi',
+  // File links (short names)
+  'KSM': 'Link KSM',
+  'KHS': 'Link KHS',
+  'ML': 'Link ML',
+  'CV': 'Link CV',
+  'PI': 'Link PI (Pakta Integritas)',
+  'Pakta Integritas': 'Link PI (Pakta Integritas)',
+  // Timestamp
+  'Tgl Daftar': 'Timestamp',
+  'Tanggal Daftar': 'Timestamp',
+  'Waktu Daftar': 'Timestamp',
+  'Tgl. Daftar': 'Timestamp'
+};
+
+/**
+  Kembalikan kunci dataData yang sesuai untuk nama kolom di sheet.
+  Jika ada alias, gunakan alias; jika tidak, gunakan nama kolom itu sendiri.
+ */
+function getDataKeyForHeader(sheetHeader) {
+  return COLUMN_ALIASES[sheetHeader] || sheetHeader;
+}
+
+/**
+  Cek apakah sebuah expected header sudah tercakup oleh sheet headers yang ada,
+  baik secara langsung (nama sama) maupun via alias.
+ */
+function isExpectedHeaderCovered(expectedHeader, headers) {
+  if (headers.indexOf(expectedHeader) >= 0) return true;
+  for (var aliasKey in COLUMN_ALIASES) {
+    if (COLUMN_ALIASES[aliasKey] === expectedHeader && headers.indexOf(aliasKey) >= 0) return true;
+  }
+  return false;
+}
+
 function initialSetup () {
   const activeSpreadsheet = SpreadsheetApp.getActiveSpreadsheet()
   scriptProp.setProperty('key', activeSpreadsheet.getId())
@@ -83,7 +146,10 @@ function saveFileToDrive(fileData, targetFolder, prefix, nim) {
 /**
   Mengirim email konfirmasi pendaftaran kepada pendaftar (Applicant)
  */
-function sendConfirmationEmail(data) {
+/**
+  Mengirim email konfirmasi pendaftaran kepada pendaftar (Applicant)
+ */
+function sendConfirmationEmail(data, isRevision) {
   if (!data.Email) return;
 
   const safeNama = escapeHtml(data['Nama Lengkap']);
@@ -94,16 +160,22 @@ function sendConfirmationEmail(data) {
   const safeBersedia = escapeHtml(data['Bersedia Dipindah Divisi']);
   const safePorto = data['Portofolio MedHum'] ? escapeHtml(data['Portofolio MedHum']) : '';
 
-  const subject = `[EIM Research Lab] Confirmation of Recruitment Registration - ${safeNama}`;
+  const subjectPrefix = isRevision ? '[REVISI] ' : '';
+  const subject = `${subjectPrefix}[EIM Research Lab] Confirmation of Recruitment Registration - ${safeNama}`;
   
   const htmlBody = `
     <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 600px; margin: 0 auto; background-color: #0b0f19; color: #e2e8f0; border-radius: 12px; overflow: hidden; border: 1px solid #1e293b;">
       <div style="background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); padding: 30px; text-align: center; border-bottom: 2px solid #06b6d4;">
         <h1 style="color: #06b6d4; margin: 0; font-size: 24px; text-transform: uppercase; letter-spacing: 1px;">EIM Research Lab</h1>
-        <p style="color: #94a3b8; margin-top: 8px; font-size: 14px;">Assistant Recruitment Confirmation</p>
+        <p style="color: #94a3b8; margin-top: 8px; font-size: 14px;">Assistant Recruitment Confirmation ${isRevision ? '<span style="color: #f97316; font-weight: bold;">[REVISI]</span>' : ''}</p>
       </div>
 
       <div style="padding: 30px;">
+        ${isRevision ? `
+        <div style="background-color: #451a03; border-left: 4px solid #f97316; color: #ffedd5; padding: 14px 18px; border-radius: 6px; margin-bottom: 20px; font-size: 14px;">
+          <strong>ℹ️ Pemberitahuan Revisi:</strong> Ini adalah konfirmasi data pendaftaran perbaikan <strong>[REVISI]</strong>. Berkas dan data terbaru Anda telah berhasil kami catat.
+        </div>
+        ` : ''}
         <h2 style="color: #f8fafc; font-size: 18px; margin-top: 0;">Halo, ${safeNama}!</h2>
         <p style="color: #cbd5e1; line-height: 1.6;">Terima kasih telah mendaftar sebagai calon asisten di <strong>EIM Research Lab</strong>. Berkas dan data pendaftaran Anda telah berhasil kami terima.</p>
         
@@ -205,13 +277,19 @@ function doPost (e) {
       doc = SpreadsheetApp.getActiveSpreadsheet();
     }
     
-    let sheet = doc.getSheetByName(sheetName)
+    // Gunakan nama sheet dari Script Properties (SHEET_NAME), fallback ke konstanta 'Sheet1'
+    const targetSheetName = scriptProp.getProperty('SHEET_NAME') || sheetName;
+    let sheet = doc.getSheetByName(targetSheetName);
     if (!sheet) {
-      sheet = doc.insertSheet(sheetName)
+      // Jika sheet bernama targetSheetName tidak ada, gunakan sheet pertama yang ada
+      // (bukan membuat sheet baru 'Sheet1' yang tersembunyi dari user)
+      const allSheets = doc.getSheets();
+      sheet = allSheets.length > 0 ? allSheets[0] : doc.insertSheet(targetSheetName);
     }
 
-    // Header resmi 17 kolom sesuai spesifikasi
+    // Header resmi 18 kolom sesuai spesifikasi (termasuk No)
     const expectedHeaders = [
+      'No',
       'Nama Lengkap',
       'NIM',
       'Angkatan',
@@ -231,28 +309,73 @@ function doPost (e) {
       'Timestamp'
     ];
 
-    // Ambil header yang sudah ada
-    let headers = []
-    if (sheet.getLastColumn() > 0) {
-      headers = sheet.getRange(1, 1, 1, sheet.getLastColumn()).getValues()[0]
+    // Baca header row yang dikonfigurasi (default: baris 1)
+    // Set Script Property HEADER_ROW=4 jika header sheet ada di baris 4
+    const headerRow = Math.max(1, parseInt(scriptProp.getProperty('HEADER_ROW') || '1', 10));
+
+    // Ambil header dari baris yang dikonfigurasi
+    let headers = [];
+    if (sheet.getLastColumn() > 0 && sheet.getLastRow() >= headerRow) {
+      headers = sheet.getRange(headerRow, 1, 1, sheet.getLastColumn()).getValues()[0];
     }
 
-    // Jika sheet masih kosong atau kurang lengkap, set header expected Headers
-    if (headers.length === 0 || (headers.length === 1 && headers[0] === "")) {
-      headers = expectedHeaders;
-      sheet.getRange(1, 1, 1, headers.length).setValues([headers]);
-      
-      const headerRange = sheet.getRange(1, 1, 1, headers.length);
-      headerRange.setFontWeight("bold");
-      headerRange.setBackground("#e0f7fa");
-      headerRange.setHorizontalAlignment("center");
-      sheet.setFrozenRows(1);
+    // Filter header kosong dari akhir array (bisa ada kolom kosong di kanan)
+    while (headers.length > 0 && String(headers[headers.length - 1]).trim() === '') {
+      headers.pop();
     }
 
-    const nextRow = sheet.getLastRow() + 1;
+    // Deteksi apakah header row benar-benar berisi header data (bukan teks metadata)
+    const hasRealHeaders = headers.length > 0 && expectedHeaders.some(function(h) {
+      return isExpectedHeaderCovered(h, headers);
+    });
+
+    if (!hasRealHeaders) {
+      // Header row kosong atau hanya berisi teks metadata — inisialisasi dengan header standar
+      headers = expectedHeaders.slice();
+      sheet.getRange(headerRow, 1, 1, headers.length).setValues([headers]);
+      const headerRange = sheet.getRange(headerRow, 1, 1, headers.length);
+      headerRange.setFontWeight('bold');
+      headerRange.setBackground('#e0f7fa');
+      headerRange.setHorizontalAlignment('center');
+      if (headerRow === 1) sheet.setFrozenRows(1);
+    } else {
+      // Sheet sudah ada header (mungkin custom + alias).
+      // Hanya tambahkan kolom expected yang BENAR-BENAR tidak ada (cek via alias juga).
+      let headersModified = false;
+      for (let ei = 0; ei < expectedHeaders.length; ei++) {
+        if (!isExpectedHeaderCovered(expectedHeaders[ei], headers)) {
+          headers.push(expectedHeaders[ei]);
+          headersModified = true;
+        }
+      }
+      if (headersModified) {
+        sheet.getRange(headerRow, 1, 1, headers.length).setValues([headers]);
+      }
+    }
+
+    // Hitung baris data berikutnya setelah baris header
+    // Gunakan NIM column sebagai patokan agar kolom custom dengan formula tidak mengacaukan hitungan
+    let nextRow = headerRow + 1;
+    const nimColIdx1 = headers.indexOf('NIM') + 1; // 1-based
+    if (nimColIdx1 > 0 && sheet.getLastRow() > headerRow) {
+      const dataRowCount = sheet.getLastRow() - headerRow;
+      const nimColValues = sheet.getRange(headerRow + 1, nimColIdx1, dataRowCount, 1).getValues();
+      for (let ri = nimColValues.length - 1; ri >= 0; ri--) {
+        if (String(nimColValues[ri][0]).trim() !== '') {
+          nextRow = headerRow + ri + 2;
+          break;
+        }
+      }
+    } else if (sheet.getLastRow() >= headerRow) {
+      nextRow = sheet.getLastRow() + 1;
+    }
+
+    // Hitung nomor urut otomatis pendaftar (1, 2, 3, dst.)
+    const autoNumber = nextRow - headerRow;
 
     // Normalisasi kunci pencocokan dan sanitasi string
     const dataData = {
+      'No': autoNumber,
       'Nama Lengkap': sanitizeSheetValue(escapeHtml(rawData['Nama Lengkap'] || rawData['nama_lengkap'] || '')),
       'NIM': sanitizeSheetValue(escapeHtml(rawData['NIM'] || rawData['nim'] || '')),
       'Angkatan': sanitizeSheetValue(escapeHtml(rawData['Angkatan'] || rawData['angkatan'] || '')),
@@ -269,68 +392,117 @@ function doPost (e) {
       'Link ML': '',
       'Link CV': '',
       'Link PI (Pakta Integritas)': '',
-      'Timestamp': new Date()
+      'Timestamp': Utilities.formatDate(new Date(), 'GMT+7', 'yyyy-MM-dd HH:mm:ss')
     };
 
-    // Proses upload berkas ke Google Drive jika tersedia payload berkas
-    const targetFolder = getOrCreateTargetFolder();
-    const nim = dataData['NIM'] || 'pendaftar';
-
-    if (rawData.ksm || rawData.file_ksm) {
-      dataData['Link KSM'] = saveFileToDrive(rawData.ksm || rawData.file_ksm, targetFolder, 'KSM', nim);
-    } else if (rawData['Link KSM']) {
-      dataData['Link KSM'] = sanitizeSheetValue(rawData['Link KSM']);
-    }
-
-    if (rawData.khs || rawData.file_khs) {
-      dataData['Link KHS'] = saveFileToDrive(rawData.khs || rawData.file_khs, targetFolder, 'KHS', nim);
-    } else if (rawData['Link KHS']) {
-      dataData['Link KHS'] = sanitizeSheetValue(rawData['Link KHS']);
-    }
-
-    if (rawData.ml || rawData.file_ml) {
-      dataData['Link ML'] = saveFileToDrive(rawData.ml || rawData.file_ml, targetFolder, 'ML', nim);
-    } else if (rawData['Link ML']) {
-      dataData['Link ML'] = sanitizeSheetValue(rawData['Link ML']);
-    }
-
-    if (rawData.cv || rawData.file_cv) {
-      dataData['Link CV'] = saveFileToDrive(rawData.cv || rawData.file_cv, targetFolder, 'CV', nim);
-    } else if (rawData['Link CV']) {
-      dataData['Link CV'] = sanitizeSheetValue(rawData['Link CV']);
-    }
-
-    if (rawData.pi || rawData.file_pi) {
-      dataData['Link PI (Pakta Integritas)'] = saveFileToDrive(rawData.pi || rawData.file_pi, targetFolder, 'PI', nim);
-    } else if (rawData['Link PI (Pakta Integritas)']) {
-      dataData['Link PI (Pakta Integritas)'] = sanitizeSheetValue(rawData['Link PI (Pakta Integritas)']);
-    }
-
-    // Petakan baris baru berdasarkan susunan header di sheet
-    const newRow = headers.map(function(header) {
-      if (header === 'Timestamp') {
-        return dataData['Timestamp'];
+    // CEK DEDUP & TAG REVISI: Jika NIM sudah ada, tandai sebagai perbaikan/revisi [REVISI]
+    let isRevision = false;
+    if (dataData['NIM']) {
+      const lastRow = sheet.getLastRow();
+      if (lastRow > headerRow) {
+        const nimColIndex = headers.indexOf('NIM') + 1;
+        if (nimColIndex > 0) {
+          const startCheckRow = Math.max(headerRow + 1, lastRow - 50);
+          const existingNims = sheet.getRange(startCheckRow, nimColIndex, lastRow - startCheckRow + 1, 1).getValues();
+          for (let r = 0; r < existingNims.length; r++) {
+            const existingNimStr = String(existingNims[r][0]).trim();
+            if (existingNimStr !== '' && existingNimStr === String(dataData['NIM']).trim()) {
+              isRevision = true;
+              Logger.log('Resubmission detected for NIM: ' + existingNimStr + ' - marking as REVISI.');
+              break;
+            }
+          }
+        }
       }
-      return dataData[header] !== undefined ? dataData[header] : sanitizeSheetValue(escapeHtml(rawData[header] || ''));
-    });
+    }
 
-    sheet.getRange(nextRow, 1, 1, newRow.length).setValues([newRow]);
+    if (isRevision && !dataData['Nama Lengkap'].includes('[REVISI]')) {
+      dataData['Nama Lengkap'] = dataData['Nama Lengkap'] + ' [REVISI]';
+    }
 
-    // Auto-resize kolom sekaligus secara efisien
+    // 1. TULIS DAHULU DATA KE SHEET (index-based + alias-aware)
+    const initialRow = new Array(headers.length).fill('');
+    for (let i = 0; i < headers.length; i++) {
+      const header = headers[i];
+      const dataKey = getDataKeyForHeader(header); // resolve alias
+      if (dataKey === 'Timestamp') {
+        initialRow[i] = dataData['Timestamp'];
+      } else if (dataData[dataKey] !== undefined) {
+        initialRow[i] = dataData[dataKey];
+      }
+      // Kolom custom yang tidak dikenal (misal: No, Status, Keterangan) dibiarkan '' (tidak diisi)
+    }
+
+    sheet.getRange(nextRow, 1, 1, initialRow.length).setValues([initialRow]);
+
+    // Auto-resize kolom secara efisien (kecuali kolom 1 'No' agar ukurannya tetap ringkas)
     try {
-      sheet.autoResizeColumns(1, headers.length);
-    } catch (resizeErr) {
-      // Fallback jika API batch autoResizeColumns tidak didukung di environment tertentu
-      for (let i = 1; i <= headers.length; i++) {
-        sheet.autoResizeColumn(i);
+      if (headers.length > 1) {
+        sheet.autoResizeColumns(2, headers.length - 1);
       }
+      sheet.setColumnWidth(1, 50);
+    } catch (resizeErr) {}
+
+    // 2. PROSES UPLOAD BERKAS KE GOOGLE DRIVE SECARA AMAN DENGAN TRY-CATCH
+    try {
+      const targetFolder = getOrCreateTargetFolder();
+      const nim = dataData['NIM'] || 'pendaftar';
+
+      if (rawData.ksm || rawData.file_ksm) {
+        dataData['Link KSM'] = saveFileToDrive(rawData.ksm || rawData.file_ksm, targetFolder, 'KSM', nim);
+      } else if (rawData['Link KSM']) {
+        dataData['Link KSM'] = sanitizeSheetValue(rawData['Link KSM']);
+      }
+
+      if (rawData.khs || rawData.file_khs) {
+        dataData['Link KHS'] = saveFileToDrive(rawData.khs || rawData.file_khs, targetFolder, 'KHS', nim);
+      } else if (rawData['Link KHS']) {
+        dataData['Link KHS'] = sanitizeSheetValue(rawData['Link KHS']);
+      }
+
+      if (rawData.ml || rawData.file_ml) {
+        dataData['Link ML'] = saveFileToDrive(rawData.ml || rawData.file_ml, targetFolder, 'ML', nim);
+      } else if (rawData['Link ML']) {
+        dataData['Link ML'] = sanitizeSheetValue(rawData['Link ML']);
+      }
+
+      if (rawData.cv || rawData.file_cv) {
+        dataData['Link CV'] = saveFileToDrive(rawData.cv || rawData.file_cv, targetFolder, 'CV', nim);
+      } else if (rawData['Link CV']) {
+        dataData['Link CV'] = sanitizeSheetValue(rawData['Link CV']);
+      }
+
+      if (rawData.pi || rawData.file_pi) {
+        dataData['Link PI (Pakta Integritas)'] = saveFileToDrive(rawData.pi || rawData.file_pi, targetFolder, 'PI', nim);
+      } else if (rawData['Link PI (Pakta Integritas)']) {
+        dataData['Link PI (Pakta Integritas)'] = sanitizeSheetValue(rawData['Link PI (Pakta Integritas)']);
+      }
+
+      // Update baris di sheet dengan link berkas Google Drive (index-based + alias-aware)
+      const updatedRow = new Array(headers.length).fill('');
+      for (let i = 0; i < headers.length; i++) {
+        const header = headers[i];
+        const dataKey = getDataKeyForHeader(header); // resolve alias
+        if (dataKey === 'Timestamp') {
+          updatedRow[i] = dataData['Timestamp'];
+        } else if (dataData[dataKey] !== undefined) {
+          updatedRow[i] = dataData[dataKey];
+        }
+      }
+      sheet.getRange(nextRow, 1, 1, updatedRow.length).setValues([updatedRow]);
+    } catch (fileErr) {
+      Logger.log('Error processing drive files: ' + fileErr.toString());
     }
 
-    // Kirim email konfirmasi secara asinkron (try-catch didalamnya)
-    sendConfirmationEmail(dataData);
+    // 3. KIRIM EMAIL KONFIRMASI (hanya 1x setelah data & berkas siap, aman try-catch)
+    try {
+      sendConfirmationEmail(dataData, isRevision);
+    } catch (emailErr) {
+      Logger.log('Error in confirmation email step: ' + emailErr.toString());
+    }
 
     return ContentService
-      .createTextOutput(JSON.stringify({ 'result': 'success', 'row': nextRow }))
+      .createTextOutput(JSON.stringify({ 'result': 'success', 'row': nextRow, 'isRevision': isRevision }))
       .setMimeType(ContentService.MimeType.JSON);
 
   } catch (err) {

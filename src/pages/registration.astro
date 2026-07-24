@@ -16,11 +16,11 @@ import ViewClosed from '../components/registration/ViewClosed.astro';
 
 const studentYears = registrationConfig.studentYears || ["2022", "2023", "2024", "2025"];
 const docLimits = registrationConfig.documentLimits || {
-  ksmMb: 2,
-  khsMb: 2,
-  mlMb: 2,
-  cvMb: 3,
-  piMb: 2
+  ksmMb: 1,
+  khsMb: 1,
+  mlMb: 1,
+  cvMb: 1.5,
+  piMb: 1
 };
 
 const piTemplateUrl = (registrationConfig as any).piTemplateUrl || "";

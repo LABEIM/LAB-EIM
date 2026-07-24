@@ -1,5 +1,5 @@
 {
-  "status": "auto",
+  "status": "open",
   "upcomingStartDate": "2026-08-01T00:00:00",
   "openDate": "2026-08-13T00:00:00",
   "deadline": "2026-08-20T23:59:59",
@@ -25,11 +25,11 @@
   "medhumDivisionValue": "Medhum",
   "piTemplateUrl": "https://bit.ly/Template-PI-EIM",
   "documentLimits": {
-    "ksmMb": 2,
-    "khsMb": 2,
-    "mlMb": 2,
-    "cvMb": 3,
-    "piMb": 2
+    "ksmMb": 1,
+    "khsMb": 1,
+    "mlMb": 1,
+    "cvMb": 1.5,
+    "piMb": 1
   },
   "upcomingConfig": {
     "title": "Recruitment Opening Soon!",

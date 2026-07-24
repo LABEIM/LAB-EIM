@@ -18,9 +18,10 @@ interface Props {
     registrationValue: string;
     registrationLabel: string;
   }>;
+  piTemplateUrl?: string;
 }
 
-const { initialStage, registrationConfig, extendedCfg, studentYears, docLimits, divisions } = Astro.props;
+const { initialStage, registrationConfig, extendedCfg, studentYears, docLimits, divisions, piTemplateUrl } = Astro.props;
 ---
 
 <div id="view-open" style={(initialStage === 'open' || initialStage === 'extended') ? 'display: block;' : 'display: none;'}>
@@ -187,9 +188,21 @@ const { initialStage, registrationConfig, extendedCfg, studentYears, docLimits, 
     </div>
 
     <div class="form-group" style="margin-top: 15px;">
-      <label for="file_pi">Pakta Integritas (PI) <span style="font-size: 0.8rem; color: var(--text-secondary);">(Max {docLimits.piMb}MB)</span> <span class="required-asterisk">*</span></label>
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; flex-wrap: wrap; gap: 8px;">
+        <label for="file_pi" style="margin-bottom: 0;">Pakta Integritas (PI) <span style="font-size: 0.8rem; color: var(--text-secondary);">(Max {docLimits.piMb}MB)</span> <span class="required-asterisk">*</span></label>
+        {piTemplateUrl && (
+          <a href={piTemplateUrl} target="_blank" rel="noopener noreferrer" style="font-size: 0.825rem; color: var(--accent-cyan); text-decoration: none; display: inline-flex; align-items: center; gap: 6px; font-weight: 500;">
+            <i class="fa-solid fa-file-arrow-down"></i> Download Template PI
+          </a>
+        )}
+      </div>
       <input type="file" class="form-control" id="file_pi" accept=".pdf,.png,.jpg,.jpeg" required />
-      <small style="color: var(--text-secondary); display: block; margin-top: 5px;">Upload signed Integrity Pact document.</small>
+      <small style="color: var(--text-secondary); display: block; margin-top: 5px;">
+        Upload signed Integrity Pact document.
+        {piTemplateUrl && (
+          <span style="margin-left: 4px;">Don't have the template yet? <a href={piTemplateUrl} target="_blank" rel="noopener noreferrer" style="color: var(--accent-cyan); text-decoration: underline;">Download template here</a>.</span>
+        )}
+      </small>
     </div>
 
     <div class="form-actions form-actions-submit">

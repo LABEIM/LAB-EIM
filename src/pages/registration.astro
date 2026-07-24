@@ -23,6 +23,8 @@ const docLimits = registrationConfig.documentLimits || {
   piMb: 2
 };
 
+const piTemplateUrl = (registrationConfig as any).piTemplateUrl || "";
+
 const openDateStr = registrationConfig.openDate || "2026-07-01T00:00:00";
 const deadlineStr = registrationConfig.deadline || "2026-07-25T23:59:59";
 const extendedDeadlineStr = registrationConfig.extendedDeadline || "";
@@ -169,8 +171,8 @@ acceptedCandidates.forEach(candidate => {
         data-extended-deadline={extendedDeadlineStr}
         data-medhum-val={registrationConfig.medhumDivisionValue || "Medhum"}
       >
-        <ViewUpcoming initialStage={initialStage} upcomingCfg={upcomingCfg} docLimits={docLimits} studentYears={studentYears} />
-        <ViewOpenForm initialStage={initialStage} registrationConfig={registrationConfig} extendedCfg={extendedCfg} studentYears={studentYears} docLimits={docLimits} divisions={divisions} />
+        <ViewUpcoming initialStage={initialStage} upcomingCfg={upcomingCfg} docLimits={docLimits} studentYears={studentYears} piTemplateUrl={piTemplateUrl} />
+        <ViewOpenForm initialStage={initialStage} registrationConfig={registrationConfig} extendedCfg={extendedCfg} studentYears={studentYears} docLimits={docLimits} divisions={divisions} piTemplateUrl={piTemplateUrl} />
         <ViewScreening initialStage={initialStage} selectionCfg={selectionCfg} />
         <ViewScreeningResults initialStage={initialStage} selectionResultsCfg={selectionResultsCfg} />
         <ViewTechnicalTest initialStage={initialStage} technicalTestCfg={technicalTestCfg} />

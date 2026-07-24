@@ -10,10 +10,24 @@ function initialSetup () {
 }
 
 /**
+  Sanitasi string untuk mencegah Formula Injection pada Google Sheets
+ */
+function sanitizeSheetValue(val) {
+  if (val === null || val === undefined) return '';
+  if (typeof val !== 'string') return val;
+  const trimmed = val.trim();
+  if (/^[=+@\-\t\r]/.test(trimmed)) {
+    return "'" + val;
+  }
+  return val;
+}
+
+/**
   Sanitasi HTML untuk mencegah HTML Injection / XSS pada email dan sheet
  */
 function escapeHtml(str) {
-  if (typeof str !== 'string') return str;
+  if (str === null || str === undefined) return '';
+  if (typeof str !== 'string') return String(str);
   return str
     .replace(/&/g, '&amp;')
     .replace(/</g, '&lt;')
@@ -239,17 +253,17 @@ function doPost (e) {
 
     // Normalisasi kunci pencocokan dan sanitasi string
     const dataData = {
-      'Nama Lengkap': escapeHtml(rawData['Nama Lengkap'] || rawData['nama_lengkap'] || ''),
-      'NIM': escapeHtml(rawData['NIM'] || rawData['nim'] || ''),
-      'Angkatan': escapeHtml(rawData['Angkatan'] || rawData['angkatan'] || ''),
-      'Email': escapeHtml(rawData['Email'] || rawData['email'] || ''),
-      'Nomor Telepon': escapeHtml(rawData['Nomor Telepon'] || rawData['nomor_telp'] || ''),
-      'Divisi 1': escapeHtml(rawData['Divisi 1'] || rawData['divisi_1'] || ''),
-      'Alasan Divisi 1': escapeHtml(rawData['Alasan Divisi 1'] || rawData['alasan_divisi_1'] || rawData['Alasan'] || ''),
-      'Divisi 2': escapeHtml(rawData['Divisi 2'] || rawData['divisi_2'] || ''),
-      'Alasan Divisi 2': escapeHtml(rawData['Alasan Divisi 2'] || rawData['alasan_divisi_2'] || rawData['Alasan'] || ''),
-      'Portofolio MedHum': escapeHtml(rawData['Portofolio MedHum'] || rawData['portofolio_medhum'] || ''),
-      'Bersedia Dipindah Divisi': escapeHtml(rawData['Bersedia Dipindah Divisi'] || rawData['bersedia_dipindah'] || ''),
+      'Nama Lengkap': sanitizeSheetValue(escapeHtml(rawData['Nama Lengkap'] || rawData['nama_lengkap'] || '')),
+      'NIM': sanitizeSheetValue(escapeHtml(rawData['NIM'] || rawData['nim'] || '')),
+      'Angkatan': sanitizeSheetValue(escapeHtml(rawData['Angkatan'] || rawData['angkatan'] || '')),
+      'Email': sanitizeSheetValue(escapeHtml(rawData['Email'] || rawData['email'] || '')),
+      'Nomor Telepon': sanitizeSheetValue(escapeHtml(rawData['Nomor Telepon'] || rawData['nomor_telp'] || '')),
+      'Divisi 1': sanitizeSheetValue(escapeHtml(rawData['Divisi 1'] || rawData['divisi_1'] || '')),
+      'Alasan Divisi 1': sanitizeSheetValue(escapeHtml(rawData['Alasan Divisi 1'] || rawData['alasan_divisi_1'] || rawData['Alasan'] || '')),
+      'Divisi 2': sanitizeSheetValue(escapeHtml(rawData['Divisi 2'] || rawData['divisi_2'] || '')),
+      'Alasan Divisi 2': sanitizeSheetValue(escapeHtml(rawData['Alasan Divisi 2'] || rawData['alasan_divisi_2'] || rawData['Alasan'] || '')),
+      'Portofolio MedHum': sanitizeSheetValue(escapeHtml(rawData['Portofolio MedHum'] || rawData['portofolio_medhum'] || '')),
+      'Bersedia Dipindah Divisi': sanitizeSheetValue(escapeHtml(rawData['Bersedia Dipindah Divisi'] || rawData['bersedia_dipindah'] || '')),
       'Link KSM': '',
       'Link KHS': '',
       'Link ML': '',
@@ -265,31 +279,31 @@ function doPost (e) {
     if (rawData.ksm || rawData.file_ksm) {
       dataData['Link KSM'] = saveFileToDrive(rawData.ksm || rawData.file_ksm, targetFolder, 'KSM', nim);
     } else if (rawData['Link KSM']) {
-      dataData['Link KSM'] = rawData['Link KSM'];
+      dataData['Link KSM'] = sanitizeSheetValue(rawData['Link KSM']);
     }
 
     if (rawData.khs || rawData.file_khs) {
       dataData['Link KHS'] = saveFileToDrive(rawData.khs || rawData.file_khs, targetFolder, 'KHS', nim);
     } else if (rawData['Link KHS']) {
-      dataData['Link KHS'] = rawData['Link KHS'];
+      dataData['Link KHS'] = sanitizeSheetValue(rawData['Link KHS']);
     }
 
     if (rawData.ml || rawData.file_ml) {
       dataData['Link ML'] = saveFileToDrive(rawData.ml || rawData.file_ml, targetFolder, 'ML', nim);
     } else if (rawData['Link ML']) {
-      dataData['Link ML'] = rawData['Link ML'];
+      dataData['Link ML'] = sanitizeSheetValue(rawData['Link ML']);
     }
 
     if (rawData.cv || rawData.file_cv) {
       dataData['Link CV'] = saveFileToDrive(rawData.cv || rawData.file_cv, targetFolder, 'CV', nim);
     } else if (rawData['Link CV']) {
-      dataData['Link CV'] = rawData['Link CV'];
+      dataData['Link CV'] = sanitizeSheetValue(rawData['Link CV']);
     }
 
     if (rawData.pi || rawData.file_pi) {
       dataData['Link PI (Pakta Integritas)'] = saveFileToDrive(rawData.pi || rawData.file_pi, targetFolder, 'PI', nim);
     } else if (rawData['Link PI (Pakta Integritas)']) {
-      dataData['Link PI (Pakta Integritas)'] = rawData['Link PI (Pakta Integritas)'];
+      dataData['Link PI (Pakta Integritas)'] = sanitizeSheetValue(rawData['Link PI (Pakta Integritas)']);
     }
 
     // Petakan baris baru berdasarkan susunan header di sheet
@@ -297,14 +311,19 @@ function doPost (e) {
       if (header === 'Timestamp') {
         return dataData['Timestamp'];
       }
-      return dataData[header] !== undefined ? dataData[header] : escapeHtml(rawData[header] || '');
+      return dataData[header] !== undefined ? dataData[header] : sanitizeSheetValue(escapeHtml(rawData[header] || ''));
     });
 
     sheet.getRange(nextRow, 1, 1, newRow.length).setValues([newRow]);
 
-    // Auto-resize kolom
-    for (let i = 1; i <= headers.length; i++) {
-      sheet.autoResizeColumn(i);
+    // Auto-resize kolom sekaligus secara efisien
+    try {
+      sheet.autoResizeColumns(1, headers.length);
+    } catch (resizeErr) {
+      // Fallback jika API batch autoResizeColumns tidak didukung di environment tertentu
+      for (let i = 1; i <= headers.length; i++) {
+        sheet.autoResizeColumn(i);
+      }
     }
 
     // Kirim email konfirmasi secara asinkron (try-catch didalamnya)

@@ -249,17 +249,61 @@ export function initRegistrationScript() {
     if (alertError) alertError.style.display = 'none';
     if (alertSuccess) alertSuccess.style.display = 'none';
 
-    const nama_lengkap = (document.getElementById('nama_lengkap') as HTMLInputElement).value;
-    const nim = (document.getElementById('nim') as HTMLInputElement).value;
-    const angkatan = (document.getElementById('angkatan') as HTMLSelectElement).value;
-    const email = (document.getElementById('email') as HTMLInputElement).value;
-    const nomor_telp = (document.getElementById('nomor_telp') as HTMLInputElement).value;
+    // Helper: Convert File object to Base64 object for code.gs Drive upload
+    const fileToBase64 = (fileInput: HTMLInputElement): Promise<{ fileName: string; mimeType: string; base64: string } | null> => {
+      return new Promise((resolve) => {
+        if (!fileInput || !fileInput.files || fileInput.files.length === 0) {
+          resolve(null);
+          return;
+        }
+        const file = fileInput.files[0];
+        const reader = new FileReader();
+        reader.onload = () => {
+          const result = reader.result as string;
+          resolve({
+            fileName: file.name,
+            mimeType: file.type || 'application/octet-stream',
+            base64: result
+          });
+        };
+        reader.onerror = () => resolve(null);
+        reader.readAsDataURL(file);
+      });
+    };
+
+    // Helper: Validate individual file size (in MB) and format (.pdf, .png, .jpg, .jpeg)
+    const validateFileInput = (fileInput: HTMLInputElement, label: string, maxMb: number): string | null => {
+      if (!fileInput || !fileInput.files || fileInput.files.length === 0) return null;
+      const file = fileInput.files[0];
+      const maxBytes = maxMb * 1024 * 1024;
+      if (file.size > maxBytes) {
+        return `File ${label} exceeds the maximum size limit of ${maxMb}MB. (Current file size: ${(file.size / (1024 * 1024)).toFixed(2)}MB)`;
+      }
+      const allowedExts = ['pdf', 'png', 'jpg', 'jpeg'];
+      const fileExt = file.name.split('.').pop()?.toLowerCase() || '';
+      if (!allowedExts.includes(fileExt)) {
+        return `File ${label} must be a valid PDF, PNG, JPG, or JPEG file.`;
+      }
+      return null;
+    };
+
+    const nama_lengkap = (document.getElementById('nama_lengkap') as HTMLInputElement).value.trim();
+    const nim = (document.getElementById('nim') as HTMLInputElement).value.trim();
+    const angkatan = (document.getElementById('angkatan') as HTMLSelectElement).value.trim();
+    const email = (document.getElementById('email') as HTMLInputElement).value.trim();
+    const nomor_telp = (document.getElementById('nomor_telp') as HTMLInputElement).value.trim();
     const divisi_1 = div1Select ? div1Select.value : '';
     const divisi_2 = div2Select ? div2Select.value : '';
-    const alasan_divisi_1 = (document.getElementById('alasan_divisi_1') as HTMLTextAreaElement).value;
-    const alasan_divisi_2 = (document.getElementById('alasan_divisi_2') as HTMLTextAreaElement).value;
-    const portofolio_medhum = medhumPortoInput?.value || '';
+    const alasan_divisi_1 = (document.getElementById('alasan_divisi_1') as HTMLTextAreaElement).value.trim();
+    const alasan_divisi_2 = (document.getElementById('alasan_divisi_2') as HTMLTextAreaElement).value.trim();
+    const portofolio_medhum = medhumPortoInput?.value.trim() || '';
     const bersedia_dipindah = (document.getElementById('bersedia_dipindah') as HTMLSelectElement).value;
+
+    const fileKsmInput = document.getElementById('file_ksm') as HTMLInputElement | null;
+    const fileKhsInput = document.getElementById('file_khs') as HTMLInputElement | null;
+    const fileMlInput = document.getElementById('file_ml') as HTMLInputElement | null;
+    const fileCvInput = document.getElementById('file_cv') as HTMLInputElement | null;
+    const filePiInput = document.getElementById('file_pi') as HTMLInputElement | null;
 
     if (divisi_1 === divisi_2) {
       if (alertError) {
@@ -277,9 +321,46 @@ export function initRegistrationScript() {
       return;
     }
 
+    // Validate uploaded file sizes and formats
+    if (fileKsmInput) {
+      const err = validateFileInput(fileKsmInput, 'KSM', 2);
+      if (err) {
+        if (alertError) { alertError.innerText = err; alertError.style.display = 'block'; }
+        return;
+      }
+    }
+    if (fileKhsInput) {
+      const err = validateFileInput(fileKhsInput, 'KHS', 2);
+      if (err) {
+        if (alertError) { alertError.innerText = err; alertError.style.display = 'block'; }
+        return;
+      }
+    }
+    if (fileMlInput) {
+      const err = validateFileInput(fileMlInput, 'Motivation Letter (ML)', 2);
+      if (err) {
+        if (alertError) { alertError.innerText = err; alertError.style.display = 'block'; }
+        return;
+      }
+    }
+    if (fileCvInput) {
+      const err = validateFileInput(fileCvInput, 'Curriculum Vitae (CV)', 3);
+      if (err) {
+        if (alertError) { alertError.innerText = err; alertError.style.display = 'block'; }
+        return;
+      }
+    }
+    if (filePiInput) {
+      const err = validateFileInput(filePiInput, 'Pakta Integritas (PI)', 2);
+      if (err) {
+        if (alertError) { alertError.innerText = err; alertError.style.display = 'block'; }
+        return;
+      }
+    }
+
     if (submitBtn && btnText) {
       submitBtn.disabled = true;
-      btnText.innerHTML = `Submitting... <i class="fa-solid fa-circle-notch fa-spin" style="margin-left: 8px;"></i>`;
+      btnText.innerHTML = `Processing & Uploading... <i class="fa-solid fa-circle-notch fa-spin" style="margin-left: 8px;"></i>`;
     }
 
     try {
@@ -291,7 +372,16 @@ export function initRegistrationScript() {
       const website_hp = (document.getElementById('website_hp') as HTMLInputElement)?.value || '';
       const secret_token = ((import.meta as any).env?.PUBLIC_RECRUITMENT_SECRET || '').replace(/^['"]|['"]$/g, '').trim();
 
-      const payload = {
+      // Read files as Base64 asynchronously
+      const [ksmObj, khsObj, mlObj, cvObj, piObj] = await Promise.all([
+        fileKsmInput ? fileToBase64(fileKsmInput) : Promise.resolve(null),
+        fileKhsInput ? fileToBase64(fileKhsInput) : Promise.resolve(null),
+        fileMlInput ? fileToBase64(fileMlInput) : Promise.resolve(null),
+        fileCvInput ? fileToBase64(fileCvInput) : Promise.resolve(null),
+        filePiInput ? fileToBase64(filePiInput) : Promise.resolve(null)
+      ]);
+
+      const payload: Record<string, any> = {
         'Nama Lengkap': nama_lengkap,
         'NIM': nim,
         'Angkatan': angkatan,
@@ -306,6 +396,12 @@ export function initRegistrationScript() {
         'website_hp': website_hp,
         'secret_token': secret_token
       };
+
+      if (ksmObj) payload['ksm'] = ksmObj;
+      if (khsObj) payload['khs'] = khsObj;
+      if (mlObj) payload['ml'] = mlObj;
+      if (cvObj) payload['cv'] = cvObj;
+      if (piObj) payload['pi'] = piObj;
 
       await fetch(scriptURL, {
         method: 'POST',

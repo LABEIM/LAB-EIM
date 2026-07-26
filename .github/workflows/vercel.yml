@@ -4,6 +4,11 @@ env:
   VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
   VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
   PUBLIC_GOOGLE_SHEET_SCRIPT_URL: ${{ secrets.PUBLIC_GOOGLE_SHEET_SCRIPT_URL }}
+  # Required so Keystatic builds the correct OAuth redirect_uri during CI.
+  # Vercel system vars (VERCEL_PROJECT_PRODUCTION_URL) are NOT available in
+  # GitHub Actions — we inject it manually via a repository secret.
+  VERCEL_URL: ${{ secrets.VERCEL_PRODUCTION_URL }}
+  VERCEL_PROJECT_PRODUCTION_URL: ${{ secrets.VERCEL_PRODUCTION_URL }}
 
 on:
   push:

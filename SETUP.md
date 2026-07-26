@@ -71,7 +71,7 @@ To enable login on your live website (e.g., `https://your-site.vercel.app/keysta
 2. Fill out the registration form:
    - **Application Name**: `EIM Lab CMS` (or any description)
    - **Homepage URL**: `https://your-site.vercel.app` (your Vercel deployment URL)
-   - **Authorization callback URL**: `https://your-site.vercel.app/api/keystatic/github/callback`
+   - **Authorization callback URL**: `https://your-site.vercel.app/api/keystatic/github/oauth/callback`
 3. Click **Register application**.
 4. Generate a **Client Secret** and copy both the **Client ID** and **Client Secret**.
 

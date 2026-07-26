@@ -4,7 +4,7 @@ export default config({
   storage: import.meta.env.PROD
     ? {
         kind: 'github',
-        repo: 'labeim/website-eim',
+        repo: 'LABEIM/LAB-EIM',
       }
     : {
         kind: 'local',

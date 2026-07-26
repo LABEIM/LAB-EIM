@@ -6,8 +6,9 @@ import react from '@astrojs/react';
 
 // https://astro.build/config
 export default defineConfig({
-  site: 'https://labeim.github.io',
-  base: '/',
+  site: process.env.VERCEL_URL
+    ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
+    : 'http://localhost:4321',
   adapter: vercel({
     webAnalytics: {
       enabled: true,

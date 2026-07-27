@@ -33,7 +33,7 @@ const requirements = event.data.requirements || [];
             </div>
           </div>
           
-          <button class="hover-bg-light" style="background-color: var(--bg-card); border: 1px solid var(--border-color); color: var(--text-primary); border-radius: 30px; padding: 8px 20px; font-size: 0.85rem; display: flex; align-items: center; gap: 8px; cursor: pointer;">
+          <button class="hover-bg-light share-btn" style="background-color: var(--bg-card); border: 1px solid var(--border-color); color: var(--text-primary); border-radius: 30px; padding: 8px 20px; font-size: 0.85rem; display: flex; align-items: center; gap: 8px; cursor: pointer;">
             <i class="fa-solid fa-share-nodes"></i> Share
           </button>
         </div>
@@ -123,7 +123,7 @@ const requirements = event.data.requirements || [];
 
             {/* Status */}
             <div style="display: flex; gap: 16px; align-items: flex-start;">
-              <div style="width: 40px; height: 40px; border-radius: 8px; background-color: var(--bg-card); display: flex; align-items: center; justify-content: center; color: event.data.status === 'ongoing' ? '#ff9800' : '#11B4BD'; font-size: 1.2rem; flex-shrink: 0; border: 1px solid var(--border-color);">
+              <div style={`width: 40px; height: 40px; border-radius: 8px; background-color: var(--bg-card); display: flex; align-items: center; justify-content: center; color: ${event.data.status === 'ongoing' ? '#ff9800' : '#11B4BD'}; font-size: 1.2rem; flex-shrink: 0; border: 1px solid var(--border-color);`}>
                 <i class={`fa-solid ${event.data.status === 'completed' ? 'fa-circle-check' : (event.data.status === 'ongoing' ? 'fa-spinner fa-spin' : 'fa-clock')}`}></i>
               </div>
               <div>
@@ -170,3 +170,24 @@ const requirements = event.data.requirements || [];
     </style>
   </div>
 </Layout>
+
+<script>
+  const shareBtns = document.querySelectorAll('.share-btn');
+  shareBtns.forEach(btn => {
+    btn.addEventListener('click', async () => {
+      if (navigator.share) {
+        try {
+          await navigator.share({
+            title: document.title,
+            url: window.location.href,
+          });
+        } catch (err) {
+          // Ignore share cancellation
+        }
+      } else {
+        await navigator.clipboard.writeText(window.location.href);
+        alert('Event link copied to clipboard!');
+      }
+    });
+  });
+</script>

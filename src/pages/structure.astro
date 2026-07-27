@@ -43,11 +43,7 @@ const divisionMap = new Map(divisions.map(d => [d.id, d]));
                     <img
                       src={member.image}
                       alt={member.name}
-                      style={{
-                        width: '100%', height: '100%', objectFit: 'cover', borderRadius: 'inherit', display: 'block',
-                        transform: member.scale ? `scale(${member.scale})` : 'none',
-                        transformOrigin: member.position || 'center'
-                      }}
+                      style={`width: 100%; height: 100%; object-fit: cover; border-radius: inherit; display: block; ${member.scale ? `transform: scale(${member.scale});` : ''} ${member.position ? `transform-origin: ${member.position};` : ''}`}
                     />
                   ) : (
                     <i class="fa-solid fa-user" style="font-size: 2.5rem; opacity: 0.5;"></i>
@@ -74,7 +70,6 @@ const divisionMap = new Map(divisions.map(d => [d.id, d]));
   const members = document.querySelectorAll('#member-grid .member-card-item');
 
   function applyFilter(filterVal: string) {
-    // Update active tab class
     tabs.forEach(tab => {
       if (tab.getAttribute('data-filter') === filterVal) {
         tab.classList.add('active');
@@ -83,7 +78,6 @@ const divisionMap = new Map(divisions.map(d => [d.id, d]));
       }
     });
 
-    // Show/hide members
     members.forEach(member => {
       const card = member as HTMLElement;
       const division = card.getAttribute('data-division');
@@ -95,24 +89,10 @@ const divisionMap = new Map(divisions.map(d => [d.id, d]));
     });
   }
 
-  // Handle click on tabs
-  tabs.forEach(tab => {
-    tab.addEventListener('click', () => {
-      const filterVal = tab.getAttribute('data-filter') || 'all';
-      applyFilter(filterVal);
-      
-      // Update URL
-      const newUrl = `${window.location.protocol}//${window.location.host}${window.location.pathname}?div=${filterVal}`;
-      window.history.pushState({ path: newUrl }, '', newUrl);
-    });
-  });
-
-  // Handle initial load from search params
-  window.addEventListener('DOMContentLoaded', () => {
+  function initFilterFromURL() {
     const params = new URLSearchParams(window.location.search);
     const divParam = params.get('div') || params.get('divisi') || 'all';
     
-    // Map Indonesian or legacy URL queries dynamically based on aliases from configuration data attribute
     let mappedParam = divParam;
     const filterTabsEl = document.getElementById('filter-tabs');
     const divisionsData = filterTabsEl?.getAttribute('data-divisions');
@@ -131,5 +111,22 @@ const divisionMap = new Map(divisions.map(d => [d.id, d]));
     }
     
     applyFilter(mappedParam);
+  }
+
+  // Handle click on tabs
+  tabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      const filterVal = tab.getAttribute('data-filter') || 'all';
+      applyFilter(filterVal);
+      
+      const newUrl = `${window.location.protocol}//${window.location.host}${window.location.pathname}?div=${filterVal}`;
+      window.history.pushState({ path: newUrl }, '', newUrl);
+    });
   });
+
+  // Handle browser back/forward navigation
+  window.addEventListener('popstate', initFilterFromURL);
+
+  // Initialize filter on module load
+  initFilterFromURL();
 </script>

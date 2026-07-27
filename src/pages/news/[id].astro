@@ -33,7 +33,7 @@ const { Content } = await render(item);
             </div>
           </div>
           
-          <button class="hover-bg-light" style="background-color: var(--bg-card); border: 1px solid var(--border-color); color: var(--text-primary); border-radius: 30px; padding: 8px 20px; font-size: 0.85rem; display: flex; align-items: center; gap: 8px; cursor: pointer;">
+          <button class="hover-bg-light share-btn" style="background-color: var(--bg-card); border: 1px solid var(--border-color); color: var(--text-primary); border-radius: 30px; padding: 8px 20px; font-size: 0.85rem; display: flex; align-items: center; gap: 8px; cursor: pointer;">
             <i class="fa-solid fa-share-nodes"></i> Share
           </button>
         </div>
@@ -50,7 +50,7 @@ const { Content } = await render(item);
           {/* Cover Image */}
           {images.length > 0 && (
             <div style="border-radius: 16px; overflow: hidden; width: 100%; border: 1px solid var(--border-color); box-shadow: var(--shadow-sm);">
-              <Image src={images[0]} alt={item.data.title} width={800} height={450} style="width: 100%; maxHeight: 500px; object-fit: cover; display: block;" />
+              <Image src={images[0]} alt={item.data.title} width={800} height={450} style="width: 100%; max-height: 500px; object-fit: cover; display: block;" />
             </div>
           )}
 
@@ -103,7 +103,7 @@ const { Content } = await render(item);
             </div>
           </div>
 
-          <button class="btn btn-secondary" style="width: 100%; justify-content: center; padding: 12px; font-size: 0.95rem; border-radius: 8px; display: flex; gap: 8px; align-items: center;">
+          <button class="btn btn-secondary share-btn" style="width: 100%; justify-content: center; padding: 12px; font-size: 0.95rem; border-radius: 8px; display: flex; gap: 8px; align-items: center;">
             <i class="fa-solid fa-share-nodes"></i> Share News
           </button>
         </div>
@@ -120,3 +120,24 @@ const { Content } = await render(item);
     </style>
   </div>
 </Layout>
+
+<script>
+  const shareBtns = document.querySelectorAll('.share-btn');
+  shareBtns.forEach(btn => {
+    btn.addEventListener('click', async () => {
+      if (navigator.share) {
+        try {
+          await navigator.share({
+            title: document.title,
+            url: window.location.href,
+          });
+        } catch (err) {
+          // Ignore share cancellation
+        }
+      } else {
+        await navigator.clipboard.writeText(window.location.href);
+        alert('News link copied to clipboard!');
+      }
+    });
+  });
+</script>

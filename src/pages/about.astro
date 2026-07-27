@@ -16,36 +16,36 @@ import aboutData from '../data/about.json';
 
   <section class="section-padding" id="about">
     <div class="container">
-      <div class="about-overview-grid" style="margin-bottom: 80px;">
+      <div class="about-overview-grid mb-80">
         <div class="about-content">
-          <h2 style="font-size: 2rem; margin-bottom: 20px;">{aboutData.overviewTitle}</h2>
-          <p class="hero-desc" style="margin-bottom: 20px; max-width: 100%;">
+          <h2 class="overview-heading">{aboutData.overviewTitle}</h2>
+          <p class="hero-desc mb-20 max-w-full">
             {aboutData.overviewContent1}
           </p>
-          <p style="color: var(--text-secondary); margin-bottom: 20px;">
+          <p class="text-secondary mb-20">
             {aboutData.overviewContent2}
           </p>
         </div>
-        <div class="about-image" style="display: flex; align-items: center; justify-content: center;">
+        <div class="about-image flex-center">
           <img src={aboutData.overviewImage} alt="EIM Lab" />
         </div>
       </div>
 
-      <div class="about-visionmission-grid glass-panel" style="margin-bottom: 80px;">
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 40px;">
+      <div class="about-visionmission-grid glass-panel mb-80">
+        <div class="vm-grid">
           <div>
-            <h3 style="font-size: 1.8rem; margin-bottom: 16px; color: var(--accent-red); display: flex; align-items: center; gap: 8px;">
+            <h3 class="vision-heading">
               <i class="fa-solid fa-eye"></i> Vision
             </h3>
-            <p style="color: var(--text-secondary); font-size: 1rem; line-height: 1.6;">
+            <p class="vm-text">
               {aboutData.vision}
             </p>
           </div>
           <div>
-            <h3 style="font-size: 1.8rem; margin-bottom: 16px; color: var(--accent-cyan); display: flex; align-items: center; gap: 8px;">
+            <h3 class="mission-heading">
               <i class="fa-solid fa-bullseye"></i> Mission
             </h3>
-            <ul style="color: var(--text-secondary); font-size: 0.95rem; line-height: 1.6; padding-left: 20px;">
+            <ul class="mission-list">
               {aboutData.missions.map((mission) => (
                 <li style="margin-bottom: 8px;">{mission}</li>
               ))}
@@ -62,7 +62,7 @@ import aboutData from '../data/about.json';
 
         <div class="focus-grid">
           <div class="focus-card glass-panel">
-            <div class="focus-icon" style="color: var(--accent-red);">
+            <div class="focus-icon text-accent-red">
               <i class="fa-solid fa-handshake"></i>
             </div>
             <h3>Reliability</h3>
@@ -76,7 +76,7 @@ import aboutData from '../data/about.json';
             <p>Demonstrating high dedication to creating technology innovations that impact society.</p>
           </div>
           <div class="focus-card glass-panel">
-            <div class="focus-icon" style="color: var(--accent-red);">
+            <div class="focus-icon text-accent-red">
               <i class="fa-solid fa-people-arrows"></i>
             </div>
             <h3>Availability</h3>
@@ -94,3 +94,18 @@ import aboutData from '../data/about.json';
     </div>
   </section>
 </Layout>
+
+<style>
+  .mb-80 { margin-bottom: 80px; }
+  .mb-20 { margin-bottom: 20px; }
+  .max-w-full { max-width: 100%; }
+  .text-secondary { color: var(--text-secondary); }
+  .text-accent-red { color: var(--accent-red); }
+  .flex-center { display: flex; align-items: center; justify-content: center; }
+  .overview-heading { font-size: 2rem; margin-bottom: 20px; }
+  .vm-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 40px; }
+  .vision-heading { font-size: 1.8rem; margin-bottom: 16px; color: var(--accent-red); display: flex; align-items: center; gap: 8px; }
+  .mission-heading { font-size: 1.8rem; margin-bottom: 16px; color: var(--accent-cyan); display: flex; align-items: center; gap: 8px; }
+  .vm-text { color: var(--text-secondary); font-size: 1rem; line-height: 1.6; }
+  .mission-list { color: var(--text-secondary); font-size: 0.95rem; line-height: 1.6; padding-left: 20px; }
+</style>

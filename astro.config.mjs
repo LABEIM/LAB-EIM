@@ -6,9 +6,11 @@ import react from '@astrojs/react';
 
 // https://astro.build/config
 export default defineConfig({
-  site: process.env.VERCEL_URL
+  site: process.env.VERCEL_PROJECT_PRODUCTION_URL
     ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
-    : 'http://localhost:4321',
+    : process.env.VERCEL_URL
+      ? `https://${process.env.VERCEL_URL}`
+      : 'http://localhost:4321',
   adapter: vercel({
     webAnalytics: {
       enabled: true,

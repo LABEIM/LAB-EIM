@@ -9,6 +9,8 @@ export function initRegistrationScript() {
   const deadlineStr = container.getAttribute('data-deadline') || "2026-08-20T23:59:59";
   const extendedDeadlineStr = container.getAttribute('data-extended-deadline') || "";
   const medhumTriggerVal = container.getAttribute('data-medhum-val') || "Medhum";
+  const portfolioTriggerRaw = container.getAttribute('data-portfolio-trigger-vals') || medhumTriggerVal;
+  const portfolioTriggerList = portfolioTriggerRaw.split(',').map(s => s.trim().toLowerCase()).filter(Boolean);
 
   const OPEN_TIME = new Date(openDateStr).getTime();
   const DEADLINE_TIME = new Date(deadlineStr).getTime();
@@ -88,11 +90,13 @@ export function initRegistrationScript() {
   updateTimers();
   setInterval(updateTimers, 1000);
 
-  // 2. MedHum Portfolio Visibility Toggle
+  // 2. Portfolio Visibility Toggle
+  const requiresPortfolio = (val: string) => portfolioTriggerList.includes(val.trim().toLowerCase());
+
   const toggleMedhumPorto = () => {
     const val1 = div1Select?.value || '';
     const val2 = div2Select?.value || '';
-    if (val1 === medhumTriggerVal || val2 === medhumTriggerVal) {
+    if (requiresPortfolio(val1) || requiresPortfolio(val2)) {
       if (medhumPortoContainer) medhumPortoContainer.style.display = 'block';
       if (medhumPortoInput) medhumPortoInput.required = true;
     } else {
@@ -244,27 +248,94 @@ export function initRegistrationScript() {
   searchBtn?.addEventListener('click', executeNimSearch);
   searchInput?.addEventListener('keypress', (e) => { if (e.key === 'Enter') executeNimSearch(); });
 
-  // 6. Registration Form Submission Logic
+  // 6. Registration Form Draft Management & Floating Toast
   let isSubmitting = false;
   const DRAFT_KEY = 'eim_registration_draft';
 
+  const draftToast = document.getElementById('draft-toast');
+  const draftToastIcon = document.getElementById('draft-toast-icon');
+  const draftToastText = document.getElementById('draft-toast-text');
+  const draftRestoredBanner = document.getElementById('draft-restored-banner');
+  const draftRestoredTime = document.getElementById('draft-restored-time');
+  const clearDraftBtn = document.getElementById('clear-draft-btn');
+  const bannerClearDraftBtn = document.getElementById('banner-clear-draft-btn');
+  const clearDraftModal = document.getElementById('clear-draft-modal');
+  const cancelClearDraftBtn = document.getElementById('cancel-clear-draft-btn');
+  const confirmClearDraftBtn = document.getElementById('confirm-clear-draft-btn');
+
+  let toastTimeout: any = null;
+
+  const showDraftToast = (msg: string, isError: boolean = false) => {
+    if (!draftToast) return;
+    if (draftToastText) draftToastText.innerText = msg;
+    if (draftToastIcon) {
+      draftToastIcon.className = isError 
+        ? 'fa-solid fa-circle-exclamation draft-toast-icon' 
+        : 'fa-solid fa-cloud-arrow-up draft-toast-icon';
+      draftToastIcon.style.color = isError ? '#ff6b6b' : 'var(--accent-cyan)';
+    }
+    draftToast.style.display = 'flex';
+    draftToast.classList.remove('toast-hidden');
+    draftToast.classList.add('toast-visible');
+
+    if (toastTimeout) clearTimeout(toastTimeout);
+    toastTimeout = setTimeout(() => {
+      draftToast.classList.remove('toast-visible');
+      draftToast.classList.add('toast-hidden');
+      setTimeout(() => {
+        if (draftToast.classList.contains('toast-hidden')) {
+          draftToast.style.display = 'none';
+        }
+      }, 300);
+    }, 2500);
+  };
+
+  let saveDraftTimeout: any = null;
+
   const saveDraft = () => {
     if (!formElement) return;
+    const nama = (document.getElementById('nama_lengkap') as HTMLInputElement)?.value || '';
+    const nim = (document.getElementById('nim') as HTMLInputElement)?.value || '';
+    const angkatan = (document.getElementById('angkatan') as HTMLSelectElement)?.value || '';
+    const email = (document.getElementById('email') as HTMLInputElement)?.value || '';
+    const telp = (document.getElementById('nomor_telp') as HTMLInputElement)?.value || '';
+    const div1 = div1Select?.value || '';
+    const alasan1 = (document.getElementById('alasan_divisi_1') as HTMLTextAreaElement)?.value || '';
+    const div2 = div2Select?.value || '';
+    const alasan2 = (document.getElementById('alasan_divisi_2') as HTMLTextAreaElement)?.value || '';
+    const porto = medhumPortoInput?.value || '';
+    const pindah = (document.getElementById('bersedia_dipindah') as HTMLSelectElement)?.value || '';
+
+    const hasContent = !!(nama || nim || angkatan || email || telp || div1 || alasan1 || div2 || alasan2 || porto || pindah);
+
+    if (!hasContent) {
+      if (clearDraftBtn) clearDraftBtn.style.display = 'none';
+      return;
+    }
+
     const draft = {
-      nama_lengkap: (document.getElementById('nama_lengkap') as HTMLInputElement)?.value || '',
-      nim: (document.getElementById('nim') as HTMLInputElement)?.value || '',
-      angkatan: (document.getElementById('angkatan') as HTMLSelectElement)?.value || '',
-      email: (document.getElementById('email') as HTMLInputElement)?.value || '',
-      nomor_telp: (document.getElementById('nomor_telp') as HTMLInputElement)?.value || '',
-      divisi_1: div1Select?.value || '',
-      alasan_divisi_1: (document.getElementById('alasan_divisi_1') as HTMLTextAreaElement)?.value || '',
-      divisi_2: div2Select?.value || '',
-      alasan_divisi_2: (document.getElementById('alasan_divisi_2') as HTMLTextAreaElement)?.value || '',
-      portofolio_medhum: medhumPortoInput?.value || '',
-      bersedia_dipindah: (document.getElementById('bersedia_dipindah') as HTMLSelectElement)?.value || ''
+      nama_lengkap: nama,
+      nim,
+      angkatan,
+      email,
+      nomor_telp: telp,
+      divisi_1: div1,
+      alasan_divisi_1: alasan1,
+      divisi_2: div2,
+      alasan_divisi_2: alasan2,
+      portofolio_medhum: porto,
+      bersedia_dipindah: pindah,
+      savedAt: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
     };
+
     try {
       localStorage.setItem(DRAFT_KEY, JSON.stringify(draft));
+      if (clearDraftBtn) clearDraftBtn.style.display = 'inline-flex';
+      
+      if (saveDraftTimeout) clearTimeout(saveDraftTimeout);
+      saveDraftTimeout = setTimeout(() => {
+        showDraftToast(`Draft auto-saved at ${draft.savedAt}`);
+      }, 400);
     } catch (e) {}
   };
 
@@ -273,31 +344,63 @@ export function initRegistrationScript() {
       const saved = localStorage.getItem(DRAFT_KEY);
       if (!saved) return;
       const draft = JSON.parse(saved);
-      if (draft.nama_lengkap && document.getElementById('nama_lengkap')) (document.getElementById('nama_lengkap') as HTMLInputElement).value = draft.nama_lengkap;
-      if (draft.nim && document.getElementById('nim')) (document.getElementById('nim') as HTMLInputElement).value = draft.nim;
-      if (draft.angkatan && document.getElementById('angkatan')) (document.getElementById('angkatan') as HTMLSelectElement).value = draft.angkatan;
-      if (draft.email && document.getElementById('email')) (document.getElementById('email') as HTMLInputElement).value = draft.email;
-      if (draft.nomor_telp && document.getElementById('nomor_telp')) (document.getElementById('nomor_telp') as HTMLInputElement).value = draft.nomor_telp;
-      if (draft.divisi_1 && div1Select) div1Select.value = draft.divisi_1;
-      if (draft.alasan_divisi_1 && document.getElementById('alasan_divisi_1')) (document.getElementById('alasan_divisi_1') as HTMLTextAreaElement).value = draft.alasan_divisi_1;
-      if (draft.divisi_2 && div2Select) div2Select.value = draft.divisi_2;
-      if (draft.alasan_divisi_2 && document.getElementById('alasan_divisi_2')) (document.getElementById('alasan_divisi_2') as HTMLTextAreaElement).value = draft.alasan_divisi_2;
-      if (draft.portofolio_medhum && medhumPortoInput) medhumPortoInput.value = draft.portofolio_medhum;
-      if (draft.bersedia_dipindah && document.getElementById('bersedia_dipindah')) (document.getElementById('bersedia_dipindah') as HTMLSelectElement).value = draft.bersedia_dipindah;
+
+      let count = 0;
+      if (draft.nama_lengkap && document.getElementById('nama_lengkap')) { (document.getElementById('nama_lengkap') as HTMLInputElement).value = draft.nama_lengkap; count++; }
+      if (draft.nim && document.getElementById('nim')) { (document.getElementById('nim') as HTMLInputElement).value = draft.nim; count++; }
+      if (draft.angkatan && document.getElementById('angkatan')) { (document.getElementById('angkatan') as HTMLSelectElement).value = draft.angkatan; count++; }
+      if (draft.email && document.getElementById('email')) { (document.getElementById('email') as HTMLInputElement).value = draft.email; count++; }
+      if (draft.nomor_telp && document.getElementById('nomor_telp')) { (document.getElementById('nomor_telp') as HTMLInputElement).value = draft.nomor_telp; count++; }
+      if (draft.divisi_1 && div1Select) { div1Select.value = draft.divisi_1; count++; }
+      if (draft.alasan_divisi_1 && document.getElementById('alasan_divisi_1')) { (document.getElementById('alasan_divisi_1') as HTMLTextAreaElement).value = draft.alasan_divisi_1; count++; }
+      if (draft.divisi_2 && div2Select) { div2Select.value = draft.divisi_2; count++; }
+      if (draft.alasan_divisi_2 && document.getElementById('alasan_divisi_2')) { (document.getElementById('alasan_divisi_2') as HTMLTextAreaElement).value = draft.alasan_divisi_2; count++; }
+      if (draft.portofolio_medhum && medhumPortoInput) { medhumPortoInput.value = draft.portofolio_medhum; count++; }
+      if (draft.bersedia_dipindah && document.getElementById('bersedia_dipindah')) { (document.getElementById('bersedia_dipindah') as HTMLSelectElement).value = draft.bersedia_dipindah; count++; }
       
       toggleMedhumPorto();
+
+      if (count > 0) {
+        if (clearDraftBtn) clearDraftBtn.style.display = 'inline-flex';
+        if (draftRestoredBanner) {
+          draftRestoredBanner.style.display = 'flex';
+          if (draftRestoredTime) draftRestoredTime.innerText = draft.savedAt || 'recently';
+        }
+      }
     } catch (e) {}
   };
 
   const clearDraft = () => {
     try {
       localStorage.removeItem(DRAFT_KEY);
+      if (formElement) {
+        formElement.reset();
+        toggleMedhumPorto();
+      }
+      if (draftRestoredBanner) draftRestoredBanner.style.display = 'none';
+      if (clearDraftBtn) clearDraftBtn.style.display = 'none';
+      if (clearDraftModal) clearDraftModal.style.display = 'none';
+      showDraftToast('Draft cleared', false);
     } catch (e) {}
   };
 
   formElement?.addEventListener('input', saveDraft);
   formElement?.addEventListener('change', saveDraft);
   restoreDraft();
+
+  // Clear Draft Confirmation Modal Handlers
+  const openClearDraftModal = () => {
+    if (clearDraftModal) clearDraftModal.style.display = 'flex';
+  };
+
+  const closeClearDraftModal = () => {
+    if (clearDraftModal) clearDraftModal.style.display = 'none';
+  };
+
+  clearDraftBtn?.addEventListener('click', openClearDraftModal);
+  bannerClearDraftBtn?.addEventListener('click', openClearDraftModal);
+  cancelClearDraftBtn?.addEventListener('click', closeClearDraftModal);
+  confirmClearDraftBtn?.addEventListener('click', clearDraft);
 
   // Modal element references & progress management helpers
   const progressModal = document.getElementById('registration-progress-modal') as HTMLElement | null;
@@ -309,6 +412,17 @@ export function initRegistrationScript() {
   const progressBar = document.getElementById('submit-progress-bar') as HTMLElement | null;
   const modalActions = document.getElementById('progress-modal-actions') as HTMLElement | null;
   const modalCloseBtn = document.getElementById('modal-close-btn') as HTMLButtonElement | null;
+
+  // Teleport fixed overlays to document.body so position: fixed covers full browser viewport
+  if (clearDraftModal && clearDraftModal.parentElement !== document.body) {
+    document.body.appendChild(clearDraftModal);
+  }
+  if (draftToast && draftToast.parentElement !== document.body) {
+    document.body.appendChild(draftToast);
+  }
+  if (progressModal && progressModal.parentElement !== document.body) {
+    document.body.appendChild(progressModal);
+  }
 
   const updateModalStage = (activeStage: number, percent: number, detailText: string) => {
     if (!progressModal) return;
@@ -352,6 +466,11 @@ export function initRegistrationScript() {
 
   const showModalSuccess = (isRevision: boolean) => {
     if (!progressModal) return;
+    try {
+      localStorage.removeItem(DRAFT_KEY);
+      if (draftRestoredBanner) draftRestoredBanner.style.display = 'none';
+      if (clearDraftBtn) clearDraftBtn.style.display = 'none';
+    } catch (e) {}
     updateModalStage(5, 100, isRevision ? 'Revision completed successfully!' : 'Registration completed successfully!');
     if (modalIcon) modalIcon.innerHTML = `<i class="fa-solid fa-circle-check" style="color: #20c997; font-size: 3rem;"></i>`;
     if (modalTitle) modalTitle.innerText = isRevision ? 'Revision Submitted!' : 'Registration Successful!';
@@ -443,8 +562,8 @@ export function initRegistrationScript() {
       return;
     }
 
-    if ((divisi_1 === medhumTriggerVal || divisi_2 === medhumTriggerVal) && !portofolio_medhum) {
-      const msg = 'Please provide your MedHum portfolio URL link!';
+    if ((requiresPortfolio(divisi_1) || requiresPortfolio(divisi_2)) && !portofolio_medhum) {
+      const msg = 'Please provide your portfolio URL link!';
       if (alertError) { alertError.innerText = msg; alertError.style.display = 'block'; }
       showModalError(msg, 1);
       resetState();
@@ -453,6 +572,12 @@ export function initRegistrationScript() {
 
     // Validate file sizes
     let totalBytes = 0;
+    const getFileInputMaxMb = (fileInput: HTMLInputElement | null, defaultMax: number): number => {
+      if (!fileInput) return defaultMax;
+      const attr = fileInput.getAttribute('data-max-mb');
+      return attr ? parseFloat(attr) : defaultMax;
+    };
+
     const validateFileInput = (fileInput: HTMLInputElement, label: string, maxMb: number): string | null => {
       if (!fileInput || !fileInput.files || fileInput.files.length === 0) return null;
       const file = fileInput.files[0];
@@ -473,16 +598,17 @@ export function initRegistrationScript() {
     };
 
     const docChecks = [
-      { input: fileKsmInput, label: 'KSM', max: 1.0 },
-      { input: fileKhsInput, label: 'KHS', max: 1.0 },
-      { input: fileMlInput, label: 'Motivation Letter (ML)', max: 1.0 },
-      { input: fileCvInput, label: 'Curriculum Vitae (CV)', max: 1.5 },
-      { input: filePiInput, label: 'Pakta Integritas (PI)', max: 1.0 }
+      { input: fileKsmInput, label: 'KSM', defaultMax: 3.0 },
+      { input: fileKhsInput, label: 'KHS', defaultMax: 3.0 },
+      { input: fileMlInput, label: 'Motivation Letter (ML)', defaultMax: 3.0 },
+      { input: fileCvInput, label: 'Curriculum Vitae (CV)', defaultMax: 5.0 },
+      { input: filePiInput, label: 'Pakta Integritas (PI)', defaultMax: 3.0 }
     ];
 
     for (const item of docChecks) {
       if (item.input) {
-        const err = validateFileInput(item.input, item.label, item.max);
+        const maxMb = getFileInputMaxMb(item.input, item.defaultMax);
+        const err = validateFileInput(item.input, item.label, maxMb);
         if (err) {
           if (alertError) { alertError.innerText = err; alertError.style.display = 'block'; }
           showModalError(err, 1);
@@ -492,9 +618,11 @@ export function initRegistrationScript() {
       }
     }
 
-    const MAX_TOTAL_BYTES = 6.0 * 1024 * 1024;
+    const formMaxTotalAttr = form?.getAttribute('data-max-total-mb');
+    const maxTotalMb = formMaxTotalAttr ? parseFloat(formMaxTotalAttr) : 15.0;
+    const MAX_TOTAL_BYTES = maxTotalMb * 1024 * 1024;
     if (totalBytes > MAX_TOTAL_BYTES) {
-      const err = `Total size of all 5 uploaded files (${(totalBytes / (1024 * 1024)).toFixed(2)}MB) exceeds 6.0MB limit. Please compress your files.`;
+      const err = `Total size of all uploaded files (${(totalBytes / (1024 * 1024)).toFixed(2)}MB) exceeds ${maxTotalMb}MB limit. Please compress your files.`;
       if (alertError) { alertError.innerText = err; alertError.style.display = 'block'; }
       showModalError(err, 1);
       resetState();

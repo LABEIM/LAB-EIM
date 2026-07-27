@@ -43,6 +43,17 @@ const { initialStage, registrationConfig, extendedCfg, studentYears, docLimits, 
     <p style="color: var(--text-secondary);">{registrationConfig.subtitle}</p>
   </div>
 
+  {/* Draft Restored Banner */}
+  <div id="draft-restored-banner" class="draft-restored-banner" style="display: none;">
+    <div class="draft-restored-content">
+      <i class="fa-solid fa-floppy-disk draft-icon"></i>
+      <span>Form draft restored from local storage (<strong id="draft-restored-time"></strong>).</span>
+    </div>
+    <button type="button" id="banner-clear-draft-btn" class="btn-clear-draft-link">
+      <i class="fa-solid fa-trash-can"></i> Clear Draft
+    </button>
+  </div>
+
   {/* Status Alerts */}
   <div id="status-alert-error" class="status-alert-error"></div>
   <div id="status-alert-success" class="status-alert-success"></div>
@@ -68,7 +79,7 @@ const { initialStage, registrationConfig, extendedCfg, studentYears, docLimits, 
   </div>
 
   {/* Registration Form */}
-  <form id="pendaftaran-form">
+  <form id="pendaftaran-form" data-max-total-mb={docLimits.totalMb || 15}>
     {/* Anti-bot Honeypot Field (Hidden from legitimate users) */}
     <input type="text" id="website_hp" name="website_hp" style="display:none !important;" tabindex="-1" autocomplete="off" aria-hidden="true" />
 
@@ -145,13 +156,13 @@ const { initialStage, registrationConfig, extendedCfg, studentYears, docLimits, 
       <textarea class="form-control" id="alasan_divisi_2" rows="3" placeholder="Explain your motivation and skill background for Division 2..." required></textarea>
     </div>
 
-    {/* Dynamic Portfolio MedHum Link */}
+    {/* Dynamic Portfolio Link */}
     <div class="form-group medhum-porto-container" id="container-medhum-porto">
       <label for="portofolio_medhum" class="medhum-porto-label">
-        <i class="fa-solid fa-palette" style="margin-right: 6px;"></i> MedHum Portfolio Link <span class="required-asterisk">*</span>
+        <i class="fa-solid fa-palette" style="margin-right: 6px;"></i> Division Portfolio Link <span class="required-asterisk">*</span>
       </label>
       <input type="url" class="form-control" id="portofolio_medhum" placeholder="https://behance.net/username or https://drive.google.com/..." />
-      <small style="color: var(--text-secondary); display: block; margin-top: 5px;">Since you selected MedHum, please provide a public URL link to your design / video portfolio.</small>
+      <small style="color: var(--text-secondary); display: block; margin-top: 5px;">Since you selected a division that requires a portfolio, please provide a public URL link to your design, work, or project portfolio.</small>
     </div>
 
     <div class="form-group" style="margin-top: 15px;">
@@ -171,22 +182,22 @@ const { initialStage, registrationConfig, extendedCfg, studentYears, docLimits, 
     <div class="form-row">
       <div class="form-group">
         <label for="file_ksm">Kartu Studi Mahasiswa (KSM) <span style="font-size: 0.8rem; color: var(--text-secondary);">(Max {docLimits.ksmMb}MB)</span> <span class="required-asterisk">*</span></label>
-        <input type="file" class="form-control" id="file_ksm" accept=".pdf,.png,.jpg,.jpeg" required />
+        <input type="file" class="form-control" id="file_ksm" accept=".pdf,.png,.jpg,.jpeg" data-max-mb={docLimits.ksmMb} required />
       </div>
       <div class="form-group">
         <label for="file_khs">Kartu Hasil Studi (KHS) <span style="font-size: 0.8rem; color: var(--text-secondary);">(Max {docLimits.khsMb}MB)</span> <span class="required-asterisk">*</span></label>
-        <input type="file" class="form-control" id="file_khs" accept=".pdf,.png,.jpg,.jpeg" required />
+        <input type="file" class="form-control" id="file_khs" accept=".pdf,.png,.jpg,.jpeg" data-max-mb={docLimits.khsMb} required />
       </div>
     </div>
 
     <div class="form-row" style="margin-top: 15px;">
       <div class="form-group">
         <label for="file_ml">Motivation Letter (ML) <span style="font-size: 0.8rem; color: var(--text-secondary);">(Max {docLimits.mlMb}MB)</span> <span class="required-asterisk">*</span></label>
-        <input type="file" class="form-control" id="file_ml" accept=".pdf,.png,.jpg,.jpeg" required />
+        <input type="file" class="form-control" id="file_ml" accept=".pdf,.png,.jpg,.jpeg" data-max-mb={docLimits.mlMb} required />
       </div>
       <div class="form-group">
         <label for="file_cv">Curriculum Vitae (CV) <span style="font-size: 0.8rem; color: var(--text-secondary);">(Max {docLimits.cvMb}MB)</span> <span class="required-asterisk">*</span></label>
-        <input type="file" class="form-control" id="file_cv" accept=".pdf,.png,.jpg,.jpeg" required />
+        <input type="file" class="form-control" id="file_cv" accept=".pdf,.png,.jpg,.jpeg" data-max-mb={docLimits.cvMb} required />
       </div>
     </div>
 
@@ -200,7 +211,7 @@ const { initialStage, registrationConfig, extendedCfg, studentYears, docLimits, 
           </a>
         )}
       </div>
-      <input type="file" class="form-control" id="file_pi" accept=".pdf,.png,.jpg,.jpeg" required />
+      <input type="file" class="form-control" id="file_pi" accept=".pdf,.png,.jpg,.jpeg" data-max-mb={docLimits.piMb} required />
       <small style="color: var(--text-secondary); display: block; margin-top: 5px;">
         Upload signed Integrity Pact document.
         {piTemplateUrl && (
@@ -213,8 +224,36 @@ const { initialStage, registrationConfig, extendedCfg, studentYears, docLimits, 
       <button type="submit" id="submit-btn" class="btn btn-primary btn-submit-registration">
         <span id="btn-text">Submit Registration <i class="fa-solid fa-paper-plane" style="margin-left: 8px;"></i></span>
       </button>
+      <button type="button" id="clear-draft-btn" class="btn btn-clear-draft" style="display: none;">
+        <i class="fa-solid fa-rotate-left"></i> Clear Draft
+      </button>
     </div>
   </form>
+
+  <!-- Floating Draft Auto-Save Toast Notification -->
+  <div id="draft-toast" class="draft-toast-container" style="display: none;">
+    <i id="draft-toast-icon" class="fa-solid fa-cloud-arrow-up draft-toast-icon"></i>
+    <span id="draft-toast-text">Draft auto-saved</span>
+  </div>
+
+  <!-- Clear Draft Confirmation Modal Overlay -->
+  <div id="clear-draft-modal" class="progress-modal-overlay" style="display: none;">
+    <div class="progress-modal-card" style="max-width: 420px; text-align: center;">
+      <div class="progress-modal-header">
+        <div class="progress-modal-icon-wrapper" style="color: #e11d48; font-size: 2.8rem; margin-bottom: 12px;">
+          <i class="fa-solid fa-triangle-exclamation"></i>
+        </div>
+        <h3 class="progress-modal-title">Clear Registration Draft?</h3>
+        <p class="progress-modal-subtitle" style="margin-top: 8px;">
+          All saved text responses in this form will be permanently deleted and reset.
+        </p>
+      </div>
+      <div style="display: flex; gap: 12px; justify-content: center; margin-top: 24px;">
+        <button type="button" id="cancel-clear-draft-btn" class="btn btn-modal-cancel">Cancel</button>
+        <button type="button" id="confirm-clear-draft-btn" class="btn btn-modal-confirm">Clear Draft</button>
+      </div>
+    </div>
+  </div>
 
   <!-- Submission Progress Modal Overlay -->
   <div id="registration-progress-modal" class="progress-modal-overlay" style="display: none;">
@@ -267,31 +306,31 @@ const { initialStage, registrationConfig, extendedCfg, studentYears, docLimits, 
 </div>
 
 <style>
-  .progress-modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background: rgba(10, 14, 23, 0.85);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-    z-index: 9999;
+  :global(.progress-modal-overlay) {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    background: rgba(14, 85, 95, 0.4) !important;
+    backdrop-filter: blur(8px) !important;
+    -webkit-backdrop-filter: blur(8px) !important;
+    z-index: 99999 !important;
     display: flex;
     align-items: center;
     justify-content: center;
     padding: 20px;
   }
 
-  .progress-modal-card {
-    background: rgba(22, 31, 49, 0.95);
-    border: 1px solid rgba(0, 240, 255, 0.3);
-    border-radius: 16px;
-    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6), 0 0 30px rgba(0, 240, 255, 0.15);
+  :global(.progress-modal-card) {
+    background: #ffffff !important;
+    border: 1px solid rgba(14, 85, 95, 0.18) !important;
+    border-radius: 16px !important;
+    box-shadow: 0 20px 50px rgba(14, 85, 95, 0.2) !important;
     width: 100%;
     max-width: 480px;
     padding: 28px 24px;
-    color: var(--text-primary, #ffffff);
+    color: var(--text-primary, #1a202c) !important;
     animation: modalSlideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   }
 
@@ -306,27 +345,62 @@ const { initialStage, registrationConfig, extendedCfg, studentYears, docLimits, 
     }
   }
 
-  .progress-modal-header {
+  :global(.progress-modal-header) {
     text-align: center;
     margin-bottom: 20px;
   }
 
-  .progress-modal-icon-wrapper {
+  :global(.progress-modal-icon-wrapper) {
     font-size: 2.5rem;
     margin-bottom: 12px;
   }
 
-  .progress-modal-title {
+  :global(.progress-modal-title) {
     font-size: 1.35rem;
     font-weight: 700;
     margin-bottom: 6px;
-    color: var(--text-primary, #ffffff);
+    color: var(--brand-dark-azure, #0E555F) !important;
   }
 
-  .progress-modal-subtitle {
-    font-size: 0.85rem;
-    color: var(--text-secondary, #94a3b8);
-    line-height: 1.4;
+  :global(.progress-modal-subtitle) {
+    font-size: 0.875rem;
+    color: var(--text-secondary, #4a5568) !important;
+    line-height: 1.5;
+  }
+
+  :global(.btn-modal-cancel) {
+    min-width: 120px;
+    background: #f1f5f9 !important;
+    border: 1px solid #cbd5e1 !important;
+    color: #475569 !important;
+    font-weight: 500;
+    border-radius: 10px;
+    padding: 10px 18px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  :global(.btn-modal-cancel:hover) {
+    background: #e2e8f0 !important;
+    color: #1e293b !important;
+  }
+
+  :global(.btn-modal-confirm) {
+    min-width: 140px;
+    background: #e11d48 !important;
+    border: 1px solid #e11d48 !important;
+    color: #ffffff !important;
+    font-weight: 600;
+    border-radius: 10px;
+    padding: 10px 18px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 12px rgba(225, 29, 72, 0.25);
+  }
+
+  :global(.btn-modal-confirm:hover) {
+    background: #be123c !important;
+    border-color: #be123c !important;
   }
 
   .progress-bar-container {
@@ -342,7 +416,7 @@ const { initialStage, registrationConfig, extendedCfg, studentYears, docLimits, 
   }
 
   .progress-detail-text {
-    color: var(--accent-cyan, #00f0ff);
+    color: var(--brand-dark-azure, #0E555F);
     font-weight: 500;
     max-width: 78%;
     white-space: nowrap;
@@ -353,9 +427,9 @@ const { initialStage, registrationConfig, extendedCfg, studentYears, docLimits, 
   .progress-percent-badge {
     font-weight: 700;
     font-size: 0.9rem;
-    color: #ffffff;
-    background: rgba(0, 240, 255, 0.15);
-    border: 1px solid rgba(0, 240, 255, 0.3);
+    color: var(--brand-dark-azure, #0E555F);
+    background: rgba(17, 180, 189, 0.12);
+    border: 1px solid rgba(17, 180, 189, 0.3);
     padding: 2px 8px;
     border-radius: 12px;
   }
@@ -363,14 +437,14 @@ const { initialStage, registrationConfig, extendedCfg, studentYears, docLimits, 
   .progress-bar-track {
     width: 100%;
     height: 10px;
-    background: rgba(255, 255, 255, 0.08);
+    background: rgba(14, 85, 95, 0.08);
     border-radius: 99px;
     overflow: hidden;
   }
 
   .progress-bar-fill {
     height: 100%;
-    background: linear-gradient(90deg, var(--accent-cyan, #00f0ff) 0%, #20c997 100%);
+    background: linear-gradient(90deg, var(--brand-dark-azure, #0E555F) 0%, var(--brand-cyan, #11B4BD) 100%);
     border-radius: 99px;
     transition: width 0.25s ease-out;
   }
@@ -379,10 +453,10 @@ const { initialStage, registrationConfig, extendedCfg, studentYears, docLimits, 
     display: flex;
     flex-direction: column;
     gap: 10px;
-    background: rgba(255, 255, 255, 0.03);
+    background: rgba(14, 85, 95, 0.03);
     border-radius: 10px;
     padding: 14px 16px;
-    border: 1px solid rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(14, 85, 95, 0.08);
   }
 
   .progress-stage-item {
@@ -398,12 +472,12 @@ const { initialStage, registrationConfig, extendedCfg, studentYears, docLimits, 
   }
 
   .progress-stage-item.stage-active {
-    color: var(--accent-cyan, #00f0ff);
+    color: var(--brand-dark-azure, #0E555F);
     font-weight: 600;
   }
 
   .progress-stage-item.stage-completed {
-    color: #20c997;
+    color: var(--brand-cyan, #11B4BD);
     font-weight: 500;
   }
 
@@ -423,5 +497,131 @@ const { initialStage, registrationConfig, extendedCfg, studentYears, docLimits, 
   .progress-modal-actions {
     margin-top: 20px;
     text-align: center;
+  }
+
+  /* Draft Restored Banner */
+  .draft-restored-banner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    background: rgba(17, 180, 189, 0.08);
+    border: 1px solid rgba(17, 180, 189, 0.25);
+    border-radius: 12px;
+    padding: 12px 18px;
+    margin-bottom: 24px;
+    color: var(--brand-dark-azure, #0E555F);
+    font-size: 0.875rem;
+    animation: fadeInBanner 0.3s ease-out;
+  }
+
+  .draft-restored-content {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .draft-icon {
+    color: var(--brand-cyan, #11B4BD);
+    font-size: 1.1rem;
+  }
+
+  .btn-clear-draft-link {
+    background: transparent;
+    border: none;
+    color: #e11d48;
+    font-size: 0.825rem;
+    font-weight: 500;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 8px;
+    border-radius: 6px;
+    transition: background 0.2s ease, color 0.2s ease;
+    white-space: nowrap;
+  }
+
+  .btn-clear-draft-link:hover {
+    background: rgba(225, 29, 72, 0.1);
+    color: #be123c;
+  }
+
+  /* Inline Clear Draft Button */
+  .form-actions-submit {
+    display: flex;
+    gap: 14px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  .btn-clear-draft {
+    background: rgba(14, 85, 95, 0.05);
+    border: 1px solid rgba(14, 85, 95, 0.15);
+    color: var(--brand-gray-azure, #4E8A92);
+    padding: 12px 20px;
+    border-radius: 10px;
+    font-weight: 500;
+    font-size: 0.9rem;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.2s ease;
+  }
+
+  .btn-clear-draft:hover {
+    background: rgba(225, 29, 72, 0.08);
+    border-color: rgba(225, 29, 72, 0.3);
+    color: #e11d48;
+  }
+
+  /* Floating Draft Toast Notification */
+  :global(.draft-toast-container) {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    z-index: 99990;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--brand-dark-azure, #0E555F) !important;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--brand-cyan, #11B4BD) !important;
+    box-shadow: 0 10px 25px rgba(14, 85, 95, 0.25) !important;
+    border-radius: 30px;
+    padding: 10px 20px;
+    color: #ffffff !important;
+    font-size: 0.85rem;
+    font-weight: 500;
+    pointer-events: none;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+  }
+
+  :global(.draft-toast-container.toast-visible) {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  :global(.draft-toast-container.toast-hidden) {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+
+  :global(.draft-toast-icon) {
+    color: var(--brand-cyan, #11B4BD) !important;
+    font-size: 1rem;
+  }
+
+  @keyframes fadeInBanner {
+    from {
+      opacity: 0;
+      transform: translateY(-8px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
 </style>

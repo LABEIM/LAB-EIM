@@ -1,5 +1,5 @@
 {
-  "status": "closed",
+  "status": "open",
   "upcomingStartDate": "2026-08-01T00:00:00",
   "openDate": "2026-08-13T00:00:00",
   "deadline": "2026-08-20T23:59:59",
@@ -17,19 +17,20 @@
   "heroTag": "Assistant Recruitment",
   "heroTitle": "Assistant Lab Registration",
   "heroDescription": "Join us and become a part of EIM Research Lab. Develop your potential in IT infrastructure, networks, and technology research.",
-  "closedMessage": "Sorry, the assistant registration form is currently closed.",
   "studentYears": [
     "2024",
     "2025"
   ],
+  "portfolioDivisionTriggerValues": "Medhum",
   "medhumDivisionValue": "Medhum",
   "piTemplateUrl": "https://bit.ly/Template-PI-EIM",
   "documentLimits": {
-    "ksmMb": 1,
-    "khsMb": 1,
-    "mlMb": 1,
-    "cvMb": 1.5,
-    "piMb": 1
+    "ksmMb": 3,
+    "khsMb": 3,
+    "mlMb": 3,
+    "cvMb": 5,
+    "piMb": 3,
+    "totalMb": 15
   },
   "upcomingConfig": {
     "title": "Recruitment Opening Soon!",

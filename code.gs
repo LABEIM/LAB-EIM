@@ -1,8 +1,18 @@
-const sheetName = 'Sheet1'
-const scriptProp = PropertiesService.getScriptProperties()
+const sheetName = 'Sheet1';
+const scriptProp = PropertiesService.getScriptProperties();
 
 // Fallback registration deadline (ISO format with timezone offset)
 const DEFAULT_DEADLINE_STR = '2026-08-23T23:59:59+07:00';
+
+// Allowed MIME types for uploaded documents (Security Whitelist)
+const ALLOWED_MIME_TYPES = [
+  'application/pdf',
+  'image/jpeg',
+  'image/png',
+  'image/webp',
+  'application/msword',
+  'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+];
 
 /**
   Pemetaan alias kolom: nama kolom di sheet (kustom) → kunci dataData internal
@@ -67,31 +77,36 @@ function isExpectedHeaderCovered(expectedHeader, headers) {
   return false;
 }
 
-function initialSetup () {
-  const activeSpreadsheet = SpreadsheetApp.getActiveSpreadsheet()
-  scriptProp.setProperty('key', activeSpreadsheet.getId())
+/**
+  Inisialisasi awal Script Properties untuk spreadsheet aktif.
+ */
+function initialSetup() {
+  const activeSpreadsheet = SpreadsheetApp.getActiveSpreadsheet();
+  scriptProp.setProperty('key', activeSpreadsheet.getId());
 }
 
 /**
-  Sanitasi string untuk mencegah Formula Injection pada Google Sheets
+  Sanitasi string untuk mencegah Formula Injection pada Google Sheets.
+  Mencegah karakter =, +, -, @, tab, carriage return di awal string dieksekusi sebagai rumus sheet.
  */
 function sanitizeSheetValue(val) {
   if (val === null || val === undefined) return '';
-  if (typeof val !== 'string') return val;
-  const trimmed = val.trim();
+  const strVal = String(val);
+  const trimmed = strVal.trim();
   if (/^[=+@\-\t\r]/.test(trimmed)) {
-    return "'" + val;
+    return "'" + strVal;
   }
-  return val;
+  return strVal;
 }
 
 /**
-  Sanitasi HTML untuk mencegah HTML Injection / XSS pada email dan sheet
+  Sanitasi HTML untuk mencegah HTML Injection / XSS pada template email.
+  PENTING: Jangan gunakan ini saat menyimpan ke Google Sheets agar data pendaftar tidak korup dengan entitas HTML.
  */
 function escapeHtml(str) {
   if (str === null || str === undefined) return '';
-  if (typeof str !== 'string') return String(str);
-  return str
+  const s = String(str);
+  return s
     .replace(/&/g, '&amp;')
     .replace(/</g, '&lt;')
     .replace(/>/g, '&gt;')
@@ -100,7 +115,16 @@ function escapeHtml(str) {
 }
 
 /**
+  Validasi format email dasar
+ */
+function isValidEmail(email) {
+  if (!email || typeof email !== 'string') return false;
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
+}
+
+/**
   Mendapatkan atau membuat folder penyimpanan file pendaftaran di Google Drive
+  Otomatis menyimpan FOLDER_ID ke ScriptProperties agar eksekusi berikutnya jauh lebih cepat.
  */
 function getOrCreateTargetFolder() {
   const folderId = scriptProp.getProperty('FOLDER_ID');
@@ -108,37 +132,73 @@ function getOrCreateTargetFolder() {
     try {
       return DriveApp.getFolderById(folderId);
     } catch (e) {
-      // Fallback jika folder ID tidak valid
+      // Fallback jika folder ID tidak valid atau dihapus
     }
   }
 
   const folderName = 'EIM Recruitment Uploads';
   const folders = DriveApp.getFoldersByName(folderName);
+  let targetFolder;
   if (folders.hasNext()) {
-    return folders.next();
+    targetFolder = folders.next();
+  } else {
+    targetFolder = DriveApp.createFolder(folderName);
   }
-  return DriveApp.createFolder(folderName);
+
+  // Cache FOLDER_ID untuk meningkatkan kecepatan request berikutnya
+  try {
+    scriptProp.setProperty('FOLDER_ID', targetFolder.getId());
+  } catch (err) {}
+
+  return targetFolder;
 }
 
 /**
-  Menyimpan file base64 ke Google Drive dan mengembalikan URL-nya (Akses privat ke pemilik Drive)
+  Menyimpan file base64 ke Google Drive secara aman (dengan pemeriksaan MIME type & ukuran)
  */
 function saveFileToDrive(fileData, targetFolder, prefix, nim) {
   if (!fileData || typeof fileData !== 'object' || !fileData.base64) {
-    return typeof fileData === 'string' ? fileData : '';
+    return typeof fileData === 'string' ? sanitizeSheetValue(fileData) : '';
   }
 
   try {
+    const mimeType = (fileData.mimeType || 'application/octet-stream').toLowerCase();
+    
+    // Keamanan: Validasi MIME Type sesuai whitelist
+    if (ALLOWED_MIME_TYPES.indexOf(mimeType) === -1) {
+      Logger.log(`Rejected file upload with unsafe MIME type: ${mimeType}`);
+      return '';
+    }
+
     const base64Clean = fileData.base64.replace(/^data:.*?;base64,/, '');
     const decodedBytes = Utilities.base64Decode(base64Clean);
-    const fileName = `${prefix}_${nim}_${fileData.fileName || 'file'}`;
-    const blob = Utilities.newBlob(decodedBytes, fileData.mimeType || 'application/octet-stream', fileName);
+
+    // Keamanan: Batasi ukuran file maksimum (10 MB per file)
+    const maxMb = parseInt(scriptProp.getProperty('MAX_FILE_SIZE_MB') || '10', 10);
+    if (decodedBytes.length > maxMb * 1024 * 1024) {
+      Logger.log(`Rejected file exceeding ${maxMb}MB limit for NIM ${nim}`);
+      return '';
+    }
+
+    // Bersihkan nama berkas dari karakter berisiko
+    const safeOriginalName = (fileData.fileName || 'file').replace(/[^a-zA-Z0-9.\-_]/g, '_');
+    const fileName = `${prefix}_${nim}_${safeOriginalName}`;
     
+    const blob = Utilities.newBlob(decodedBytes, mimeType, fileName);
     const file = targetFolder.createFile(blob);
-    // Catatan Privasi: setSharing(ANYONE_WITH_LINK) sengaja DIHAPUS agar berkas tetap privat bagi admin lab
+
+    // Akses Berkas: Berkas tetap privat secara default. Set Script Property MAKE_FILES_PUBLIC='true' jika ingin membuat link dapat dilihat siapapun yang memiliki link.
+    if (scriptProp.getProperty('MAKE_FILES_PUBLIC') === 'true') {
+      try {
+        file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
+      } catch (shareErr) {
+        Logger.log('Could not set file sharing to ANYONE_WITH_LINK: ' + shareErr.toString());
+      }
+    }
+
     return file.getUrl();
   } catch (err) {
-    Logger.log('Error saving file: ' + err.toString());
+    Logger.log('Error saving file to Drive: ' + err.toString());
     return '';
   }
 }
@@ -146,12 +206,16 @@ function saveFileToDrive(fileData, targetFolder, prefix, nim) {
 /**
   Mengirim email konfirmasi pendaftaran kepada pendaftar (Applicant)
  */
-/**
-  Mengirim email konfirmasi pendaftaran kepada pendaftar (Applicant)
- */
 function sendConfirmationEmail(data, isRevision) {
-  if (!data.Email) return;
+  if (!data.Email || !isValidEmail(data.Email)) return;
 
+  // Cek Kuota Harian Email Google Apps Script
+  if (MailApp.getRemainingDailyQuota() <= 0) {
+    Logger.log('Warning: Daily email quota exhausted. Skipping email confirmation.');
+    return;
+  }
+
+  // Sanitasi Khusus Tampilan HTML Email
   const safeNama = escapeHtml(data['Nama Lengkap']);
   const safeNim = escapeHtml(data['NIM']);
   const safeAngkatan = escapeHtml(data['Angkatan']);
@@ -212,10 +276,34 @@ function sendConfirmationEmail(data, isRevision) {
   }
 }
 
-function doPost (e) {
-  const lock = LockService.getScriptLock()
-  // Menunggu hingga 10 detik jika ada akses konkuren dari beberapa user sekaligus
-  lock.tryLock(10000)
+/**
+  Endpoint GET untuk pengujian status server (Health Check)
+ */
+function doGet(e) {
+  return ContentService
+    .createTextOutput(JSON.stringify({ 
+      'status': 'online', 
+      'message': 'EIM Research Lab Recruitment API is operational.' 
+    }))
+    .setMimeType(ContentService.MimeType.JSON);
+}
+
+/**
+  Endpoint Utama POST (Menerima Pendaftaran)
+ */
+function doPost(e) {
+  const lock = LockService.getScriptLock();
+  
+  // Keamanan: Proteksi Race Condition & Akses Konkuren
+  const acquired = lock.tryLock(10000);
+  if (!acquired) {
+    return ContentService
+      .createTextOutput(JSON.stringify({ 
+        'result': 'error', 
+        'error': 'Server is currently busy. Please submit again in a few moments.' 
+      }))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
 
   try {
     // 1. CEK DEADLINE
@@ -234,12 +322,12 @@ function doPost (e) {
 
     // Parser data pendaftaran
     const rawData = {};
-    if (e.parameter) {
+    if (e && e.parameter) {
       for (const k in e.parameter) {
         rawData[k] = e.parameter[k];
       }
     }
-    if (e.postData && e.postData.contents) {
+    if (e && e.postData && e.postData.contents) {
       try {
         const json = JSON.parse(e.postData.contents);
         for (const k in json) {
@@ -250,17 +338,17 @@ function doPost (e) {
       }
     }
 
-    // 2. CEK HONEYPOT (Anti-bot)
+    // 2. CEK HONEYPOT (Anti-bot Protection)
     if (rawData.website_hp && String(rawData.website_hp).trim() !== '') {
-      // Jika field honeypot terisi, kembalikan respons pura-pura sukses agar bot terkecoh tanpa memproses apapun
+      // Return respons sukses palsu untuk mengelabuhi bot spam tanpa menyimpan data apapun
       return ContentService
         .createTextOutput(JSON.stringify({ 'result': 'success', 'row': -1 }))
         .setMimeType(ContentService.MimeType.JSON);
     }
 
-    // 3. CEK SECRET AUTH TOKEN (Opsional / jika dikonfigurasi di Script Properties)
+    // 3. CEK SECRET AUTH TOKEN (Opsional / Jika dikonfigurasi di Script Properties)
     const expectedSecret = scriptProp.getProperty('SECRET_KEY');
-    if (expectedSecret && rawData.secret_token !== expectedSecret) {
+    if (expectedSecret && String(rawData.secret_token || '').trim() !== expectedSecret.trim()) {
       return ContentService
         .createTextOutput(JSON.stringify({ 
           'result': 'error', 
@@ -281,8 +369,6 @@ function doPost (e) {
     const targetSheetName = scriptProp.getProperty('SHEET_NAME') || sheetName;
     let sheet = doc.getSheetByName(targetSheetName);
     if (!sheet) {
-      // Jika sheet bernama targetSheetName tidak ada, gunakan sheet pertama yang ada
-      // (bukan membuat sheet baru 'Sheet1' yang tersembunyi dari user)
       const allSheets = doc.getSheets();
       sheet = allSheets.length > 0 ? allSheets[0] : doc.insertSheet(targetSheetName);
     }
@@ -310,7 +396,6 @@ function doPost (e) {
     ];
 
     // Baca header row yang dikonfigurasi (default: baris 1)
-    // Set Script Property HEADER_ROW=4 jika header sheet ada di baris 4
     const headerRow = Math.max(1, parseInt(scriptProp.getProperty('HEADER_ROW') || '1', 10));
 
     // Ambil header dari baris yang dikonfigurasi
@@ -319,18 +404,17 @@ function doPost (e) {
       headers = sheet.getRange(headerRow, 1, 1, sheet.getLastColumn()).getValues()[0];
     }
 
-    // Filter header kosong dari akhir array (bisa ada kolom kosong di kanan)
+    // Filter header kosong dari akhir array
     while (headers.length > 0 && String(headers[headers.length - 1]).trim() === '') {
       headers.pop();
     }
 
-    // Deteksi apakah header row benar-benar berisi header data (bukan teks metadata)
+    // Deteksi apakah header row benar-benar berisi header data
     const hasRealHeaders = headers.length > 0 && expectedHeaders.some(function(h) {
       return isExpectedHeaderCovered(h, headers);
     });
 
     if (!hasRealHeaders) {
-      // Header row kosong atau hanya berisi teks metadata — inisialisasi dengan header standar
       headers = expectedHeaders.slice();
       sheet.getRange(headerRow, 1, 1, headers.length).setValues([headers]);
       const headerRange = sheet.getRange(headerRow, 1, 1, headers.length);
@@ -339,8 +423,6 @@ function doPost (e) {
       headerRange.setHorizontalAlignment('center');
       if (headerRow === 1) sheet.setFrozenRows(1);
     } else {
-      // Sheet sudah ada header (mungkin custom + alias).
-      // Hanya tambahkan kolom expected yang BENAR-BENAR tidak ada (cek via alias juga).
       let headersModified = false;
       for (let ei = 0; ei < expectedHeaders.length; ei++) {
         if (!isExpectedHeaderCovered(expectedHeaders[ei], headers)) {
@@ -354,9 +436,8 @@ function doPost (e) {
     }
 
     // Hitung baris data berikutnya setelah baris header
-    // Gunakan NIM column sebagai patokan agar kolom custom dengan formula tidak mengacaukan hitungan
     let nextRow = headerRow + 1;
-    const nimColIdx1 = headers.indexOf('NIM') + 1; // 1-based
+    const nimColIdx1 = headers.indexOf('NIM') + 1;
     if (nimColIdx1 > 0 && sheet.getLastRow() > headerRow) {
       const dataRowCount = sheet.getLastRow() - headerRow;
       const nimColValues = sheet.getRange(headerRow + 1, nimColIdx1, dataRowCount, 1).getValues();
@@ -373,20 +454,23 @@ function doPost (e) {
     // Hitung nomor urut otomatis pendaftar (1, 2, 3, dst.)
     const autoNumber = nextRow - headerRow;
 
-    // Normalisasi kunci pencocokan dan sanitasi string
+    // Bersihkan teks (Sanitasi Formula Injection untuk Sheets, TANPA HTML escaping agar data sheet tidak korup)
+    const rawNama = String(rawData['Nama Lengkap'] || rawData['nama_lengkap'] || '');
+    const rawNim = String(rawData['NIM'] || rawData['nim'] || '');
+
     const dataData = {
       'No': autoNumber,
-      'Nama Lengkap': sanitizeSheetValue(escapeHtml(rawData['Nama Lengkap'] || rawData['nama_lengkap'] || '')),
-      'NIM': sanitizeSheetValue(escapeHtml(rawData['NIM'] || rawData['nim'] || '')),
-      'Angkatan': sanitizeSheetValue(escapeHtml(rawData['Angkatan'] || rawData['angkatan'] || '')),
-      'Email': sanitizeSheetValue(escapeHtml(rawData['Email'] || rawData['email'] || '')),
-      'Nomor Telepon': sanitizeSheetValue(escapeHtml(rawData['Nomor Telepon'] || rawData['nomor_telp'] || '')),
-      'Divisi 1': sanitizeSheetValue(escapeHtml(rawData['Divisi 1'] || rawData['divisi_1'] || '')),
-      'Alasan Divisi 1': sanitizeSheetValue(escapeHtml(rawData['Alasan Divisi 1'] || rawData['alasan_divisi_1'] || rawData['Alasan'] || '')),
-      'Divisi 2': sanitizeSheetValue(escapeHtml(rawData['Divisi 2'] || rawData['divisi_2'] || '')),
-      'Alasan Divisi 2': sanitizeSheetValue(escapeHtml(rawData['Alasan Divisi 2'] || rawData['alasan_divisi_2'] || rawData['Alasan'] || '')),
-      'Portofolio MedHum': sanitizeSheetValue(escapeHtml(rawData['Portofolio MedHum'] || rawData['portofolio_medhum'] || '')),
-      'Bersedia Dipindah Divisi': sanitizeSheetValue(escapeHtml(rawData['Bersedia Dipindah Divisi'] || rawData['bersedia_dipindah'] || '')),
+      'Nama Lengkap': sanitizeSheetValue(rawNama),
+      'NIM': sanitizeSheetValue(rawNim),
+      'Angkatan': sanitizeSheetValue(rawData['Angkatan'] || rawData['angkatan'] || ''),
+      'Email': sanitizeSheetValue(rawData['Email'] || rawData['email'] || ''),
+      'Nomor Telepon': sanitizeSheetValue(rawData['Nomor Telepon'] || rawData['nomor_telp'] || ''),
+      'Divisi 1': sanitizeSheetValue(rawData['Divisi 1'] || rawData['divisi_1'] || ''),
+      'Alasan Divisi 1': sanitizeSheetValue(rawData['Alasan Divisi 1'] || rawData['alasan_divisi_1'] || rawData['Alasan'] || ''),
+      'Divisi 2': sanitizeSheetValue(rawData['Divisi 2'] || rawData['divisi_2'] || ''),
+      'Alasan Divisi 2': sanitizeSheetValue(rawData['Alasan Divisi 2'] || rawData['alasan_divisi_2'] || rawData['Alasan'] || ''),
+      'Portofolio MedHum': sanitizeSheetValue(rawData['Portofolio MedHum'] || rawData['portofolio_medhum'] || ''),
+      'Bersedia Dipindah Divisi': sanitizeSheetValue(rawData['Bersedia Dipindah Divisi'] || rawData['bersedia_dipindah'] || ''),
       'Link KSM': '',
       'Link KHS': '',
       'Link ML': '',
@@ -420,81 +504,59 @@ function doPost (e) {
       dataData['Nama Lengkap'] = dataData['Nama Lengkap'] + ' [REVISI]';
     }
 
-    // 1. TULIS DAHULU DATA KE SHEET (index-based + alias-aware)
-    const initialRow = new Array(headers.length).fill('');
-    for (let i = 0; i < headers.length; i++) {
-      const header = headers[i];
-      const dataKey = getDataKeyForHeader(header); // resolve alias
-      if (dataKey === 'Timestamp') {
-        initialRow[i] = dataData['Timestamp'];
-      } else if (dataData[dataKey] !== undefined) {
-        initialRow[i] = dataData[dataKey];
-      }
-      // Kolom custom yang tidak dikenal (misal: No, Status, Keterangan) dibiarkan '' (tidak diisi)
-    }
-
-    sheet.getRange(nextRow, 1, 1, initialRow.length).setValues([initialRow]);
-
-    // Auto-resize kolom secara efisien (kecuali kolom 1 'No' agar ukurannya tetap ringkas)
-    try {
-      if (headers.length > 1) {
-        sheet.autoResizeColumns(2, headers.length - 1);
-      }
-      sheet.setColumnWidth(1, 50);
-    } catch (resizeErr) {}
-
-    // 2. PROSES UPLOAD BERKAS KE GOOGLE DRIVE SECARA AMAN DENGAN TRY-CATCH
+    // PROSES UPLOAD BERKAS KE GOOGLE DRIVE DI MEMORI DULU (Single Batch Operation)
     try {
       const targetFolder = getOrCreateTargetFolder();
-      const nim = dataData['NIM'] || 'pendaftar';
+      const nimStr = dataData['NIM'] || 'pendaftar';
 
       if (rawData.ksm || rawData.file_ksm) {
-        dataData['Link KSM'] = saveFileToDrive(rawData.ksm || rawData.file_ksm, targetFolder, 'KSM', nim);
+        dataData['Link KSM'] = saveFileToDrive(rawData.ksm || rawData.file_ksm, targetFolder, 'KSM', nimStr);
       } else if (rawData['Link KSM']) {
         dataData['Link KSM'] = sanitizeSheetValue(rawData['Link KSM']);
       }
 
       if (rawData.khs || rawData.file_khs) {
-        dataData['Link KHS'] = saveFileToDrive(rawData.khs || rawData.file_khs, targetFolder, 'KHS', nim);
+        dataData['Link KHS'] = saveFileToDrive(rawData.khs || rawData.file_khs, targetFolder, 'KHS', nimStr);
       } else if (rawData['Link KHS']) {
         dataData['Link KHS'] = sanitizeSheetValue(rawData['Link KHS']);
       }
 
       if (rawData.ml || rawData.file_ml) {
-        dataData['Link ML'] = saveFileToDrive(rawData.ml || rawData.file_ml, targetFolder, 'ML', nim);
+        dataData['Link ML'] = saveFileToDrive(rawData.ml || rawData.file_ml, targetFolder, 'ML', nimStr);
       } else if (rawData['Link ML']) {
         dataData['Link ML'] = sanitizeSheetValue(rawData['Link ML']);
       }
 
       if (rawData.cv || rawData.file_cv) {
-        dataData['Link CV'] = saveFileToDrive(rawData.cv || rawData.file_cv, targetFolder, 'CV', nim);
+        dataData['Link CV'] = saveFileToDrive(rawData.cv || rawData.file_cv, targetFolder, 'CV', nimStr);
       } else if (rawData['Link CV']) {
         dataData['Link CV'] = sanitizeSheetValue(rawData['Link CV']);
       }
 
       if (rawData.pi || rawData.file_pi) {
-        dataData['Link PI (Pakta Integritas)'] = saveFileToDrive(rawData.pi || rawData.file_pi, targetFolder, 'PI', nim);
+        dataData['Link PI (Pakta Integritas)'] = saveFileToDrive(rawData.pi || rawData.file_pi, targetFolder, 'PI', nimStr);
       } else if (rawData['Link PI (Pakta Integritas)']) {
         dataData['Link PI (Pakta Integritas)'] = sanitizeSheetValue(rawData['Link PI (Pakta Integritas)']);
       }
-
-      // Update baris di sheet dengan link berkas Google Drive (index-based + alias-aware)
-      const updatedRow = new Array(headers.length).fill('');
-      for (let i = 0; i < headers.length; i++) {
-        const header = headers[i];
-        const dataKey = getDataKeyForHeader(header); // resolve alias
-        if (dataKey === 'Timestamp') {
-          updatedRow[i] = dataData['Timestamp'];
-        } else if (dataData[dataKey] !== undefined) {
-          updatedRow[i] = dataData[dataKey];
-        }
-      }
-      sheet.getRange(nextRow, 1, 1, updatedRow.length).setValues([updatedRow]);
     } catch (fileErr) {
       Logger.log('Error processing drive files: ' + fileErr.toString());
     }
 
-    // 3. KIRIM EMAIL KONFIRMASI (hanya 1x setelah data & berkas siap, aman try-catch)
+    // TULIS 1X SECARA ATOMIK KE GOOGLE SHEET (Optimal Performance - Hemat API & Latensi)
+    const finalRow = new Array(headers.length).fill('');
+    for (let i = 0; i < headers.length; i++) {
+      const header = headers[i];
+      const dataKey = getDataKeyForHeader(header);
+      if (dataKey === 'Timestamp') {
+        finalRow[i] = dataData['Timestamp'];
+      } else if (dataData[dataKey] !== undefined) {
+        finalRow[i] = dataData[dataKey];
+      }
+    }
+
+    sheet.getRange(nextRow, 1, 1, finalRow.length).setValues([finalRow]);
+
+    // KIRIM EMAIL KONFIRMASI (Opsional / Terisolasi Try-Catch)
     try {
       sendConfirmationEmail(dataData, isRevision);
     } catch (emailErr) {
@@ -502,12 +564,20 @@ function doPost (e) {
     }
 
     return ContentService
-      .createTextOutput(JSON.stringify({ 'result': 'success', 'row': nextRow, 'isRevision': isRevision }))
+      .createTextOutput(JSON.stringify({ 
+        'result': 'success', 
+        'row': nextRow, 
+        'isRevision': isRevision 
+      }))
       .setMimeType(ContentService.MimeType.JSON);
 
   } catch (err) {
+    Logger.log('Critical error in doPost: ' + err.toString());
     return ContentService
-      .createTextOutput(JSON.stringify({ 'result': 'error', 'error': err.toString() }))
+      .createTextOutput(JSON.stringify({ 
+        'result': 'error', 
+        'error': 'An internal server error occurred processing the registration.' 
+      }))
       .setMimeType(ContentService.MimeType.JSON);
   } finally {
     lock.releaseLock();

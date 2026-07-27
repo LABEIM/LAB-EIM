@@ -18,11 +18,12 @@ import ContactPersonBox from '../components/registration/ContactPersonBox.astro'
 
 const studentYears = registrationConfig.studentYears || ["2022", "2023", "2024", "2025"];
 const docLimits = registrationConfig.documentLimits || {
-  ksmMb: 1,
-  khsMb: 1,
-  mlMb: 1,
-  cvMb: 1.5,
-  piMb: 1
+  ksmMb: 3,
+  khsMb: 3,
+  mlMb: 3,
+  cvMb: 5,
+  piMb: 3,
+  totalMb: 15
 };
 
 const piTemplateUrl = (registrationConfig as any).piTemplateUrl || "";
@@ -187,7 +188,8 @@ acceptedCandidates.forEach(candidate => {
         data-open-date={openDateStr}
         data-deadline={deadlineStr} 
         data-extended-deadline={extendedDeadlineStr}
-        data-medhum-val={registrationConfig.medhumDivisionValue || "Medhum"}
+        data-medhum-val={registrationConfig.portfolioDivisionTriggerValues || registrationConfig.medhumDivisionValue || "Medhum"}
+        data-portfolio-trigger-vals={registrationConfig.portfolioDivisionTriggerValues || registrationConfig.medhumDivisionValue || "Medhum"}
       >
         <ViewUpcoming initialStage={initialStage} upcomingCfg={upcomingCfg} docLimits={docLimits} studentYears={studentYears} piTemplateUrl={piTemplateUrl} />
         <ViewOpenForm initialStage={initialStage} registrationConfig={registrationConfig} extendedCfg={extendedCfg} studentYears={studentYears} docLimits={docLimits} divisions={divisions} piTemplateUrl={piTemplateUrl} />

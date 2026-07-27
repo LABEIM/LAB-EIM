@@ -163,12 +163,12 @@ export default config({
         heroTag: fields.text({ label: 'Hero Tag', defaultValue: 'Assistant Recruitment' }),
         heroTitle: fields.text({ label: 'Hero Title', defaultValue: 'Assistant Lab Registration' }),
         heroDescription: fields.text({ label: 'Hero Description', defaultValue: 'Join us and become a part of EIM Research Lab. Develop your potential in IT infrastructure, networks, and technology research.' }),
-        closedMessage: fields.text({ label: 'Closed Form Message', defaultValue: 'Sorry, the assistant registration form is currently closed.' }),
         studentYears: fields.array(fields.text({ label: 'Year' }), {
           label: 'Eligible Student Years',
           itemLabel: props => props.value,
         }),
-        medhumDivisionValue: fields.text({ label: 'MedHum Division Trigger Value', defaultValue: 'Medhum' }),
+        portfolioDivisionTriggerValues: fields.text({ label: 'Portfolio Division Trigger Values (Comma-separated, e.g. Medhum, Front-End)', defaultValue: 'Medhum' }),
+        medhumDivisionValue: fields.text({ label: 'MedHum Division Trigger Value (Legacy Fallback)', defaultValue: 'Medhum' }),
         piTemplateUrl: fields.text({ label: 'Pakta Integritas (PI) Template Link', defaultValue: 'https://bit.ly/Template-PI-EIM' }),
         documentLimits: fields.object({
           ksmMb: fields.number({ label: 'KSM File Limit (MB)', defaultValue: 2 }),
@@ -176,6 +176,7 @@ export default config({
           mlMb: fields.number({ label: 'Motivation Letter File Limit (MB)', defaultValue: 2 }),
           cvMb: fields.number({ label: 'CV File Limit (MB)', defaultValue: 3 }),
           piMb: fields.number({ label: 'Pakta Integritas File Limit (MB)', defaultValue: 2 }),
+          totalMb: fields.number({ label: 'Total Submission Batch File Limit (MB)', defaultValue: 15 }),
         }),
         upcomingConfig: fields.object({
           title: fields.text({ label: 'Upcoming Section Title', defaultValue: 'Recruitment Opening Soon!' }),

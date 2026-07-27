@@ -34,29 +34,31 @@ This document is a step-by-step guide for setting up, configuring, and operating
 1. In the Apps Script editor toolbar, select the function `initialSetup` from the dropdown and click **Run**.
    > *This stores the active Spreadsheet ID into Script Properties so the script knows where to append form data.*
 2. Go to **Project Settings ⚙️** (left sidebar menu) > **Script Properties**.
-3. Click **Add script property** and configure:
+3. Click **Add script property** and configure any desired options:
    * **`DEADLINE`**: `2026-08-23T23:59:59+07:00` *(ISO date string matching your registration close date)*
    * **`HEADER_ROW`**: `1` *(Optional. Set to `4` if your column header row starts at row 4, e.g. when top rows contain metadata or title)*
    * **`SHEET_NAME`**: `Sheet1` *(Optional. Name of the target worksheet tab, defaults to `Sheet1`)*
    * **`SECRET_KEY`**: `your_custom_passphrase` *(Optional signature key for security checks)*
-   * **`FOLDER_ID`**: *(Optional)* The ID of a Google Drive folder where uploaded applicant PDFs will be saved (found in `drive.google.com/drive/folders/FOLDER_ID`). If left blank, the script automatically creates a folder named `"EIM Recruitment Uploads"`.
+   * **`FOLDER_ID`**: *(Optional)* The ID of a Google Drive folder where uploaded applicant PDFs will be saved. If left blank, the script automatically creates a folder named `"EIM Recruitment Uploads"` and caches its ID.
+   * **`MAX_FILE_SIZE_MB`**: `10` *(Optional. Maximum file size in MB per uploaded document, defaults to `10`)*
+   * **`MAKE_FILES_PUBLIC`**: `false` *(Optional. Set to `true` if uploaded Drive links should be viewable by anyone with the link. Defaults to `false` for privacy)*
 
-### 3. Backend Line Reference & Key Customizations (`code.gs`)
+### 3. Backend Key Customizations (`code.gs`)
 If you need to customize email text, sheet tab names, or folder fallback logic:
 
 * **📊 Target Worksheet Tab Name** (`code.gs` Line 1):
   ```javascript
-  const sheetName = 'Sheet1' // Change to match your Google Sheet tab name (e.g. 'Pendaftar')
+  const sheetName = 'Sheet1'; // Change to match your Google Sheet tab name (e.g. 'Pendaftar')
   ```
-* **📁 Google Drive Folder Fallback** (`code.gs` Lines 42-58):
-  * Reads `FOLDER_ID` from Script Properties (Line 43).
-  * Automatically creates `"EIM Recruitment Uploads"` folder if `FOLDER_ID` is omitted (Line 52).
-* **📧 Confirmation Email Subject & Template** (`code.gs` Lines 86-141):
-  * Recipient Email (`data.Email`): Lines 87 & 134.
-  * Email Subject & HTML Styling: Lines 97–130. Sent automatically from the deploying Google account.
+* **📁 Google Drive Folder & Upload Logic** (`code.gs` Lines 128–204):
+  * Reads `FOLDER_ID` from Script Properties or automatically creates `"EIM Recruitment Uploads"` folder and caches the folder ID.
+  * Validates MIME types against `ALLOWED_MIME_TYPES` whitelist and enforces file size limits.
+* **📧 Confirmation Email Subject & Template** (`code.gs` Lines 206–275):
+  * Recipient Email validation & Daily Quota check.
+  * Email Subject & HTML Styling. Sent automatically from the deploying Google account.
 
 
-### 3. Deploy as Web App
+### 4. Deploy as Web App
 1. In the top right corner, click **Deploy > New deployment**.
 2. Click the gear icon ⚙️ next to *Select type* and select **Web app**.
 3. Fill out the deployment details:

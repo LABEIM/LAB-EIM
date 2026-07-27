@@ -3,12 +3,12 @@ import { config, fields, collection, singleton } from '@keystatic/core';
 export default config({
   storage: import.meta.env.PROD
     ? {
-        kind: 'github',
-        repo: 'LABEIM/LAB-EIM',
-      }
+      kind: 'github',
+      repo: 'LABEIM/LAB-EIM',
+    }
     : {
-        kind: 'local',
-      },
+      kind: 'local',
+    },
   collections: {
     news: collection({
       label: 'News',

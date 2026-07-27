@@ -99,31 +99,6 @@
         text-align: center;
     }
 
-    .form-row {
-        grid-template-columns: 1fr;
-        gap: 15px;
-    }
-
-    .registration-form-container {
-        padding: 20px 15px;
-    }
-
-    .registration-timer {
-        gap: 8px;
-    }
-
-    .timer-block {
-        padding: 8px 10px;
-        min-width: 60px;
-    }
-
-    .timer-block > div:first-child {
-        font-size: 1.2rem !important;
-    }
-
-    .timer-block > div:last-child {
-        font-size: 0.7rem !important;
-    }
 }
 
 /* This rule only applies to mobile screens (maximum width 767px) */

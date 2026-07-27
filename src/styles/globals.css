@@ -23,13 +23,10 @@
 @import "./base.css";
 @import "./components/navbar.css";
 @import "./components/footer.css";
-@import "./components/modal.css";
-@import "./components/toast.css";
 @import "./pages/hero.css";
 @import "./pages/about.css";
 @import "./pages/organization.css";
 @import "./pages/news.css";
-@import "./pages/study-group.css";
 @import "./pages/events.css";
 @import "./pages/registration.css";
 @import "./mobile.css";

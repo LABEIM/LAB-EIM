@@ -65,15 +65,21 @@ This project uses **Keystatic CMS** for content management, stored in Git and de
 2. Sign in to [Vercel](https://vercel.com/) and click **Add New** -> **Project**.
 3. Import your repository. Vercel will automatically detect Astro and apply the correct build settings.
 
-### 2. Setting up GitHub OAuth for Keystatic CMS
-To enable login on your live website (e.g., `https://your-site.vercel.app/keystatic`):
-1. In GitHub, go to your profile **Settings** -> **Developer Settings** -> **OAuth Apps** -> **New OAuth App**.
+### 2. Setting up a GitHub App for Keystatic CMS
+Keystatic CMS requires a **GitHub App** (not a standard OAuth App) to interact with your GitHub repository:
+1. In GitHub, go to **Settings** -> **Developer Settings** -> **GitHub Apps** -> **New GitHub App** ([Direct Link](https://github.com/settings/apps/new)).
 2. Fill out the registration form:
-   - **Application Name**: `EIM Lab CMS` (or any description)
+   - **GitHub App Name**: `EIM Lab CMS` (must be unique across GitHub)
    - **Homepage URL**: `https://your-site.vercel.app` (your Vercel deployment URL)
    - **Authorization callback URL**: `https://your-site.vercel.app/api/keystatic/github/oauth/callback`
-3. Click **Register application**.
+   - **Webhook**: Uncheck **Active** (Webhooks are not required)
+   - **Repository Permissions**:
+     - **Contents**: `Read & Write`
+     - **Pull Requests**: `Read & Write`
+3. Click **Create GitHub App**.
 4. Generate a **Client Secret** and copy both the **Client ID** and **Client Secret**.
+5. Copy the **App Slug** from the top of your GitHub App settings page (the last segment of your app's public GitHub URL, e.g. `eim-lab-cms`).
+6. In the left sidebar of your GitHub App settings, click **Install App** and click **Install** on your target repository (`LABEIM/LAB-EIM`).
 
 ### 3. Adding Vercel Environment Variables
 In your Vercel project dashboard, go to **Settings** -> **Environment Variables** and add the following variables:
@@ -82,8 +88,9 @@ In your Vercel project dashboard, go to **Settings** -> **Environment Variables*
 | --- | --- | --- |
 | `PUBLIC_GOOGLE_SHEET_SCRIPT_URL` | `https://script.google.com/macros/s/.../exec` | The Web App deployment URL of your Google Apps Script handler |
 | `PUBLIC_RECRUITMENT_SECRET` | `your_secret_passphrase_here` | *(Optional)* Secret signature key matching `SECRET_KEY` in Google Apps Script properties |
-| `KEYSTATIC_GITHUB_CLIENT_ID` | `Iv1.xxxxxxxxxxxx` | The Client ID from your GitHub OAuth App |
-| `KEYSTATIC_GITHUB_CLIENT_SECRET` | `xxxxxxxxxxxxxxxxxxxxxxxx` | The Client Secret from your GitHub OAuth App |
+| `KEYSTATIC_GITHUB_CLIENT_ID` | `Iv1.xxxxxxxxxxxx` | The Client ID from your GitHub App |
+| `KEYSTATIC_GITHUB_CLIENT_SECRET` | `xxxxxxxxxxxxxxxxxxxxxxxx` | The Client Secret from your GitHub App |
+| `PUBLIC_KEYSTATIC_GITHUB_APP_SLUG` | `eim-lab-cms` | The URL slug of your GitHub App (prevents 404 on login) |
 | `KEYSTATIC_SECRET` | `any_long_random_string` | A secret key used to sign the Keystatic session cookie |
 
 ### 4. Setting Script Properties in Google Apps Script

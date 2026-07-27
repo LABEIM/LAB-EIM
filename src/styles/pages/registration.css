@@ -149,6 +149,50 @@
   line-height: 1.8;
   list-style-type: none;
   padding-left: 0;
+  margin: 0;
+}
+
+.checklist-list li {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.checklist-list li:last-child {
+  margin-bottom: 0;
+}
+
+.checklist-download-btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 5px 28px;
+  font-size: 0.8rem;
+  line-height: 1.2;
+  background: rgba(0, 242, 254, 0.12);
+  color: var(--accent-cyan);
+  border: 1px solid rgba(0, 242, 254, 0.3);
+  border-radius: 6px;
+  text-decoration: none;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  text-align: center;
+}
+
+.checklist-download-btn i {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.checklist-download-btn:hover {
+  background: rgba(0, 242, 254, 0.22);
+  border-color: rgba(0, 242, 254, 0.5);
+  color: #ffffff;
 }
 
 /* NIM Search Lookup Box */

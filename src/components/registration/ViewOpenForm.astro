@@ -194,8 +194,9 @@ const { initialStage, registrationConfig, extendedCfg, studentYears, docLimits, 
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; flex-wrap: wrap; gap: 8px;">
         <label for="file_pi" style="margin-bottom: 0;">Pakta Integritas (PI) <span style="font-size: 0.8rem; color: var(--text-secondary);">(Max {docLimits.piMb}MB)</span> <span class="required-asterisk">*</span></label>
         {piTemplateUrl && (
-          <a href={piTemplateUrl} target="_blank" rel="noopener noreferrer" style="font-size: 0.825rem; color: var(--accent-cyan); text-decoration: none; display: inline-flex; align-items: center; gap: 6px; font-weight: 500;">
-            <i class="fa-solid fa-file-arrow-down"></i> Download Template PI
+          <a href={piTemplateUrl} target="_blank" rel="noopener noreferrer" style="font-size: 0.825rem; color: var(--accent-cyan); text-decoration: none; display: inline-flex; align-items: center; justify-content: center; gap: 6px; font-weight: 500; line-height: 1;">
+            <i class="fa-solid fa-file-arrow-down"></i>
+            <span>Download Template PI</span>
           </a>
         )}
       </div>

@@ -13,8 +13,12 @@
 .registration-form-container {
   max-width: 850px;
   margin: 0 auto;
-  padding: 40px 30px;
-  border-top: 3px solid var(--accent-cyan);
+  padding: 45px 35px;
+  background: #ffffff;
+  border: 1px solid rgba(14, 85, 95, 0.12);
+  border-top: 4px solid var(--brand-cyan, #11B4BD);
+  border-radius: var(--border-radius-md, 16px);
+  box-shadow: 0 12px 40px rgba(14, 85, 95, 0.08);
 }
 
 /* Extended Banner */
@@ -229,12 +233,106 @@
 /* Form Styles */
 .form-section-heading {
   margin-top: 35px;
-  margin-bottom: 15px;
-  font-size: 1.2rem;
-  font-weight: bold;
-  color: var(--accent-cyan);
-  border-bottom: 1px solid var(--border-color);
-  padding-bottom: 8px;
+  margin-bottom: 20px;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--brand-dark-azure, #0E555F);
+  border-bottom: 2px solid rgba(14, 85, 95, 0.1);
+  padding-bottom: 10px;
+  display: flex;
+  align-items: center;
+}
+
+.form-group {
+  margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.form-group label {
+  display: block;
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: var(--brand-dark-azure, #0E555F);
+  margin-bottom: 8px;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+@media (max-width: 640px) {
+  .form-row {
+    grid-template-columns: 1fr;
+    gap: 15px;
+  }
+}
+
+.form-control {
+  width: 100%;
+  padding: 12px 16px;
+  font-size: 0.95rem;
+  font-family: inherit;
+  color: var(--text-primary, #1a202c);
+  background-color: #f8fafc;
+  border: 1.5px solid rgba(14, 85, 95, 0.18);
+  border-radius: var(--border-radius-sm, 8px);
+  transition: all 0.2s ease;
+  outline: none;
+}
+
+.form-control:focus {
+  border-color: var(--brand-cyan, #11B4BD);
+  background-color: #ffffff;
+  box-shadow: 0 0 0 3px rgba(17, 180, 189, 0.15);
+}
+
+.form-control::placeholder {
+  color: #94a3b8;
+}
+
+select.form-control {
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%230E555F'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  background-size: 16px;
+  padding-right: 40px;
+  cursor: pointer;
+}
+
+textarea.form-control {
+  resize: vertical;
+  min-height: 95px;
+  line-height: 1.5;
+}
+
+input[type="file"].form-control {
+  padding: 9px 12px;
+  cursor: pointer;
+  font-size: 0.875rem;
+  background-color: #ffffff;
+}
+
+input[type="file"].form-control::file-selector-button {
+  background: rgba(14, 85, 95, 0.08);
+  border: 1px solid rgba(14, 85, 95, 0.2);
+  color: var(--brand-dark-azure, #0E555F);
+  font-weight: 600;
+  padding: 6px 14px;
+  border-radius: 6px;
+  margin-right: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+input[type="file"].form-control::file-selector-button:hover {
+  background: rgba(14, 85, 95, 0.15);
+  border-color: var(--brand-dark-azure, #0E555F);
 }
 
 .medhum-porto-container {
@@ -247,24 +345,42 @@
 }
 
 .medhum-porto-label {
-  color: #e879f9;
+  color: #a855f7;
   font-weight: bold;
 }
 
 .required-asterisk {
-  color: var(--accent-red);
+  color: #e11d48;
+  font-weight: 700;
+  margin-left: 2px;
 }
 
 .form-actions-submit {
+  display: flex;
   justify-content: center;
+  align-items: center;
+  gap: 15px;
   margin-top: 40px;
 }
 
 .btn-submit-registration {
   width: 100%;
   max-width: 320px;
-  padding: 14px;
-  font-size: 1.1rem;
+  padding: 14px 28px;
+  font-size: 1.05rem;
+  font-weight: 600;
+  background: linear-gradient(135deg, var(--brand-cyan, #11B4BD) 0%, var(--brand-dark-azure, #0E555F) 100%);
+  color: #ffffff;
+  border: none;
+  border-radius: var(--border-radius-sm, 8px);
+  box-shadow: 0 4px 14px rgba(17, 180, 189, 0.35);
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.btn-submit-registration:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(17, 180, 189, 0.45);
 }
 
 /* Info Cards */
@@ -648,31 +764,53 @@
   margin: 0 auto;
 }
 
+.registration-timer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 35px;
+}
+
+.timer-block {
+  background: rgba(14, 85, 95, 0.04);
+  border: 1px solid rgba(14, 85, 95, 0.12);
+  border-radius: 12px;
+  padding: 14px 20px;
+  min-width: 90px;
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(14, 85, 95, 0.04);
+}
+
 .reg-timer-mb {
   margin-bottom: 35px;
 }
 
 .reg-timer-days {
-  font-size: 1.5rem;
+  font-size: 1.6rem;
   font-weight: bold;
-  color: var(--accent-cyan);
+  color: var(--brand-cyan, #11B4BD);
 }
 
 .reg-timer-val {
-  font-size: 1.5rem;
+  font-size: 1.6rem;
   font-weight: bold;
-  color: var(--text-primary);
+  color: var(--brand-dark-azure, #0E555F);
 }
 
 .reg-timer-val-red {
-  font-size: 1.5rem;
+  font-size: 1.6rem;
   font-weight: bold;
-  color: var(--accent-red);
+  color: #e11d48;
 }
 
 .reg-timer-label {
-  font-size: 0.8rem;
-  color: var(--text-secondary);
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-muted, #718096);
+  margin-top: 2px;
 }
 
 .reg-checklist-notice {

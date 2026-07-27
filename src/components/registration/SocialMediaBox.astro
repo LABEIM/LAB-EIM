@@ -76,41 +76,41 @@ if (socials.youtube) {
 }
 ---
 
-<div class={`social-media-box ${compact ? 'compact' : ''}`}>
-  <div class="social-media-header">
-    <div class="social-media-badge">
+<div class={`connect-media-box ${compact ? 'compact' : ''}`}>
+  <div class="connect-media-header">
+    <div class="connect-media-badge">
       <i class="fa-solid fa-bullhorn" style="margin-right: 6px;"></i> Latest News Channel
     </div>
-    <h3 class="social-media-title">{title}</h3>
-    {subtitle && <p class="social-media-subtitle">{subtitle}</p>}
+    <h3 class="connect-media-title">{title}</h3>
+    {subtitle && <p class="connect-media-subtitle">{subtitle}</p>}
   </div>
 
-  <div class="social-cards-grid">
+  <div class="connect-cards-grid">
     {items.map((item) => (
       <a
         href={item.url}
         target="_blank"
         rel="noopener noreferrer"
-        class="social-card"
+        class="connect-card"
         style={`--social-color: ${item.color}; --social-bg: ${item.bgColor};`}
       >
-        <div class="social-icon-wrapper">
+        <div class="connect-icon-wrapper">
           <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
             <path d={item.svgPath} />
           </svg>
         </div>
-        <div class="social-info">
-          <span class="social-platform">{item.label}</span>
-          <span class="social-handle">{item.handle}</span>
+        <div class="connect-info">
+          <span class="connect-platform">{item.label}</span>
+          <span class="connect-handle">{item.handle}</span>
         </div>
-        <i class="fa-solid fa-arrow-up-right-from-square social-external-icon"></i>
+        <i class="fa-solid fa-arrow-up-right-from-square connect-external-icon"></i>
       </a>
     ))}
   </div>
 </div>
 
 <style>
-  .social-media-box {
+  .connect-media-box {
     margin-top: 30px;
     padding: 28px 24px;
     background: rgba(255, 255, 255, 0.02);
@@ -121,12 +121,12 @@ if (socials.youtube) {
     overflow: hidden;
   }
 
-  .social-media-box.compact {
+  .connect-media-box.compact {
     padding: 20px 16px;
     margin-top: 20px;
   }
 
-  .social-media-badge {
+  .connect-media-badge {
     display: inline-flex;
     align-items: center;
     background: rgba(224, 30, 90, 0.12);
@@ -141,14 +141,14 @@ if (socials.youtube) {
     margin-bottom: 12px;
   }
 
-  .social-media-title {
+  .connect-media-title {
     font-size: 1.35rem;
     font-weight: 700;
     color: var(--text-primary);
     margin-bottom: 8px;
   }
 
-  .social-media-subtitle {
+  .connect-media-subtitle {
     font-size: 0.92rem;
     color: var(--text-secondary);
     max-width: 540px;
@@ -156,7 +156,7 @@ if (socials.youtube) {
     line-height: 1.5;
   }
 
-  .social-cards-grid {
+  .connect-cards-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
     gap: 14px;
@@ -164,7 +164,7 @@ if (socials.youtube) {
     margin: 0 auto;
   }
 
-  .social-card {
+  .connect-card {
     display: flex;
     align-items: center;
     gap: 12px;
@@ -177,13 +177,13 @@ if (socials.youtube) {
     position: relative;
   }
 
-  .social-card:hover {
+  .connect-card:hover {
     transform: translateY(-3px);
     border-color: var(--social-color);
     box-shadow: 0 8px 24px -6px var(--social-bg);
   }
 
-  .social-icon-wrapper {
+  .connect-icon-wrapper {
     width: 40px;
     height: 40px;
     border-radius: 10px;
@@ -197,41 +197,41 @@ if (socials.youtube) {
     transition: transform 0.25s ease;
   }
 
-  .social-card:hover .social-icon-wrapper {
-    transform: scale(1.1);
+  .connect-card:hover .connect-icon-wrapper {
+    transform: scale(1.1) rotate(-5deg);
   }
 
-  .social-info {
+  .connect-info {
     display: flex;
     flex-direction: column;
     text-align: left;
     overflow: hidden;
   }
 
-  .social-platform {
-    font-size: 0.95rem;
+  .connect-platform {
     font-weight: 600;
+    font-size: 0.92rem;
     color: var(--text-primary);
     line-height: 1.2;
   }
 
-  .social-handle {
+  .connect-handle {
     font-size: 0.78rem;
-    color: var(--text-muted);
+    color: var(--text-secondary);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
   }
 
-  .social-external-icon {
+  .connect-external-icon {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
     margin-left: auto;
-    font-size: 0.8rem;
-    color: var(--text-muted);
-    opacity: 0.6;
+    opacity: 0;
+    transform: translate(-3px, 3px);
     transition: all 0.2s ease;
   }
 
-  .social-card:hover .social-external-icon {
     color: var(--social-color);
     opacity: 1;
     transform: translate(2px, -2px);

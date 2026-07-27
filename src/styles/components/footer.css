@@ -43,12 +43,12 @@
     padding-left: 4px;
 }
 
-.footer-socials {
+.footer-connect-list {
     display: flex;
     gap: 12px;
 }
 
-.footer-social-btn {
+.footer-connect-btn {
     width: 40px;
     height: 40px;
     border-radius: 50%;
@@ -61,7 +61,7 @@
     transition: var(--transition-fast);
 }
 
-.footer-social-btn:hover {
+.footer-connect-btn:hover {
     border-color: var(--accent-cyan);
     color: var(--accent-cyan);
     box-shadow: var(--glow-cyan);

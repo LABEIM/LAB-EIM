@@ -2,15 +2,9 @@ name: Unified CI/CD Pipeline
 
 on:
   push:
-    branches: [ "main" ]
-    paths-ignore:
-      - '**.md'
-      - 'docs/**'
+    branches: [ "main", "master", "astro-version" ]
   pull_request:
     branches: [ "main", "master", "astro-version" ]
-    paths-ignore:
-      - '**.md'
-      - 'docs/**'
   workflow_dispatch:
 
 concurrency:

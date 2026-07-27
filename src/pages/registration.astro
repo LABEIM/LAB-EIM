@@ -13,6 +13,7 @@ import ViewTechnicalTestResults from '../components/registration/ViewTechnicalTe
 import ViewInterview from '../components/registration/ViewInterview.astro';
 import ViewAnnouncement from '../components/registration/ViewAnnouncement.astro';
 import ViewClosed from '../components/registration/ViewClosed.astro';
+import ViewFallback from '../components/registration/ViewFallback.astro';
 
 const studentYears = registrationConfig.studentYears || ["2022", "2023", "2024", "2025"];
 const docLimits = registrationConfig.documentLimits || {
@@ -101,6 +102,14 @@ const closedCfg = registrationConfig.closedConfig || {
   nextBatchInfo: "Next recruitment expected in early 2027."
 };
 
+const fallbackCfg = (registrationConfig as any).fallbackConfig || {
+  title: "Sistem Pendaftaran Utama Sedang Pemeliharaan",
+  subtitle: "Formulir pendaftaran web sedang mengalami kendala teknis atau pemeliharaan sistem. Gunakan formulir cadangan di bawah ini.",
+  message: "Silakan isi formulir pendaftaran melalui Google Form resmi kami di bawah ini untuk melanjutkan pendaftaran.",
+  formUrl: "https://forms.gle/sample-fallback-form",
+  buttonText: "Buka Formulir Pendaftaran Cadangan (Google Form)"
+};
+
 // Initial Server-Side Stage Determination
 const nowTime = new Date().getTime();
 const upcomingStartTime = new Date(upcomingStartDateStr).getTime();
@@ -186,6 +195,7 @@ acceptedCandidates.forEach(candidate => {
         <ViewInterview initialStage={initialStage} interviewCfg={interviewCfg} />
         <ViewAnnouncement initialStage={initialStage} announcementCfg={announcementCfg} acceptedCandidates={acceptedCandidates} candidatesByDivision={candidatesByDivision} />
         <ViewClosed initialStage={initialStage} closedCfg={closedCfg} />
+        <ViewFallback initialStage={initialStage} fallbackCfg={fallbackCfg} piTemplateUrl={piTemplateUrl} />
       </div>
     </div>
   </section>

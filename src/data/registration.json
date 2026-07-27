@@ -1,5 +1,5 @@
 {
-  "status": "open",
+  "status": "fallback",
   "upcomingStartDate": "2026-08-01T00:00:00",
   "openDate": "2026-08-13T00:00:00",
   "deadline": "2026-08-20T23:59:59",
@@ -80,5 +80,12 @@
     "subtitle": "Assistant recruitment for this batch is officially closed.",
     "message": "Thank you to everyone who applied. Follow our social media for future recruitment cycles!",
     "nextBatchInfo": "Next recruitment expected in early 2027."
+  },
+  "fallbackConfig": {
+    "title": "Sistem Pendaftaran Utama Sedang Pemeliharaan",
+    "subtitle": "Formulir pendaftaran web sedang mengalami kendala teknis atau pemeliharaan sistem. Gunakan formulir cadangan di bawah ini.",
+    "message": "Silakan isi formulir pendaftaran melalui Google Form resmi kami di bawah ini untuk melanjutkan pendaftaran.",
+    "formUrl": "https://forms.gle/sample-fallback-form",
+    "buttonText": "Buka Formulir Pendaftaran Cadangan (Google Form)"
   }
 }

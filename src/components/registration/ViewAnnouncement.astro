@@ -4,9 +4,12 @@ import TimelineSteps from './TimelineSteps.astro';
 interface Candidate {
   name: string;
   nim: string | number;
-  division: string;
+  division?: string;
+  screeningStatus?: string;
+  technicalTestStatus?: string;
   finalStatus?: string;
   status?: string;
+  notes?: string;
 }
 
 interface Props {

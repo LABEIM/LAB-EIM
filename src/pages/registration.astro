@@ -115,10 +115,11 @@ const acceptedCandidates = candidatesList.filter(c => (c as any).finalStatus ===
 
 const candidatesByDivision: Record<string, typeof candidatesList> = {};
 acceptedCandidates.forEach(candidate => {
-  if (!candidatesByDivision[candidate.division]) {
-    candidatesByDivision[candidate.division] = [];
+  const divisionKey = candidate.division || 'General';
+  if (!candidatesByDivision[divisionKey]) {
+    candidatesByDivision[divisionKey] = [];
   }
-  candidatesByDivision[candidate.division].push(candidate);
+  candidatesByDivision[divisionKey].push(candidate);
 });
 ---
 

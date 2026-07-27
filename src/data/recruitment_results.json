@@ -5,7 +5,6 @@
     {
       "nim": "1202210001",
       "name": "Jane Doe",
-      "division": "Web Development",
       "screeningStatus": "passed",
       "technicalTestStatus": "passed",
       "finalStatus": "accepted",

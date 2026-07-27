@@ -1,5 +1,5 @@
 {
-  "status": "fallback",
+  "status": "closed",
   "upcomingStartDate": "2026-08-01T00:00:00",
   "openDate": "2026-08-13T00:00:00",
   "deadline": "2026-08-20T23:59:59",
@@ -87,5 +87,21 @@
     "message": "Silakan isi formulir pendaftaran melalui Google Form resmi kami di bawah ini untuk melanjutkan pendaftaran.",
     "formUrl": "https://forms.gle/sample-fallback-form",
     "buttonText": "Buka Formulir Pendaftaran Cadangan (Google Form)"
-  }
+  },
+  "contactPersons": [
+    {
+      "name": "CP Info & Recruitment",
+      "role": "General & Selection Info",
+      "platform": "whatsapp",
+      "contactId": "+62 812-3456-7890",
+      "link": "https://wa.me/6281234567890"
+    },
+    {
+      "name": "CP Technical Support",
+      "role": "Technical & Submission",
+      "platform": "line",
+      "contactId": "@eim_techsupport",
+      "link": "https://line.me/ti/p/~eim_techsupport"
+    }
+  ]
 }

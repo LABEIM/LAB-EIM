@@ -237,6 +237,28 @@ export default config({
           formUrl: fields.text({ label: 'External Backup Form URL (Google Form)', defaultValue: 'https://forms.gle/sample-fallback-form' }),
           buttonText: fields.text({ label: 'Fallback Button Text', defaultValue: 'Buka Formulir Pendaftaran Cadangan (Google Form)' }),
         }),
+        contactPersons: fields.array(
+          fields.object({
+            name: fields.text({ label: 'Contact Person Name' }),
+            role: fields.text({ label: 'Role / Division Label (e.g. CP Information & Selection)' }),
+            platform: fields.select({
+              label: 'Contact Platform',
+              options: [
+                { label: 'WhatsApp', value: 'whatsapp' },
+                { label: 'LINE', value: 'line' },
+                { label: 'Email', value: 'email' },
+                { label: 'Phone', value: 'phone' },
+              ],
+              defaultValue: 'whatsapp',
+            }),
+            contactId: fields.text({ label: 'Contact ID / Phone Number / Handle (e.g. 081234567890 or @id)' }),
+            link: fields.text({ label: 'Direct Clickable Contact Link (e.g. https://wa.me/6281234567890)' }),
+          }),
+          {
+            label: 'Contact Persons List',
+            itemLabel: props => `${props.fields.name.value || 'Contact Person'} (${props.fields.role.value || ''})`,
+          }
+        ),
       },
     }),
     recruitment_results: singleton({

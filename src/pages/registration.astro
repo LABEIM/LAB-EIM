@@ -14,6 +14,7 @@ import ViewInterview from '../components/registration/ViewInterview.astro';
 import ViewAnnouncement from '../components/registration/ViewAnnouncement.astro';
 import ViewClosed from '../components/registration/ViewClosed.astro';
 import ViewFallback from '../components/registration/ViewFallback.astro';
+import ContactPersonBox from '../components/registration/ContactPersonBox.astro';
 
 const studentYears = registrationConfig.studentYears || ["2022", "2023", "2024", "2025"];
 const docLimits = registrationConfig.documentLimits || {
@@ -40,6 +41,8 @@ const interviewEndDateStr = registrationConfig.interviewEndDate || "2026-09-06T2
 const announcementDateStr = registrationConfig.announcementDate || "2026-09-09T00:00:00";
 
 // Config objects with fallbacks
+const contactPersons = (registrationConfig as any).contactPersons || [];
+
 const upcomingCfg = registrationConfig.upcomingConfig || {
   title: "Recruitment Opening Soon!",
   subtitle: "Get your documents ready. Registration will officially open soon.",
@@ -196,6 +199,9 @@ acceptedCandidates.forEach(candidate => {
         <ViewAnnouncement initialStage={initialStage} announcementCfg={announcementCfg} acceptedCandidates={acceptedCandidates} candidatesByDivision={candidatesByDivision} />
         <ViewClosed initialStage={initialStage} closedCfg={closedCfg} />
         <ViewFallback initialStage={initialStage} fallbackCfg={fallbackCfg} piTemplateUrl={piTemplateUrl} />
+        {initialStage !== 'closed' && (
+          <ContactPersonBox contactPersons={contactPersons} />
+        )}
       </div>
     </div>
   </section>

@@ -14,26 +14,25 @@ interface Props {
 const { initialStage, fallbackCfg, piTemplateUrl } = Astro.props;
 ---
 
-<div id="view-fallback" style={initialStage === 'fallback' ? 'display: block;' : 'display: none;'}>
+<div id="view-fallback" class={initialStage === 'fallback' ? '' : 'is-hidden'}>
   <div class="registration-header">
     <h2>{fallbackCfg.title}</h2>
-    <p style="color: var(--text-secondary); max-width: 600px; margin: 0 auto; font-size: 1.05rem;">{fallbackCfg.subtitle}</p>
+    <p class="registration-hero-subtitle">{fallbackCfg.subtitle}</p>
   </div>
 
   <div class="info-card-panel">
-    <i class="fa-solid fa-triangle-exclamation info-card-icon" style="color: #facc15; font-size: 3rem; margin-bottom: 20px;"></i>
-    <p style="color: var(--text-primary); font-size: 1.05rem; max-width: 600px; margin: 0 auto 25px auto; line-height: 1.6;">{fallbackCfg.message}</p>
+    <i class="fa-solid fa-triangle-exclamation info-card-icon reg-icon-yellow"></i>
+    <p class="reg-msg-p">{fallbackCfg.message}</p>
 
-    <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap; align-items: center;">
+    <div class="reg-btn-group">
       {piTemplateUrl && (
         <a 
           href={piTemplateUrl} 
           target="_blank" 
           rel="noopener noreferrer" 
-          class="btn btn-secondary" 
-          style="position: relative; padding-left: 45px; padding-right: 24px;"
+          class="btn btn-secondary reg-btn-action-padded"
         >
-          <i class="fa-solid fa-file-pdf" style="position: absolute; left: 20px; top: 50%; transform: translateY(-50%); color: #ff6b6b;"></i>Download Template Pakta Integritas
+          <i class="fa-solid fa-file-pdf reg-btn-icon-abs reg-btn-icon-red"></i>Download Template Pakta Integritas
         </a>
       )}
 
@@ -41,16 +40,15 @@ const { initialStage, fallbackCfg, piTemplateUrl } = Astro.props;
         href={fallbackCfg.formUrl} 
         target="_blank" 
         rel="noopener noreferrer" 
-        class="btn btn-primary" 
-        style="position: relative; padding-left: 45px; padding-right: 24px;"
+        class="btn btn-primary reg-btn-action-padded"
       >
-        <i class="fa-solid fa-arrow-up-right-from-square" style="position: absolute; left: 20px; top: 50%; transform: translateY(-50%);"></i>{fallbackCfg.buttonText || 'Buka Formulir Pendaftaran Cadangan'}
+        <i class="fa-solid fa-arrow-up-right-from-square reg-btn-icon-abs"></i>{fallbackCfg.buttonText || 'Buka Formulir Pendaftaran Cadangan'}
       </a>
     </div>
 
-    <div style="margin-top: 30px; border-top: 1px solid var(--border-color); padding-top: 25px; display: flex; justify-content: center;">
-      <a href="/" class="btn btn-secondary" style="position: relative; padding-left: 45px; padding-right: 45px;">
-        <i class="fa-solid fa-house" style="position: absolute; left: 24px; top: 50%; transform: translateY(-50%);"></i>Back to Home
+    <div class="reg-border-top-box">
+      <a href="/" class="btn btn-secondary reg-btn-padded">
+        <i class="fa-solid fa-house reg-btn-icon-abs"></i>Back to Home
       </a>
     </div>
   </div>

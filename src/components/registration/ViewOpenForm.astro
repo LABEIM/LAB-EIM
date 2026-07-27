@@ -24,13 +24,12 @@ interface Props {
 const { initialStage, registrationConfig, extendedCfg, studentYears, docLimits, divisions, piTemplateUrl } = Astro.props;
 ---
 
-<div id="view-open" style={(initialStage === 'open' || initialStage === 'extended') ? 'display: block;' : 'display: none;'}>
+<div id="view-open" class={(initialStage === 'open' || initialStage === 'extended') ? '' : 'is-hidden'}>
   
   {/* Extended Registration Banner */}
   <div 
     id="extended-banner" 
-    class="extended-banner"
-    style={`display: ${initialStage === 'extended' ? 'block' : 'none'};`}
+    class={`extended-banner ${initialStage === 'extended' ? '' : 'is-hidden'}`}
   >
     <h3 class="extended-banner-title">
       <i class="fa-solid fa-bolt"></i> {extendedCfg.bannerTitle}
@@ -40,11 +39,11 @@ const { initialStage, registrationConfig, extendedCfg, studentYears, docLimits, 
 
   <div class="registration-header">
     <h2>{registrationConfig.title}</h2>
-    <p style="color: var(--text-secondary);">{registrationConfig.subtitle}</p>
+    <p class="registration-hero-subtitle">{registrationConfig.subtitle}</p>
   </div>
 
   {/* Draft Restored Banner */}
-  <div id="draft-restored-banner" class="draft-restored-banner" style="display: none;">
+  <div id="draft-restored-banner" class="draft-restored-banner is-hidden">
     <div class="draft-restored-content">
       <i class="fa-solid fa-floppy-disk draft-icon"></i>
       <span>Form draft restored from local storage (<strong id="draft-restored-time"></strong>).</span>
@@ -59,33 +58,33 @@ const { initialStage, registrationConfig, extendedCfg, studentYears, docLimits, 
   <div id="status-alert-success" class="status-alert-success"></div>
 
   {/* Countdown Timer */}
-  <div class="registration-timer" id="registration-timer" style="margin-bottom: 30px;">
+  <div class="registration-timer reg-timer-mb" id="registration-timer">
     <div class="timer-block">
-      <div id="timer-days" style="font-size: 1.5rem; font-weight: bold; color: var(--text-primary);">0</div>
-      <div style="font-size: 0.8rem; color: var(--text-secondary);">Days</div>
+      <div id="timer-days" class="reg-timer-val">0</div>
+      <div class="reg-timer-label">Days</div>
     </div>
     <div class="timer-block">
-      <div id="timer-hours" style="font-size: 1.5rem; font-weight: bold; color: var(--text-primary);">0</div>
-      <div style="font-size: 0.8rem; color: var(--text-secondary);">Hours</div>
+      <div id="timer-hours" class="reg-timer-val">0</div>
+      <div class="reg-timer-label">Hours</div>
     </div>
     <div class="timer-block">
-      <div id="timer-minutes" style="font-size: 1.5rem; font-weight: bold; color: var(--text-primary);">0</div>
-      <div style="font-size: 0.8rem; color: var(--text-secondary);">Minutes</div>
+      <div id="timer-minutes" class="reg-timer-val">0</div>
+      <div class="reg-timer-label">Minutes</div>
     </div>
     <div class="timer-block">
-      <div id="timer-seconds" style="font-size: 1.5rem; font-weight: bold; color: var(--accent-red);">0</div>
-      <div style="font-size: 0.8rem; color: var(--text-secondary);">Seconds</div>
+      <div id="timer-seconds" class="reg-timer-val-red">0</div>
+      <div class="reg-timer-label">Seconds</div>
     </div>
   </div>
 
   {/* Registration Form */}
   <form id="pendaftaran-form" data-max-total-mb={docLimits.totalMb || 15}>
     {/* Anti-bot Honeypot Field (Hidden from legitimate users) */}
-    <input type="text" id="website_hp" name="website_hp" style="display:none !important;" tabindex="-1" autocomplete="off" aria-hidden="true" />
+    <input type="text" id="website_hp" name="website_hp" class="reg-honeypot-input" tabindex="-1" autocomplete="off" aria-hidden="true" />
 
     {/* Section 1: Data Diri */}
     <div class="form-section-heading">
-      <i class="fa-solid fa-user" style="margin-right: 8px;"></i> 1. Personal Identity
+      <i class="fa-solid fa-user reg-icon-mr-sm"></i> 1. Personal Identity
     </div>
 
     <div class="form-group">
@@ -93,7 +92,7 @@ const { initialStage, registrationConfig, extendedCfg, studentYears, docLimits, 
       <input type="text" class="form-control" id="nama_lengkap" placeholder="Your full name" required />
     </div>
 
-    <div class="form-row" style="margin-top: 15px;">
+    <div class="form-row reg-form-row-mt">
       <div class="form-group">
         <label for="nim">Student ID (NIM) <span class="required-asterisk">*</span></label>
         <input type="text" class="form-control" id="nim" placeholder="Example: 1202210001" pattern="[0-9]+" required />
@@ -109,7 +108,7 @@ const { initialStage, registrationConfig, extendedCfg, studentYears, docLimits, 
       </div>
     </div>
 
-    <div class="form-row" style="margin-top: 15px;">
+    <div class="form-row reg-form-row-mt">
       <div class="form-group">
         <label for="email">Email Address <span class="required-asterisk">*</span></label>
         <input type="email" class="form-control" id="email" placeholder="name@domain.com" required />
@@ -122,7 +121,7 @@ const { initialStage, registrationConfig, extendedCfg, studentYears, docLimits, 
 
     {/* Section 2: Pemilihan Divisi */}
     <div class="form-section-heading">
-      <i class="fa-solid fa-layer-group" style="margin-right: 8px;"></i> 2. Division Selection & Motivation
+      <i class="fa-solid fa-layer-group reg-icon-mr-sm"></i> 2. Division Selection & Motivation
     </div>
 
     <div class="form-row">
@@ -146,12 +145,12 @@ const { initialStage, registrationConfig, extendedCfg, studentYears, docLimits, 
       </div>
     </div>
 
-    <div class="form-group" style="margin-top: 15px;">
+    <div class="form-group reg-form-row-mt">
       <label for="alasan_divisi_1">Reason for Choosing Division 1 <span class="required-asterisk">*</span></label>
       <textarea class="form-control" id="alasan_divisi_1" rows="3" placeholder="Explain your motivation and skill background for Division 1..." required></textarea>
     </div>
 
-    <div class="form-group" style="margin-top: 15px;">
+    <div class="form-group reg-form-row-mt">
       <label for="alasan_divisi_2">Reason for Choosing Division 2 <span class="required-asterisk">*</span></label>
       <textarea class="form-control" id="alasan_divisi_2" rows="3" placeholder="Explain your motivation and skill background for Division 2..." required></textarea>
     </div>
@@ -159,13 +158,13 @@ const { initialStage, registrationConfig, extendedCfg, studentYears, docLimits, 
     {/* Dynamic Portfolio Link */}
     <div class="form-group medhum-porto-container" id="container-medhum-porto">
       <label for="portofolio_medhum" class="medhum-porto-label">
-        <i class="fa-solid fa-palette" style="margin-right: 6px;"></i> Division Portfolio Link <span class="required-asterisk">*</span>
+        <i class="fa-solid fa-palette reg-icon-mr"></i> Division Portfolio Link <span class="required-asterisk">*</span>
       </label>
       <input type="url" class="form-control" id="portofolio_medhum" placeholder="https://behance.net/username or https://drive.google.com/..." />
-      <small style="color: var(--text-secondary); display: block; margin-top: 5px;">Since you selected a division that requires a portfolio, please provide a public URL link to your design, work, or project portfolio.</small>
+      <small class="reg-small-desc">Since you selected a division that requires a portfolio, please provide a public URL link to your design, work, or project portfolio.</small>
     </div>
 
-    <div class="form-group" style="margin-top: 15px;">
+    <div class="form-group reg-form-row-mt">
       <label for="bersedia_dipindah">Willing to be moved to another division if needed? <span class="required-asterisk">*</span></label>
       <select class="form-control" id="bersedia_dipindah" required>
         <option value="" disabled selected>Select Preference</option>
@@ -176,79 +175,80 @@ const { initialStage, registrationConfig, extendedCfg, studentYears, docLimits, 
 
     {/* Section 3: Berkas Pendaftaran */}
     <div class="form-section-heading">
-      <i class="fa-solid fa-folder-open" style="margin-right: 8px;"></i> 3. Document Uploads (PDF / Images)
+      <i class="fa-solid fa-folder-open reg-icon-mr-sm"></i> 3. Document Uploads (PDF / Images)
     </div>
 
     <div class="form-row">
       <div class="form-group">
-        <label for="file_ksm">Kartu Studi Mahasiswa (KSM) <span style="font-size: 0.8rem; color: var(--text-secondary);">(Max {docLimits.ksmMb}MB)</span> <span class="required-asterisk">*</span></label>
+        <label for="file_ksm">Kartu Studi Mahasiswa (KSM) <span class="reg-file-label-small">(Max {docLimits.ksmMb}MB)</span> <span class="required-asterisk">*</span></label>
         <input type="file" class="form-control" id="file_ksm" accept=".pdf,.png,.jpg,.jpeg" data-max-mb={docLimits.ksmMb} required />
       </div>
       <div class="form-group">
-        <label for="file_khs">Kartu Hasil Studi (KHS) <span style="font-size: 0.8rem; color: var(--text-secondary);">(Max {docLimits.khsMb}MB)</span> <span class="required-asterisk">*</span></label>
+        <label for="file_khs">Kartu Hasil Studi (KHS) <span class="reg-file-label-small">(Max {docLimits.khsMb}MB)</span> <span class="required-asterisk">*</span></label>
         <input type="file" class="form-control" id="file_khs" accept=".pdf,.png,.jpg,.jpeg" data-max-mb={docLimits.khsMb} required />
       </div>
     </div>
 
-    <div class="form-row" style="margin-top: 15px;">
+    <div class="form-row reg-form-row-mt">
       <div class="form-group">
-        <label for="file_ml">Motivation Letter (ML) <span style="font-size: 0.8rem; color: var(--text-secondary);">(Max {docLimits.mlMb}MB)</span> <span class="required-asterisk">*</span></label>
+        <label for="file_ml">Motivation Letter (ML) <span class="reg-file-label-small">(Max {docLimits.mlMb}MB)</span> <span class="required-asterisk">*</span></label>
         <input type="file" class="form-control" id="file_ml" accept=".pdf,.png,.jpg,.jpeg" data-max-mb={docLimits.mlMb} required />
       </div>
       <div class="form-group">
-        <label for="file_cv">Curriculum Vitae (CV) <span style="font-size: 0.8rem; color: var(--text-secondary);">(Max {docLimits.cvMb}MB)</span> <span class="required-asterisk">*</span></label>
+        <label for="file_cv">Curriculum Vitae (CV) <span class="reg-file-label-small">(Max {docLimits.cvMb}MB)</span> <span class="required-asterisk">*</span></label>
         <input type="file" class="form-control" id="file_cv" accept=".pdf,.png,.jpg,.jpeg" data-max-mb={docLimits.cvMb} required />
       </div>
     </div>
 
-    <div class="form-group" style="margin-top: 15px;">
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; flex-wrap: wrap; gap: 8px;">
-        <label for="file_pi" style="margin-bottom: 0;">Pakta Integritas (PI) <span style="font-size: 0.8rem; color: var(--text-secondary);">(Max {docLimits.piMb}MB)</span> <span class="required-asterisk">*</span></label>
+    <div class="form-group reg-form-row-mt">
+      <div class="reg-pi-label-row">
+        <label for="file_pi" class="reg-mb-0">Pakta Integritas (PI) <span class="reg-file-label-small">(Max {docLimits.piMb}MB)</span> <span class="required-asterisk">*</span></label>
         {piTemplateUrl && (
-          <a href={piTemplateUrl} target="_blank" rel="noopener noreferrer" style="font-size: 0.825rem; color: var(--accent-cyan); text-decoration: none; display: inline-flex; align-items: center; justify-content: center; gap: 6px; font-weight: 500; line-height: 1;">
+          <a href={piTemplateUrl} target="_blank" rel="noopener noreferrer" class="reg-pi-link-inline">
             <i class="fa-solid fa-file-arrow-down"></i>
             <span>Download Template PI</span>
           </a>
         )}
       </div>
       <input type="file" class="form-control" id="file_pi" accept=".pdf,.png,.jpg,.jpeg" data-max-mb={docLimits.piMb} required />
-      <small style="color: var(--text-secondary); display: block; margin-top: 5px;">
+      <small class="reg-small-desc">
         Upload signed Integrity Pact document.
         {piTemplateUrl && (
-          <span style="margin-left: 4px;">Don't have the template yet? <a href={piTemplateUrl} target="_blank" rel="noopener noreferrer" style="color: var(--accent-cyan); text-decoration: underline;">Download template here</a>.</span>
+          <span>Don't have the template yet? <a href={piTemplateUrl} target="_blank" rel="noopener noreferrer" class="reg-pi-sublink">Download template here</a>.</span>
         )}
       </small>
     </div>
 
     <div class="form-actions form-actions-submit">
       <button type="submit" id="submit-btn" class="btn btn-primary btn-submit-registration">
-        <span id="btn-text">Submit Registration <i class="fa-solid fa-paper-plane" style="margin-left: 8px;"></i></span>
+        <span id="btn-text">Submit Registration <i class="fa-solid fa-paper-plane reg-icon-ml-xs"></i></span>
       </button>
-      <button type="button" id="clear-draft-btn" class="btn btn-clear-draft" style="display: none;">
+      <button type="button" id="clear-draft-btn" class="btn btn-clear-draft is-hidden">
         <i class="fa-solid fa-rotate-left"></i> Clear Draft
       </button>
     </div>
   </form>
 
   <!-- Floating Draft Auto-Save Toast Notification -->
-  <div id="draft-toast" class="draft-toast-container" style="display: none;">
+  <div id="draft-toast" class="draft-toast-container is-hidden">
     <i id="draft-toast-icon" class="fa-solid fa-cloud-arrow-up draft-toast-icon"></i>
     <span id="draft-toast-text">Draft auto-saved</span>
   </div>
 
   <!-- Clear Draft Confirmation Modal Overlay -->
-  <div id="clear-draft-modal" class="progress-modal-overlay" style="display: none;">
-    <div class="progress-modal-card" style="max-width: 420px; text-align: center;">
+  <div id="clear-draft-modal" class="progress-modal-overlay is-hidden">
+    <div class="progress-modal-card reg-modal-card-sm">
       <div class="progress-modal-header">
-        <div class="progress-modal-icon-wrapper" style="color: #e11d48; font-size: 2.8rem; margin-bottom: 12px;">
+        <div class="progress-modal-icon-wrapper reg-modal-icon-red">
           <i class="fa-solid fa-triangle-exclamation"></i>
         </div>
         <h3 class="progress-modal-title">Clear Registration Draft?</h3>
-        <p class="progress-modal-subtitle" style="margin-top: 8px;">
+        <p class="progress-modal-subtitle reg-modal-subtitle-mt">
           All saved text responses in this form will be permanently deleted and reset.
         </p>
       </div>
-      <div style="display: flex; gap: 12px; justify-content: center; margin-top: 24px;">
+
+      <div class="reg-btn-group reg-form-row-mt">
         <button type="button" id="cancel-clear-draft-btn" class="btn btn-modal-cancel">Cancel</button>
         <button type="button" id="confirm-clear-draft-btn" class="btn btn-modal-confirm">Clear Draft</button>
       </div>
@@ -256,11 +256,11 @@ const { initialStage, registrationConfig, extendedCfg, studentYears, docLimits, 
   </div>
 
   <!-- Submission Progress Modal Overlay -->
-  <div id="registration-progress-modal" class="progress-modal-overlay" style="display: none;">
+  <div id="registration-progress-modal" class="progress-modal-overlay is-hidden">
     <div class="progress-modal-card">
       <div class="progress-modal-header">
         <div id="progress-modal-icon" class="progress-modal-icon-wrapper">
-          <i class="fa-solid fa-cloud-arrow-up fa-bounce" style="color: var(--accent-cyan);"></i>
+          <i class="fa-solid fa-cloud-arrow-up fa-bounce footer-icon-cyan"></i>
         </div>
         <h3 id="progress-modal-title" class="progress-modal-title">Submitting Registration</h3>
         <p id="progress-modal-subtitle" class="progress-modal-subtitle">Please stay on this page while we process your documents and transmit data.</p>
@@ -273,7 +273,7 @@ const { initialStage, registrationConfig, extendedCfg, studentYears, docLimits, 
           <span id="submit-progress-percent" class="progress-percent-badge">0%</span>
         </div>
         <div class="progress-bar-track">
-          <div id="submit-progress-bar" class="progress-bar-fill" style="width: 0%;"></div>
+          <div id="submit-progress-bar" class="progress-bar-fill"></div>
         </div>
       </div>
 
@@ -298,330 +298,11 @@ const { initialStage, registrationConfig, extendedCfg, studentYears, docLimits, 
       </div>
 
       <!-- Modal Action Buttons (Shown on completion or error) -->
-      <div id="progress-modal-actions" class="progress-modal-actions" style="display: none;">
-        <button type="button" id="modal-close-btn" class="btn btn-primary" style="min-width: 140px;">Close</button>
+      <div id="progress-modal-actions" class="progress-modal-actions is-hidden">
+        <button type="button" id="modal-close-btn" class="btn btn-primary reg-modal-btn-w">Close</button>
       </div>
     </div>
   </div>
 </div>
 
-<style>
-  :global(.progress-modal-overlay) {
-    position: fixed !important;
-    top: 0 !important;
-    left: 0 !important;
-    width: 100vw !important;
-    height: 100vh !important;
-    background: rgba(14, 85, 95, 0.4) !important;
-    backdrop-filter: blur(8px) !important;
-    -webkit-backdrop-filter: blur(8px) !important;
-    z-index: 99999 !important;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
-  }
 
-  :global(.progress-modal-card) {
-    background: #ffffff !important;
-    border: 1px solid rgba(14, 85, 95, 0.18) !important;
-    border-radius: 16px !important;
-    box-shadow: 0 20px 50px rgba(14, 85, 95, 0.2) !important;
-    width: 100%;
-    max-width: 480px;
-    padding: 28px 24px;
-    color: var(--text-primary, #1a202c) !important;
-    animation: modalSlideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-  }
-
-  @keyframes modalSlideUp {
-    from {
-      opacity: 0;
-      transform: translateY(20px) scale(0.96);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0) scale(1);
-    }
-  }
-
-  :global(.progress-modal-header) {
-    text-align: center;
-    margin-bottom: 20px;
-  }
-
-  :global(.progress-modal-icon-wrapper) {
-    font-size: 2.5rem;
-    margin-bottom: 12px;
-  }
-
-  :global(.progress-modal-title) {
-    font-size: 1.35rem;
-    font-weight: 700;
-    margin-bottom: 6px;
-    color: var(--brand-dark-azure, #0E555F) !important;
-  }
-
-  :global(.progress-modal-subtitle) {
-    font-size: 0.875rem;
-    color: var(--text-secondary, #4a5568) !important;
-    line-height: 1.5;
-  }
-
-  :global(.btn-modal-cancel) {
-    min-width: 120px;
-    background: #f1f5f9 !important;
-    border: 1px solid #cbd5e1 !important;
-    color: #475569 !important;
-    font-weight: 500;
-    border-radius: 10px;
-    padding: 10px 18px;
-    cursor: pointer;
-    transition: all 0.2s ease;
-  }
-
-  :global(.btn-modal-cancel:hover) {
-    background: #e2e8f0 !important;
-    color: #1e293b !important;
-  }
-
-  :global(.btn-modal-confirm) {
-    min-width: 140px;
-    background: #e11d48 !important;
-    border: 1px solid #e11d48 !important;
-    color: #ffffff !important;
-    font-weight: 600;
-    border-radius: 10px;
-    padding: 10px 18px;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    box-shadow: 0 4px 12px rgba(225, 29, 72, 0.25);
-  }
-
-  :global(.btn-modal-confirm:hover) {
-    background: #be123c !important;
-    border-color: #be123c !important;
-  }
-
-  .progress-bar-container {
-    margin-bottom: 22px;
-  }
-
-  .progress-bar-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 8px;
-    font-size: 0.85rem;
-  }
-
-  .progress-detail-text {
-    color: var(--brand-dark-azure, #0E555F);
-    font-weight: 500;
-    max-width: 78%;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-
-  .progress-percent-badge {
-    font-weight: 700;
-    font-size: 0.9rem;
-    color: var(--brand-dark-azure, #0E555F);
-    background: rgba(17, 180, 189, 0.12);
-    border: 1px solid rgba(17, 180, 189, 0.3);
-    padding: 2px 8px;
-    border-radius: 12px;
-  }
-
-  .progress-bar-track {
-    width: 100%;
-    height: 10px;
-    background: rgba(14, 85, 95, 0.08);
-    border-radius: 99px;
-    overflow: hidden;
-  }
-
-  .progress-bar-fill {
-    height: 100%;
-    background: linear-gradient(90deg, var(--brand-dark-azure, #0E555F) 0%, var(--brand-cyan, #11B4BD) 100%);
-    border-radius: 99px;
-    transition: width 0.25s ease-out;
-  }
-
-  .progress-stages-list {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    background: rgba(14, 85, 95, 0.03);
-    border-radius: 10px;
-    padding: 14px 16px;
-    border: 1px solid rgba(14, 85, 95, 0.08);
-  }
-
-  .progress-stage-item {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-size: 0.875rem;
-    transition: color 0.2s ease;
-  }
-
-  .progress-stage-item.stage-pending {
-    color: var(--text-secondary, #64748b);
-  }
-
-  .progress-stage-item.stage-active {
-    color: var(--brand-dark-azure, #0E555F);
-    font-weight: 600;
-  }
-
-  .progress-stage-item.stage-completed {
-    color: var(--brand-cyan, #11B4BD);
-    font-weight: 500;
-  }
-
-  .progress-stage-item.stage-failed {
-    color: #ff6b6b;
-    font-weight: 600;
-  }
-
-  .stage-icon {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 18px;
-    font-size: 0.95rem;
-  }
-
-  .progress-modal-actions {
-    margin-top: 20px;
-    text-align: center;
-  }
-
-  /* Draft Restored Banner */
-  .draft-restored-banner {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 12px;
-    background: rgba(17, 180, 189, 0.08);
-    border: 1px solid rgba(17, 180, 189, 0.25);
-    border-radius: 12px;
-    padding: 12px 18px;
-    margin-bottom: 24px;
-    color: var(--brand-dark-azure, #0E555F);
-    font-size: 0.875rem;
-    animation: fadeInBanner 0.3s ease-out;
-  }
-
-  .draft-restored-content {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-
-  .draft-icon {
-    color: var(--brand-cyan, #11B4BD);
-    font-size: 1.1rem;
-  }
-
-  .btn-clear-draft-link {
-    background: transparent;
-    border: none;
-    color: #e11d48;
-    font-size: 0.825rem;
-    font-weight: 500;
-    cursor: pointer;
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    padding: 4px 8px;
-    border-radius: 6px;
-    transition: background 0.2s ease, color 0.2s ease;
-    white-space: nowrap;
-  }
-
-  .btn-clear-draft-link:hover {
-    background: rgba(225, 29, 72, 0.1);
-    color: #be123c;
-  }
-
-  /* Inline Clear Draft Button */
-  .form-actions-submit {
-    display: flex;
-    gap: 14px;
-    align-items: center;
-    flex-wrap: wrap;
-  }
-
-  .btn-clear-draft {
-    background: rgba(14, 85, 95, 0.05);
-    border: 1px solid rgba(14, 85, 95, 0.15);
-    color: var(--brand-gray-azure, #4E8A92);
-    padding: 12px 20px;
-    border-radius: 10px;
-    font-weight: 500;
-    font-size: 0.9rem;
-    cursor: pointer;
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    transition: all 0.2s ease;
-  }
-
-  .btn-clear-draft:hover {
-    background: rgba(225, 29, 72, 0.08);
-    border-color: rgba(225, 29, 72, 0.3);
-    color: #e11d48;
-  }
-
-  /* Floating Draft Toast Notification */
-  :global(.draft-toast-container) {
-    position: fixed;
-    bottom: 24px;
-    right: 24px;
-    z-index: 99990;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    background: var(--brand-dark-azure, #0E555F) !important;
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border: 1px solid var(--brand-cyan, #11B4BD) !important;
-    box-shadow: 0 10px 25px rgba(14, 85, 95, 0.25) !important;
-    border-radius: 30px;
-    padding: 10px 20px;
-    color: #ffffff !important;
-    font-size: 0.85rem;
-    font-weight: 500;
-    pointer-events: none;
-    transition: opacity 0.3s ease, transform 0.3s ease;
-  }
-
-  :global(.draft-toast-container.toast-visible) {
-    opacity: 1;
-    transform: translateY(0);
-  }
-
-  :global(.draft-toast-container.toast-hidden) {
-    opacity: 0;
-    transform: translateY(12px);
-  }
-
-  :global(.draft-toast-icon) {
-    color: var(--brand-cyan, #11B4BD) !important;
-    font-size: 1rem;
-  }
-
-  @keyframes fadeInBanner {
-    from {
-      opacity: 0;
-      transform: translateY(-8px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-</style>

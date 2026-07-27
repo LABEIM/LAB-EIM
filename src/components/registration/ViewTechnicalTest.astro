@@ -15,35 +15,35 @@ interface Props {
 const { initialStage, technicalTestCfg } = Astro.props;
 ---
 
-<div id="view-technical-test" style={initialStage === 'technical_test' ? 'display: block;' : 'display: none;'}>
+<div id="view-technical-test" class={initialStage === 'technical_test' ? '' : 'is-hidden'}>
   <div class="registration-header">
     <h2>{technicalTestCfg.title}</h2>
-    <p style="color: var(--text-secondary); max-width: 600px; margin: 0 auto;">{technicalTestCfg.subtitle}</p>
+    <p class="registration-hero-subtitle">{technicalTestCfg.subtitle}</p>
   </div>
 
   <TimelineSteps activeStepIndex={3} />
 
   <div class="info-card-panel">
     <i class="fa-solid fa-laptop-code info-card-icon"></i>
-    <p style="color: var(--text-primary); font-size: 1.05rem; margin-bottom: 20px;">{technicalTestCfg.message}</p>
+    <p class="reg-checklist-notice">{technicalTestCfg.message}</p>
     
-    <div style="display: flex; justify-content: center; gap: 15px; flex-wrap: wrap;">
+    <div class="reg-btn-group">
       {technicalTestCfg.scheduleInfo && (
         <div class="badge-date-info">
-          <i class="fa-solid fa-calendar-days" style="margin-right: 6px;"></i> Schedule: <strong>{technicalTestCfg.scheduleInfo}</strong>
+          <i class="fa-solid fa-calendar-days reg-icon-mr"></i> Schedule: <strong>{technicalTestCfg.scheduleInfo}</strong>
         </div>
       )}
       {technicalTestCfg.locationInfo && (
         <div class="badge-location-info">
-          <i class="fa-solid fa-location-dot" style="margin-right: 6px; color: var(--accent-cyan);"></i> Location: <strong>{technicalTestCfg.locationInfo}</strong>
+          <i class="fa-solid fa-location-dot reg-checklist-icon"></i> Location: <strong>{technicalTestCfg.locationInfo}</strong>
         </div>
       )}
     </div>
   </div>
 
-  <div style="display: flex; justify-content: center; text-align: center;">
-    <a href="/" class="btn btn-secondary" style="position: relative; padding-left: 45px; padding-right: 45px;">
-      <i class="fa-solid fa-house" style="position: absolute; left: 24px;"></i>Back to Home
+  <div class="reg-btn-wrapper">
+    <a href="/" class="btn btn-secondary reg-btn-padded">
+      <i class="fa-solid fa-house reg-btn-icon-left"></i>Back to Home
     </a>
   </div>
 </div>

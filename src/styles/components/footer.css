@@ -74,6 +74,43 @@
     transform: translateY(-3px);
 }
 
+.footer .logo-icon-sm {
+    width: 30px;
+    height: 30px;
+}
+
+.footer .logo-text-sm {
+    font-size: 1.2rem;
+}
+
+.footer .logo-sub-sm {
+    font-size: 0.6rem;
+    letter-spacing: 1px;
+}
+
+.footer-contact-list {
+    margin-bottom: 20px;
+}
+
+.footer-icon-red {
+    margin-right: 8px;
+    color: var(--accent-red);
+}
+
+.footer-icon-cyan {
+    margin-right: 8px;
+    color: var(--accent-cyan);
+}
+
+.footer-social-title {
+    margin-bottom: 12px;
+    font-size: 0.95rem;
+}
+
+.footer-heart-icon {
+    color: var(--accent-red);
+}
+
 .footer-bottom {
     border-top: 1px solid rgba(255, 255, 255, 0.05);
     padding-top: 30px;
@@ -88,3 +125,4 @@
     font-size: 0.85rem;
     color: var(--text-muted);
 }
+

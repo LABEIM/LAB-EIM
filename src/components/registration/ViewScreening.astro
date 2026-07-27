@@ -14,27 +14,27 @@ interface Props {
 const { initialStage, selectionCfg } = Astro.props;
 ---
 
-<div id="view-selection" style={initialStage === 'selection' ? 'display: block;' : 'display: none;'}>
+<div id="view-selection" class={initialStage === 'selection' ? '' : 'is-hidden'}>
   <div class="registration-header">
     <h2>{selectionCfg.title}</h2>
-    <p style="color: var(--text-secondary); max-width: 600px; margin: 0 auto;">{selectionCfg.subtitle}</p>
+    <p class="registration-hero-subtitle">{selectionCfg.subtitle}</p>
   </div>
 
   <TimelineSteps activeStepIndex={2} />
 
   <div class="info-card-panel">
     <i class="fa-solid fa-clipboard-check info-card-icon"></i>
-    <p style="color: var(--text-primary); font-size: 1.05rem; margin-bottom: 15px;">{selectionCfg.message}</p>
+    <p class="reg-checklist-notice">{selectionCfg.message}</p>
     {selectionCfg.estimatedAnnouncementDate && (
       <div class="badge-date-info">
-        <i class="fa-solid fa-calendar-day" style="margin-right: 6px;"></i> Estimated Announcement: <strong>{selectionCfg.estimatedAnnouncementDate}</strong>
+        <i class="fa-solid fa-calendar-day reg-icon-mr"></i> Estimated Announcement: <strong>{selectionCfg.estimatedAnnouncementDate}</strong>
       </div>
     )}
   </div>
 
-  <div style="display: flex; justify-content: center; text-align: center;">
-    <a href="/" class="btn btn-secondary" style="position: relative; padding-left: 45px; padding-right: 45px;">
-      <i class="fa-solid fa-house" style="position: absolute; left: 24px;"></i>Back to Home
+  <div class="reg-btn-wrapper">
+    <a href="/" class="btn btn-secondary reg-btn-padded">
+      <i class="fa-solid fa-house reg-btn-icon-left"></i>Back to Home
     </a>
   </div>
 </div>

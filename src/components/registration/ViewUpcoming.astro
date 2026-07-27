@@ -20,55 +20,55 @@ interface Props {
 const { initialStage, upcomingCfg, docLimits, studentYears, piTemplateUrl } = Astro.props;
 ---
 
-<div id="view-upcoming" style={initialStage === 'upcoming' ? 'display: block;' : 'display: none;'}>
+<div id="view-upcoming" class={initialStage === 'upcoming' ? '' : 'is-hidden'}>
   <div class="registration-header">
     <h2>{upcomingCfg.title}</h2>
-    <p class="hero-desc" style="max-width: 600px; margin: 0 auto;">{upcomingCfg.subtitle}</p>
+    <p class="hero-desc registration-hero-subtitle">{upcomingCfg.subtitle}</p>
   </div>
 
-  <div class="registration-timer" id="upcoming-timer" style="margin-bottom: 35px;">
+  <div class="registration-timer reg-timer-mb" id="upcoming-timer">
     <div class="timer-block">
-      <div id="u-timer-days" style="font-size: 1.5rem; font-weight: bold; color: var(--accent-cyan);">0</div>
-      <div style="font-size: 0.8rem; color: var(--text-secondary);">Days</div>
+      <div id="u-timer-days" class="reg-timer-days">0</div>
+      <div class="reg-timer-label">Days</div>
     </div>
     <div class="timer-block">
-      <div id="u-timer-hours" style="font-size: 1.5rem; font-weight: bold; color: var(--text-primary);">0</div>
-      <div style="font-size: 0.8rem; color: var(--text-secondary);">Hours</div>
+      <div id="u-timer-hours" class="reg-timer-val">0</div>
+      <div class="reg-timer-label">Hours</div>
     </div>
     <div class="timer-block">
-      <div id="u-timer-minutes" style="font-size: 1.5rem; font-weight: bold; color: var(--text-primary);">0</div>
-      <div style="font-size: 0.8rem; color: var(--text-secondary);">Minutes</div>
+      <div id="u-timer-minutes" class="reg-timer-val">0</div>
+      <div class="reg-timer-label">Minutes</div>
     </div>
     <div class="timer-block">
-      <div id="u-timer-seconds" style="font-size: 1.5rem; font-weight: bold; color: var(--accent-red);">0</div>
-      <div style="font-size: 0.8rem; color: var(--text-secondary);">Seconds</div>
+      <div id="u-timer-seconds" class="reg-timer-val-red">0</div>
+      <div class="reg-timer-label">Seconds</div>
     </div>
   </div>
 
   <div class="checklist-box">
     <h3 class="checklist-title">
-      <i class="fa-solid fa-list-check" style="margin-right: 8px;"></i> Document Checklist & Requirements
+      <i class="fa-solid fa-list-check reg-icon-mr-sm"></i> Document Checklist & Requirements
     </h3>
-    <p style="color: var(--text-secondary); font-size: 0.95rem; margin-bottom: 15px;">{upcomingCfg.prepNotice}</p>
+    <p class="reg-checklist-notice">{upcomingCfg.prepNotice}</p>
     <ul class="checklist-list">
       <li>
-        <i class="fa-solid fa-check" style="color: var(--accent-cyan); margin-right: 2px;"></i>
+        <i class="fa-solid fa-check reg-checklist-icon"></i>
         <span><strong>Kartu Studi Mahasiswa (KSM)</strong> - Max {docLimits.ksmMb}MB</span>
       </li>
       <li>
-        <i class="fa-solid fa-check" style="color: var(--accent-cyan); margin-right: 2px;"></i>
+        <i class="fa-solid fa-check reg-checklist-icon"></i>
         <span><strong>Kartu Hasil Studi (KHS)</strong> - Max {docLimits.khsMb}MB</span>
       </li>
       <li>
-        <i class="fa-solid fa-check" style="color: var(--accent-cyan); margin-right: 2px;"></i>
+        <i class="fa-solid fa-check reg-checklist-icon"></i>
         <span><strong>Motivation Letter (ML)</strong> - Max {docLimits.mlMb}MB</span>
       </li>
       <li>
-        <i class="fa-solid fa-check" style="color: var(--accent-cyan); margin-right: 2px;"></i>
+        <i class="fa-solid fa-check reg-checklist-icon"></i>
         <span><strong>Curriculum Vitae (CV)</strong> - Max {docLimits.cvMb}MB</span>
       </li>
       <li>
-        <i class="fa-solid fa-check" style="color: var(--accent-cyan); margin-right: 2px;"></i>
+        <i class="fa-solid fa-check reg-checklist-icon"></i>
         <span><strong>Pakta Integritas (PI)</strong> - Max {docLimits.piMb}MB</span>
         {piTemplateUrl && (
           <a href={piTemplateUrl} target="_blank" rel="noopener noreferrer" class="checklist-download-btn">
@@ -78,15 +78,15 @@ const { initialStage, upcomingCfg, docLimits, studentYears, piTemplateUrl } = As
         )}
       </li>
       <li>
-        <i class="fa-solid fa-user-graduate" style="color: var(--accent-cyan); margin-right: 2px;"></i>
+        <i class="fa-solid fa-user-graduate reg-checklist-icon"></i>
         <span><strong>Eligible Student Years:</strong> {studentYears.join(", ")}</span>
       </li>
     </ul>
   </div>
 
-  <div style="display: flex; justify-content: center; text-align: center;">
-    <a href="/" class="btn btn-secondary" style="position: relative; padding-left: 45px; padding-right: 45px;">
-      <i class="fa-solid fa-house" style="position: absolute; left: 24px;"></i>Back to Home
+  <div class="reg-btn-wrapper">
+    <a href="/" class="btn btn-secondary reg-btn-padded">
+      <i class="fa-solid fa-house reg-btn-icon-left"></i>Back to Home
     </a>
   </div>
 </div>

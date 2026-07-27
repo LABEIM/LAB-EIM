@@ -14,10 +14,10 @@ interface Props {
 const { initialStage, selectionResultsCfg } = Astro.props;
 ---
 
-<div id="view-selection-results" style={initialStage === 'selection_results' ? 'display: block;' : 'display: none;'}>
+<div id="view-selection-results" class={initialStage === 'selection_results' ? '' : 'is-hidden'}>
   <div class="registration-header">
     <h2>{selectionResultsCfg.title}</h2>
-    <p style="color: var(--text-secondary); max-width: 600px; margin: 0 auto;">{selectionResultsCfg.subtitle}</p>
+    <p class="registration-hero-subtitle">{selectionResultsCfg.subtitle}</p>
   </div>
 
   <TimelineSteps activeStepIndex={2} markCurrentAsCompleted={true} />
@@ -25,20 +25,20 @@ const { initialStage, selectionResultsCfg } = Astro.props;
   {/* NIM Search Box for Screening Results */}
   <div class="search-lookup-box">
     <h3 class="search-lookup-title">
-      <i class="fa-solid fa-magnifying-glass" style="margin-right: 8px;"></i> Check Document Screening Result
+      <i class="fa-solid fa-magnifying-glass reg-icon-mr-sm"></i> Check Document Screening Result
     </h3>
     <div class="search-lookup-form">
-      <input type="text" id="search-screening-nim-input" class="form-control" placeholder="Enter Student ID (NIM)..." style="background: var(--bg-primary);" />
-      <button id="search-screening-nim-btn" class="btn btn-primary" style="white-space: nowrap; padding: 10px 20px;">
-        Search <i class="fa-solid fa-search" style="margin-left: 4px;"></i>
+      <input type="text" id="search-screening-nim-input" class="form-control reg-input-bg" placeholder="Enter Student ID (NIM)..." />
+      <button id="search-screening-nim-btn" class="btn btn-primary reg-btn-search">
+        Search <i class="fa-solid fa-search reg-icon-ml-xs"></i>
       </button>
     </div>
     <div id="search-screening-result-box" class="search-result-display"></div>
   </div>
 
-  <div style="display: flex; justify-content: center; text-align: center;">
-    <a href="/" class="btn btn-secondary" style="position: relative; padding-left: 45px; padding-right: 45px;">
-      <i class="fa-solid fa-house" style="position: absolute; left: 24px;"></i>Back to Home
+  <div class="reg-btn-wrapper">
+    <a href="/" class="btn btn-secondary reg-btn-padded">
+      <i class="fa-solid fa-house reg-btn-icon-left"></i>Back to Home
     </a>
   </div>
 </div>

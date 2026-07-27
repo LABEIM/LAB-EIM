@@ -348,3 +348,9 @@ h1, h2, h3, h4, h5, h6 {
 
 .hover-scale { transition: transform 0.3s; }
 .hover-scale:hover { transform: scale(1.1) !important; }
+
+/* Global helper utilities */
+.is-hidden {
+    display: none !important;
+}
+

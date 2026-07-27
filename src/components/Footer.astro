@@ -9,12 +9,12 @@ const currentYear = new Date().getFullYear();
     <div class="footer-grid">
       <div class="footer-about">
         <a href="/" class="logo-container">
-          <div class="logo-icon" style="width: 30px; height: 30px;">
+          <div class="logo-icon logo-icon-sm">
             <img src={siteData.logo} alt={`${siteData.name} Logo`} width="30" height="30" />
           </div>
           <div class="logo-text">
-            <span class="text-gradient-dual" style="font-size: 1.2rem;">{siteData.name}</span>
-            <span class="logo-sub" style="font-size: 0.6rem; letter-spacing: 1px;">{siteData.subName}</span>
+            <span class="text-gradient-dual logo-text-sm">{siteData.name}</span>
+            <span class="logo-sub logo-sub-sm">{siteData.subName}</span>
           </div>
         </a>
         <p>{siteData.fullName} is part of the Enterprise & Industrial System (EIS) Expertise Group, Bachelor of Information Systems Study Program, Faculty of Industrial Engineering, Telkom University.</p>
@@ -34,12 +34,12 @@ const currentYear = new Date().getFullYear();
 
       <div>
         <h4 class="footer-title">Contact & Location</h4>
-        <ul class="footer-links" style="margin-bottom: 20px;">
-          <li><i class="fa-solid fa-location-dot" style="margin-right: 8px; color: var(--accent-red);"></i> {siteData.contact.location}</li>
-          <li><i class="fa-solid fa-university" style="margin-right: 8px; color: var(--accent-red);"></i> {siteData.contact.university}</li>
-          <li><i class="fa-solid fa-envelope" style="margin-right: 8px; color: var(--accent-cyan);"></i> {siteData.contact.email}</li>
+        <ul class="footer-links footer-contact-list">
+          <li><i class="fa-solid fa-location-dot footer-icon-red"></i> {siteData.contact.location}</li>
+          <li><i class="fa-solid fa-university footer-icon-red"></i> {siteData.contact.university}</li>
+          <li><i class="fa-solid fa-envelope footer-icon-cyan"></i> {siteData.contact.email}</li>
         </ul>
-        <h4 class="footer-title" style="margin-bottom: 12px; font-size: 0.95rem;">Follow Our Social Media</h4>
+        <h4 class="footer-title footer-social-title">Follow Our Social Media</h4>
         <div class="footer-connect-list">
           {siteData.socials.instagram && (
             <a href={siteData.socials.instagram} target="_blank" rel="noopener noreferrer" class="footer-connect-btn" title="Instagram @eimresearchlab">
@@ -101,7 +101,7 @@ const currentYear = new Date().getFullYear();
 
     <div class="footer-bottom">
       <p>&copy; {currentYear} {siteData.fullName}. All Rights Reserved.</p>
-      <p>Designed with <i class="fa-solid fa-heart" style="color: var(--accent-red);"></i> in Telkom University</p>
+      <p>Designed with <i class="fa-solid fa-heart footer-heart-icon"></i> in Telkom University</p>
     </div>
   </div>
 </footer>

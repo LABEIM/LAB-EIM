@@ -12,24 +12,24 @@ interface Props {
 const { initialStage, closedCfg } = Astro.props;
 ---
 
-<div id="view-closed" style={initialStage === 'closed' ? 'display: block;' : 'display: none;'}>
-  <div style="text-align: center; padding: 40px 20px; background-color: var(--bg-card); border-radius: 10px; border: 1px solid var(--border-color);">
-    <i class="fa-solid fa-lock" style="font-size: 3rem; color: var(--text-muted); margin-bottom: 20px;"></i>
-    <h3 style="font-size: 1.8rem; margin-bottom: 12px; color: var(--text-primary);">{closedCfg.title}</h3>
-    <p style="color: var(--text-secondary); font-size: 1.05rem; max-width: 550px; margin: 0 auto 20px auto;">{closedCfg.subtitle}</p>
-    <p style="color: var(--text-muted); font-size: 0.95rem; margin-bottom: 25px;">{closedCfg.message}</p>
+<div id="view-closed" class={initialStage === 'closed' ? '' : 'is-hidden'}>
+  <div class="reg-closed-box">
+    <i class="fa-solid fa-lock reg-closed-icon"></i>
+    <h3 class="reg-closed-title">{closedCfg.title}</h3>
+    <p class="reg-closed-subtitle">{closedCfg.subtitle}</p>
+    <p class="reg-closed-msg">{closedCfg.message}</p>
 
     {closedCfg.nextBatchInfo && (
-      <div style="display: inline-block; background: rgba(255, 255, 255, 0.04); border: 1px solid var(--border-color); border-radius: 20px; padding: 8px 18px; color: var(--accent-cyan); font-size: 0.85rem; margin-bottom: 30px;">
-        <i class="fa-solid fa-circle-info" style="margin-right: 6px;"></i> {closedCfg.nextBatchInfo}
+      <div class="reg-next-batch-pill">
+        <i class="fa-solid fa-circle-info reg-icon-mr"></i> {closedCfg.nextBatchInfo}
       </div>
     )}
 
-    <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
-      <a href="/" class="btn btn-primary" style="position: relative; padding-left: 45px; padding-right: 45px;">
-        <i class="fa-solid fa-house" style="position: absolute; left: 24px;"></i>Back to Home
+    <div class="reg-btn-group">
+      <a href="/" class="btn btn-primary reg-btn-padded">
+        <i class="fa-solid fa-house reg-btn-icon-left"></i>Back to Home
       </a>
-      <a href="/news" class="btn btn-secondary" style="padding: 10px 24px;">
+      <a href="/news" class="btn btn-secondary reg-btn-px">
         <i class="fa-solid fa-newspaper"></i> Lab News & Updates
       </a>
     </div>

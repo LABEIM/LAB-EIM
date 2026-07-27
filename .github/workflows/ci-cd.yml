@@ -50,8 +50,12 @@ jobs:
     permissions:
       contents: read
       pull-requests: write
+      deployments: write
+    environment:
+      name: ${{ github.event_name == 'pull_request' && 'preview' || 'production' }}
+      url: ${{ steps.deploy_preview.outputs.deploy_url || steps.deploy_production.outputs.deploy_url || secrets.VERCEL_PRODUCTION_URL }}
     outputs:
-      deploy_url: ${{ steps.deploy_preview.outputs.deploy_url || secrets.VERCEL_PRODUCTION_URL }}
+      deploy_url: ${{ steps.deploy_preview.outputs.deploy_url || steps.deploy_production.outputs.deploy_url || secrets.VERCEL_PRODUCTION_URL }}
     env:
       VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
       VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
@@ -99,8 +103,11 @@ jobs:
           echo "deploy_url=$DEPLOY_URL" >> $GITHUB_OUTPUT
 
       - name: Deploy to Vercel (Production)
+        id: deploy_production
         if: github.event_name != 'pull_request'
-        run: vercel deploy --prebuilt --prod --yes --token=${{ secrets.VERCEL_TOKEN }}
+        run: |
+          DEPLOY_URL=$(vercel deploy --prebuilt --prod --yes --token=${{ secrets.VERCEL_TOKEN }})
+          echo "deploy_url=$DEPLOY_URL" >> $GITHUB_OUTPUT
 
       - name: Post preview URL to PR
         if: github.event_name == 'pull_request' && success()
@@ -129,9 +136,20 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Run Lighthouse audit
+      - name: Build Astro project (fallback for static audit if URL is unavailable)
+        if: ${{ !needs.deploy.outputs.deploy_url }}
+        run: npm run build
+
+      - name: Run Lighthouse audit (Live URL)
+        if: ${{ needs.deploy.outputs.deploy_url }}
         uses: treosh/lighthouse-ci-action@v12
         with:
           configPath: './.lighthouserc.json'
           urls: |
             ${{ needs.deploy.outputs.deploy_url }}
+
+      - name: Run Lighthouse audit (Static Fallback)
+        if: ${{ !needs.deploy.outputs.deploy_url }}
+        uses: treosh/lighthouse-ci-action@v12
+        with:
+          configPath: './.lighthouserc.json'

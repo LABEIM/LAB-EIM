@@ -1,30 +1,64 @@
-name: Vercel Deployment
-
-env:
-  VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-  VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
-  PUBLIC_GOOGLE_SHEET_SCRIPT_URL: ${{ secrets.PUBLIC_GOOGLE_SHEET_SCRIPT_URL }}
-  # Required so Keystatic builds the correct OAuth redirect_uri during CI.
-  # Vercel system vars (VERCEL_PROJECT_PRODUCTION_URL) are NOT available in
-  # GitHub Actions — we inject it manually via a repository secret.
-  VERCEL_URL: ${{ secrets.VERCEL_PRODUCTION_URL }}
-  VERCEL_PROJECT_PRODUCTION_URL: ${{ secrets.VERCEL_PRODUCTION_URL }}
+name: Unified CI/CD Pipeline
 
 on:
   push:
-    branches:
-      - main
+    branches: [ "main" ]
+    paths-ignore:
+      - '**.md'
+      - 'docs/**'
   pull_request:
-    branches:
-      - main
+    branches: [ "main", "master", "astro-version" ]
+    paths-ignore:
+      - '**.md'
+      - 'docs/**'
+  workflow_dispatch:
 
-permissions:
-  contents: read
-  pull-requests: write
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  ASTRO_TELEMETRY_DISABLED: 1
 
 jobs:
-  deploy:
+  validate:
+    name: CI Validation (Lint & Build)
     runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run Astro diagnostics
+        run: npx astro check
+
+      - name: Verify build compilation
+        run: npm run build
+
+  deploy:
+    name: Deploy to Vercel
+    needs: validate
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+    outputs:
+      deploy_url: ${{ steps.deploy_preview.outputs.deploy_url || secrets.VERCEL_PRODUCTION_URL }}
+    env:
+      VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+      VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+      PUBLIC_GOOGLE_SHEET_SCRIPT_URL: ${{ secrets.PUBLIC_GOOGLE_SHEET_SCRIPT_URL }}
+      # Required so Keystatic builds the correct OAuth redirect_uri during CI.
+      VERCEL_URL: ${{ secrets.VERCEL_PRODUCTION_URL }}
+      VERCEL_PROJECT_PRODUCTION_URL: ${{ secrets.VERCEL_PRODUCTION_URL }}
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
@@ -77,3 +111,27 @@ jobs:
           gh pr comment ${{ github.event.pull_request.number }} --body "🚀 **Vercel Preview Deployment Ready!**
           
           🔗 Preview URL: $DEPLOY_URL"
+
+  lighthouse:
+    name: Lighthouse Audit
+    needs: deploy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run Lighthouse audit
+        uses: treosh/lighthouse-ci-action@v12
+        with:
+          configPath: './.lighthouserc.json'
+          urls: |
+            ${{ needs.deploy.outputs.deploy_url }}

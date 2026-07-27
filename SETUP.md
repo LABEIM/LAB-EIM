@@ -105,18 +105,33 @@ In your Vercel project dashboard, go to **Settings** -> **Environment Variables*
 
 ## CI/CD Workflow with GitHub Actions
 
-A custom GitHub Actions pipeline is configured in this repository to automate and gatekeeper deployments to Vercel. 
+A unified GitHub Actions pipeline (`.github/workflows/ci-cd.yml`) is configured in this repository to gatekeeper deployments to Vercel and execute automated Lighthouse performance audits.
 
-### Setup Repository Secrets
+### 1. Preventing Duplicate Deployments (Vercel Dashboard Setting)
+
+Because Vercel automatically builds on git pushes by default, you must configure Vercel to allow GitHub Actions to act as the exclusive, gated deployment controller:
+
+1. Go to your Vercel Project Dashboard -> **Settings** -> **Build and Deployment**.
+2. Scroll down to the **Ignored Build Step** section.
+3. Under **Behavior**, select **Don't build anything** from the dropdown menu (this automatically sets the ignore command to `exit 0`).
+4. Click **Save**.
+
+*This instructs Vercel to ignore native GitHub webhooks, ensuring Vercel only deploys when commanded by GitHub Actions (`ci-cd.yml`) after CI validation succeeds.*
+
+
+
+### 2. Setup Repository Secrets
 
 To enable the deployment workflow, add the following secrets under **Settings > Secrets and variables > Actions > New repository secret** in your GitHub repository:
 
 1. `VERCEL_TOKEN`: Your Vercel Personal Access Token (created at [Vercel Settings > Tokens](https://vercel.com/account/tokens)).
 2. `VERCEL_ORG_ID`: Your Vercel Organization ID (found as `orgId` in `.vercel/project.json` or by running `npx vercel link`).
 3. `VERCEL_PROJECT_ID`: Your Vercel Project ID (found as `projectId` in `.vercel/project.json` or by running `npx vercel link`).
-4. `PUBLIC_GOOGLE_SHEET_SCRIPT_URL`: The URL of your Google Apps Script handler (to inject it during build time).
+4. `VERCEL_PRODUCTION_URL`: Your main production domain URL (e.g. `website-eim.vercel.app`).
+5. `PUBLIC_GOOGLE_SHEET_SCRIPT_URL`: The URL of your Google Apps Script handler (to inject it during build time).
 
-### Features of the CI/CD Pipeline
-- **Automation**: Triggers on push or pull requests targeting the `main` branch.
-- **Fail-Safe Checks**: Dependencies are installed and validated before running builds. If tests or formatting checks are added later, they will run and block deployment if they fail.
-- **Preview Comments**: On Pull Requests, the workflow automatically deploys a preview and uses the GitHub CLI to write a comment on the PR containing the exact preview URL.
+### 3. Pipeline Stages (`ci-cd.yml`)
+- **Stage 1: CI Validation (`validate`)**: Runs `npx astro check` and `npm run build` on PRs and main pushes. Cancels redundant in-progress runs automatically and ignores markdown-only edits.
+- **Stage 2: Vercel Deployment (`deploy`)**: Gated behind `validate`. Builds and deploys a preview environment for PRs (and posts a PR comment with the live URL) or deploys to production on pushes to `main`.
+- **Stage 3: Lighthouse Audit (`lighthouse`)**: Gated behind `deploy`. Automatically audits performance directly against the live deployed Vercel URL.
+

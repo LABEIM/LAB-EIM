@@ -181,47 +181,145 @@
     line-height: 1.5;
 }
 
-/* Structure Page Filter Navbar */
+/* Structure Page Filter Navbar (Dark Glassmorphism) */
 .filter-container {
     display: flex;
     justify-content: center;
     align-items: center;
     flex-wrap: wrap;
-    gap: 12px;
-    margin-bottom: 40px;
-    padding: 10px;
-    background: rgba(255, 255, 255, 0.8);
-    backdrop-filter: blur(12px);
+    gap: 8px;
+    margin-bottom: 30px;
+    padding: 8px 12px;
+    background: rgba(18, 24, 38, 0.75);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
     border-radius: 50px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-    border: 1px solid rgba(0, 0, 0, 0.05);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.1);
     max-width: fit-content;
     margin-left: auto;
     margin-right: auto;
 }
 
 .filter-tab {
-    padding: 10px 24px;
-    font-size: 0.95rem;
+    padding: 10px 22px;
+    font-size: 0.9rem;
     font-weight: 600;
-    color: #555;
+    color: rgba(255, 255, 255, 0.7);
     background: transparent;
-    border: none;
+    border: 1px solid transparent;
     border-radius: 30px;
     cursor: pointer;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     position: relative;
-    overflow: hidden;
 }
 
 .filter-tab:hover {
-    color: var(--accent-cyan);
-    background: rgba(0, 198, 198, 0.1);
+    color: #ffffff;
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.2);
 }
 
 .filter-tab.active {
-    background: linear-gradient(135deg, #111 0%, #333 100%);
-    color: #fff;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    transform: translateY(-2px);
+    background: linear-gradient(135deg, rgba(var(--accent-cyan-rgb), 0.35) 0%, rgba(13, 20, 36, 0.95) 100%);
+    color: #ffffff;
+    border: 1px solid var(--accent-cyan);
+    box-shadow: 0 4px 20px rgba(var(--accent-cyan-rgb), 0.4);
+    transform: translateY(-1px);
 }
+
+/* Division Summary Banner Panel */
+.division-banner-panel {
+    background: rgba(18, 24, 38, 0.85);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 20px;
+    padding: 24px 30px;
+    margin-bottom: 40px;
+    transition: all 0.3s ease;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+}
+
+.banner-header-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-bottom: 10px;
+}
+
+.banner-title-group {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.banner-title-group h2 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #ffffff;
+    margin: 0;
+}
+
+.division-badge-tag {
+    padding: 4px 14px;
+    border-radius: 30px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    background: rgba(var(--accent-cyan-rgb), 0.2);
+    color: var(--accent-cyan);
+    border: 1px solid rgba(var(--accent-cyan-rgb), 0.4);
+}
+
+.banner-member-count {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.85);
+    background: rgba(255, 255, 255, 0.08);
+    padding: 6px 16px;
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.banner-description {
+    font-size: 0.95rem;
+    color: rgba(255, 255, 255, 0.75);
+    line-height: 1.6;
+    margin: 0;
+}
+
+/* Empty State Panel */
+.empty-state-panel {
+    text-align: center;
+    padding: 60px 20px;
+    background: rgba(18, 24, 38, 0.75);
+    border-radius: 20px;
+    border: 1px dashed rgba(255, 255, 255, 0.2);
+    margin: 40px 0;
+}
+
+.empty-state-icon {
+    font-size: 3rem;
+    color: var(--accent-cyan);
+    margin-bottom: 16px;
+    opacity: 0.8;
+}
+
+.empty-state-panel h4 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #ffffff;
+    margin-bottom: 8px;
+}
+
+.empty-state-panel p {
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.75);
+    max-width: 450px;
+    margin: 0 auto;
+}
+

@@ -2,10 +2,11 @@
 import Layout from '../layouts/Layout.astro';
 import membersData from '../data/members.json';
 import divisionsData from '../data/divisions.json';
+import { buildDivisionMap, getDivisionInfo } from '../utils/division-mapper';
 
 const initialMembers = membersData.list || [];
 const divisions = Array.isArray(divisionsData) ? divisionsData : (divisionsData as any).list || [];
-const divisionMap = new Map(divisions.map((d: any) => [d.id, d]));
+const divisionMap = buildDivisionMap(divisions);
 ---
 
 <Layout title="Organizational Structure - EIM Research Lab">
@@ -27,15 +28,45 @@ const divisionMap = new Map(divisions.map((d: any) => [d.id, d]));
         ))}
       </div>
 
+      <!-- Division Summary Banner -->
+      <div class="division-banner-panel" id="division-banner">
+        <div class="banner-header-row">
+          <div class="banner-title-group">
+            <h2 id="banner-title">All Divisions</h2>
+            <span class="division-badge-tag" id="banner-badge">OVERVIEW</span>
+          </div>
+          <span class="banner-member-count" id="banner-count">{initialMembers.length} Members</span>
+        </div>
+        <p class="banner-description" id="banner-desc">
+          Meet our dedicated laboratory assistants working across research, networking, public relations, competition, and community service.
+        </p>
+      </div>
+
+      <!-- Empty State Notice (hidden by default) -->
+      <div class="empty-state-panel" id="empty-state-notice" style="display: none;">
+        <div class="empty-state-icon">
+          <i class="fa-solid fa-users-slash"></i>
+        </div>
+        <h4>No Members Found</h4>
+        <p>There are currently no staff entries assigned to this division. Select another division tab or check back later.</p>
+      </div>
+
       <div class="member-grid" id="member-grid">
         {initialMembers.map((member, idx) => {
-          const divInfo = divisionMap.get(member.division);
+          const divInfo = getDivisionInfo(member.division, divisions);
           const borderColor = divInfo?.borderColor || 'rgba(255, 255, 255, 0.1)';
           const roleColor = divInfo?.roleColor || 'var(--text-secondary)';
+          // Build comprehensive division data attribute (combines member.division, canonical id, and aliases)
+          const matchedAliases = divInfo?.aliases ? divInfo.aliases.join(' ') : '';
+          const canonicalId = divInfo?.id || member.division;
+          const divisionDataAttr = Array.from(new Set([member.division, canonicalId, ...matchedAliases.split(' ')]))
+            .filter(Boolean)
+            .join(' ');
+
           return (
             <div 
-              class={`member-card glass-panel member-card-item div-${member.division}`} 
-              data-division={member.division}
+              class={`member-card glass-panel member-card-item div-${canonicalId}`} 
+              data-division={divisionDataAttr}
               style={`animation-delay: ${idx * 0.04}s; border-color: ${borderColor};`}
             >
               <div class="member-avatar-wrapper">

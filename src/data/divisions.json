@@ -8,6 +8,7 @@
       "registrationLabel": "Inti",
       "registrationValue": "core",
       "aliases": [
+        "core",
         "inti"
       ],
       "borderColor": "rgba(var(--accent-red-rgb), 0.3)",
@@ -21,6 +22,7 @@
       "registrationLabel": "Riset",
       "registrationValue": "Riset",
       "aliases": [
+        "research",
         "riset"
       ],
       "borderColor": "rgba(var(--accent-cyan-rgb), 0.3)",
@@ -30,10 +32,13 @@
       "id": "pku",
       "name": "Pelatihan & Kuliah Umum",
       "displayName": "PELATIHAN & KULIAH UMUM",
-      "description": "Primary Capacity Development through training and do public lectures events.",
+      "description": "Primary Capacity Development through training and public lectures events.",
       "registrationLabel": "Pelatihan & Kuliah Umum (PKU)",
       "registrationValue": "PKU",
-      "aliases": [],
+      "aliases": [
+        "pku",
+        "pelatihan"
+      ],
       "borderColor": "rgba(79, 172, 254, 0.3)",
       "roleColor": "#4facfe"
     },
@@ -45,6 +50,7 @@
       "registrationLabel": "Competition & Event",
       "registrationValue": "competition",
       "aliases": [
+        "competition",
         "lomba"
       ],
       "borderColor": "rgba(255, 186, 0, 0.3)",
@@ -53,12 +59,14 @@
     {
       "id": "media",
       "name": "Media & Humas",
-      "displayName": "Media & Humas",
+      "displayName": "MEDIA & HUMAS",
       "description": "Media and Humas for branding and information dissemination.",
       "registrationLabel": "Media & Humas (MEDHUM)",
       "registrationValue": "Medhum",
       "aliases": [
-        "medhum"
+        "media",
+        "medhum",
+        "prc"
       ],
       "borderColor": "rgba(163, 7, 186, 0.3)",
       "roleColor": "#a307ba"
@@ -67,11 +75,13 @@
       "id": "care",
       "name": "Community Action & Empowerment",
       "displayName": "COMMUNITY ACTION & EMPOWERMENT",
-      "description": "Community Service conducted periodically to help the society.",
+      "description": "Community Service conducted periodically to help society.",
       "registrationLabel": "Community Action & Empowerment (CARE)",
       "registrationValue": "care",
       "aliases": [
-        "pengmas"
+        "community",
+        "pengmas",
+        "care"
       ],
       "borderColor": "rgba(39, 174, 96, 0.3)",
       "roleColor": "#27ae60"

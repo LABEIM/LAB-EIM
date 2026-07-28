@@ -43,6 +43,12 @@ const COLUMN_ALIASES = {
   'Bersedia di Pindahkan': 'Bersedia Dipindah Divisi',
   'Bersedia Dipindahkan': 'Bersedia Dipindah Divisi',
   'Bersedia Pindah': 'Bersedia Dipindah Divisi',
+  // Portofolio (Kustom/Multi-Divisi)
+  'Portofolio': 'Portofolio MedHum',
+  'Portfolio': 'Portofolio MedHum',
+  'Link Portofolio': 'Portofolio MedHum',
+  'Portofolio Divisi': 'Portofolio MedHum',
+  'Link Portofolio Divisi': 'Portofolio MedHum',
   // File links (short names)
   'KSM': 'Link KSM',
   'KHS': 'Link KHS',
@@ -204,6 +210,21 @@ function saveFileToDrive(fileData, targetFolder, prefix, nim) {
 }
 
 /**
+  Cek apakah salah satu dari pilihan divisi membutuhkan portofolio (misal: Medhum)
+ */
+function isPortfolioRequired(divisi1, divisi2) {
+  const rawTriggers = scriptProp.getProperty('PORTFOLIO_DIVISIONS') || 'Medhum';
+  const triggers = rawTriggers.split(',').map(function(s) { return s.trim().toLowerCase(); }).filter(Boolean);
+
+  const d1 = String(divisi1 || '').trim().toLowerCase();
+  const d2 = String(divisi2 || '').trim().toLowerCase();
+
+  return triggers.some(function(t) {
+    return (d1 !== '' && d1.indexOf(t) >= 0) || (d2 !== '' && d2.indexOf(t) >= 0);
+  });
+}
+
+/**
   Mengirim email konfirmasi pendaftaran kepada pendaftar (Applicant)
  */
 function sendConfirmationEmail(data, isRevision) {
@@ -223,6 +244,13 @@ function sendConfirmationEmail(data, isRevision) {
   const safeDivisi2 = escapeHtml(data['Divisi 2']);
   const safeBersedia = escapeHtml(data['Bersedia Dipindah Divisi']);
   const safePorto = data['Portofolio MedHum'] ? escapeHtml(data['Portofolio MedHum']) : '';
+  const showPortfolio = Boolean(safePorto && isPortfolioRequired(data['Divisi 1'], data['Divisi 2']));
+
+  const linkKsm = data['Link KSM'] ? escapeHtml(data['Link KSM']) : '';
+  const linkKhs = data['Link KHS'] ? escapeHtml(data['Link KHS']) : '';
+  const linkMl = data['Link ML'] ? escapeHtml(data['Link ML']) : '';
+  const linkCv = data['Link CV'] ? escapeHtml(data['Link CV']) : '';
+  const linkPi = data['Link PI (Pakta Integritas)'] ? escapeHtml(data['Link PI (Pakta Integritas)']) : '';
 
   const subjectPrefix = isRevision ? '[REVISI] ' : '';
   const subject = `${subjectPrefix}[EIM Research Lab] Confirmation of Recruitment Registration - ${safeNama}`;
@@ -251,10 +279,24 @@ function sendConfirmationEmail(data, isRevision) {
             <tr><td style="padding: 6px 0; color: #94a3b8;">Angkatan</td><td style="padding: 6px 0; font-weight: 600;">: ${safeAngkatan}</td></tr>
             <tr><td style="padding: 6px 0; color: #94a3b8;">Pilihan Divisi 1</td><td style="padding: 6px 0; font-weight: 600;">: ${safeDivisi1}</td></tr>
             <tr><td style="padding: 6px 0; color: #94a3b8;">Pilihan Divisi 2</td><td style="padding: 6px 0; font-weight: 600;">: ${safeDivisi2}</td></tr>
-            ${safePorto ? `<tr><td style="padding: 6px 0; color: #94a3b8;">Portofolio MedHum</td><td style="padding: 6px 0;"><a href="${safePorto}" style="color: #38bdf8;">Lihat Portofolio</a></td></tr>` : ''}
+            ${showPortfolio ? `<tr><td style="padding: 6px 0; color: #94a3b8;">Link Portofolio</td><td style="padding: 6px 0;"><a href="${safePorto}" style="color: #38bdf8;" target="_blank">Lihat Portofolio</a></td></tr>` : ''}
             <tr><td style="padding: 6px 0; color: #94a3b8;">Bersedia Dipindah</td><td style="padding: 6px 0; font-weight: 600;">: ${safeBersedia}</td></tr>
           </table>
         </div>
+
+        ${(linkKsm || linkKhs || linkMl || linkCv || linkPi) ? `
+        <div style="background-color: #1e293b; border-left: 4px solid #38bdf8; padding: 20px; border-radius: 6px; margin: 25px 0;">
+          <h3 style="color: #38bdf8; margin-top: 0; font-size: 15px; text-transform: uppercase; letter-spacing: 0.5px;">Berkas Terunggah (Uploaded Documents)</h3>
+          <p style="color: #94a3b8; font-size: 12px; margin-top: -4px; margin-bottom: 14px;">Klik tautan berkas di bawah ini untuk memastikan dokumen yang Anda kirimkan sudah benar:</p>
+          <table style="width: 100%; color: #cbd5e1; font-size: 14px; border-collapse: collapse;">
+            ${linkKsm ? `<tr><td style="padding: 6px 0; width: 40%; color: #94a3b8;">Kartu Studi Mahasiswa (KSM)</td><td style="padding: 6px 0;">: <a href="${linkKsm}" style="color: #38bdf8; text-decoration: underline;" target="_blank">Lihat Berkas KSM</a></td></tr>` : ''}
+            ${linkKhs ? `<tr><td style="padding: 6px 0; color: #94a3b8;">Kartu Hasil Studi (KHS)</td><td style="padding: 6px 0;">: <a href="${linkKhs}" style="color: #38bdf8; text-decoration: underline;" target="_blank">Lihat Berkas KHS</a></td></tr>` : ''}
+            ${linkMl ? `<tr><td style="padding: 6px 0; color: #94a3b8;">Motivation Letter (ML)</td><td style="padding: 6px 0;">: <a href="${linkMl}" style="color: #38bdf8; text-decoration: underline;" target="_blank">Lihat Motivation Letter</a></td></tr>` : ''}
+            ${linkCv ? `<tr><td style="padding: 6px 0; color: #94a3b8;">Curriculum Vitae (CV)</td><td style="padding: 6px 0;">: <a href="${linkCv}" style="color: #38bdf8; text-decoration: underline;" target="_blank">Lihat CV</a></td></tr>` : ''}
+            ${linkPi ? `<tr><td style="padding: 6px 0; color: #94a3b8;">Pakta Integritas (PI)</td><td style="padding: 6px 0;">: <a href="${linkPi}" style="color: #38bdf8; text-decoration: underline;" target="_blank">Lihat Pakta Integritas</a></td></tr>` : ''}
+          </table>
+        </div>
+        ` : ''}
 
         <p style="color: #cbd5e1; line-height: 1.6;">Tahapan seleksi berikutnya akan diinformasikan lebih lanjut melalui email dan WhatsApp resmi EIM Research Lab.</p>
         
@@ -469,7 +511,9 @@ function doPost(e) {
       'Alasan Divisi 1': sanitizeSheetValue(rawData['Alasan Divisi 1'] || rawData['alasan_divisi_1'] || rawData['Alasan'] || ''),
       'Divisi 2': sanitizeSheetValue(rawData['Divisi 2'] || rawData['divisi_2'] || ''),
       'Alasan Divisi 2': sanitizeSheetValue(rawData['Alasan Divisi 2'] || rawData['alasan_divisi_2'] || rawData['Alasan'] || ''),
-      'Portofolio MedHum': sanitizeSheetValue(rawData['Portofolio MedHum'] || rawData['portofolio_medhum'] || ''),
+      'Portofolio MedHum': isPortfolioRequired(rawData['Divisi 1'] || rawData['divisi_1'], rawData['Divisi 2'] || rawData['divisi_2'])
+        ? sanitizeSheetValue(rawData['Portofolio MedHum'] || rawData['portofolio_medhum'] || '')
+        : '',
       'Bersedia Dipindah Divisi': sanitizeSheetValue(rawData['Bersedia Dipindah Divisi'] || rawData['bersedia_dipindah'] || ''),
       'Link KSM': '',
       'Link KHS': '',

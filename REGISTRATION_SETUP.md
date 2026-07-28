@@ -41,9 +41,16 @@ This document is a step-by-step guide for setting up, configuring, and operating
    * **`SECRET_KEY`**: `your_custom_passphrase` *(Optional signature key for security checks)*
    * **`FOLDER_ID`**: *(Optional)* The ID of a Google Drive folder where uploaded applicant PDFs will be saved. If left blank, the script automatically creates a folder named `"EIM Recruitment Uploads"` and caches its ID.
    * **`MAX_FILE_SIZE_MB`**: `10` *(Optional. Maximum file size in MB per uploaded document, defaults to `10`)*
-   * **`MAKE_FILES_PUBLIC`**: `false` *(Optional. Set to `true` if uploaded Drive links should be viewable by anyone with the link. Defaults to `false` for privacy)*
+   * **`MAKE_FILES_PUBLIC`**: `true` *(Optional. Set to `true` if uploaded Drive links should be viewable via link by candidates. Defaults to `false`)*
+   * **`PORTFOLIO_DIVISIONS`**: `Medhum` *(Optional. Comma-separated division values requiring portfolio links, e.g. `Medhum, Riset, Design`. Defaults to `Medhum`)*
 
-### 3. Backend Key Customizations (`code.gs`)
+### 3. Google Drive Folder & Security Permissions Guide
+> [!IMPORTANT]
+> **Recommended Security Setup for Staff & Candidate Privacy:**
+> 1. **Parent Drive Folder (`EIM Recruitment Uploads`)**: Keep General Access set to **`Restricted`**. Share the folder explicitly with your **lab staff's Google emails** (or staff group) so staff have full access for candidate scoring.
+> 2. **File Links in Email (`MAKE_FILES_PUBLIC='true'`)**: Setting `MAKE_FILES_PUBLIC='true'` generates unlisted view links for individual uploaded files. This allows candidates to click and verify their uploaded documents directly from their confirmation email, while keeping the parent folder and other candidates' documents strictly private.
+
+### 4. Backend Key Customizations (`code.gs`)
 If you need to customize email text, sheet tab names, or folder fallback logic:
 
 * **📊 Target Worksheet Tab Name** (`code.gs` Line 1):
@@ -53,12 +60,13 @@ If you need to customize email text, sheet tab names, or folder fallback logic:
 * **📁 Google Drive Folder & Upload Logic** (`code.gs` Lines 128–204):
   * Reads `FOLDER_ID` from Script Properties or automatically creates `"EIM Recruitment Uploads"` folder and caches the folder ID.
   * Validates MIME types against `ALLOWED_MIME_TYPES` whitelist and enforces file size limits.
-* **📧 Confirmation Email Subject & Template** (`code.gs` Lines 206–275):
+* **📧 Confirmation Email & Document Verification Links** (`code.gs` Lines 224–315):
   * Recipient Email validation & Daily Quota check.
-  * Email Subject & HTML Styling. Sent automatically from the deploying Google account.
+  * Dynamically includes portfolio links under **Link Portofolio** only if the candidate chose a portfolio-requiring division.
+  * Includes direct verification links for all uploaded candidate documents (KSM, KHS, ML, CV, PI).
 
 
-### 4. Deploy as Web App
+### 5. Deploy as Web App
 1. In the top right corner, click **Deploy > New deployment**.
 2. Click the gear icon ⚙️ next to *Select type* and select **Web app**.
 3. Fill out the deployment details:

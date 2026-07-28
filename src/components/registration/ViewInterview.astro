@@ -1,5 +1,7 @@
 ---
 import TimelineSteps from './TimelineSteps.astro';
+import StageInfoPanel from './StageInfoPanel.astro';
+import BackToHomeButton from './BackToHomeButton.astro';
 
 interface Props {
   initialStage: string;
@@ -23,29 +25,13 @@ const { initialStage, interviewCfg } = Astro.props;
 
   <TimelineSteps activeStepIndex={4} />
 
-  <div class="info-card-panel">
-    <i class="fa-solid fa-comments info-card-icon"></i>
-    <p class="reg-checklist-notice">{interviewCfg.message}</p>
-    
-    <div class="reg-btn-group">
-      {interviewCfg.scheduleInfo && (
-        <div class="badge-date-info">
-          <i class="fa-solid fa-calendar-days reg-icon-mr"></i> Schedule: <strong>{interviewCfg.scheduleInfo}</strong>
-        </div>
-      )}
-      {interviewCfg.locationInfo && (
-        <div class="badge-location-info">
-          <i class="fa-solid fa-video reg-checklist-icon"></i> Location / Room: <strong>{interviewCfg.locationInfo}</strong>
-        </div>
-      )}
-    </div>
-  </div>
+  <StageInfoPanel
+    iconClass="fa-comments"
+    message={interviewCfg.message}
+    scheduleInfo={interviewCfg.scheduleInfo}
+    locationInfo={interviewCfg.locationInfo}
+    locationIconClass="fa-video"
+  />
 
-  <div class="reg-btn-wrapper">
-    <a href="/" class="btn btn-secondary reg-btn-padded">
-      <i class="fa-solid fa-house reg-btn-icon-left"></i>Back to Home
-    </a>
-  </div>
+  <BackToHomeButton />
 </div>
-
-

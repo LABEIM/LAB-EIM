@@ -67,6 +67,28 @@
   transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
   box-shadow: 0 4px 12px rgba(14, 85, 95, 0.04);
+  --plat-color: #25D366;
+  --plat-bg: rgba(37, 211, 102, 0.12);
+}
+
+.cp-card.cp-whatsapp {
+  --plat-color: #25D366;
+  --plat-bg: rgba(37, 211, 102, 0.12);
+}
+
+.cp-card.cp-line {
+  --plat-color: #00C300;
+  --plat-bg: rgba(0, 195, 0, 0.12);
+}
+
+.cp-card.cp-email {
+  --plat-color: #EA4335;
+  --plat-bg: rgba(234, 67, 53, 0.12);
+}
+
+.cp-card.cp-phone {
+  --plat-color: #34A853;
+  --plat-bg: rgba(52, 168, 83, 0.12);
 }
 
 .cp-card:hover {

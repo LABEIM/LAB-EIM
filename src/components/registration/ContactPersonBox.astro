@@ -68,7 +68,7 @@ const platformConfig: Record<string, { label: string; iconClass: string; color: 
         const platInfo = platformConfig[platKey] || platformConfig.whatsapp;
 
         return (
-          <div class="cp-card" style={`--plat-color: ${platInfo.color}; --plat-bg: ${platInfo.bgColor};`}>
+          <div class={`cp-card cp-${platKey}`}>
             <div class="cp-card-header">
               <span class="cp-role-badge">{cp.role || 'Contact Person'}</span>
               <div class="cp-plat-icon">

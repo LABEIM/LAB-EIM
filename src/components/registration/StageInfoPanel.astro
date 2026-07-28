@@ -1,0 +1,45 @@
+---
+interface Props {
+  iconClass: string;
+  message: string;
+  estimatedAnnouncementDate?: string;
+  scheduleInfo?: string;
+  locationInfo?: string;
+  locationIconClass?: string;
+}
+
+const {
+  iconClass,
+  message,
+  estimatedAnnouncementDate,
+  scheduleInfo,
+  locationInfo,
+  locationIconClass = "fa-location-dot"
+} = Astro.props;
+---
+
+<div class="info-card-panel">
+  <i class={`fa-solid ${iconClass} info-card-icon`}></i>
+  <p class="reg-checklist-notice">{message}</p>
+  
+  {estimatedAnnouncementDate && (
+    <div class="badge-date-info">
+      <i class="fa-solid fa-calendar-day reg-icon-mr"></i> Estimated Announcement: <strong>{estimatedAnnouncementDate}</strong>
+    </div>
+  )}
+
+  {(scheduleInfo || locationInfo) && (
+    <div class="reg-btn-group">
+      {scheduleInfo && (
+        <div class="badge-date-info">
+          <i class="fa-solid fa-calendar-days reg-icon-mr"></i> Schedule: <strong>{scheduleInfo}</strong>
+        </div>
+      )}
+      {locationInfo && (
+        <div class="badge-location-info">
+          <i class={`fa-solid ${locationIconClass} reg-checklist-icon`}></i> Location: <strong>{locationInfo}</strong>
+        </div>
+      )}
+    </div>
+  )}
+</div>

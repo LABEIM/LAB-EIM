@@ -1,5 +1,7 @@
 ---
 import TimelineSteps from './TimelineSteps.astro';
+import NimSearchBox from './NimSearchBox.astro';
+import BackToHomeButton from './BackToHomeButton.astro';
 
 interface Props {
   initialStage: string;
@@ -23,24 +25,13 @@ const { initialStage, selectionResultsCfg } = Astro.props;
   <TimelineSteps activeStepIndex={2} markCurrentAsCompleted={true} />
 
   {/* NIM Search Box for Screening Results */}
-  <div class="search-lookup-box">
-    <h3 class="search-lookup-title">
-      <i class="fa-solid fa-magnifying-glass reg-icon-mr-sm"></i> Check Document Screening Result
-    </h3>
-    <div class="search-lookup-form">
-      <input type="text" id="search-screening-nim-input" class="form-control reg-input-bg" placeholder="Enter Student ID (NIM)..." />
-      <button id="search-screening-nim-btn" class="btn btn-primary reg-btn-search">
-        Search <i class="fa-solid fa-search reg-icon-ml-xs"></i>
-      </button>
-    </div>
-    <div id="search-screening-result-box" class="search-result-display"></div>
-  </div>
+  <NimSearchBox
+    title="Check Document Screening Result"
+    inputId="search-screening-nim-input"
+    buttonId="search-screening-nim-btn"
+    resultBoxId="search-screening-result-box"
+    buttonLabel="Search"
+  />
 
-  <div class="reg-btn-wrapper">
-    <a href="/" class="btn btn-secondary reg-btn-padded">
-      <i class="fa-solid fa-house reg-btn-icon-left"></i>Back to Home
-    </a>
-  </div>
+  <BackToHomeButton />
 </div>
-
-

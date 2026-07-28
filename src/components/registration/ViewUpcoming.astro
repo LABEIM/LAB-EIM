@@ -1,4 +1,6 @@
 ---
+import BackToHomeButton from './BackToHomeButton.astro';
+
 interface Props {
   initialStage: string;
   upcomingCfg: {
@@ -85,11 +87,7 @@ const { initialStage, upcomingCfg, docLimits, studentYears, piTemplateUrl } = As
     </ul>
   </div>
 
-  <div class="reg-btn-wrapper">
-    <a href="/" class="btn btn-secondary reg-btn-padded">
-      <i class="fa-solid fa-house reg-btn-icon-left"></i>Back to Home
-    </a>
-  </div>
+  <BackToHomeButton />
 </div>
 
 

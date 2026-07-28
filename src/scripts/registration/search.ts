@@ -59,6 +59,11 @@ function findCandidate(query: string): Candidate | undefined {
   });
 }
 
+function setResultDisplay(box: HTMLElement, statusClass: 'status-passed' | 'status-info' | 'status-error' | 'status-muted', htmlContent: string) {
+  box.className = `search-result-display is-visible ${statusClass}`;
+  box.innerHTML = htmlContent;
+}
+
 export function initRegistrationSearch() {
   // 1. Document Screening Results Lookup
   const searchScreeningInput = document.getElementById('search-screening-nim-input') as HTMLInputElement | null;
@@ -69,33 +74,36 @@ export function initRegistrationSearch() {
     if (!searchScreeningInput || !searchScreeningResultBox) return;
     const query = searchScreeningInput.value.trim();
     if (!query) {
-      searchScreeningResultBox.style.display = 'block';
-      searchScreeningResultBox.style.background = 'rgba(255, 107, 107, 0.1)';
-      searchScreeningResultBox.style.color = '#ff6b6b';
-      searchScreeningResultBox.innerHTML = '<i class="fa-solid fa-circle-exclamation"></i> Please enter a NIM to search.';
+      setResultDisplay(
+        searchScreeningResultBox,
+        'status-error',
+        '<i class="fa-solid fa-circle-exclamation"></i> Please enter a NIM to search.'
+      );
       return;
     }
 
     const match = findCandidate(query);
-    searchScreeningResultBox.style.display = 'block';
     if (match) {
       const isPassed = match.screeningStatus === 'passed';
-      searchScreeningResultBox.style.background = isPassed ? 'rgba(32, 201, 151, 0.12)' : 'rgba(255, 255, 255, 0.05)';
-      searchScreeningResultBox.style.border = `1px solid ${isPassed ? '#20c997' : 'var(--border-color)'}`;
-      searchScreeningResultBox.style.color = isPassed ? '#20c997' : 'var(--text-secondary)';
-      searchScreeningResultBox.innerHTML = `
-        <div style="font-size: 1.2rem; font-weight: bold; margin-bottom: 6px;">
-          ${isPassed ? 'PASSED DOCUMENT SCREENING' : 'Document Screening Status'}
-        </div>
-        <div style="color: var(--text-primary); font-size: 1.05rem;">NIM: <strong>${match.nim || ''}</strong></div>
-        <p style="margin-top: 8px; font-size: 0.9rem;">
-          ${isPassed ? 'Congratulations! You have qualified for the Technical Test phase. Please check your email for technical test details.' : (match.notes || 'Thank you for applying. Keep striving for future opportunities.')}
-        </p>
-      `;
+      setResultDisplay(
+        searchScreeningResultBox,
+        isPassed ? 'status-passed' : 'status-muted',
+        `
+          <div class="search-result-title">
+            ${isPassed ? 'PASSED DOCUMENT SCREENING' : 'Document Screening Status'}
+          </div>
+          <div class="search-result-nim">NIM: <strong>${match.nim || ''}</strong></div>
+          <p class="search-result-desc">
+            ${isPassed ? 'Congratulations! You have qualified for the Technical Test phase. Please check your email for technical test details.' : (match.notes || 'Thank you for applying. Keep striving for future opportunities.')}
+          </p>
+        `
+      );
     } else {
-      searchScreeningResultBox.style.background = 'rgba(255, 255, 255, 0.05)';
-      searchScreeningResultBox.style.color = 'var(--text-secondary)';
-      searchScreeningResultBox.innerHTML = `No screening result record found for NIM "<strong>${query}</strong>".`;
+      setResultDisplay(
+        searchScreeningResultBox,
+        'status-muted',
+        `No screening result record found for NIM "<strong>${query}</strong>".`
+      );
     }
   };
 
@@ -111,33 +119,36 @@ export function initRegistrationSearch() {
     if (!searchTechInput || !searchTechResultBox) return;
     const query = searchTechInput.value.trim();
     if (!query) {
-      searchTechResultBox.style.display = 'block';
-      searchTechResultBox.style.background = 'rgba(255, 107, 107, 0.1)';
-      searchTechResultBox.style.color = '#ff6b6b';
-      searchTechResultBox.innerHTML = '<i class="fa-solid fa-circle-exclamation"></i> Please enter a NIM to search.';
+      setResultDisplay(
+        searchTechResultBox,
+        'status-error',
+        '<i class="fa-solid fa-circle-exclamation"></i> Please enter a NIM to search.'
+      );
       return;
     }
 
     const match = findCandidate(query);
-    searchTechResultBox.style.display = 'block';
     if (match) {
       const isPassed = match.technicalTestStatus === 'passed';
-      searchTechResultBox.style.background = isPassed ? 'rgba(32, 201, 151, 0.12)' : 'rgba(255, 255, 255, 0.05)';
-      searchTechResultBox.style.border = `1px solid ${isPassed ? '#20c997' : 'var(--border-color)'}`;
-      searchTechResultBox.style.color = isPassed ? '#20c997' : 'var(--text-secondary)';
-      searchTechResultBox.innerHTML = `
-        <div style="font-size: 1.2rem; font-weight: bold; margin-bottom: 6px;">
-          ${isPassed ? 'PASSED TECHNICAL TEST' : 'Technical Test Status'}
-        </div>
-        <div style="color: var(--text-primary); font-size: 1.05rem;">NIM: <strong>${match.nim || ''}</strong></div>
-        <p style="margin-top: 8px; font-size: 0.9rem;">
-          ${isPassed ? 'Congratulations! You have qualified for the Interview phase. Please check your email for interview schedule details.' : (match.notes || 'Thank you for participating in the technical test.')}
-        </p>
-      `;
+      setResultDisplay(
+        searchTechResultBox,
+        isPassed ? 'status-passed' : 'status-muted',
+        `
+          <div class="search-result-title">
+            ${isPassed ? 'PASSED TECHNICAL TEST' : 'Technical Test Status'}
+          </div>
+          <div class="search-result-nim">NIM: <strong>${match.nim || ''}</strong></div>
+          <p class="search-result-desc">
+            ${isPassed ? 'Congratulations! You have qualified for the Interview phase. Please check your email for interview schedule details.' : (match.notes || 'Thank you for participating in the technical test.')}
+          </p>
+        `
+      );
     } else {
-      searchTechResultBox.style.background = 'rgba(255, 255, 255, 0.05)';
-      searchTechResultBox.style.color = 'var(--text-secondary)';
-      searchTechResultBox.innerHTML = `No technical test result record found for NIM "<strong>${query}</strong>".`;
+      setResultDisplay(
+        searchTechResultBox,
+        'status-muted',
+        `No technical test result record found for NIM "<strong>${query}</strong>".`
+      );
     }
   };
 
@@ -153,41 +164,45 @@ export function initRegistrationSearch() {
     if (!searchInput || !resultBox) return;
     const query = searchInput.value.trim();
     if (!query) {
-      resultBox.style.display = 'block';
-      resultBox.style.background = 'rgba(255, 107, 107, 0.1)';
-      resultBox.style.color = '#ff6b6b';
-      resultBox.innerHTML = '<i class="fa-solid fa-circle-exclamation"></i> Please enter a NIM to search.';
+      setResultDisplay(
+        resultBox,
+        'status-error',
+        '<i class="fa-solid fa-circle-exclamation"></i> Please enter a NIM to search.'
+      );
       return;
     }
 
     const match = findCandidate(query);
-    resultBox.style.display = 'block';
     if (match) {
       const isAccepted = match.finalStatus === 'accepted' || match.status === 'accepted';
       if (isAccepted) {
-        resultBox.style.background = 'rgba(32, 201, 151, 0.12)';
-        resultBox.style.border = '1px solid rgba(32, 201, 151, 0.4)';
-        resultBox.style.color = '#20c997';
-        resultBox.innerHTML = `
-          <div style="font-size: 1.5rem; margin-bottom: 8px;"><i class="fa-solid fa-circle-check"></i> CONGRATULATIONS!</div>
-          <div style="font-size: 1.1rem; font-weight: bold; color: var(--text-primary);">NIM: <strong>${match.nim || ''}</strong></div>
-          <div style="margin-top: 4px; font-size: 0.95rem; color: var(--accent-cyan);">Division: <strong>${match.division || ''}</strong></div>
-          <p style="margin-top: 10px; font-size: 0.9rem; color: var(--text-secondary);">${match.notes || 'You have been accepted as an assistant at EIM Research Lab.'}</p>
-        `;
+        setResultDisplay(
+          resultBox,
+          'status-passed',
+          `
+            <div class="search-result-title-lg"><i class="fa-solid fa-circle-check"></i> CONGRATULATIONS!</div>
+            <div class="search-result-nim">NIM: <strong>${match.nim || ''}</strong></div>
+            <div class="search-result-division">Division: <strong>${match.division || ''}</strong></div>
+            <p class="search-result-desc">${match.notes || 'You have been accepted as an assistant at EIM Research Lab.'}</p>
+          `
+        );
       } else {
-        resultBox.style.background = 'rgba(0, 240, 255, 0.08)';
-        resultBox.style.border = '1px solid rgba(0, 240, 255, 0.3)';
-        resultBox.style.color = 'var(--accent-cyan)';
-        resultBox.innerHTML = `
-          <div style="font-size: 1.2rem; margin-bottom: 6px;"><i class="fa-solid fa-info-circle"></i> Status: ${(match.finalStatus || match.status || 'evaluated').toUpperCase()}</div>
-          <div style="font-weight: bold; color: var(--text-primary);">NIM: <strong>${match.nim || ''}</strong></div>
-          <p style="margin-top: 8px; font-size: 0.9rem; color: var(--text-secondary);">${match.notes || 'Thank you for participating in this recruitment cycle.'}</p>
-        `;
+        setResultDisplay(
+          resultBox,
+          'status-info',
+          `
+            <div class="search-result-title"><i class="fa-solid fa-info-circle"></i> Status: ${(match.finalStatus || match.status || 'evaluated').toUpperCase()}</div>
+            <div class="search-result-nim">NIM: <strong>${match.nim || ''}</strong></div>
+            <p class="search-result-desc">${match.notes || 'Thank you for participating in this recruitment cycle.'}</p>
+          `
+        );
       }
     } else {
-      resultBox.style.background = 'rgba(255, 255, 255, 0.05)';
-      resultBox.style.color = 'var(--text-secondary)';
-      resultBox.innerHTML = `No matching candidate record found for NIM "<strong>${query}</strong>".`;
+      setResultDisplay(
+        resultBox,
+        'status-muted',
+        `No matching candidate record found for NIM "<strong>${query}</strong>".`
+      );
     }
   };
 

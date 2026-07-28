@@ -1,0 +1,19 @@
+---
+interface Props {
+  wrapperClass?: string;
+  href?: string;
+  label?: string;
+}
+
+const {
+  wrapperClass = "reg-btn-wrapper",
+  href = "/",
+  label = "Back to Home"
+} = Astro.props;
+---
+
+<div class={wrapperClass}>
+  <a href={href} class="btn btn-secondary reg-btn-padded">
+    <i class="fa-solid fa-house reg-btn-icon-left"></i>{label}
+  </a>
+</div>

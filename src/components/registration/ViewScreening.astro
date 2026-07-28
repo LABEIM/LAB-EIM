@@ -1,5 +1,7 @@
 ---
 import TimelineSteps from './TimelineSteps.astro';
+import StageInfoPanel from './StageInfoPanel.astro';
+import BackToHomeButton from './BackToHomeButton.astro';
 
 interface Props {
   initialStage: string;
@@ -22,21 +24,11 @@ const { initialStage, selectionCfg } = Astro.props;
 
   <TimelineSteps activeStepIndex={2} />
 
-  <div class="info-card-panel">
-    <i class="fa-solid fa-clipboard-check info-card-icon"></i>
-    <p class="reg-checklist-notice">{selectionCfg.message}</p>
-    {selectionCfg.estimatedAnnouncementDate && (
-      <div class="badge-date-info">
-        <i class="fa-solid fa-calendar-day reg-icon-mr"></i> Estimated Announcement: <strong>{selectionCfg.estimatedAnnouncementDate}</strong>
-      </div>
-    )}
-  </div>
+  <StageInfoPanel
+    iconClass="fa-clipboard-check"
+    message={selectionCfg.message}
+    estimatedAnnouncementDate={selectionCfg.estimatedAnnouncementDate}
+  />
 
-  <div class="reg-btn-wrapper">
-    <a href="/" class="btn btn-secondary reg-btn-padded">
-      <i class="fa-solid fa-house reg-btn-icon-left"></i>Back to Home
-    </a>
-  </div>
+  <BackToHomeButton />
 </div>
-
-

@@ -2,11 +2,10 @@
 import Layout from '../layouts/Layout.astro';
 import membersData from '../data/members.json';
 import divisionsData from '../data/divisions.json';
-import { buildDivisionMap, getDivisionInfo } from '../utils/division-mapper';
+import { getDivisionInfo, type DivisionConfig } from '../utils/division-mapper';
 
 const initialMembers = membersData.list || [];
-const divisions = Array.isArray(divisionsData) ? divisionsData : (divisionsData as any).list || [];
-const divisionMap = buildDivisionMap(divisions);
+const divisions: DivisionConfig[] = Array.isArray(divisionsData) ? (divisionsData as DivisionConfig[]) : ((divisionsData as any).list || []);
 ---
 
 <Layout title="Organizational Structure - EIM Research Lab">

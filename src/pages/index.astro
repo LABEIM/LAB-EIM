@@ -4,8 +4,9 @@ import Layout from '../layouts/Layout.astro';
 import divisionsData from '../data/divisions.json';
 import registrationConfig from '../data/registration.json';
 import { getCurrentRecruitmentStage } from '../utils/recruitment';
+import type { DivisionConfig } from '../utils/division-mapper';
 
-const divisions = Array.isArray(divisionsData) ? divisionsData : (divisionsData as any).list || [];
+const divisions: DivisionConfig[] = Array.isArray(divisionsData) ? (divisionsData as DivisionConfig[]) : ((divisionsData as any).list || []);
 
 // Fetch and sort news
 const allNews = await getCollection('news');

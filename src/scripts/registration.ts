@@ -1,3 +1,4 @@
+import type { RegistrationContext } from './registration/types';
 import { initRegistrationTimers } from './registration/timer';
 import { initRegistrationSearch } from './registration/search';
 import { initRegistrationDraft } from './registration/draft';
@@ -7,22 +8,13 @@ export function initRegistrationScript() {
   const container = document.getElementById('registration-container');
   if (!container) return;
 
+  const formElement = document.getElementById('pendaftaran-form') as HTMLFormElement | null;
+  const minWordsAttr = formElement?.getAttribute('data-min-words') || container.getAttribute('data-min-reason-words');
+  const minReasonWords = minWordsAttr ? parseInt(minWordsAttr, 10) : 30;
+
   const medhumTriggerVal = container.getAttribute('data-medhum-val') || "Medhum";
   const portfolioTriggerRaw = container.getAttribute('data-portfolio-trigger-vals') || medhumTriggerVal;
   const portfolioTriggerList = portfolioTriggerRaw.split(',').map(s => s.trim().toLowerCase()).filter(Boolean);
-
-  // Form & Alert Elements
-  const formElement = document.getElementById('pendaftaran-form') as HTMLFormElement | null;
-  const submitBtn = document.getElementById('submit-btn') as HTMLButtonElement | null;
-  const btnText = document.getElementById('btn-text');
-
-  const alertError = document.getElementById('status-alert-error') as HTMLElement | null;
-  const alertSuccess = document.getElementById('status-alert-success') as HTMLElement | null;
-
-  const div1Select = document.getElementById('divisi_1') as HTMLSelectElement | null;
-  const div2Select = document.getElementById('divisi_2') as HTMLSelectElement | null;
-  const medhumPortoContainer = document.getElementById('container-medhum-porto') as HTMLElement | null;
-  const medhumPortoInput = document.getElementById('portofolio_medhum') as HTMLInputElement | null;
 
   // Modals & Overlay Teleportation
   const clearDraftModal = document.getElementById('clear-draft-modal');
@@ -39,28 +31,40 @@ export function initRegistrationScript() {
     document.body.appendChild(progressModal);
   }
 
+  // Construct typed Context Object
+  const ctx: RegistrationContext = {
+    container,
+    formElement,
+    submitBtn: document.getElementById('submit-btn') as HTMLButtonElement | null,
+    btnText: document.getElementById('btn-text'),
+    alertError: document.getElementById('status-alert-error'),
+    alertSuccess: document.getElementById('status-alert-success'),
+    div1Select: document.getElementById('divisi_1') as HTMLSelectElement | null,
+    div2Select: document.getElementById('divisi_2') as HTMLSelectElement | null,
+    medhumPortoContainer: document.getElementById('container-medhum-porto'),
+    medhumPortoInput: document.getElementById('portofolio_medhum') as HTMLInputElement | null,
+    clearDraftModal,
+    draftToast,
+    progressModal,
+    portfolioTriggerList,
+    minReasonWords
+  };
+
   // Initialize Sub-modules
   initRegistrationTimers(container);
   initRegistrationSearch();
 
-  const { toggleMedhumPorto, clearDraft, requiresPortfolio } = initRegistrationDraft(
-    formElement,
-    div1Select,
-    div2Select,
-    medhumPortoContainer,
-    medhumPortoInput,
-    portfolioTriggerList
-  );
+  const { toggleMedhumPorto, clearDraft, requiresPortfolio } = initRegistrationDraft(ctx);
 
   initRegistrationSubmit(
-    formElement,
-    submitBtn,
-    btnText,
-    alertError,
-    alertSuccess,
-    div1Select,
-    div2Select,
-    medhumPortoInput,
+    ctx,
+    undefined,
+    undefined,
+    undefined,
+    undefined,
+    undefined,
+    undefined,
+    undefined,
     requiresPortfolio,
     clearDraft,
     toggleMedhumPorto

@@ -1,12 +1,59 @@
-export interface DocCheckItem {
-  input: HTMLInputElement | null;
-  label: string;
-  defaultMax: number;
-}
+import type { DocCheckItem } from './types';
+export type { DocCheckItem };
 
 export function countWords(text: string): number {
   if (!text) return 0;
   return text.trim().split(/\s+/).filter(Boolean).length;
+}
+
+export function validateNim(nim: string): boolean {
+  return /^\d{9,15}$/.test(nim);
+}
+
+export function validatePhone(phone: string): boolean {
+  const cleanPhone = phone.replace(/\s+/g, '');
+  return /^(08|\+?628)\d{7,11}$/.test(cleanPhone);
+}
+
+export function validateSingleFile(
+  fileInput: HTMLInputElement,
+  label: string,
+  maxMb: number
+): { valid: boolean; errorMsg?: string; fileSize: number } {
+  if (!fileInput || !fileInput.files || fileInput.files.length === 0) {
+    return { valid: true, fileSize: 0 };
+  }
+
+  const file = fileInput.files[0];
+  if (file.size === 0) {
+    return { valid: false, errorMsg: `File ${label} is empty (0 bytes). Please upload a valid non-empty document.`, fileSize: 0 };
+  }
+
+  const maxBytes = maxMb * 1024 * 1024;
+  if (file.size > maxBytes) {
+    return {
+      valid: false,
+      errorMsg: `File ${label} exceeds maximum size limit of ${maxMb}MB. (${(file.size / (1024 * 1024)).toFixed(2)}MB)`,
+      fileSize: file.size
+    };
+  }
+
+  const inputExtsAttr = fileInput.getAttribute('data-allowed-exts') || 'pdf, png, jpg, jpeg';
+  const itemAllowedExts = inputExtsAttr
+    .split(',')
+    .map(ext => ext.trim().toLowerCase().replace(/^\./, ''))
+    .filter(Boolean);
+
+  const fileExt = file.name.split('.').pop()?.toLowerCase() || '';
+  if (itemAllowedExts.length > 0 && !itemAllowedExts.includes(fileExt)) {
+    return {
+      valid: false,
+      errorMsg: `File ${label} has invalid format (.${fileExt}). Allowed formats for ${label}: ${itemAllowedExts.map(e => '.' + e).join(', ')}`,
+      fileSize: file.size
+    };
+  }
+
+  return { valid: true, fileSize: file.size };
 }
 
 export function validateRegistrationForm(
@@ -22,12 +69,11 @@ export function validateRegistrationForm(
   requiresPortfolio: (val: string) => boolean,
   docChecks: DocCheckItem[]
 ): { valid: boolean; errorMsg?: string } {
-  if (!/^\d{9,15}$/.test(nim)) {
+  if (!validateNim(nim)) {
     return { valid: false, errorMsg: 'Please enter a valid numeric NIM (9 to 15 digits)!' };
   }
 
-  const cleanPhone = nomor_telp.replace(/\s+/g, '');
-  if (!/^(08|\+?628)\d{7,11}$/.test(cleanPhone)) {
+  if (!validatePhone(nomor_telp)) {
     return { valid: false, errorMsg: 'Please enter a valid Indonesian phone number starting with 08 or +628!' };
   }
 
@@ -62,41 +108,17 @@ export function validateRegistrationForm(
     return attr ? parseFloat(attr) : defaultMax;
   };
 
-  const validateFileInput = (fileInput: HTMLInputElement, label: string, maxMb: number): string | null => {
-    if (!fileInput || !fileInput.files || fileInput.files.length === 0) return null;
-    const file = fileInput.files[0];
-    if (file.size === 0) {
-      return `File ${label} is empty (0 bytes). Please upload a valid non-empty document.`;
-    }
-    totalBytes += file.size;
-    const maxBytes = maxMb * 1024 * 1024;
-    if (file.size > maxBytes) {
-      return `File ${label} exceeds maximum size limit of ${maxMb}MB. (${(file.size / (1024 * 1024)).toFixed(2)}MB)`;
-    }
-    const inputExtsAttr = fileInput.getAttribute('data-allowed-exts') || 'pdf, png, jpg, jpeg';
-    const itemAllowedExts = inputExtsAttr
-      .split(',')
-      .map(ext => ext.trim().toLowerCase().replace(/^\./, ''))
-      .filter(Boolean);
-
-    const fileExt = file.name.split('.').pop()?.toLowerCase() || '';
-    if (itemAllowedExts.length > 0 && !itemAllowedExts.includes(fileExt)) {
-      return `File ${label} has invalid format (.${fileExt}). Allowed formats for ${label}: ${itemAllowedExts.map(e => '.' + e).join(', ')}`;
-    }
-    return null;
-  };
-
   for (const item of docChecks) {
     if (item.input) {
       const maxMb = getFileInputMaxMb(item.input, item.defaultMax);
-      const err = validateFileInput(item.input, item.label, maxMb);
-      if (err) {
-        return { valid: false, errorMsg: err };
+      const res = validateSingleFile(item.input, item.label, maxMb);
+      if (!res.valid) {
+        return { valid: false, errorMsg: res.errorMsg };
       }
+      totalBytes += res.fileSize;
     }
   }
 
-  // Use formElement safely instead of undeclared form
   const formMaxTotalAttr = formElement?.getAttribute('data-max-total-mb');
   const maxTotalMb = formMaxTotalAttr ? parseFloat(formMaxTotalAttr) : 15.0;
   const MAX_TOTAL_BYTES = maxTotalMb * 1024 * 1024;

@@ -1,4 +1,6 @@
 ---
+import type { DivisionConfig } from '../../utils/division-mapper';
+
 interface Props {
   initialStage: string;
   registrationConfig: any;
@@ -15,12 +17,7 @@ interface Props {
     piMb: number;
     totalMb?: number;
   };
-  divisions: Array<{
-    registrationValue?: string;
-    registrationLabel?: string;
-    id?: string;
-    name?: string;
-  }>;
+  divisions: DivisionConfig[];
   piTemplateUrl?: string;
   minReasonWords?: number;
 }

@@ -1,14 +1,43 @@
 import { countWords } from './validation';
+import type { RegistrationContext } from './types';
+
 export const DRAFT_KEY = 'eim_registration_draft';
 
 export function initRegistrationDraft(
-  formElement: HTMLFormElement | null,
-  div1Select: HTMLSelectElement | null,
-  div2Select: HTMLSelectElement | null,
-  medhumPortoContainer: HTMLElement | null,
-  medhumPortoInput: HTMLInputElement | null,
-  portfolioTriggerList: string[]
+  ctxOrForm: RegistrationContext | HTMLFormElement | null,
+  div1SelectParam?: HTMLSelectElement | null,
+  div2SelectParam?: HTMLSelectElement | null,
+  medhumPortoContainerParam?: HTMLElement | null,
+  medhumPortoInputParam?: HTMLInputElement | null,
+  portfolioTriggerListParam?: string[]
 ) {
+  // Support both context object and legacy positional parameters
+  let formElement: HTMLFormElement | null = null;
+  let div1Select: HTMLSelectElement | null = null;
+  let div2Select: HTMLSelectElement | null = null;
+  let medhumPortoContainer: HTMLElement | null = null;
+  let medhumPortoInput: HTMLInputElement | null = null;
+  let portfolioTriggerList: string[] = ['medhum', 'media', 'prc'];
+  let minReasonWords = 30;
+
+  if (ctxOrForm && 'container' in ctxOrForm) {
+    const ctx = ctxOrForm as RegistrationContext;
+    formElement = ctx.formElement;
+    div1Select = ctx.div1Select;
+    div2Select = ctx.div2Select;
+    medhumPortoContainer = ctx.medhumPortoContainer;
+    medhumPortoInput = ctx.medhumPortoInput;
+    portfolioTriggerList = ctx.portfolioTriggerList;
+    minReasonWords = ctx.minReasonWords;
+  } else {
+    formElement = ctxOrForm as HTMLFormElement | null;
+    div1Select = div1SelectParam || null;
+    div2Select = div2SelectParam || null;
+    medhumPortoContainer = medhumPortoContainerParam || null;
+    medhumPortoInput = medhumPortoInputParam || null;
+    portfolioTriggerList = portfolioTriggerListParam || portfolioTriggerList;
+  }
+
   const draftToast = document.getElementById('draft-toast');
   const draftToastIcon = document.getElementById('draft-toast-icon');
   const draftToastText = document.getElementById('draft-toast-text');
@@ -21,10 +50,6 @@ export function initRegistrationDraft(
   const confirmClearDraftBtn = document.getElementById('confirm-clear-draft-btn');
 
   const updateWordCounters = () => {
-    const containerEl = document.getElementById('registration-container');
-    const minWordsAttr = formElement?.getAttribute('data-min-words') || containerEl?.getAttribute('data-min-reason-words');
-    const minWords = minWordsAttr ? parseInt(minWordsAttr, 10) : 30;
-
     const alasan1Input = document.getElementById('alasan_divisi_1') as HTMLTextAreaElement | null;
     const alasan2Input = document.getElementById('alasan_divisi_2') as HTMLTextAreaElement | null;
 
@@ -37,7 +62,7 @@ export function initRegistrationDraft(
     if (alasan1Input && counter1El && count1Val) {
       const w1 = countWords(alasan1Input.value);
       count1Val.innerText = w1.toString();
-      if (w1 >= minWords) {
+      if (w1 >= minReasonWords) {
         counter1El.classList.remove('word-count-invalid');
         counter1El.classList.add('word-count-valid');
       } else {
@@ -49,7 +74,7 @@ export function initRegistrationDraft(
     if (alasan2Input && counter2El && count2Val) {
       const w2 = countWords(alasan2Input.value);
       count2Val.innerText = w2.toString();
-      if (w2 >= minWords) {
+      if (w2 >= minReasonWords) {
         counter2El.classList.remove('word-count-invalid');
         counter2El.classList.add('word-count-valid');
       } else {

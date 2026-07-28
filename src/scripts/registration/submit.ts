@@ -1,20 +1,59 @@
-import type { DocCheckItem } from './validation';
+import type { DocCheckItem, RegistrationContext } from './types';
 import { validateRegistrationForm } from './validation';
 import { DRAFT_KEY } from './draft';
 
 export function initRegistrationSubmit(
-  formElement: HTMLFormElement | null,
-  submitBtn: HTMLButtonElement | null,
-  btnText: HTMLElement | null,
-  alertError: HTMLElement | null,
-  alertSuccess: HTMLElement | null,
-  div1Select: HTMLSelectElement | null,
-  div2Select: HTMLSelectElement | null,
-  medhumPortoInput: HTMLInputElement | null,
-  requiresPortfolio: (val: string) => boolean,
-  clearDraft: () => void,
-  toggleMedhumPorto: () => void
+  ctxOrForm: RegistrationContext | HTMLFormElement | null,
+  submitBtnParam?: HTMLButtonElement | null,
+  btnTextParam?: HTMLElement | null,
+  alertErrorParam?: HTMLElement | null,
+  alertSuccessParam?: HTMLElement | null,
+  div1SelectParam?: HTMLSelectElement | null,
+  div2SelectParam?: HTMLSelectElement | null,
+  medhumPortoInputParam?: HTMLInputElement | null,
+  requiresPortfolioParam?: (val: string) => boolean,
+  clearDraftParam?: () => void,
+  toggleMedhumPortoParam?: () => void
 ) {
+  let formElement: HTMLFormElement | null = null;
+  let submitBtn: HTMLButtonElement | null = null;
+  let btnText: HTMLElement | null = null;
+  let alertError: HTMLElement | null = null;
+  let alertSuccess: HTMLElement | null = null;
+  let div1Select: HTMLSelectElement | null = null;
+  let div2Select: HTMLSelectElement | null = null;
+  let medhumPortoInput: HTMLInputElement | null = null;
+  let requiresPortfolio = (val: string) => val.toLowerCase().includes('medhum');
+  let clearDraft = () => {};
+  let toggleMedhumPorto = () => {};
+
+  if (ctxOrForm && 'container' in ctxOrForm) {
+    const ctx = ctxOrForm as RegistrationContext;
+    formElement = ctx.formElement;
+    submitBtn = ctx.submitBtn;
+    btnText = ctx.btnText;
+    alertError = ctx.alertError;
+    alertSuccess = ctx.alertSuccess;
+    div1Select = ctx.div1Select;
+    div2Select = ctx.div2Select;
+    medhumPortoInput = ctx.medhumPortoInput;
+    requiresPortfolio = (val: string) => ctx.portfolioTriggerList.includes(val.trim().toLowerCase());
+    if (clearDraftParam) clearDraft = clearDraftParam;
+    if (toggleMedhumPortoParam) toggleMedhumPorto = toggleMedhumPortoParam;
+  } else {
+    formElement = ctxOrForm as HTMLFormElement | null;
+    submitBtn = submitBtnParam || null;
+    btnText = btnTextParam || null;
+    alertError = alertErrorParam || null;
+    alertSuccess = alertSuccessParam || null;
+    div1Select = div1SelectParam || null;
+    div2Select = div2SelectParam || null;
+    medhumPortoInput = medhumPortoInputParam || null;
+    if (requiresPortfolioParam) requiresPortfolio = requiresPortfolioParam;
+    if (clearDraftParam) clearDraft = clearDraftParam;
+    if (toggleMedhumPortoParam) toggleMedhumPorto = toggleMedhumPortoParam;
+  }
+
   let isSubmitting = false;
 
   // Modal element references

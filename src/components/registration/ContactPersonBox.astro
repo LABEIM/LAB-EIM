@@ -1,12 +1,14 @@
 ---
 import '../../styles/components/contact-person.css';
 
+import type { ContactPerson as UtilsContactPerson } from '../../utils/types';
+
 export interface ContactPerson {
   name: string;
-  role: string;
-  platform: 'whatsapp' | 'line' | 'email' | 'phone' | string;
-  contactId: string;
-  link: string;
+  role?: string;
+  platform?: 'whatsapp' | 'line' | 'email' | 'phone' | string;
+  contactId?: string;
+  link?: string;
 }
 
 interface Props {

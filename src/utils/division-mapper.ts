@@ -1,14 +1,6 @@
-export interface DivisionConfig {
-  id: string;
-  name: string;
-  displayName: string;
-  description: string;
-  registrationLabel?: string;
-  registrationValue?: string;
-  aliases?: string[];
-  borderColor?: string;
-  roleColor?: string;
-}
+import type { DivisionConfig } from './types';
+
+export type { DivisionConfig };
 
 // Global fallback synonyms mapping legacy English & Indonesian keys bidirectional
 const FALLBACK_SYNONYMS: Record<string, string[]> = {
@@ -33,7 +25,7 @@ const FALLBACK_SYNONYMS: Record<string, string[]> = {
  */
 export function buildDivisionMap(divisions: DivisionConfig[]): Map<string, DivisionConfig> {
   const map = new Map<string, DivisionConfig>();
-  
+
   if (!Array.isArray(divisions)) return map;
 
   for (const div of divisions) {
@@ -85,11 +77,15 @@ export function buildDivisionMap(divisions: DivisionConfig[]): Map<string, Divis
 
 /**
  * Retrieves the division configuration matching an ID, alias, or legacy term.
+ * Accepts an optional pre-built Map to optimize performance when looking up multiple items.
  */
-export function getDivisionInfo(divIdOrAlias: string, divisions: DivisionConfig[]): DivisionConfig | undefined {
+export function getDivisionInfo(
+  divIdOrAlias: string,
+  divisions: DivisionConfig[] | Map<string, DivisionConfig>
+): DivisionConfig | undefined {
   if (!divIdOrAlias) return undefined;
   const key = divIdOrAlias.trim().toLowerCase();
-  const map = buildDivisionMap(divisions);
+  const map = divisions instanceof Map ? divisions : buildDivisionMap(divisions);
   return map.get(key);
 }
 
@@ -97,7 +93,11 @@ export function getDivisionInfo(divIdOrAlias: string, divisions: DivisionConfig[
  * Checks if a member's division matches the selected filter value.
  * Handles matching by ID or aliases bidirectionally.
  */
-export function isDivisionMatch(memberDiv: string, filterVal: string, divisions: DivisionConfig[]): boolean {
+export function isDivisionMatch(
+  memberDiv: string,
+  filterVal: string,
+  divisions: DivisionConfig[]
+): boolean {
   if (!filterVal || filterVal === 'all') return true;
   if (!memberDiv) return false;
 
@@ -106,16 +106,17 @@ export function isDivisionMatch(memberDiv: string, filterVal: string, divisions:
 
   if (mKey === fKey) return true;
 
-  const memberDivObj = getDivisionInfo(mKey, divisions);
-  const filterDivObj = getDivisionInfo(fKey, divisions);
+  const map = buildDivisionMap(divisions);
+  const memberDivObj = getDivisionInfo(mKey, map);
+  const filterDivObj = getDivisionInfo(fKey, map);
 
   if (memberDivObj && filterDivObj) {
     return memberDivObj.id.toLowerCase() === filterDivObj.id.toLowerCase();
   }
 
   // Fallback: check if member key is in fallback synonyms of filter key or vice-versa
-  if (FALLBACK_SYNONYMS[fKey] && FALLBACK_SYNONYMS[fKey].includes(mKey)) return true;
-  if (FALLBACK_SYNONYMS[mKey] && FALLBACK_SYNONYMS[mKey].includes(fKey)) return true;
+  if (FALLBACK_SYNONYMS[fKey]?.includes(mKey)) return true;
+  if (FALLBACK_SYNONYMS[mKey]?.includes(fKey)) return true;
 
   return false;
 }
@@ -123,13 +124,17 @@ export function isDivisionMatch(memberDiv: string, filterVal: string, divisions:
 /**
  * Parses raw division data which may be an array or an object with a `.list` array property.
  */
-export function parseDivisions(divisionsData: any): DivisionConfig[] {
+export function parseDivisions(divisionsData: unknown): DivisionConfig[] {
   if (Array.isArray(divisionsData)) {
     return divisionsData as DivisionConfig[];
   }
-  if (divisionsData && Array.isArray((divisionsData as any).list)) {
-    return (divisionsData as any).list as DivisionConfig[];
+  if (
+    typeof divisionsData === 'object' &&
+    divisionsData !== null &&
+    'list' in divisionsData &&
+    Array.isArray((divisionsData as Record<string, unknown>).list)
+  ) {
+    return (divisionsData as Record<string, unknown>).list as DivisionConfig[];
   }
   return [];
 }
-

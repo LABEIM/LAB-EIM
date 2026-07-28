@@ -43,6 +43,7 @@ This document is a step-by-step guide for setting up, configuring, and operating
    * **`MAX_FILE_SIZE_MB`**: `10` *(Optional. Maximum file size in MB per uploaded document, defaults to `10`)*
    * **`MAKE_FILES_PUBLIC`**: `true` *(Optional. Set to `true` if uploaded Drive links should be viewable via link by candidates. Defaults to `false`)*
    * **`PORTFOLIO_DIVISIONS`**: `Medhum` *(Optional. Comma-separated division values requiring portfolio links, e.g. `Medhum, Riset, Design`. Defaults to `Medhum`)*
+   * **`WA_GROUP_URL`**: `https://chat.whatsapp.com/YOUR_GROUP_INVITE_CODE` *(Optional. Official WhatsApp group invite URL for applicants. Must start with `https://chat.whatsapp.com/` or `https://wa.me/` for security)*
 
 ### 3. Google Drive Folder & Security Permissions Guide
 > [!IMPORTANT]
@@ -108,6 +109,7 @@ Set the key dates for each phase in ISO format (`YYYY-MM-DDTHH:mm:ss`):
 ```json
 {
   "status": "auto",
+  "minReasonWords": 30,
   "upcomingStartDate": "2026-08-01T00:00:00",
   "openDate": "2026-08-13T00:00:00",
   "deadline": "2026-08-20T23:59:59",
@@ -122,6 +124,8 @@ Set the key dates for each phase in ISO format (`YYYY-MM-DDTHH:mm:ss`):
   "announcementDate": "2026-09-09T00:00:00"
 }
 ```
+
+* **`minReasonWords`**: Minimum number of words required for each "Reason for Choosing Division" textarea (default: `30`). Can be changed directly in `registration.json` or via Keystatic Admin UI under Registration Settings.
 
 ### Automatic vs Manual Stage Overrides:
 * **`"status": "auto"`** *(Recommended)*: System automatically computes the current active stage based on system time vs the dates above.

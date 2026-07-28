@@ -225,6 +225,27 @@ function isPortfolioRequired(divisi1, divisi2) {
 }
 
 /**
+  Mendapatkan dan memvalidasi tautan Grup WhatsApp pendaftaran dari Script Properties.
+  Memastikan tautan hanya menggunakan protokol HTTPS dan domain resmi WhatsApp (chat.whatsapp.com / wa.me) demi keamanan pendaftar.
+ */
+function getSafeWhatsAppUrl() {
+  const url = (scriptProp.getProperty('WA_GROUP_URL') || '').trim();
+  if (!url) return '';
+
+  // Validasi Keamanan: Harus HTTPS dan mengarah ke domain resmi WhatsApp (chat.whatsapp.com atau wa.me)
+  const allowedPatterns = [
+    /^https:\/\/chat\.whatsapp\.com\/[A-Za-z0-9_-]+/i,
+    /^https:\/\/wa\.me\/[A-Za-z0-9_-]+/i
+  ];
+
+  const isSafe = allowedPatterns.some(function(pattern) {
+    return pattern.test(url);
+  });
+
+  return isSafe ? escapeHtml(url) : '';
+}
+
+/**
   Mengirim email konfirmasi pendaftaran kepada pendaftar (Applicant)
  */
 function sendConfirmationEmail(data, isRevision) {
@@ -251,6 +272,7 @@ function sendConfirmationEmail(data, isRevision) {
   const linkMl = data['Link ML'] ? escapeHtml(data['Link ML']) : '';
   const linkCv = data['Link CV'] ? escapeHtml(data['Link CV']) : '';
   const linkPi = data['Link PI (Pakta Integritas)'] ? escapeHtml(data['Link PI (Pakta Integritas)']) : '';
+  const safeWaUrl = getSafeWhatsAppUrl();
 
   const subjectPrefix = isRevision ? '[REVISI] ' : '';
   const subject = `${subjectPrefix}[EIM Research Lab] Confirmation of Recruitment Registration - ${safeNama}`;
@@ -295,6 +317,20 @@ function sendConfirmationEmail(data, isRevision) {
             ${linkCv ? `<tr><td style="padding: 6px 0; color: #94a3b8;">Curriculum Vitae (CV)</td><td style="padding: 6px 0;">: <a href="${linkCv}" style="color: #38bdf8; text-decoration: underline;" target="_blank">Lihat CV</a></td></tr>` : ''}
             ${linkPi ? `<tr><td style="padding: 6px 0; color: #94a3b8;">Pakta Integritas (PI)</td><td style="padding: 6px 0;">: <a href="${linkPi}" style="color: #38bdf8; text-decoration: underline;" target="_blank">Lihat Pakta Integritas</a></td></tr>` : ''}
           </table>
+        </div>
+        ` : ''}
+
+        ${safeWaUrl ? `
+        <div style="background-color: #064e3b; border-left: 4px solid #10b981; padding: 20px; border-radius: 6px; margin: 25px 0;">
+          <h3 style="color: #34d399; margin-top: 0; font-size: 15px; text-transform: uppercase; letter-spacing: 0.5px;">💬 Grup WhatsApp Calon Asisten</h3>
+          <p style="color: #a7f3d0; font-size: 14px; line-height: 1.5; margin-top: 6px; margin-bottom: 16px;">
+            Silakan bergabung ke grup WhatsApp calon asisten EIM Research Lab untuk mendapatkan informasi dan pengumuman terbaru seputar proses seleksi:
+          </p>
+          <div style="text-align: center; margin: 10px 0 5px 0;">
+            <a href="${safeWaUrl}" target="_blank" rel="noopener noreferrer" style="background-color: #10b981; color: #ffffff; padding: 12px 24px; border-radius: 8px; font-weight: 600; text-decoration: none; display: inline-block; font-size: 14px; border: 1px solid #059669;">
+              📲 Gabung Grup WhatsApp
+            </a>
+          </div>
         </div>
         ` : ''}
 

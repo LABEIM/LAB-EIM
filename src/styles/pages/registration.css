@@ -992,6 +992,23 @@ input[type="file"].form-control::file-selector-button:hover {
   margin-top: 5px;
 }
 
+.word-count-info {
+  font-size: 0.8rem;
+  transition: color 0.2s ease;
+}
+
+.word-count-info.word-count-invalid {
+  color: #ff8c00;
+}
+
+.word-count-info.word-count-valid {
+  color: #20c997;
+}
+
+.word-count-val {
+  font-weight: 600;
+}
+
 .reg-pi-link-inline {
   font-size: 0.825rem;
   color: var(--accent-cyan);

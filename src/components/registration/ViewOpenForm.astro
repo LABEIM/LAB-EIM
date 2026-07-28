@@ -20,9 +20,10 @@ interface Props {
     registrationLabel: string;
   }>;
   piTemplateUrl?: string;
+  minReasonWords?: number;
 }
 
-const { initialStage, registrationConfig, extendedCfg, studentYears, docLimits, divisions, piTemplateUrl } = Astro.props;
+const { initialStage, registrationConfig, extendedCfg, studentYears, docLimits, divisions, piTemplateUrl, minReasonWords = 30 } = Astro.props;
 ---
 
 <div id="view-open" class={(initialStage === 'open' || initialStage === 'extended') ? '' : 'is-hidden'}>
@@ -79,7 +80,7 @@ const { initialStage, registrationConfig, extendedCfg, studentYears, docLimits, 
   </div>
 
   {/* Registration Form */}
-  <form id="pendaftaran-form" data-max-total-mb={docLimits.totalMb || 15}>
+  <form id="pendaftaran-form" data-max-total-mb={docLimits.totalMb || 15} data-min-words={minReasonWords}>
     {/* Anti-bot Honeypot Field (Hidden from legitimate users) */}
     <input type="text" id="website_hp" name="website_hp" class="reg-honeypot-input" tabindex="-1" autocomplete="off" aria-hidden="true" />
 
@@ -149,11 +150,17 @@ const { initialStage, registrationConfig, extendedCfg, studentYears, docLimits, 
     <div class="form-group reg-form-row-mt">
       <label for="alasan_divisi_1">Reason for Choosing Division 1 <span class="required-asterisk">*</span></label>
       <textarea class="form-control" id="alasan_divisi_1" rows="3" placeholder="Explain your motivation and skill background for Division 1..." required></textarea>
+      <small class="reg-small-desc word-count-info" id="alasan_divisi_1_counter" data-min-words={minReasonWords}>
+        Word count: <span class="word-count-val" id="alasan_divisi_1_count">0</span> / {minReasonWords} words minimum
+      </small>
     </div>
 
     <div class="form-group reg-form-row-mt">
       <label for="alasan_divisi_2">Reason for Choosing Division 2 <span class="required-asterisk">*</span></label>
       <textarea class="form-control" id="alasan_divisi_2" rows="3" placeholder="Explain your motivation and skill background for Division 2..." required></textarea>
+      <small class="reg-small-desc word-count-info" id="alasan_divisi_2_counter" data-min-words={minReasonWords}>
+        Word count: <span class="word-count-val" id="alasan_divisi_2_count">0</span> / {minReasonWords} words minimum
+      </small>
     </div>
 
     {/* Dynamic Portfolio Link */}

@@ -197,6 +197,7 @@ export default config({
         portfolioDivisionTriggerValues: fields.text({ label: 'Portfolio Division Trigger Values (Comma-separated, e.g. Medhum, Front-End)', defaultValue: 'Medhum' }),
         medhumDivisionValue: fields.text({ label: 'MedHum Division Trigger Value (Legacy Fallback)', defaultValue: 'Medhum' }),
         piTemplateUrl: fields.text({ label: 'Pakta Integritas (PI) Template Link', defaultValue: 'https://bit.ly/Template-PI-EIM' }),
+        minReasonWords: fields.number({ label: 'Minimum Word Count for Reason for Choosing Division', defaultValue: 30 }),
         documentLimits: fields.object({
           ksmMb: fields.number({ label: 'KSM File Limit (MB)', defaultValue: 2 }),
           khsMb: fields.number({ label: 'KHS File Limit (MB)', defaultValue: 2 }),

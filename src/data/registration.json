@@ -24,6 +24,7 @@
   "portfolioDivisionTriggerValues": "Medhum",
   "medhumDivisionValue": "Medhum",
   "piTemplateUrl": "https://bit.ly/Template-PI-EIM",
+  "minReasonWords": 30,
   "documentLimits": {
     "ksmMb": 3,
     "khsMb": 3,

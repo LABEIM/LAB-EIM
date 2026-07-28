@@ -1,3 +1,4 @@
+import { countWords } from './validation';
 export const DRAFT_KEY = 'eim_registration_draft';
 
 export function initRegistrationDraft(
@@ -18,6 +19,45 @@ export function initRegistrationDraft(
   const clearDraftModal = document.getElementById('clear-draft-modal');
   const cancelClearDraftBtn = document.getElementById('cancel-clear-draft-btn');
   const confirmClearDraftBtn = document.getElementById('confirm-clear-draft-btn');
+
+  const updateWordCounters = () => {
+    const containerEl = document.getElementById('registration-container');
+    const minWordsAttr = formElement?.getAttribute('data-min-words') || containerEl?.getAttribute('data-min-reason-words');
+    const minWords = minWordsAttr ? parseInt(minWordsAttr, 10) : 30;
+
+    const alasan1Input = document.getElementById('alasan_divisi_1') as HTMLTextAreaElement | null;
+    const alasan2Input = document.getElementById('alasan_divisi_2') as HTMLTextAreaElement | null;
+
+    const counter1El = document.getElementById('alasan_divisi_1_counter');
+    const count1Val = document.getElementById('alasan_divisi_1_count');
+
+    const counter2El = document.getElementById('alasan_divisi_2_counter');
+    const count2Val = document.getElementById('alasan_divisi_2_count');
+
+    if (alasan1Input && counter1El && count1Val) {
+      const w1 = countWords(alasan1Input.value);
+      count1Val.innerText = w1.toString();
+      if (w1 >= minWords) {
+        counter1El.classList.remove('word-count-invalid');
+        counter1El.classList.add('word-count-valid');
+      } else {
+        counter1El.classList.remove('word-count-valid');
+        counter1El.classList.add('word-count-invalid');
+      }
+    }
+
+    if (alasan2Input && counter2El && count2Val) {
+      const w2 = countWords(alasan2Input.value);
+      count2Val.innerText = w2.toString();
+      if (w2 >= minWords) {
+        counter2El.classList.remove('word-count-invalid');
+        counter2El.classList.add('word-count-valid');
+      } else {
+        counter2El.classList.remove('word-count-valid');
+        counter2El.classList.add('word-count-invalid');
+      }
+    }
+  };
 
   // Portfolio Visibility Toggle
   const requiresPortfolio = (val: string) => portfolioTriggerList.includes(val.trim().toLowerCase());
@@ -116,35 +156,42 @@ export function initRegistrationDraft(
     } catch (e) {}
   };
 
+  const handleFormInput = () => {
+    saveDraft();
+    updateWordCounters();
+  };
+
   const restoreDraft = () => {
     try {
       const saved = localStorage.getItem(DRAFT_KEY);
-      if (!saved) return;
-      const draft = JSON.parse(saved);
+      if (saved) {
+        const draft = JSON.parse(saved);
 
-      let count = 0;
-      if (draft.nama_lengkap && document.getElementById('nama_lengkap')) { (document.getElementById('nama_lengkap') as HTMLInputElement).value = draft.nama_lengkap; count++; }
-      if (draft.nim && document.getElementById('nim')) { (document.getElementById('nim') as HTMLInputElement).value = draft.nim; count++; }
-      if (draft.angkatan && document.getElementById('angkatan')) { (document.getElementById('angkatan') as HTMLSelectElement).value = draft.angkatan; count++; }
-      if (draft.email && document.getElementById('email')) { (document.getElementById('email') as HTMLInputElement).value = draft.email; count++; }
-      if (draft.nomor_telp && document.getElementById('nomor_telp')) { (document.getElementById('nomor_telp') as HTMLInputElement).value = draft.nomor_telp; count++; }
-      if (draft.divisi_1 && div1Select) { div1Select.value = draft.divisi_1; count++; }
-      if (draft.alasan_divisi_1 && document.getElementById('alasan_divisi_1')) { (document.getElementById('alasan_divisi_1') as HTMLTextAreaElement).value = draft.alasan_divisi_1; count++; }
-      if (draft.divisi_2 && div2Select) { div2Select.value = draft.divisi_2; count++; }
-      if (draft.alasan_divisi_2 && document.getElementById('alasan_divisi_2')) { (document.getElementById('alasan_divisi_2') as HTMLTextAreaElement).value = draft.alasan_divisi_2; count++; }
-      if (draft.portofolio_medhum && medhumPortoInput) { medhumPortoInput.value = draft.portofolio_medhum; count++; }
-      if (draft.bersedia_dipindah && document.getElementById('bersedia_dipindah')) { (document.getElementById('bersedia_dipindah') as HTMLSelectElement).value = draft.bersedia_dipindah; count++; }
-      
-      toggleMedhumPorto();
+        let count = 0;
+        if (draft.nama_lengkap && document.getElementById('nama_lengkap')) { (document.getElementById('nama_lengkap') as HTMLInputElement).value = draft.nama_lengkap; count++; }
+        if (draft.nim && document.getElementById('nim')) { (document.getElementById('nim') as HTMLInputElement).value = draft.nim; count++; }
+        if (draft.angkatan && document.getElementById('angkatan')) { (document.getElementById('angkatan') as HTMLSelectElement).value = draft.angkatan; count++; }
+        if (draft.email && document.getElementById('email')) { (document.getElementById('email') as HTMLInputElement).value = draft.email; count++; }
+        if (draft.nomor_telp && document.getElementById('nomor_telp')) { (document.getElementById('nomor_telp') as HTMLInputElement).value = draft.nomor_telp; count++; }
+        if (draft.divisi_1 && div1Select) { div1Select.value = draft.divisi_1; count++; }
+        if (draft.alasan_divisi_1 && document.getElementById('alasan_divisi_1')) { (document.getElementById('alasan_divisi_1') as HTMLTextAreaElement).value = draft.alasan_divisi_1; count++; }
+        if (draft.divisi_2 && div2Select) { div2Select.value = draft.divisi_2; count++; }
+        if (draft.alasan_divisi_2 && document.getElementById('alasan_divisi_2')) { (document.getElementById('alasan_divisi_2') as HTMLTextAreaElement).value = draft.alasan_divisi_2; count++; }
+        if (draft.portofolio_medhum && medhumPortoInput) { medhumPortoInput.value = draft.portofolio_medhum; count++; }
+        if (draft.bersedia_dipindah && document.getElementById('bersedia_dipindah')) { (document.getElementById('bersedia_dipindah') as HTMLSelectElement).value = draft.bersedia_dipindah; count++; }
+        
+        toggleMedhumPorto();
 
-      if (count > 0) {
-        if (clearDraftBtn) clearDraftBtn.style.display = 'inline-flex';
-        if (draftRestoredBanner) {
-          draftRestoredBanner.style.display = 'flex';
-          if (draftRestoredTime) draftRestoredTime.innerText = draft.savedAt || 'recently';
+        if (count > 0) {
+          if (clearDraftBtn) clearDraftBtn.style.display = 'inline-flex';
+          if (draftRestoredBanner) {
+            draftRestoredBanner.style.display = 'flex';
+            if (draftRestoredTime) draftRestoredTime.innerText = draft.savedAt || 'recently';
+          }
         }
       }
     } catch (e) {}
+    updateWordCounters();
   };
 
   const clearDraft = () => {
@@ -159,10 +206,11 @@ export function initRegistrationDraft(
       if (clearDraftModal) clearDraftModal.style.display = 'none';
       showDraftToast('Draft cleared', false);
     } catch (e) {}
+    updateWordCounters();
   };
 
-  formElement?.addEventListener('input', saveDraft);
-  formElement?.addEventListener('change', saveDraft);
+  formElement?.addEventListener('input', handleFormInput);
+  formElement?.addEventListener('change', handleFormInput);
   restoreDraft();
 
   const openClearDraftModal = () => {

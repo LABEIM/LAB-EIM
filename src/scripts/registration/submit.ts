@@ -151,12 +151,19 @@ export function initRegistrationSubmit(
       { input: filePiInput, label: 'Pakta Integritas (PI)', defaultMax: 3.0 }
     ];
 
+    const containerEl = document.getElementById('registration-container');
+    const minWordsAttr = formElement?.getAttribute('data-min-words') || containerEl?.getAttribute('data-min-reason-words');
+    const minReasonWords = minWordsAttr ? parseInt(minWordsAttr, 10) : 30;
+
     const validationResult = validateRegistrationForm(
       formElement,
       nim,
       nomor_telp,
       divisi_1,
       divisi_2,
+      alasan_divisi_1,
+      alasan_divisi_2,
+      minReasonWords,
       portofolio_medhum,
       requiresPortfolio,
       docChecks

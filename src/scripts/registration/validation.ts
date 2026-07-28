@@ -4,12 +4,20 @@ export interface DocCheckItem {
   defaultMax: number;
 }
 
+export function countWords(text: string): number {
+  if (!text) return 0;
+  return text.trim().split(/\s+/).filter(Boolean).length;
+}
+
 export function validateRegistrationForm(
   formElement: HTMLFormElement | null,
   nim: string,
   nomor_telp: string,
   divisi_1: string,
   divisi_2: string,
+  alasan_divisi_1: string,
+  alasan_divisi_2: string,
+  minReasonWords: number,
   portofolio_medhum: string,
   requiresPortfolio: (val: string) => boolean,
   docChecks: DocCheckItem[]
@@ -25,6 +33,22 @@ export function validateRegistrationForm(
 
   if (divisi_1 === divisi_2) {
     return { valid: false, errorMsg: 'Division Choice 1 and Division Choice 2 cannot be the same!' };
+  }
+
+  const words1 = countWords(alasan_divisi_1);
+  if (words1 < minReasonWords) {
+    return {
+      valid: false,
+      errorMsg: `Reason for Choosing Division 1 must contain at least ${minReasonWords} words (currently ${words1} ${words1 === 1 ? 'word' : 'words'}).`
+    };
+  }
+
+  const words2 = countWords(alasan_divisi_2);
+  if (words2 < minReasonWords) {
+    return {
+      valid: false,
+      errorMsg: `Reason for Choosing Division 2 must contain at least ${minReasonWords} words (currently ${words2} ${words2 === 1 ? 'word' : 'words'}).`
+    };
   }
 
   if ((requiresPortfolio(divisi_1) || requiresPortfolio(divisi_2)) && !portofolio_medhum) {

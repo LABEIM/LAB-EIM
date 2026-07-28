@@ -269,6 +269,11 @@ export default config({
       schema: {
         batch: fields.text({ label: 'Batch Title', defaultValue: 'Recruitment Assistant 2026' }),
         publishedDate: fields.text({ label: 'Published Date', defaultValue: '2026-08-01' }),
+        bulkImportText: fields.text({
+          label: 'Bulk Spreadsheet Paste (Copy & paste table rows directly from Google Sheets / Excel)',
+          multiline: true,
+          description: 'Supported format: NIM | Division | Screening (passed/failed) | Technical (passed/failed) | Final (accepted/waitlist/rejected) | Notes',
+        }),
         candidates: fields.array(
           fields.object({
             nim: fields.text({ label: 'NIM' }),

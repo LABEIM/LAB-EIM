@@ -216,4 +216,26 @@ This file configures the global branding, tab information, and social links of t
 }
 ```
 
+---
+
+## 7. Managing Recruitment Results via Keystatic CMS (`/keystatic`)
+
+Lab staff manage candidate recruitment search results directly on the **Keystatic Admin Page** at `/keystatic`.
+
+### Accessing Keystatic Admin
+- URL Path: `/keystatic`
+- Singleton Section: **Singletons > Recruitment Results (Candidate Search)**
+
+### How to Update Candidates inside Keystatic Admin
+1. Log into the Keystatic Admin dashboard at `/keystatic`.
+2. Click on **Singletons** in the left menu, then select **Recruitment Results (Candidate Search)**.
+3. Update the **Batch Title** (e.g. `Recruitment Assistant 2026`) and **Published Date**.
+4. Choose your preferred update method inside Keystatic:
+   - **Method A (Bulk Spreadsheet Paste)**: Copy table rows directly from Google Sheets or Excel (`NIM`, `Division`, `ScreeningStatus`, `TechnicalTestStatus`, `FinalStatus`, `Notes`) and paste them into the **Bulk Spreadsheet Paste** field.
+   - **Method B (Individual Entries)**: Under **Candidate List (Individual Entries)**, click **Add** to manage candidate records manually.
+5. Click **Save** in Keystatic to write updates directly into `src/data/recruitment_results.json`. Candidates will immediately be searchable by NIM on the website registration page.
+
+
+
+
 

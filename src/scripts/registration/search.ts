@@ -10,12 +10,50 @@ interface Candidate {
   notes?: string;
 }
 
+function parseBulkImportText(text: string): Candidate[] {
+  if (!text || typeof text !== 'string') return [];
+  const lines = text.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
+  if (!lines.length) return [];
+
+  let delimiter = ',';
+  if (lines[0].includes('\t')) delimiter = '\t';
+  else if (lines[0].includes(';')) delimiter = ';';
+
+  const results: Candidate[] = [];
+  const firstLineLower = lines[0].toLowerCase();
+  const startIdx = firstLineLower.includes('nim') ? 1 : 0;
+
+  for (let i = startIdx; i < lines.length; i++) {
+    const cols = lines[i].split(delimiter).map(c => c.trim().replace(/^["']|["']$/g, ''));
+    const nim = cols[0] || '';
+    if (!nim || nim.length < 3) continue;
+
+    const screeningVal = (cols[2] || 'passed').toLowerCase();
+    const technicalVal = (cols[3] || 'passed').toLowerCase();
+    const finalVal = (cols[4] || 'accepted').toLowerCase();
+
+    results.push({
+      nim: nim,
+      division: cols[1] || 'General',
+      screeningStatus: ['passed', 'failed'].includes(screeningVal) ? screeningVal : 'passed',
+      technicalTestStatus: ['passed', 'failed'].includes(technicalVal) ? technicalVal : 'passed',
+      finalStatus: ['accepted', 'waitlist', 'rejected'].includes(finalVal) ? finalVal : 'accepted',
+      notes: cols[5] || '',
+    });
+  }
+  return results;
+}
+
 function findCandidate(query: string): Candidate | undefined {
   const q = query.trim().toLowerCase();
   if (!q) return undefined;
 
-  const candidates: Candidate[] = (resultsData as any).candidates || [];
-  return candidates.find(c => {
+  const structured: Candidate[] = (resultsData as any).candidates || [];
+  const bulkText: string = (resultsData as any).bulkImportText || '';
+  const fromBulk = parseBulkImportText(bulkText);
+  const allCandidates = [...structured, ...fromBulk];
+
+  return allCandidates.find(c => {
     const nimStr = c.nim != null ? String(c.nim).toLowerCase() : '';
     return nimStr === q;
   });
@@ -47,7 +85,7 @@ export function initRegistrationSearch() {
       searchScreeningResultBox.style.color = isPassed ? '#20c997' : 'var(--text-secondary)';
       searchScreeningResultBox.innerHTML = `
         <div style="font-size: 1.2rem; font-weight: bold; margin-bottom: 6px;">
-          ${isPassed ? '🎉 PASSED DOCUMENT SCREENING' : 'ℹ️ Document Screening Status'}
+          ${isPassed ? 'PASSED DOCUMENT SCREENING' : 'Document Screening Status'}
         </div>
         <div style="color: var(--text-primary); font-size: 1.05rem;">NIM: <strong>${match.nim || ''}</strong></div>
         <p style="margin-top: 8px; font-size: 0.9rem;">
@@ -89,7 +127,7 @@ export function initRegistrationSearch() {
       searchTechResultBox.style.color = isPassed ? '#20c997' : 'var(--text-secondary)';
       searchTechResultBox.innerHTML = `
         <div style="font-size: 1.2rem; font-weight: bold; margin-bottom: 6px;">
-          ${isPassed ? '🎉 PASSED TECHNICAL TEST' : 'ℹ️ Technical Test Status'}
+          ${isPassed ? 'PASSED TECHNICAL TEST' : 'Technical Test Status'}
         </div>
         <div style="color: var(--text-primary); font-size: 1.05rem;">NIM: <strong>${match.nim || ''}</strong></div>
         <p style="margin-top: 8px; font-size: 0.9rem;">

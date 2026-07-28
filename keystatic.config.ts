@@ -148,6 +148,18 @@ export default config({
           label: 'Missions',
           itemLabel: props => props.value,
         }),
+        values: fields.array(
+          fields.object({
+            title: fields.text({ label: 'Title' }),
+            description: fields.text({ label: 'Description', multiline: true }),
+            icon: fields.text({ label: 'FontAwesome Icon Class (e.g. fa-handshake)' }),
+            isAccent: fields.checkbox({ label: 'Red Accent Icon (Checked = red accent, Unchecked = cyan accent)', defaultValue: false }),
+          }),
+          {
+            label: 'Laboratory Core Values',
+            itemLabel: props => props.fields.title.value || 'Value',
+          }
+        ),
       },
     }),
     registration: singleton({

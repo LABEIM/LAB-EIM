@@ -2,18 +2,18 @@
 import Layout from '../layouts/Layout.astro';
 import membersData from '../data/members.json';
 import divisionsData from '../data/divisions.json';
-import { getDivisionInfo, type DivisionConfig } from '../utils/division-mapper';
+import { getDivisionInfo, parseDivisions } from '../utils/division-mapper';
 
 const initialMembers = membersData.list || [];
-const divisions: DivisionConfig[] = Array.isArray(divisionsData) ? (divisionsData as DivisionConfig[]) : ((divisionsData as any).list || []);
+const divisions = parseDivisions(divisionsData);
 ---
 
 <Layout title="Organizational Structure - EIM Research Lab">
-  <section class="page-header" style="padding-top: 150px; padding-bottom: 50px;">
+  <section class="page-header structure-page-header">
     <div class="container">
       <div class="page-header-content">
         <h1>Organizational <span class="text-gradient-cyan">Structure</span></h1>
-        <p style="margin-top: 15px; color: var(--text-secondary);">Meet the EIM laboratory assistants in each division.</p>
+        <p class="structure-page-subtitle">Meet the EIM laboratory assistants in each division.</p>
       </div>
     </div>
   </section>
@@ -42,7 +42,7 @@ const divisions: DivisionConfig[] = Array.isArray(divisionsData) ? (divisionsDat
       </div>
 
       <!-- Empty State Notice (hidden by default) -->
-      <div class="empty-state-panel" id="empty-state-notice" style="display: none;">
+      <div class="empty-state-panel" id="empty-state-notice">
         <div class="empty-state-icon">
           <i class="fa-solid fa-users-slash"></i>
         </div>
@@ -62,6 +62,10 @@ const divisions: DivisionConfig[] = Array.isArray(divisionsData) ? (divisionsDat
             .filter(Boolean)
             .join(' ');
 
+          const avatarBgStyle = member.image ? 'background: transparent;' : '';
+          const imageTransformStyle = member.scale ? `transform: scale(${member.scale});` : '';
+          const imageOriginStyle = member.position ? `transform-origin: ${member.position};` : '';
+
           return (
             <div 
               class={`member-card glass-panel member-card-item div-${canonicalId}`} 
@@ -69,15 +73,16 @@ const divisions: DivisionConfig[] = Array.isArray(divisionsData) ? (divisionsDat
               style={`animation-delay: ${idx * 0.04}s; border-color: ${borderColor};`}
             >
               <div class="member-avatar-wrapper">
-                <div class="member-avatar" style={member.image ? "background: transparent;" : ""}>
+                <div class="member-avatar" style={avatarBgStyle}>
                   {member.image ? (
                     <img
                       src={member.image}
                       alt={member.name}
-                      style={`width: 100%; height: 100%; object-fit: cover; border-radius: inherit; display: block; ${member.scale ? `transform: scale(${member.scale});` : ''} ${member.position ? `transform-origin: ${member.position};` : ''}`}
+                      class="member-avatar-img"
+                      style={`${imageTransformStyle} ${imageOriginStyle}`}
                     />
                   ) : (
-                    <i class="fa-solid fa-user" style="font-size: 2.5rem; opacity: 0.5;"></i>
+                    <i class="fa-solid fa-user default-avatar-icon"></i>
                   )}
                 </div>
               </div>

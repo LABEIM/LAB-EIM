@@ -4,9 +4,12 @@ import Layout from '../layouts/Layout.astro';
 import divisionsData from '../data/divisions.json';
 import registrationConfig from '../data/registration.json';
 import { getCurrentRecruitmentStage } from '../utils/recruitment';
-import type { DivisionConfig } from '../utils/division-mapper';
+import { parseDivisions } from '../utils/division-mapper';
+import { STAGE_ACTION_CONFIG, DEFAULT_ACTION_BTN } from '../utils/constants';
+import ResearchFocus from '../components/home/ResearchFocus.astro';
+import NewsCard from '../components/cards/NewsCard.astro';
 
-const divisions: DivisionConfig[] = Array.isArray(divisionsData) ? (divisionsData as DivisionConfig[]) : ((divisionsData as any).list || []);
+const divisions = parseDivisions(divisionsData);
 
 // Fetch and sort news
 const allNews = await getCollection('news');
@@ -16,20 +19,7 @@ const latestNews = allNews
 
 // Calculate active recruitment stage
 const currentStage = getCurrentRecruitmentStage(registrationConfig);
-
-const STAGE_ACTION_CONFIG: Record<string, { label: string; icon: string }> = {
-  upcoming: { label: 'Recruitment Opening Soon', icon: 'fa-clock' },
-  open: { label: 'Register as Assistant Now', icon: 'fa-user-plus' },
-  extended: { label: 'Register as Assistant Now', icon: 'fa-user-plus' },
-  selection: { label: 'Check Screening Status', icon: 'fa-spinner' },
-  selection_results: { label: 'Check Screening Results', icon: 'fa-square-poll-vertical' },
-  technical_test: { label: 'Check Technical Test Info', icon: 'fa-laptop-code' },
-  technical_test_results: { label: 'Check Technical Test Results', icon: 'fa-square-poll-vertical' },
-  interview: { label: 'Check Interview Info', icon: 'fa-comments' },
-  announcement: { label: 'Check Final Results', icon: 'fa-award' },
-};
-
-const actionBtn = STAGE_ACTION_CONFIG[currentStage] || { label: 'Recruitment Information', icon: 'fa-info-circle' };
+const actionBtn = STAGE_ACTION_CONFIG[currentStage] || DEFAULT_ACTION_BTN;
 ---
 
 <Layout title="EIM Research Lab - Enterprise Infrastructure Management">
@@ -48,7 +38,7 @@ const actionBtn = STAGE_ACTION_CONFIG[currentStage] || { label: 'Recruitment Inf
           </p>
           <div class="hero-actions">
             {actionBtn && (
-              <a href="/registration" class="btn btn-primary" style="box-shadow: var(--glow-cyan-intense); transform: scale(1.05);">
+              <a href="/registration" class="btn btn-primary hero-action-primary">
                 {actionBtn.label} <i class={`fa-solid ${actionBtn.icon}`}></i>
               </a>
             )}
@@ -79,45 +69,17 @@ const actionBtn = STAGE_ACTION_CONFIG[currentStage] || { label: 'Recruitment Inf
       </div>
 
       {/* Research Focus */}
-      <div style="margin-top: 100px;">
-        <div class="section-title">
-          <h2>Research Focus & Laboratory</h2>
-          <p>We focus on the essential pillars of large-scale information technology infrastructure.</p>
-        </div>
-        <div class="focus-grid">
-          <div class="focus-card glass-panel">
-            <div class="focus-icon">
-              <i class="fa-solid fa-network-wired"></i>
-            </div>
-            <h3>Network Optimization</h3>
-            <p>Assessing route efficiency, routing & switching protocols, network traffic load simulation, and enterprise-scale regional interconnection.</p>
-          </div>
-          <div class="focus-card glass-panel">
-            <div class="focus-icon">
-              <i class="fa-solid fa-cloud-arrow-up"></i>
-            </div>
-            <h3>Cloud Infrastructure</h3>
-            <p>Implementation of private & public cloud, containerization (Docker, Kubernetes), network virtualization, and hybrid data center integration.</p>
-          </div>
-          <div class="focus-card glass-panel">
-            <div class="focus-icon">
-              <i class="fa-solid fa-robot"></i>
-            </div>
-            <h3>Network Automation & AI</h3>
-            <p>Switch/router configuration automation using Ansible/Python, and intelligent network performance monitoring based on artificial intelligence.</p>
-          </div>
-        </div>
-      </div>
+      <ResearchFocus />
 
       {/* Lab Divisions */}
-      <div style="margin-top: 100px;">
+      <div class="home-section-wrapper">
         <div class="section-title">
           <h2>EIM Laboratory Divisions</h2>
           <p>EIM Laboratory consists of 6 main divisions collaborating in integrated research and operations.</p>
         </div>
         <div class="divisions-brief-grid">
           {divisions.map(div => (
-            <a href={`/structure?div=${div.id}`} class="div-brief-card glass-panel" style="display: block; cursor: pointer;">
+            <a href={`/structure?div=${div.id}`} class="div-brief-card glass-panel division-card-link">
               <h4>{div.displayName}</h4>
               <p>{div.description}</p>
             </a>
@@ -126,44 +88,24 @@ const actionBtn = STAGE_ACTION_CONFIG[currentStage] || { label: 'Recruitment Inf
       </div>
 
       {/* Latest News */}
-      <div style="margin-top: 100px; margin-bottom: 20px;">
+      <div class="home-section-wrapper latest-news-section">
         <div class="section-title">
           <h2>Latest News</h2>
           <p>Latest news and article releases from EIM Research Lab.</p>
         </div>
         <div class="news-grid">
           {latestNews.length === 0 ? (
-            <div class="news-empty-state glass-panel" style="grid-column: 1 / -1;">
+            <div class="news-empty-state glass-panel news-empty-full">
               <i class="fa-regular fa-newspaper"></i>
-              <p style="color: var(--text-secondary);">No latest news available.</p>
+              <p class="text-secondary-muted">No latest news available.</p>
             </div>
           ) : (
-            latestNews.map(news => {
-              const coverImg = (news.data.image && news.data.image.length > 0) 
-                ? news.data.image[0] 
-                : "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&q=80&w=600";
-              return (
-                <div class="news-card glass-panel">
-                  <div class="news-img" style="position: relative; height: 200px; overflow: hidden; border-radius: 12px 12px 0 0;">
-                    <img src={coverImg} alt={news.data.title} style="width: 100%; height: 100%; object-fit: cover;" />
-                    <span class="news-tag" style="position: absolute; top: 15px; right: 15px; background: var(--accent-cyan); color: #000; padding: 5px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: bold;">{news.data.category}</span>
-                  </div>
-                  <div class="news-content" style="padding: 20px;">
-                    <div class="news-date" style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 10px;">
-                      <i class="fa-regular fa-calendar"></i> {new Date(news.data.news_date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
-                    </div>
-                    <h3 style="margin-bottom: 10px; font-size: 1.2rem; line-height: 1.4;">{news.data.title}</h3>
-                    <p class="news-desc" style="color: var(--text-secondary); font-size: 0.95rem; line-height: 1.6; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;">{news.body}</p>
-                    <div class="news-footer" style="margin-top: 15px; padding-top: 15px; border-top: 1px solid var(--border-color); font-size: 0.9rem; color: var(--text-secondary);">
-                      <span class="news-author">By: {news.data.author}</span>
-                    </div>
-                  </div>
-                </div>
-              );
-            })
+            latestNews.map(newsItem => (
+              <NewsCard news={newsItem} showButton={false} />
+            ))
           )}
         </div>
-        <div style="text-align: center; margin-top: 40px;">
+        <div class="view-all-news-wrapper">
           <a href="/news" class="btn btn-secondary">
             View All News <i class="fa-solid fa-arrow-right"></i>
           </a>

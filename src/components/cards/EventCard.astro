@@ -1,0 +1,51 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { DEFAULT_COVER_IMAGE } from '../../utils/constants';
+
+interface Props {
+  event: CollectionEntry<'events'>;
+}
+
+const { event } = Astro.props;
+
+let statusClass = 'upcoming';
+let statusIcon = 'fa-clock';
+let statusText = 'Upcoming';
+
+if (event.data.status === 'completed') {
+  statusClass = 'completed';
+  statusIcon = 'fa-circle-check';
+  statusText = 'Completed';
+} else if (event.data.status === 'ongoing') {
+  statusClass = 'ongoing';
+  statusIcon = 'fa-spinner fa-spin';
+  statusText = 'Ongoing';
+}
+
+const coverImg = (event.data.image && event.data.image.length > 0)
+  ? event.data.image[0]
+  : DEFAULT_COVER_IMAGE;
+---
+
+<div class="event-card glass-panel">
+  <div class="event-cover-img">
+    <img src={coverImg} alt={`Cover ${event.data.title}`} />
+  </div>
+  <div class={`event-status ${statusClass}`}>
+    <i class={`fa-solid ${statusIcon}`}></i> {statusText}
+  </div>
+  <div class="event-icon">
+    <i class={`fa-solid ${event.data.icon || 'fa-calendar'}`}></i>
+  </div>
+  <h3>{event.data.title}</h3>
+  <p class="event-cat">Category: {event.data.category}</p>
+  <p>{event.data.description}</p>
+
+  <a href={`/event/${event.id}`} class="btn btn-secondary btn-read-more">
+    Read More <i class="fa-solid fa-arrow-right"></i>
+  </a>
+
+  <div class="event-footer">
+    <span class="event-date"><i class="fa-regular fa-calendar"></i> {event.data.event_date}</span>
+  </div>
+</div>

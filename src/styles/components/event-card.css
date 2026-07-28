@@ -1,0 +1,27 @@
+/* --- EVENT CARD COMPONENT --- */
+.event-card {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.event-card .btn-read-more {
+  width: 100%;
+  margin-top: 15px;
+  padding: 8px;
+  font-size: 0.9rem;
+  text-align: center;
+}
+
+.event-card .btn-read-more i {
+  margin-left: 5px;
+}
+
+.event-card .event-footer {
+  margin-top: auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid var(--border-color);
+  padding-top: 20px;
+}

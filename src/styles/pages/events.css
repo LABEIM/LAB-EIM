@@ -109,3 +109,216 @@
     font-size: 0.85rem;
     color: var(--text-muted);
 }
+
+.event-page-header {
+    background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
+    padding: 120px 0 60px 0;
+    text-align: center;
+}
+
+.event-page-header h1 {
+    font-size: 3rem;
+    margin-bottom: 15px;
+}
+
+.event-page-subtitle {
+    font-size: 1.1rem;
+    color: var(--text-secondary);
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.event-section-main {
+    background: var(--bg-primary);
+    min-height: 60vh;
+}
+
+/* Event Detail Page Styles */
+.detail-header-section {
+    padding-top: 120px;
+    padding-bottom: 40px;
+    border-bottom: 1px solid var(--border-color);
+    background-color: var(--bg-dark-secondary);
+}
+
+.back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--text-secondary);
+    margin-bottom: 24px;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.header-title-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.event-title {
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: var(--text-primary);
+    margin-bottom: 12px;
+    font-family: var(--font-heading);
+}
+
+.organizer-badge {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--text-secondary);
+    font-size: 1rem;
+}
+
+.action-share-btn {
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    border-radius: 30px;
+    padding: 8px 20px;
+    font-size: 0.85rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+}
+
+.content-section {
+    padding: 60px 0;
+}
+
+.responsive-grid {
+    display: grid;
+    grid-template-columns: 1fr 380px;
+    gap: 40px;
+    align-items: start;
+}
+
+.main-column {
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+}
+
+.section-subheading {
+    font-size: 1.4rem;
+    color: #11B4BD;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: var(--font-heading);
+}
+
+.section-body-text {
+    color: var(--text-secondary);
+    line-height: 1.7;
+    font-size: 1.05rem;
+    white-space: pre-line;
+}
+
+.section-list {
+    color: var(--text-secondary);
+    font-size: 1.05rem;
+    line-height: 1.7;
+    padding-left: 20px;
+}
+
+.section-list li {
+    margin-bottom: 6px;
+}
+
+.doc-images-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 15px;
+}
+
+.doc-img-wrapper {
+    border-radius: 10px;
+    overflow: hidden;
+    height: 150px;
+}
+
+.doc-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.sidebar-card {
+    border-radius: 16px;
+    padding: 30px;
+    box-shadow: var(--shadow-md);
+}
+
+.sidebar-title {
+    font-size: 1.25rem;
+    color: var(--text-primary);
+    margin-bottom: 24px;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 16px;
+    font-family: var(--font-heading);
+}
+
+.sidebar-info-group {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.info-item {
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+}
+
+.info-icon-box {
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    background-color: var(--bg-card);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #11B4BD;
+    font-size: 1.2rem;
+    flex-shrink: 0;
+    border: 1px solid var(--border-color);
+}
+
+.info-label {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    margin-bottom: 4px;
+}
+
+.info-val {
+    color: var(--text-primary);
+    font-weight: 600;
+    font-size: 0.95rem;
+}
+
+.register-btn {
+    width: 100%;
+    justify-content: center;
+    padding: 14px;
+    font-size: 1rem;
+    border-radius: 8px;
+    margin-bottom: 16px;
+}
+
+.register-notice {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    text-align: center;
+    margin: 0;
+    line-height: 1.6;
+}
+

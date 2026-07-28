@@ -12,5 +12,31 @@
     "Creating a conducive and productive laboratory environment by upholding EIM Work values.",
     "Developing sustainable work programs through innovation and quality improvement.",
     "Strengthening communication and collaboration with all stakeholders."
+  ],
+  "values": [
+    {
+      "title": "Reliability",
+      "description": "Building trust through a strong and consistent identity in every research and service.",
+      "icon": "fa-handshake",
+      "isAccent": true
+    },
+    {
+      "title": "Commitment",
+      "description": "Demonstrating high dedication to creating technology innovations that impact society.",
+      "icon": "fa-award",
+      "isAccent": false
+    },
+    {
+      "title": "Availability",
+      "description": "Always present as a platform for collaboration, exchanging ideas, and developing digital science.",
+      "icon": "fa-people-arrows",
+      "isAccent": true
+    },
+    {
+      "title": "Quality",
+      "description": "Delivering research work, practical solutions, and training with the highest quality standards.",
+      "icon": "fa-circle-check",
+      "isAccent": false
+    }
   ]
 }

@@ -23,6 +23,8 @@
 @import "./base.css";
 @import "./components/navbar.css";
 @import "./components/footer.css";
+@import "./components/event-card.css";
+@import "./components/news-card.css";
 @import "./pages/hero.css";
 @import "./pages/about.css";
 @import "./pages/organization.css";

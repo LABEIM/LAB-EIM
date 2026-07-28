@@ -1,6 +1,40 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import aboutData from '../data/about.json';
+
+interface ValueItem {
+  title: string;
+  description: string;
+  icon: string;
+  isAccent?: boolean;
+}
+
+const values: ValueItem[] = aboutData.values || [
+  {
+    title: "Reliability",
+    description: "Building trust through a strong and consistent identity in every research and service.",
+    icon: "fa-handshake",
+    isAccent: true
+  },
+  {
+    title: "Commitment",
+    description: "Demonstrating high dedication to creating technology innovations that impact society.",
+    icon: "fa-award",
+    isAccent: false
+  },
+  {
+    title: "Availability",
+    description: "Always present as a platform for collaboration, exchanging ideas, and developing digital science.",
+    icon: "fa-people-arrows",
+    isAccent: true
+  },
+  {
+    title: "Quality",
+    description: "Delivering research work, practical solutions, and training with the highest quality standards.",
+    icon: "fa-circle-check",
+    isAccent: false
+  }
+];
 ---
 
 <Layout title={`${aboutData.title} - EIM Research Lab`}>
@@ -47,7 +81,7 @@ import aboutData from '../data/about.json';
             </h3>
             <ul class="mission-list">
               {aboutData.missions.map((mission) => (
-                <li style="margin-bottom: 8px;">{mission}</li>
+                <li class="mission-item">{mission}</li>
               ))}
             </ul>
           </div>
@@ -61,51 +95,17 @@ import aboutData from '../data/about.json';
         </div>
 
         <div class="focus-grid">
-          <div class="focus-card glass-panel">
-            <div class="focus-icon text-accent-red">
-              <i class="fa-solid fa-handshake"></i>
+          {values.map((val) => (
+            <div class="focus-card glass-panel">
+              <div class={`focus-icon ${val.isAccent ? 'text-accent-red' : ''}`}>
+                <i class={`fa-solid ${val.icon}`}></i>
+              </div>
+              <h3>{val.title}</h3>
+              <p>{val.description}</p>
             </div>
-            <h3>Reliability</h3>
-            <p>Building trust through a strong and consistent identity in every research and service.</p>
-          </div>
-          <div class="focus-card glass-panel">
-            <div class="focus-icon">
-              <i class="fa-solid fa-award"></i>
-            </div>
-            <h3>Commitment</h3>
-            <p>Demonstrating high dedication to creating technology innovations that impact society.</p>
-          </div>
-          <div class="focus-card glass-panel">
-            <div class="focus-icon text-accent-red">
-              <i class="fa-solid fa-people-arrows"></i>
-            </div>
-            <h3>Availability</h3>
-            <p>Always present as a platform for collaboration, exchanging ideas, and developing digital science.</p>
-          </div>
-          <div class="focus-card glass-panel">
-            <div class="focus-icon">
-              <i class="fa-solid fa-circle-check"></i>
-            </div>
-            <h3>Quality</h3>
-            <p>Delivering research work, practical solutions, and training with the highest quality standards.</p>
-          </div>
+          ))}
         </div>
       </div>
     </div>
   </section>
 </Layout>
-
-<style>
-  .mb-80 { margin-bottom: 80px; }
-  .mb-20 { margin-bottom: 20px; }
-  .max-w-full { max-width: 100%; }
-  .text-secondary { color: var(--text-secondary); }
-  .text-accent-red { color: var(--accent-red); }
-  .flex-center { display: flex; align-items: center; justify-content: center; }
-  .overview-heading { font-size: 2rem; margin-bottom: 20px; }
-  .vm-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 40px; }
-  .vision-heading { font-size: 1.8rem; margin-bottom: 16px; color: var(--accent-red); display: flex; align-items: center; gap: 8px; }
-  .mission-heading { font-size: 1.8rem; margin-bottom: 16px; color: var(--accent-cyan); display: flex; align-items: center; gap: 8px; }
-  .vm-text { color: var(--text-secondary); font-size: 1rem; line-height: 1.6; }
-  .mission-list { color: var(--text-secondary); font-size: 0.95rem; line-height: 1.6; padding-left: 20px; }
-</style>

@@ -14,26 +14,32 @@ const { event } = Astro.props;
 const images = event.data.image || [];
 const benefits = event.data.benefits || [];
 const requirements = event.data.requirements || [];
+
+const isOngoing = event.data.status === 'ongoing';
+const isCompleted = event.data.status === 'completed';
+const statusColor = isOngoing ? '#ff9800' : '#11B4BD';
+const statusIcon = isCompleted ? 'fa-circle-check' : (isOngoing ? 'fa-spinner fa-spin' : 'fa-clock');
+const statusLabel = isCompleted ? 'Completed' : (isOngoing ? 'Ongoing' : 'Upcoming');
 ---
 
 <Layout title={`${event.data.title} - EIM Research Lab`}>
-  <div style="min-height: 100vh;">
+  <div class="page-min-height">
     {/* Top Section */}
-    <section style="padding-top: 120px; padding-bottom: 40px; border-bottom: 1px solid var(--border-color); backgroundColor: var(--bg-dark-secondary);">
+    <section class="detail-header-section">
       <div class="container">
-        <a href="/event" class="hover-text-primary" style="display: inline-flex; align-items: center; gap: 8px; color: var(--text-secondary); margin-bottom: 24px; font-size: 0.9rem; font-weight: 500;">
+        <a href="/event" class="hover-text-primary back-link">
           <i class="fa-solid fa-arrow-left"></i> Back
         </a>
         
-        <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 20px;">
+        <div class="header-title-row">
           <div>
-            <h1 style="font-size: 2.5rem; font-weight: 800; color: var(--text-primary); margin-bottom: 12px; font-family: var(--font-heading);">{event.data.title}</h1>
-            <div style="display: flex; align-items: center; gap: 8px; color: var(--text-secondary); font-size: 1rem;">
+            <h1 class="event-title">{event.data.title}</h1>
+            <div class="organizer-badge">
               <i class="fa-solid fa-users"></i> EIM Research Lab
             </div>
           </div>
           
-          <button class="hover-bg-light share-btn" style="background-color: var(--bg-card); border: 1px solid var(--border-color); color: var(--text-primary); border-radius: 30px; padding: 8px 20px; font-size: 0.85rem; display: flex; align-items: center; gap: 8px; cursor: pointer;">
+          <button class="hover-bg-light share-btn action-share-btn">
             <i class="fa-solid fa-share-nodes"></i> Share
           </button>
         </div>
@@ -41,18 +47,18 @@ const requirements = event.data.requirements || [];
     </section>
 
     {/* Main Content Section */}
-    <section style="padding: 60px 0;">
-      <div class="container responsive-grid" style="display: grid; grid-template-columns: 1fr 380px; gap: 40px; align-items: start;">
+    <section class="content-section">
+      <div class="container responsive-grid">
         
         {/* Left Column */}
-        <div style="display: flex; flex-direction: column; gap: 40px;">
+        <div class="main-column">
           
           {/* Description */}
           <div>
-            <h3 style="font-size: 1.4rem; color: #11B4BD; margin-bottom: 16px; display: flex; align-items: center; gap: 10px; font-family: var(--font-heading);">
+            <h3 class="section-subheading">
               <i class="fa-solid fa-circle-info"></i> Event Description
             </h3>
-            <p style="color: var(--text-secondary); line-height: 1.7; font-size: 1.05rem; white-space: pre-line;">
+            <p class="section-body-text">
               {event.data.description}
             </p>
           </div>
@@ -60,12 +66,12 @@ const requirements = event.data.requirements || [];
           {/* Benefits */}
           {benefits.length > 0 && (
             <div>
-              <h3 style="font-size: 1.4rem; color: #11B4BD; margin-bottom: 16px; display: flex; align-items: center; gap: 10px; font-family: var(--font-heading);">
+              <h3 class="section-subheading">
                 <i class="fa-solid fa-gift"></i> Event Benefits
               </h3>
-              <ul style="color: var(--text-secondary); font-size: 1.05rem; line-height: 1.7; padding-left: 20px;">
+              <ul class="section-list">
                 {benefits.map(b => (
-                  <li style="margin-bottom: 6px;">{b}</li>
+                  <li>{b}</li>
                 ))}
               </ul>
             </div>
@@ -74,12 +80,12 @@ const requirements = event.data.requirements || [];
           {/* Requirements */}
           {requirements.length > 0 && (
             <div>
-              <h3 style="font-size: 1.4rem; color: #11B4BD; margin-bottom: 16px; display: flex; align-items: center; gap: 10px; font-family: var(--font-heading);">
+              <h3 class="section-subheading">
                 <i class="fa-solid fa-circle-check"></i> Participant Requirements
               </h3>
-              <ul style="color: var(--text-secondary); font-size: 1.05rem; line-height: 1.7; padding-left: 20px;">
+              <ul class="section-list">
                 {requirements.map(r => (
-                  <li style="margin-bottom: 6px;">{r}</li>
+                  <li>{r}</li>
                 ))}
               </ul>
             </div>
@@ -88,13 +94,13 @@ const requirements = event.data.requirements || [];
           {/* Documentation */}
           {images.length > 0 && (
             <div>
-              <h3 style="font-size: 1.4rem; color: #11B4BD; margin-bottom: 16px; display: flex; align-items: center; gap: 10px; font-family: var(--font-heading);">
+              <h3 class="section-subheading">
                 <i class="fa-solid fa-image"></i> Documentation
               </h3>
-              <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 15px;">
+              <div class="doc-images-grid">
                 {images.map((img, idx) => (
-                  <div style="border-radius: 10px; overflow: hidden; height: 150px;">
-                    <img src={img} alt={`Documentation ${idx + 1}`} class="hover-scale" style="width: 100%; height: 100%; object-fit: cover;" />
+                  <div class="doc-img-wrapper">
+                    <img src={img} alt={`Documentation ${idx + 1}`} class="hover-scale doc-img" />
                   </div>
                 ))}
               </div>
@@ -104,54 +110,52 @@ const requirements = event.data.requirements || [];
         </div>
 
         {/* Right Column (Sidebar) */}
-        <div class="glass-panel" style="border-radius: 16px; padding: 30px; box-shadow: var(--shadow-md);">
-          <h3 style="font-size: 1.25rem; color: var(--text-primary); margin-bottom: 24px; border-bottom: 1px solid var(--border-color); padding-bottom: 16px; font-family: var(--font-heading);">
+        <div class="glass-panel sidebar-card">
+          <h3 class="sidebar-title">
             Key Information
           </h3>
           
-          <div style="display: flex; flex-direction: column; gap: 20px; margin-bottom: 30px;">
+          <div class="sidebar-info-group">
             {/* Date */}
-            <div style="display: flex; gap: 16px; align-items: flex-start;">
-              <div style="width: 40px; height: 40px; border-radius: 8px; background-color: var(--bg-card); display: flex; align-items: center; justify-content: center; color: #11B4BD; font-size: 1.2rem; flex-shrink: 0; border: 1px solid var(--border-color);">
+            <div class="info-item">
+              <div class="info-icon-box">
                 <i class="fa-regular fa-calendar"></i>
               </div>
               <div>
-                <div style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 4px;">Event Date</div>
-                <div style="color: var(--text-primary); font-weight: 600; font-size: 0.95rem;">{event.data.event_date || "-"}</div>
+                <div class="info-label">Event Date</div>
+                <div class="info-val">{event.data.event_date || "-"}</div>
               </div>
             </div>
 
             {/* Status */}
-            <div style="display: flex; gap: 16px; align-items: flex-start;">
-              <div style={`width: 40px; height: 40px; border-radius: 8px; background-color: var(--bg-card); display: flex; align-items: center; justify-content: center; color: ${event.data.status === 'ongoing' ? '#ff9800' : '#11B4BD'}; font-size: 1.2rem; flex-shrink: 0; border: 1px solid var(--border-color);`}>
-                <i class={`fa-solid ${event.data.status === 'completed' ? 'fa-circle-check' : (event.data.status === 'ongoing' ? 'fa-spinner fa-spin' : 'fa-clock')}`}></i>
+            <div class="info-item">
+              <div class="info-icon-box" style={`color: ${statusColor};`}>
+                <i class={`fa-solid ${statusIcon}`}></i>
               </div>
               <div>
-                <div style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 4px;">Status</div>
-                <div style="color: var(--text-primary); font-weight: 600; font-size: 0.95rem;">
-                  {event.data.status === 'completed' ? 'Completed' : (event.data.status === 'ongoing' ? 'Ongoing' : 'Upcoming')}
-                </div>
+                <div class="info-label">Status</div>
+                <div class="info-val">{statusLabel}</div>
               </div>
             </div>
 
             {/* Category */}
-            <div style="display: flex; gap: 16px; align-items: flex-start;">
-              <div style="width: 40px; height: 40px; border-radius: 8px; background-color: var(--bg-card); display: flex; align-items: center; justify-content: center; color: #11B4BD; font-size: 1.2rem; flex-shrink: 0; border: 1px solid var(--border-color);">
+            <div class="info-item">
+              <div class="info-icon-box">
                 <i class="fa-solid fa-tag"></i>
               </div>
               <div>
-                <div style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 4px;">Category</div>
-                <div style="color: var(--text-primary); font-weight: 600; font-size: 0.95rem;">{event.data.category || "-"}</div>
+                <div class="info-label">Category</div>
+                <div class="info-val">{event.data.category || "-"}</div>
               </div>
             </div>
           </div>
 
           {event.data.show_register && event.data.status !== 'completed' && (
             <>
-              <a href="/registration" class="btn btn-primary" style="width: 100%; justify-content: center; padding: 14px; font-size: 1rem; border-radius: 8px; margin-bottom: 16px;">
+              <a href="/registration" class="btn btn-primary register-btn">
                 Register Now
               </a>
-              <p style="font-size: 0.75rem; color: var(--text-muted); text-align: center; margin: 0; line-height: 1.6;">
+              <p class="register-notice">
                 *You will be redirected to the<br/>event registration form
               </p>
             </>
@@ -159,15 +163,6 @@ const requirements = event.data.requirements || [];
         </div>
       </div>
     </section>
-
-    {/* Responsive media query */}
-    <style>
-      @media (max-width: 991px) {
-        .responsive-grid {
-          grid-template-columns: 1fr !important;
-        }
-      }
-    </style>
   </div>
 </Layout>
 

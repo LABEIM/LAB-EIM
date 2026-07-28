@@ -119,3 +119,17 @@ export function isDivisionMatch(memberDiv: string, filterVal: string, divisions:
 
   return false;
 }
+
+/**
+ * Parses raw division data which may be an array or an object with a `.list` array property.
+ */
+export function parseDivisions(divisionsData: any): DivisionConfig[] {
+  if (Array.isArray(divisionsData)) {
+    return divisionsData as DivisionConfig[];
+  }
+  if (divisionsData && Array.isArray((divisionsData as any).list)) {
+    return (divisionsData as any).list as DivisionConfig[];
+  }
+  return [];
+}
+

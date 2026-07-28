@@ -1,0 +1,49 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { DEFAULT_COVER_IMAGE } from '../../utils/constants';
+
+interface Props {
+  news: CollectionEntry<'news'>;
+  showButton?: boolean;
+}
+
+const { news, showButton = true } = Astro.props;
+
+const coverImg = (news.data.image && news.data.image.length > 0)
+  ? news.data.image[0]
+  : DEFAULT_COVER_IMAGE;
+
+const formattedDate = new Date(news.data.news_date).toLocaleDateString('en-US', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric'
+});
+---
+
+<div class="news-card glass-panel">
+  <div class="news-img">
+    <img src={coverImg} alt={`Cover ${news.data.title}`} />
+    <span class="news-tag">{news.data.category}</span>
+  </div>
+  <div class="news-content">
+    <div class="news-date">
+      <i class="fa-regular fa-calendar"></i> {formattedDate}
+    </div>
+    <h3>{news.data.title}</h3>
+    <p class="news-desc">{news.body}</p>
+
+    <div class="news-footer-group">
+      {showButton && (
+        <a href={`/news/${news.id}`} class="btn btn-secondary btn-read-more">
+          Read More <i class="fa-solid fa-arrow-right"></i>
+        </a>
+      )}
+
+      <div class="news-footer">
+        <span class="news-author">
+          <i class="fa-solid fa-pen-nib"></i> By: {news.data.author}
+        </span>
+      </div>
+    </div>
+  </div>
+</div>

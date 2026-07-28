@@ -118,3 +118,39 @@
 .node-2 { bottom: 0; left: 50%; transform: translate(-50%, 50%); }
 .node-3 { top: 50%; left: 0; transform: translate(-50%, -50%); }
 .node-4 { top: 50%; right: 0; transform: translate(50%, -50%); }
+
+.hero-action-primary {
+    box-shadow: var(--glow-cyan-intense);
+    transform: scale(1.05);
+}
+
+.research-focus-wrapper {
+    margin-top: 100px;
+}
+
+.home-section-wrapper {
+    margin-top: 100px;
+}
+
+.latest-news-section {
+    margin-bottom: 20px;
+}
+
+.division-card-link {
+    display: block;
+    cursor: pointer;
+}
+
+.news-empty-full {
+    grid-column: 1 / -1;
+}
+
+.text-secondary-muted {
+    color: var(--text-secondary);
+}
+
+.view-all-news-wrapper {
+    text-align: center;
+    margin-top: 40px;
+}
+

@@ -323,3 +323,27 @@
     margin: 0 auto;
 }
 
+.structure-page-header {
+    padding-top: 150px;
+    padding-bottom: 50px;
+}
+
+.structure-page-subtitle {
+    margin-top: 15px;
+    color: var(--text-secondary);
+}
+
+.member-avatar-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: inherit;
+    display: block;
+}
+
+.default-avatar-icon {
+    font-size: 2.5rem;
+    opacity: 0.5;
+}
+
+

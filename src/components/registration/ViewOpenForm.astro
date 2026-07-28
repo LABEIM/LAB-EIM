@@ -16,8 +16,10 @@ interface Props {
     totalMb?: number;
   };
   divisions: Array<{
-    registrationValue: string;
-    registrationLabel: string;
+    registrationValue?: string;
+    registrationLabel?: string;
+    id?: string;
+    name?: string;
   }>;
   piTemplateUrl?: string;
   minReasonWords?: number;
@@ -150,7 +152,7 @@ const piAccept = formatAccept(piExts);
         <select class="form-control" id="divisi_1" required>
           <option value="" disabled selected>Select Division 1</option>
           {divisions.map(div => (
-            <option value={div.registrationValue}>{div.registrationLabel}</option>
+            <option value={div.registrationValue || div.id}>{div.registrationLabel || div.name}</option>
           ))}
         </select>
       </div>
@@ -159,7 +161,7 @@ const piAccept = formatAccept(piExts);
         <select class="form-control" id="divisi_2" required>
           <option value="" disabled selected>Select Division 2</option>
           {divisions.map(div => (
-            <option value={div.registrationValue}>{div.registrationLabel}</option>
+            <option value={div.registrationValue || div.id}>{div.registrationLabel || div.name}</option>
           ))}
         </select>
       </div>

@@ -1,10 +1,10 @@
 ---
 import { getCollection } from 'astro:content';
 import Layout from '../../layouts/Layout.astro';
+import EventCard from '../../components/cards/EventCard.astro';
 
 const events = await getCollection('events');
 const sortedEvents = events.sort((a, b) => {
-  // Sort by date (newest first)
   const timeA = new Date(a.data.event_date).getTime();
   const timeB = new Date(b.data.event_date).getTime();
   return isNaN(timeA) || isNaN(timeB) ? 0 : timeB - timeA;
@@ -12,68 +12,28 @@ const sortedEvents = events.sort((a, b) => {
 ---
 
 <Layout title="Events & Agenda - EIM Research Lab">
-  <section class="page-header" style="background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%); padding: 120px 0 60px 0; text-align: center;">
+  <section class="page-header event-page-header">
     <div class="container">
       <div class="page-header-content">
-        <h1 style="font-size: 3rem; margin-bottom: 15px;">Events & <span class="text-gradient-dual">Agenda</span></h1>
-        <p style="font-size: 1.1rem; color: var(--text-secondary); max-width: 600px; margin: 0 auto;">Stay tuned for the latest events, training sessions, and research activities from EIM Laboratory.</p>
+        <h1>Events & <span class="text-gradient-dual">Agenda</span></h1>
+        <p class="event-page-subtitle">Stay tuned for the latest events, training sessions, and research activities from EIM Laboratory.</p>
       </div>
     </div>
   </section>
 
-  <section class="section-padding" style="background: var(--bg-primary); min-height: 60vh;">
+  <section class="section-padding event-section-main">
     <div class="container">
       {sortedEvents.length === 0 ? (
-        <div class="news-empty-state" style="text-align: center; padding: 50px 0;">
-          <i class="fa-regular fa-folder-open" style="font-size: 4rem; opacity: 0.3; margin-bottom: 20px;"></i>
+        <div class="news-empty-state empty-state-box">
+          <i class="fa-regular fa-folder-open empty-state-icon"></i>
           <h3>No Events Yet</h3>
           <p>No events or agendas have been published yet.</p>
         </div>
       ) : (
         <div class="news-grid" id="events-grid">
-          {sortedEvents.map(event => {
-            let statusClass = 'upcoming';
-            let statusIcon = 'fa-clock';
-            let statusText = 'Upcoming';
-
-            if (event.data.status === 'completed') {
-              statusClass = 'completed';
-              statusIcon = 'fa-circle-check';
-              statusText = 'Completed';
-            } else if (event.data.status === 'ongoing') {
-              statusClass = 'ongoing';
-              statusIcon = 'fa-spinner fa-spin';
-              statusText = 'Ongoing';
-            }
-
-            let coverImg = "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&q=80&w=600";
-            if (event.data.image && event.data.image.length > 0) coverImg = event.data.image[0];
-
-            return (
-              <div class="event-card glass-panel" style="display: flex; flex-direction: column; height: 100%;">
-                <div class="event-cover-img">
-                  <img src={coverImg} alt={`Cover ${event.data.title}`} />
-                </div>
-                <div class={`event-status ${statusClass}`}>
-                  <i class={`fa-solid ${statusIcon}`}></i> {statusText}
-                </div>
-                <div class="event-icon">
-                  <i class={`fa-solid ${event.data.icon || 'fa-calendar'}`}></i>
-                </div>
-                <h3>{event.data.title}</h3>
-                <p class="event-cat">Category: {event.data.category}</p>
-                <p>{event.data.description}</p>
-
-                <a href={`/event/${event.id}`} class="btn btn-secondary btn-read-more" style="width: 100%; margin-top: 15px; padding: 8px; font-size: 0.9rem; text-align: center;">
-                  Read More <i class="fa-solid fa-arrow-right" style="margin-left: 5px;"></i>
-                </a>
-
-                <div class="event-footer" style="margin-top: auto; display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border-color); padding-top: 20px;">
-                  <span class="event-date"><i class="fa-regular fa-calendar"></i> {event.data.event_date}</span>
-                </div>
-              </div>
-            );
-          })}
+          {sortedEvents.map(event => (
+            <EventCard event={event} />
+          ))}
         </div>
       )}
     </div>

@@ -2,7 +2,6 @@
 import TimelineSteps from './TimelineSteps.astro';
 
 interface Candidate {
-  name: string;
   nim: string | number;
   division?: string;
   screeningStatus?: string;
@@ -41,7 +40,7 @@ const { initialStage, announcementCfg } = Astro.props;
       <i class="fa-solid fa-magnifying-glass reg-icon-mr-sm"></i> Check Final Selection Result
     </h3>
     <div class="search-lookup-form">
-      <input type="text" id="search-nim-input" class="form-control reg-input-bg" placeholder="Enter Student ID (NIM) or Name..." />
+      <input type="text" id="search-nim-input" class="form-control reg-input-bg" placeholder="Enter Student ID (NIM)..." />
       <button id="search-nim-btn" class="btn btn-primary reg-btn-search">
         Check <i class="fa-solid fa-search reg-icon-ml-xs"></i>
       </button>

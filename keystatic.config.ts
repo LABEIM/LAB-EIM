@@ -272,7 +272,6 @@ export default config({
         candidates: fields.array(
           fields.object({
             nim: fields.text({ label: 'NIM' }),
-            name: fields.text({ label: 'Candidate Full Name' }),
             division: fields.text({ label: 'Division Name' }),
             screeningStatus: fields.select({
               label: 'Document Screening Status',
@@ -303,7 +302,7 @@ export default config({
           }),
           {
             label: 'Candidate List',
-            itemLabel: props => `${props.fields.name.value || 'Candidate'} (${props.fields.nim.value || ''})`,
+            itemLabel: props => props.fields.nim.value ? `NIM: ${props.fields.nim.value}` : 'Candidate',
           }
         ),
       },

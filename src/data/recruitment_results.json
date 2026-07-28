@@ -4,7 +4,6 @@
   "candidates": [
     {
       "nim": "1202210001",
-      "name": "Jane Doe",
       "division": "Software Engineering",
       "screeningStatus": "passed",
       "technicalTestStatus": "passed",
@@ -13,7 +12,6 @@
     },
     {
       "nim": "1202210002",
-      "name": "John Smith",
       "division": "Network & Infrastructure",
       "screeningStatus": "passed",
       "technicalTestStatus": "passed",
@@ -22,7 +20,6 @@
     },
     {
       "nim": "1202210003",
-      "name": "Alex Johnson",
       "division": "Media & Humas",
       "screeningStatus": "passed",
       "technicalTestStatus": "passed",
@@ -31,7 +28,6 @@
     },
     {
       "nim": "1202210004",
-      "name": "Michael Brown",
       "division": "Cyber Security",
       "screeningStatus": "passed",
       "technicalTestStatus": "failed",

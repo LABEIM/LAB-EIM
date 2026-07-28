@@ -94,8 +94,8 @@ This file manages candidate evaluation status entries across all announcement ch
 * **`batch`** (String): Name of the recruitment batch (e.g. `"Recruitment Assistant 2026"`).
 * **`publishedDate`** (String): Announcement release date.
 * **`candidates`** (Array of Objects): List of candidate status entries:
-  * `nim` (String): Student ID (e.g. `"1202210001"`).
-  * `name` (String): Full name of the candidate.
+  * `nim` (String): Student ID (e.g. `"1202210001"`). NIM is strictly used as the unique search identifier for announcement checkups.
+  * `name` (String): Full name of the candidate (kept internally for record keeping).
   * `division` (String): Division name.
   * `screeningStatus` (String): `"passed"` or `"failed"`.
   * `technicalTestStatus` (String): `"passed"` or `"failed"`.

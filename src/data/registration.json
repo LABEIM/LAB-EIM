@@ -25,6 +25,13 @@
   "medhumDivisionValue": "Medhum",
   "piTemplateUrl": "https://bit.ly/Template-PI-EIM",
   "minReasonWords": 30,
+  "allowedFileExtensions": {
+    "ksm": "pdf, png, jpg, jpeg",
+    "khs": "pdf, png, jpg, jpeg",
+    "ml": "pdf, png, jpg, jpeg",
+    "cv": "pdf, png, jpg, jpeg",
+    "pi": "pdf, png, jpg, jpeg"
+  },
   "documentLimits": {
     "ksmMb": 3,
     "khsMb": 3,

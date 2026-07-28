@@ -198,6 +198,13 @@ export default config({
         medhumDivisionValue: fields.text({ label: 'MedHum Division Trigger Value (Legacy Fallback)', defaultValue: 'Medhum' }),
         piTemplateUrl: fields.text({ label: 'Pakta Integritas (PI) Template Link', defaultValue: 'https://bit.ly/Template-PI-EIM' }),
         minReasonWords: fields.number({ label: 'Minimum Word Count for Reason for Choosing Division', defaultValue: 30 }),
+        allowedFileExtensions: fields.object({
+          ksm: fields.text({ label: 'KSM Allowed Extensions', description: 'e.g. pdf, png, jpg, jpeg', defaultValue: 'pdf, png, jpg, jpeg' }),
+          khs: fields.text({ label: 'KHS Allowed Extensions', description: 'e.g. pdf, png, jpg, jpeg', defaultValue: 'pdf, png, jpg, jpeg' }),
+          ml: fields.text({ label: 'Motivation Letter Allowed Extensions', description: 'e.g. pdf, png, jpg, jpeg', defaultValue: 'pdf, png, jpg, jpeg' }),
+          cv: fields.text({ label: 'CV Allowed Extensions', description: 'e.g. pdf, png, jpg, jpeg', defaultValue: 'pdf, png, jpg, jpeg' }),
+          pi: fields.text({ label: 'Pakta Integritas Allowed Extensions', description: 'e.g. pdf, png, jpg, jpeg', defaultValue: 'pdf, png, jpg, jpeg' }),
+        }),
         documentLimits: fields.object({
           ksmMb: fields.number({ label: 'KSM File Limit (MB)', defaultValue: 2 }),
           khsMb: fields.number({ label: 'KHS File Limit (MB)', defaultValue: 2 }),

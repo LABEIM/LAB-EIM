@@ -73,10 +73,15 @@ export function validateRegistrationForm(
     if (file.size > maxBytes) {
       return `File ${label} exceeds maximum size limit of ${maxMb}MB. (${(file.size / (1024 * 1024)).toFixed(2)}MB)`;
     }
-    const allowedExts = ['pdf', 'png', 'jpg', 'jpeg'];
+    const inputExtsAttr = fileInput.getAttribute('data-allowed-exts') || 'pdf, png, jpg, jpeg';
+    const itemAllowedExts = inputExtsAttr
+      .split(',')
+      .map(ext => ext.trim().toLowerCase().replace(/^\./, ''))
+      .filter(Boolean);
+
     const fileExt = file.name.split('.').pop()?.toLowerCase() || '';
-    if (!allowedExts.includes(fileExt)) {
-      return `File ${label} must be a valid PDF, PNG, JPG, or JPEG file.`;
+    if (itemAllowedExts.length > 0 && !itemAllowedExts.includes(fileExt)) {
+      return `File ${label} has invalid format (.${fileExt}). Allowed formats for ${label}: ${itemAllowedExts.map(e => '.' + e).join(', ')}`;
     }
     return null;
   };

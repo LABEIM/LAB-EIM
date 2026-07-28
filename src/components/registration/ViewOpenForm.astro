@@ -24,6 +24,24 @@ interface Props {
 }
 
 const { initialStage, registrationConfig, extendedCfg, studentYears, docLimits, divisions, piTemplateUrl, minReasonWords = 30 } = Astro.props;
+
+const allowedExtsCfg = (registrationConfig as any).allowedFileExtensions || {};
+const formatAccept = (extsStr?: string) => (extsStr || "pdf, png, jpg, jpeg")
+  .split(',')
+  .map((ext: string) => '.' + ext.trim().replace(/^\./, ''))
+  .join(',');
+
+const ksmExts = allowedExtsCfg.ksm || "pdf, png, jpg, jpeg";
+const khsExts = allowedExtsCfg.khs || "pdf, png, jpg, jpeg";
+const mlExts = allowedExtsCfg.ml || "pdf, png, jpg, jpeg";
+const cvExts = allowedExtsCfg.cv || "pdf, png, jpg, jpeg";
+const piExts = allowedExtsCfg.pi || "pdf, png, jpg, jpeg";
+
+const ksmAccept = formatAccept(ksmExts);
+const khsAccept = formatAccept(khsExts);
+const mlAccept = formatAccept(mlExts);
+const cvAccept = formatAccept(cvExts);
+const piAccept = formatAccept(piExts);
 ---
 
 <div id="view-open" class={(initialStage === 'open' || initialStage === 'extended') ? '' : 'is-hidden'}>
@@ -189,22 +207,22 @@ const { initialStage, registrationConfig, extendedCfg, studentYears, docLimits, 
     <div class="form-row">
       <div class="form-group">
         <label for="file_ksm">Kartu Studi Mahasiswa (KSM) <span class="reg-file-label-small">(Max {docLimits.ksmMb}MB)</span> <span class="required-asterisk">*</span></label>
-        <input type="file" class="form-control" id="file_ksm" accept=".pdf,.png,.jpg,.jpeg" data-max-mb={docLimits.ksmMb} required />
+        <input type="file" class="form-control" id="file_ksm" accept={ksmAccept} data-allowed-exts={ksmExts} data-max-mb={docLimits.ksmMb} required />
       </div>
       <div class="form-group">
         <label for="file_khs">Kartu Hasil Studi (KHS) <span class="reg-file-label-small">(Max {docLimits.khsMb}MB)</span> <span class="required-asterisk">*</span></label>
-        <input type="file" class="form-control" id="file_khs" accept=".pdf,.png,.jpg,.jpeg" data-max-mb={docLimits.khsMb} required />
+        <input type="file" class="form-control" id="file_khs" accept={khsAccept} data-allowed-exts={khsExts} data-max-mb={docLimits.khsMb} required />
       </div>
     </div>
 
     <div class="form-row reg-form-row-mt">
       <div class="form-group">
         <label for="file_ml">Motivation Letter (ML) <span class="reg-file-label-small">(Max {docLimits.mlMb}MB)</span> <span class="required-asterisk">*</span></label>
-        <input type="file" class="form-control" id="file_ml" accept=".pdf,.png,.jpg,.jpeg" data-max-mb={docLimits.mlMb} required />
+        <input type="file" class="form-control" id="file_ml" accept={mlAccept} data-allowed-exts={mlExts} data-max-mb={docLimits.mlMb} required />
       </div>
       <div class="form-group">
         <label for="file_cv">Curriculum Vitae (CV) <span class="reg-file-label-small">(Max {docLimits.cvMb}MB)</span> <span class="required-asterisk">*</span></label>
-        <input type="file" class="form-control" id="file_cv" accept=".pdf,.png,.jpg,.jpeg" data-max-mb={docLimits.cvMb} required />
+        <input type="file" class="form-control" id="file_cv" accept={cvAccept} data-allowed-exts={cvExts} data-max-mb={docLimits.cvMb} required />
       </div>
     </div>
 
@@ -218,7 +236,7 @@ const { initialStage, registrationConfig, extendedCfg, studentYears, docLimits, 
           </a>
         )}
       </div>
-      <input type="file" class="form-control" id="file_pi" accept=".pdf,.png,.jpg,.jpeg" data-max-mb={docLimits.piMb} required />
+      <input type="file" class="form-control" id="file_pi" accept={piAccept} data-allowed-exts={piExts} data-max-mb={docLimits.piMb} required />
       <small class="reg-small-desc">
         Upload signed Integrity Pact document.
         {piTemplateUrl && (

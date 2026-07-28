@@ -1,9 +1,11 @@
 ---
 import { getCollection } from 'astro:content';
 import Layout from '../layouts/Layout.astro';
-import divisions from '../data/divisions.json';
+import divisionsData from '../data/divisions.json';
 import registrationConfig from '../data/registration.json';
 import { getCurrentRecruitmentStage } from '../utils/recruitment';
+
+const divisions = Array.isArray(divisionsData) ? divisionsData : (divisionsData as any).list || [];
 
 // Fetch and sort news
 const allNews = await getCollection('news');

@@ -2,8 +2,10 @@
 import Layout from '../layouts/Layout.astro';
 import registrationConfig from '../data/registration.json';
 import resultsConfig from '../data/recruitment_results.json';
-import divisions from '../data/divisions.json';
+import divisionsData from '../data/divisions.json';
 import { getCurrentRecruitmentStage } from '../utils/recruitment';
+
+const divisions = Array.isArray(divisionsData) ? divisionsData : (divisionsData as any).list || [];
 
 import ViewUpcoming from '../components/registration/ViewUpcoming.astro';
 import ViewOpenForm from '../components/registration/ViewOpenForm.astro';

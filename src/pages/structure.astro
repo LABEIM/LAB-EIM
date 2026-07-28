@@ -1,10 +1,11 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import membersData from '../data/members.json';
-import divisions from '../data/divisions.json';
+import divisionsData from '../data/divisions.json';
 
 const initialMembers = membersData.list || [];
-const divisionMap = new Map(divisions.map(d => [d.id, d]));
+const divisions = Array.isArray(divisionsData) ? divisionsData : (divisionsData as any).list || [];
+const divisionMap = new Map(divisions.map((d: any) => [d.id, d]));
 ---
 
 <Layout title="Organizational Structure - EIM Research Lab">

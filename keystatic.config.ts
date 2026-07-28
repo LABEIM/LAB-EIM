@@ -72,6 +72,33 @@ export default config({
     }),
   },
   singletons: {
+    divisions: singleton({
+      label: 'Divisions Configuration',
+      path: 'src/data/divisions',
+      format: { data: 'json' },
+      schema: {
+        list: fields.array(
+          fields.object({
+            id: fields.text({ label: 'ID (Unique lowercase identifier, e.g. core, research)' }),
+            name: fields.text({ label: 'Name (Title case, e.g. Research)' }),
+            displayName: fields.text({ label: 'Display Name (Uppercase badge text, e.g. RESEARCH)' }),
+            description: fields.text({ label: 'Description', multiline: true }),
+            registrationLabel: fields.text({ label: 'Registration Label (Form dropdown text)' }),
+            registrationValue: fields.text({ label: 'Registration Value (Submitted value, e.g. Inti, Riset)' }),
+            aliases: fields.array(fields.text({ label: 'Alias (e.g. riset)' }), {
+              label: 'Aliases (Legacy URL bookmarks)',
+              itemLabel: props => props.value,
+            }),
+            borderColor: fields.text({ label: 'Border Color (CSS color/rgba/var)' }),
+            roleColor: fields.text({ label: 'Role Color (CSS color/hex/var)' }),
+          }),
+          {
+            label: 'Lab Divisions List',
+            itemLabel: props => props.fields.name.value || 'Division',
+          }
+        ),
+      },
+    }),
     members: singleton({
       label: 'Members (Structure)',
       path: 'src/data/members',

@@ -7,7 +7,7 @@ Admin Portal: https://lab-eim.vercel.app/keystatic
 ---
 
 ## 1. Divisions Configuration (`src/data/divisions.json`)
-This file defines all operational divisions in the laboratory. Adding a new division here automatically updates the homepage grid, the filter tabs on the team structure page, and the dropdown choices on the registration page.
+This file defines all operational divisions in the laboratory. Adding or updating a division here or via **Keystatic Admin > Singletons > Divisions Configuration** automatically updates the homepage grid, the filter tabs on the team structure page, and the dropdown choices on the registration page.
 
 ### Fields Explanation
 * **`id`** (String): A unique, lowercase identifier for the division. This matches the `division` field in `members.json`. (e.g. `"core"`, `"research"`, `"security"`)

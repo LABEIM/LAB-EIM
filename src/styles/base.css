@@ -314,10 +314,6 @@ h1, h2, h3, h4, h5, h6 {
     100% { opacity: 0; }
 }
 
-.page-transition-overlay .transition-strip {
-    display: none; /* Hide old heavy strips */
-}
-
 /* Page content fade-in on load */
 .page-content-animate {
     animation: pageContentIn 0.4s ease-out 0.1s both;

@@ -505,7 +505,7 @@ input[type="file"].form-control::file-selector-button:hover {
 }
 
 /* Progress Modal & Draft Styles */
-:global(.progress-modal-overlay) {
+.progress-modal-overlay {
   position: fixed !important;
   top: 0 !important;
   left: 0 !important;
@@ -521,7 +521,7 @@ input[type="file"].form-control::file-selector-button:hover {
   padding: 20px;
 }
 
-:global(.progress-modal-card) {
+.progress-modal-card {
   background: #ffffff !important;
   border: 1px solid rgba(14, 85, 95, 0.18) !important;
   border-radius: 16px !important;
@@ -544,30 +544,30 @@ input[type="file"].form-control::file-selector-button:hover {
   }
 }
 
-:global(.progress-modal-header) {
+.progress-modal-header {
   text-align: center;
   margin-bottom: 20px;
 }
 
-:global(.progress-modal-icon-wrapper) {
+.progress-modal-icon-wrapper {
   font-size: 2.5rem;
   margin-bottom: 12px;
 }
 
-:global(.progress-modal-title) {
+.progress-modal-title {
   font-size: 1.35rem;
   font-weight: 700;
   margin-bottom: 6px;
   color: var(--brand-dark-azure, #0E555F) !important;
 }
 
-:global(.progress-modal-subtitle) {
+.progress-modal-subtitle {
   font-size: 0.875rem;
   color: var(--text-secondary, #4a5568) !important;
   line-height: 1.5;
 }
 
-:global(.btn-modal-cancel) {
+.btn-modal-cancel {
   min-width: 120px;
   background: #f1f5f9 !important;
   border: 1px solid #cbd5e1 !important;
@@ -579,12 +579,12 @@ input[type="file"].form-control::file-selector-button:hover {
   transition: all 0.2s ease;
 }
 
-:global(.btn-modal-cancel:hover) {
+.btn-modal-cancel:hover {
   background: #e2e8f0 !important;
   color: #1e293b !important;
 }
 
-:global(.btn-modal-confirm) {
+.btn-modal-confirm {
   min-width: 140px;
   background: #e11d48 !important;
   border: 1px solid #e11d48 !important;
@@ -597,7 +597,7 @@ input[type="file"].form-control::file-selector-button:hover {
   box-shadow: 0 4px 12px rgba(225, 29, 72, 0.25);
 }
 
-:global(.btn-modal-confirm:hover) {
+.btn-modal-confirm:hover {
   background: #be123c !important;
   border-color: #be123c !important;
 }
@@ -766,7 +766,7 @@ input[type="file"].form-control::file-selector-button:hover {
   color: #e11d48;
 }
 
-:global(.draft-toast-container) {
+.draft-toast-container {
   position: fixed;
   bottom: 24px;
   right: 24px;
@@ -788,17 +788,17 @@ input[type="file"].form-control::file-selector-button:hover {
   transition: opacity 0.3s ease, transform 0.3s ease;
 }
 
-:global(.draft-toast-container.toast-visible) {
+.draft-toast-container.toast-visible {
   opacity: 1;
   transform: translateY(0);
 }
 
-:global(.draft-toast-container.toast-hidden) {
+.draft-toast-container.toast-hidden {
   opacity: 0;
   transform: translateY(12px);
 }
 
-:global(.draft-toast-icon) {
+.draft-toast-icon {
   color: var(--brand-cyan, #11B4BD) !important;
   font-size: 1rem;
 }

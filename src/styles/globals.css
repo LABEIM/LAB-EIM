@@ -25,6 +25,7 @@
 @import "./components/footer.css";
 @import "./components/event-card.css";
 @import "./components/news-card.css";
+@import "./components/contact-person.css";
 @import "./pages/hero.css";
 @import "./pages/about.css";
 @import "./pages/organization.css";

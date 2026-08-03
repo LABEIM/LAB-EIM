@@ -117,7 +117,10 @@ export function initRegistrationSubmit(
     if (item) item.className = 'progress-stage-item stage-failed';
     if (icon) icon.innerHTML = `<i class="fa-solid fa-circle-xmark"></i>`;
 
-    if (modalActions) modalActions.style.display = 'block';
+    if (modalActions) {
+      modalActions.classList.remove('is-hidden');
+      modalActions.style.display = 'block';
+    }
     if (modalCloseBtn) modalCloseBtn.innerText = isEn ? 'Close & Edit Form' : 'Tutup & Periksa Form';
   };
 
@@ -147,7 +150,10 @@ export function initRegistrationSubmit(
     if (modalTitle) modalTitle.innerText = isRevision ? (isEn ? 'Revision Submitted!' : 'Revisi Berhasil Dikirim!') : (isEn ? 'Registration Successful!' : 'Pendaftaran Berhasil!');
     if (modalSubtitle) modalSubtitle.innerText = successMessage;
 
-    if (modalActions) modalActions.style.display = 'block';
+    if (modalActions) {
+      modalActions.classList.remove('is-hidden');
+      modalActions.style.display = 'block';
+    }
     if (modalCloseBtn) modalCloseBtn.innerText = isEn ? 'Done' : 'Selesai';
   };
 
@@ -156,7 +162,10 @@ export function initRegistrationSubmit(
       progressModal.classList.add('is-hidden');
       progressModal.style.display = 'none';
     }
-    if (modalActions) modalActions.style.display = 'none';
+    if (modalActions) {
+      modalActions.classList.add('is-hidden');
+      modalActions.style.display = 'none';
+    }
   };
 
   modalCloseBtn?.addEventListener('click', hideProgressModal);
@@ -179,7 +188,10 @@ export function initRegistrationSubmit(
     if (modalIcon) modalIcon.innerHTML = `<i class="fa-solid fa-cloud-arrow-up fa-bounce" style="color: var(--accent-cyan);"></i>`;
     if (modalTitle) modalTitle.innerText = isEn ? 'Submitting Registration' : 'Mengirim Pendaftaran';
     if (modalSubtitle) modalSubtitle.innerText = isEn ? 'Please stay on this page while we process your documents and transmit data.' : 'Mohon tetap di halaman ini selagi sistem memproses dokumen dan mengirim data.';
-    if (modalActions) modalActions.style.display = 'none';
+    if (modalActions) {
+      modalActions.classList.add('is-hidden');
+      modalActions.style.display = 'none';
+    }
 
     updateModalStage(1, 5, isEn ? 'Validating candidate details & document inputs...' : 'Memvalidasi data calon asisten & masukan berkas...');
 

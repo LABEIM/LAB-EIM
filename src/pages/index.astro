@@ -48,14 +48,25 @@ const actionBtn = STAGE_ACTION_CONFIG[currentStage] || DEFAULT_ACTION_BTN;
             {t('home.heroDesc', locale)}
           </p>
           <div class="hero-actions">
-            {actionBtn && (
-              <a href={getLocalizedPath('/registration', locale)} class="btn btn-primary hero-action-primary">
-                {actionBtn.label} <i class={`fa-solid ${actionBtn.icon}`}></i>
-              </a>
+            {currentStage !== 'closed' && actionBtn ? (
+              <>
+                <a href={getLocalizedPath('/registration', locale)} class="btn btn-primary hero-action-primary">
+                  {actionBtn.label} <i class={`fa-solid ${actionBtn.icon}`}></i>
+                </a>
+                <a href={getLocalizedPath('/about', locale)} class="btn btn-secondary">
+                  {t('nav.about', locale)} <i class="fa-solid fa-circle-info"></i>
+                </a>
+              </>
+            ) : (
+              <>
+                <a href={getLocalizedPath('/about', locale)} class="btn btn-primary hero-action-primary">
+                  {t('nav.about', locale)} <i class="fa-solid fa-circle-info"></i>
+                </a>
+                <a href={getLocalizedPath('/structure', locale)} class="btn btn-secondary">
+                  {t('nav.structure', locale)} <i class="fa-solid fa-users"></i>
+                </a>
+              </>
             )}
-            <a href={getLocalizedPath('/structure', locale)} class="btn btn-secondary">
-              {t('nav.structure', locale)} <i class="fa-solid fa-users"></i>
-            </a>
           </div>
         </div>
         <div class="hero-visual">

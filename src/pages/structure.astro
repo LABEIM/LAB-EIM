@@ -26,7 +26,7 @@ const divisions = parseDivisions(divisionsData);
       <div class="filter-container" id="filter-tabs" data-divisions={JSON.stringify(divisions)}>
         <button class="filter-tab active" data-filter="all">{t('struct.allDivisions', locale)}</button>
         {divisions.map(div => (
-          <button class="filter-tab" data-filter={div.id}>{div.name}</button>
+          <button class="filter-tab" data-filter={div.id}>{div.displayName || div.name}</button>
         ))}
       </div>
 
@@ -93,7 +93,7 @@ const divisions = parseDivisions(divisionsData);
                 <h3>{member.name}</h3>
                 <div class="member-role" style={`color: ${roleColor};`}>{member.role}</div>
                 <span class="member-div">
-                  {divInfo?.displayName || member.division.toUpperCase()}
+                  {(divInfo?.name || member.division).toUpperCase()}
                 </span>
               </div>
             </div>

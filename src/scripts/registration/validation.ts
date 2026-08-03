@@ -82,6 +82,16 @@ export function validateRegistrationForm(
 ): { valid: boolean; errorMsg?: string } {
   const isEn = formElement?.getAttribute('data-locale') === 'en';
 
+  if (formElement && !formElement.checkValidity()) {
+    formElement.reportValidity();
+    return {
+      valid: false,
+      errorMsg: isEn
+        ? 'Please fill in all required form fields correctly!'
+        : 'Mohon lengkapi seluruh isian formulir yang wajib diisi dengan benar!'
+    };
+  }
+
   if (!validateNim(nim)) {
     return {
       valid: false,

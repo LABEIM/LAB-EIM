@@ -254,6 +254,7 @@ export function initRegistrationDraft(
   return {
     toggleMedhumPorto,
     clearDraft,
-    requiresPortfolio
+    requiresPortfolio,
+    updateWordCounters
   };
 }

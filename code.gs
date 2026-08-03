@@ -21,46 +21,47 @@ const ALLOWED_MIME_TYPES = [
  */
 const COLUMN_ALIASES = {
   // Nomor Urut / Row Number
-  'No': 'No',
-  'No.': 'No',
-  'Nomor': 'No',
+  'no': 'No',
+  'no.': 'No',
+  'nomor': 'No',
   // Nomor Telepon
-  'No. HP': 'Nomor Telepon',
-  'Nomor HP': 'Nomor Telepon',
-  'No HP': 'Nomor Telepon',
-  'No Hp': 'Nomor Telepon',
-  'Phone': 'Nomor Telepon',
-  'Telepon': 'Nomor Telepon',
+  'no. hp': 'Nomor Telepon',
+  'nomor hp': 'Nomor Telepon',
+  'no hp': 'Nomor Telepon',
+  'phone': 'Nomor Telepon',
+  'telepon': 'Nomor Telepon',
   // Alasan Divisi 1
-  'Alasan Memilih Divisi Pertama': 'Alasan Divisi 1',
-  'Alasan Divisi Pertama': 'Alasan Divisi 1',
-  'Alasan 1': 'Alasan Divisi 1',
+  'alasan memilih divisi pertama': 'Alasan Divisi 1',
+  'alasan divisi pertama': 'Alasan Divisi 1',
+  'alasan 1': 'Alasan Divisi 1',
   // Alasan Divisi 2
-  'Alasan Memilih Divisi Kedua': 'Alasan Divisi 2',
-  'Alasan Divisi Kedua': 'Alasan Divisi 2',
-  'Alasan 2': 'Alasan Divisi 2',
+  'alasan memilih divisi kedua': 'Alasan Divisi 2',
+  'alasan divisi kedua': 'Alasan Divisi 2',
+  'alasan 2': 'Alasan Divisi 2',
   // Bersedia Dipindah
-  'Bersedia di Pindahkan': 'Bersedia Dipindah Divisi',
-  'Bersedia Dipindahkan': 'Bersedia Dipindah Divisi',
-  'Bersedia Pindah': 'Bersedia Dipindah Divisi',
+  'bersedia di pindahkan': 'Bersedia Dipindah Divisi',
+  'bersedia dipindahkan': 'Bersedia Dipindah Divisi',
+  'bersedia pindah': 'Bersedia Dipindah Divisi',
   // Portofolio (Kustom/Multi-Divisi)
-  'Portofolio': 'Portofolio MedHum',
-  'Portfolio': 'Portofolio MedHum',
-  'Link Portofolio': 'Portofolio MedHum',
-  'Portofolio Divisi': 'Portofolio MedHum',
-  'Link Portofolio Divisi': 'Portofolio MedHum',
+  'portofolio': 'Portofolio MedHum',
+  'portfolio': 'Portofolio MedHum',
+  'link portofolio': 'Portofolio MedHum',
+  'portofolio divisi': 'Portofolio MedHum',
+  'link portofolio divisi': 'Portofolio MedHum',
   // File links (short names)
-  'KSM': 'Link KSM',
-  'KHS': 'Link KHS',
-  'ML': 'Link ML',
-  'CV': 'Link CV',
-  'PI': 'Link PI (Pakta Integritas)',
-  'Pakta Integritas': 'Link PI (Pakta Integritas)',
+  'ksm': 'Link KSM',
+  'khs': 'Link KHS',
+  'ml': 'Link ML',
+  'cv': 'Link CV',
+  'pi': 'Link PI (Pakta Integritas)',
+  'pakta integritas': 'Link PI (Pakta Integritas)',
   // Timestamp
-  'Tgl Daftar': 'Timestamp',
-  'Tanggal Daftar': 'Timestamp',
-  'Waktu Daftar': 'Timestamp',
-  'Tgl. Daftar': 'Timestamp'
+  'timestamp': 'Timestamp',
+  'tgl daftar': 'Timestamp',
+  'tanggal daftar': 'Timestamp',
+  'waktu daftar': 'Timestamp',
+  'tgl. daftar': 'Timestamp',
+  'waktu': 'Timestamp'
 };
 
 /**
@@ -68,7 +69,17 @@ const COLUMN_ALIASES = {
   Jika ada alias, gunakan alias; jika tidak, gunakan nama kolom itu sendiri.
  */
 function getDataKeyForHeader(sheetHeader) {
-  return COLUMN_ALIASES[sheetHeader] || sheetHeader;
+  if (!sheetHeader) return '';
+  const cleanHeader = String(sheetHeader).trim();
+  const lowerHeader = cleanHeader.toLowerCase();
+
+  if (COLUMN_ALIASES[lowerHeader]) {
+    return COLUMN_ALIASES[lowerHeader];
+  }
+  if (/timestamp|waktu|tgl.*daftar|date/i.test(cleanHeader)) {
+    return 'Timestamp';
+  }
+  return cleanHeader;
 }
 
 /**
@@ -76,9 +87,11 @@ function getDataKeyForHeader(sheetHeader) {
   baik secara langsung (nama sama) maupun via alias.
  */
 function isExpectedHeaderCovered(expectedHeader, headers) {
-  if (headers.indexOf(expectedHeader) >= 0) return true;
-  for (var aliasKey in COLUMN_ALIASES) {
-    if (COLUMN_ALIASES[aliasKey] === expectedHeader && headers.indexOf(aliasKey) >= 0) return true;
+  const expLower = String(expectedHeader).trim().toLowerCase();
+  for (var i = 0; i < headers.length; i++) {
+    const h = String(headers[i]).trim();
+    if (h.toLowerCase() === expLower) return true;
+    if (getDataKeyForHeader(h).toLowerCase() === expLower) return true;
   }
   return false;
 }
@@ -160,15 +173,42 @@ function getOrCreateTargetFolder() {
 }
 
 /**
+  Normalisasi objek file dari payload (object atau string base64)
+ */
+function normalizeFileObject(fileData, fallbackName, fallbackType) {
+  if (!fileData) return null;
+  if (typeof fileData === 'object' && fileData !== null && fileData.base64) {
+    return {
+      base64: fileData.base64,
+      fileName: fileData.fileName || fileData.name || fallbackName || 'file',
+      mimeType: fileData.mimeType || fileData.type || fallbackType || 'application/pdf'
+    };
+  }
+  if (typeof fileData === 'string' && fileData.trim() !== '') {
+    // Return null if it's already an HTTP Drive URL
+    if (/^https?:\/\//i.test(fileData.trim())) return null;
+    return {
+      base64: fileData,
+      fileName: fallbackName || 'file',
+      mimeType: fallbackType || 'application/pdf'
+    };
+  }
+  return null;
+}
+
+/**
   Menyimpan file base64 ke Google Drive secara aman (dengan pemeriksaan MIME type & ukuran)
  */
-function saveFileToDrive(fileData, targetFolder, prefix, nim) {
-  if (!fileData || typeof fileData !== 'object' || !fileData.base64) {
-    return typeof fileData === 'string' ? sanitizeSheetValue(fileData) : '';
+function saveFileToDrive(fileData, targetFolder, prefix, nim, fallbackName, fallbackType) {
+  const fileObj = normalizeFileObject(fileData, fallbackName, fallbackType);
+  if (!fileObj || !fileObj.base64) {
+    return (typeof fileData === 'string' && /^https?:\/\//i.test(fileData.trim()))
+      ? sanitizeSheetValue(fileData)
+      : '';
   }
 
   try {
-    const mimeType = (fileData.mimeType || 'application/octet-stream').toLowerCase();
+    const mimeType = (fileObj.mimeType || 'application/octet-stream').toLowerCase();
     
     // Keamanan: Validasi MIME Type sesuai whitelist
     if (ALLOWED_MIME_TYPES.indexOf(mimeType) === -1) {
@@ -176,7 +216,7 @@ function saveFileToDrive(fileData, targetFolder, prefix, nim) {
       return '';
     }
 
-    const base64Clean = fileData.base64.replace(/^data:.*?;base64,/, '');
+    const base64Clean = fileObj.base64.replace(/^data:.*?;base64,/, '');
     const decodedBytes = Utilities.base64Decode(base64Clean);
 
     // Keamanan: Batasi ukuran file maksimum (10 MB per file)
@@ -187,7 +227,7 @@ function saveFileToDrive(fileData, targetFolder, prefix, nim) {
     }
 
     // Bersihkan nama berkas dari karakter berisiko
-    const safeOriginalName = (fileData.fileName || 'file').replace(/[^a-zA-Z0-9.\-_]/g, '_');
+    const safeOriginalName = (fileObj.fileName || 'file').replace(/[^a-zA-Z0-9.\-_]/g, '_');
     const fileName = `${prefix}_${nim}_${safeOriginalName}`;
     
     const blob = Utilities.newBlob(decodedBytes, mimeType, fileName);
@@ -343,10 +383,21 @@ function sendConfirmationEmail(data, isRevision) {
     </div>
   `;
 
+  const plainTextBody = `Halo ${data['Nama Lengkap']},\n\n` +
+    `Terima kasih telah mendaftar sebagai calon asisten di EIM Research Lab. Data pendaftaran Anda telah berhasil kami terima.\n\n` +
+    `Ringkasan Pendaftaran:\n` +
+    `- Nama Lengkap: ${data['Nama Lengkap']}\n` +
+    `- NIM: ${data['NIM']}\n` +
+    `- Angkatan: ${data['Angkatan']}\n` +
+    `- Divisi 1: ${data['Divisi 1']}\n` +
+    `- Divisi 2: ${data['Divisi 2']}\n\n` +
+    `Salam,\nEIM Research Lab`;
+
   try {
     MailApp.sendEmail({
       to: data.Email,
       subject: subject,
+      body: plainTextBody,
       htmlBody: htmlBody
     });
   } catch (err) {

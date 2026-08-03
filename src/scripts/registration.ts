@@ -47,7 +47,9 @@ export function initRegistrationScript() {
     draftToast,
     progressModal,
     portfolioTriggerList,
-    minReasonWords
+    minReasonWords,
+    scriptUrl: container.getAttribute('data-script-url') || formElement?.getAttribute('data-script-url') || undefined,
+    secretToken: container.getAttribute('data-secret-token') || formElement?.getAttribute('data-secret-token') || undefined
   };
 
   // Initialize Sub-modules

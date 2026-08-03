@@ -84,6 +84,8 @@ acceptedCandidates.forEach((candidate: any) => {
         data-extended-deadline={extendedDeadlineStr}
         data-portfolio-trigger-vals={registrationConfig.portfolioDivisionTriggerValues || registrationConfig.medhumDivisionValue || "Medhum"}
         data-min-reason-words={minReasonWords}
+        data-script-url={import.meta.env.PUBLIC_GOOGLE_SHEET_SCRIPT_URL}
+        data-secret-token={import.meta.env.PUBLIC_RECRUITMENT_SECRET}
       >
         <ViewUpcoming initialStage={initialStage} upcomingCfg={upcomingCfg} docLimits={docLimits} studentYears={studentYears} piTemplateUrl={piTemplateUrl} />
         <ViewOpenForm initialStage={initialStage} registrationConfig={registrationConfig} extendedCfg={extendedCfg} studentYears={studentYears} docLimits={docLimits} divisions={divisions} piTemplateUrl={piTemplateUrl} minReasonWords={minReasonWords} />

@@ -20,4 +20,6 @@ export interface RegistrationContext {
   progressModal: HTMLElement | null;
   portfolioTriggerList: string[];
   minReasonWords: number;
+  scriptUrl?: string;
+  secretToken?: string;
 }

@@ -34,6 +34,8 @@ export const uiTranslations: Record<Locale, Record<string, string>> = {
     'nav.event': 'Kegiatan',
     'nav.news': 'Berita',
     'nav.register': 'Pendaftaran',
+    'nav.contact': 'Kontak',
+    'nav.joinUs': 'Join Us',
 
     // Common Buttons & Badges
     'btn.learnMore': 'Pelajari Selengkapnya',

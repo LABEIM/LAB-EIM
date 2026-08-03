@@ -2,9 +2,18 @@
 import { Image } from 'astro:assets';
 import logoImg from '../../public/image/eim/logo_EIM_crop.avif';
 import { getLocaleFromUrl, getLocalizedPath, getLocalizedJsonData, t } from '../utils/i18n';
+import { getCurrentRecruitmentStage } from '../utils/recruitment';
 
 const locale = getLocaleFromUrl(Astro.url);
 const siteData = await getLocalizedJsonData<any>('site', locale);
+const registrationData = await getLocalizedJsonData<any>('registration', locale);
+
+const recruitmentStage = getCurrentRecruitmentStage(registrationData || {});
+const isRecruitmentActive = recruitmentStage === 'open' || recruitmentStage === 'extended';
+
+const ctaConfig = isRecruitmentActive
+  ? { href: getLocalizedPath('/registration', locale), rawHref: '/registration', label: t('nav.joinUs', locale), isJoinUs: true }
+  : { href: getLocalizedPath('/contact', locale), rawHref: '/contact', label: t('nav.contact', locale), isJoinUs: false };
 
 const pathname = Astro.url.pathname;
 let baseCleanPath = pathname;
@@ -58,6 +67,14 @@ const enPath = getLocalizedPath(pathname, 'en');
           <a href={link.href}>{link.label}</a>
         </li>
       ))}
+      <li class="nav-cta-item">
+        <a
+          href={ctaConfig.href}
+          class={`nav-cta ${ctaConfig.isJoinUs ? 'nav-cta-join' : 'nav-cta-contact'} ${isActive(ctaConfig.rawHref) ? 'active' : ''}`}
+        >
+          <span>{ctaConfig.label}</span>
+        </a>
+      </li>
     </ul>
 
     <div class="nav-toggle" id="nav-toggle">

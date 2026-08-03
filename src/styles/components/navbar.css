@@ -66,8 +66,14 @@
 
 .nav-links {
     display: flex;
+    align-items: center;
     list-style: none;
     gap: 32px;
+}
+
+.nav-links li {
+    display: flex;
+    align-items: center;
 }
 
 .nav-links a {
@@ -76,6 +82,8 @@
     color: var(--text-secondary);
     position: relative;
     padding: 8px 0;
+    display: inline-flex;
+    align-items: center;
 }
 
 .nav-links a:hover,
@@ -113,6 +121,71 @@
     background-color: var(--text-primary);
     transition: var(--transition-fast);
 }
+
+/* --- NAVBAR CTA BUTTON --- */
+.nav-links li.nav-cta-item {
+    display: flex;
+    align-items: center;
+}
+
+.nav-links a.nav-cta {
+    padding: 8px 22px;
+    border-radius: 50px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    letter-spacing: 0.3px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.nav-links a.nav-cta::after {
+    display: none !important;
+}
+
+/* Contact Button Styling */
+.nav-links a.nav-cta-contact {
+    background: linear-gradient(135deg, rgba(14, 85, 95, 0.8) 0%, rgba(10, 48, 60, 0.9) 100%);
+    color: #ffffff !important;
+    border: 1px solid rgba(0, 242, 254, 0.3);
+}
+
+.nav-links a.nav-cta-contact:hover,
+.nav-links a.nav-cta-contact.active {
+    background: linear-gradient(135deg, rgba(0, 242, 254, 0.9) 0%, rgba(14, 85, 95, 1) 100%);
+    color: #0b1329 !important;
+    border-color: rgba(0, 242, 254, 0.8);
+    box-shadow: 0 0 20px rgba(0, 242, 254, 0.4), 0 4px 15px rgba(0, 0, 0, 0.3);
+    transform: translateY(-2px);
+}
+
+/* Join Us Button Styling */
+.nav-links a.nav-cta-join {
+    background: linear-gradient(135deg, #e63946 0%, #b81424 100%);
+    color: #ffffff !important;
+    border: 1px solid rgba(255, 107, 107, 0.4);
+    animation: ctaPulse 3s infinite;
+}
+
+.nav-links a.nav-cta-join:hover,
+.nav-links a.nav-cta-join.active {
+    background: linear-gradient(135deg, #ff4d5a 0%, #e63946 100%);
+    color: #ffffff !important;
+    box-shadow: 0 0 22px rgba(230, 57, 70, 0.6), 0 4px 15px rgba(0, 0, 0, 0.3);
+    transform: translateY(-2px);
+}
+
+@keyframes ctaPulse {
+    0%, 100% {
+        box-shadow: 0 0 10px rgba(230, 57, 70, 0.3);
+    }
+    50% {
+        box-shadow: 0 0 20px rgba(230, 57, 70, 0.6);
+    }
+}
+
 
 
 

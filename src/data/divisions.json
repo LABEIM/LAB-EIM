@@ -3,7 +3,7 @@
     {
       "id": "inti",
       "name": "Inti",
-      "displayName": "INTI",
+      "displayName": "Inti",
       "description": "Koordinator, Sekretaris, dan Bendahara yang mengelola operasional internal lab.",
       "registrationLabel": "Inti",
       "registrationValue": "core",
@@ -17,7 +17,7 @@
     {
       "id": "riset",
       "name": "Riset",
-      "displayName": "RISET",
+      "displayName": "Riset",
       "description": "Berfokus pada riset infrastruktur digital dan publikasi ilmiah.",
       "registrationLabel": "Riset",
       "registrationValue": "Riset",
@@ -45,7 +45,7 @@
     {
       "id": "competition",
       "name": "Competition & Event",
-      "displayName": "COMPETITION & EVENT",
+      "displayName": "Competition & Event",
       "description": "Mempersiapkan tim kompetitif untuk kejuaraan IT & jaringan skala nasional.",
       "registrationLabel": "Competition & Event",
       "registrationValue": "competition",
@@ -59,7 +59,7 @@
     {
       "id": "media",
       "name": "Media & Humas",
-      "displayName": "MEDIA & HUMAS",
+      "displayName": "Media & Humas",
       "description": "Pengelolaan media dan hubungan masyarakat untuk branding dan penyebaran informasi.",
       "registrationLabel": "Media & Humas (MEDHUM)",
       "registrationValue": "Medhum",

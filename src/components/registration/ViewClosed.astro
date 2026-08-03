@@ -1,4 +1,6 @@
 ---
+import { getLocaleFromUrl, getLocalizedPath } from '../../utils/i18n';
+
 interface Props {
   initialStage: string;
   closedCfg: {
@@ -9,6 +11,7 @@ interface Props {
   };
 }
 
+const locale = getLocaleFromUrl(Astro.url);
 const { initialStage, closedCfg } = Astro.props;
 ---
 
@@ -26,14 +29,12 @@ const { initialStage, closedCfg } = Astro.props;
     )}
 
     <div class="reg-btn-group">
-      <a href="/" class="btn btn-primary reg-btn-padded">
-        <i class="fa-solid fa-house reg-btn-icon-left"></i>Back to Home
+      <a href={getLocalizedPath('/', locale)} class="btn btn-primary reg-btn-padded">
+        <i class="fa-solid fa-house reg-btn-icon-left"></i>{locale === 'en' ? 'Back to Home' : 'Kembali ke Beranda'}
       </a>
-      <a href="/news" class="btn btn-secondary reg-btn-px">
-        <i class="fa-solid fa-newspaper"></i> Lab News & Updates
+      <a href={getLocalizedPath('/news', locale)} class="btn btn-secondary reg-btn-px">
+        <i class="fa-solid fa-newspaper"></i> {locale === 'en' ? 'Lab News & Updates' : 'Berita & Pengumuman'}
       </a>
     </div>
   </div>
 </div>
-
-

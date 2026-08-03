@@ -2,6 +2,7 @@
 import TimelineSteps from './TimelineSteps.astro';
 import NimSearchBox from './NimSearchBox.astro';
 import BackToHomeButton from './BackToHomeButton.astro';
+import { getLocaleFromUrl, t } from '../../utils/i18n';
 
 interface Props {
   initialStage: string;
@@ -13,6 +14,7 @@ interface Props {
   };
 }
 
+const locale = getLocaleFromUrl(Astro.url);
 const { initialStage, selectionResultsCfg } = Astro.props;
 ---
 
@@ -26,11 +28,11 @@ const { initialStage, selectionResultsCfg } = Astro.props;
 
   {/* NIM Search Box for Screening Results */}
   <NimSearchBox
-    title="Check Document Screening Result"
+    title={locale === 'en' ? "Check Document Screening Result" : "Cek Hasil Seleksi Berkas"}
     inputId="search-screening-nim-input"
     buttonId="search-screening-nim-btn"
     resultBoxId="search-screening-result-box"
-    buttonLabel="Search"
+    buttonLabel={t('btn.search', locale)}
   />
 
   <BackToHomeButton />

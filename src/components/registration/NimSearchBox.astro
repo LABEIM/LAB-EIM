@@ -1,4 +1,6 @@
 ---
+import { getLocaleFromUrl, t } from '../../utils/i18n';
+
 interface Props {
   title: string;
   inputId: string;
@@ -8,12 +10,14 @@ interface Props {
   containerClass?: string;
 }
 
+const locale = getLocaleFromUrl(Astro.url);
+
 const {
   title,
   inputId,
   buttonId,
   resultBoxId,
-  buttonLabel = "Search",
+  buttonLabel = t('btn.search', locale),
   containerClass = ""
 } = Astro.props;
 ---
@@ -23,7 +27,7 @@ const {
     <i class="fa-solid fa-magnifying-glass reg-icon-mr-sm"></i> {title}
   </h3>
   <div class="search-lookup-form">
-    <input type="text" id={inputId} class="form-control reg-input-bg" placeholder="Enter Student ID (NIM)..." />
+    <input type="text" id={inputId} class="form-control reg-input-bg" placeholder={t('reg.resultsPlaceholder', locale)} />
     <button id={buttonId} class="btn btn-primary reg-btn-search">
       {buttonLabel} <i class="fa-solid fa-search reg-icon-ml-xs"></i>
     </button>

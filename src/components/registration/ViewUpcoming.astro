@@ -1,5 +1,6 @@
 ---
 import BackToHomeButton from './BackToHomeButton.astro';
+import { getLocaleFromUrl, t } from '../../utils/i18n';
 
 interface Props {
   initialStage: string;
@@ -20,6 +21,7 @@ interface Props {
   piTemplateUrl?: string;
 }
 
+const locale = getLocaleFromUrl(Astro.url);
 const { initialStage, upcomingCfg, docLimits, studentYears, piTemplateUrl } = Astro.props;
 ---
 
@@ -32,62 +34,60 @@ const { initialStage, upcomingCfg, docLimits, studentYears, piTemplateUrl } = As
   <div class="registration-timer reg-timer-mb" id="upcoming-timer">
     <div class="timer-block">
       <div id="u-timer-days" class="reg-timer-days">0</div>
-      <div class="reg-timer-label">Days</div>
+      <div class="reg-timer-label">{locale === 'en' ? 'Days' : 'Hari'}</div>
     </div>
     <div class="timer-block">
       <div id="u-timer-hours" class="reg-timer-val">0</div>
-      <div class="reg-timer-label">Hours</div>
+      <div class="reg-timer-label">{locale === 'en' ? 'Hours' : 'Jam'}</div>
     </div>
     <div class="timer-block">
       <div id="u-timer-minutes" class="reg-timer-val">0</div>
-      <div class="reg-timer-label">Minutes</div>
+      <div class="reg-timer-label">{locale === 'en' ? 'Minutes' : 'Menit'}</div>
     </div>
     <div class="timer-block">
       <div id="u-timer-seconds" class="reg-timer-val-red">0</div>
-      <div class="reg-timer-label">Seconds</div>
+      <div class="reg-timer-label">{locale === 'en' ? 'Seconds' : 'Detik'}</div>
     </div>
   </div>
 
   <div class="checklist-box">
     <h3 class="checklist-title">
-      <i class="fa-solid fa-list-check reg-icon-mr-sm"></i> Document Checklist & Requirements
+      <i class="fa-solid fa-list-check reg-icon-mr-sm"></i> {locale === 'en' ? 'Document Checklist & Requirements' : 'Daftar Berkas & Persyaratan'}
     </h3>
     <p class="reg-checklist-notice">{upcomingCfg.prepNotice}</p>
     <ul class="checklist-list">
       <li>
         <i class="fa-solid fa-check reg-checklist-icon"></i>
-        <span><strong>Kartu Studi Mahasiswa (KSM)</strong> - Max {docLimits.ksmMb}MB</span>
+        <span><strong>{t('form.ksm', locale)}</strong> - Max {docLimits.ksmMb}MB</span>
       </li>
       <li>
         <i class="fa-solid fa-check reg-checklist-icon"></i>
-        <span><strong>Kartu Hasil Studi (KHS)</strong> - Max {docLimits.khsMb}MB</span>
+        <span><strong>{t('form.khs', locale)}</strong> - Max {docLimits.khsMb}MB</span>
       </li>
       <li>
         <i class="fa-solid fa-check reg-checklist-icon"></i>
-        <span><strong>Motivation Letter (ML)</strong> - Max {docLimits.mlMb}MB</span>
+        <span><strong>{t('form.motivationLetter', locale)}</strong> - Max {docLimits.mlMb}MB</span>
       </li>
       <li>
         <i class="fa-solid fa-check reg-checklist-icon"></i>
-        <span><strong>Curriculum Vitae (CV)</strong> - Max {docLimits.cvMb}MB</span>
+        <span><strong>{t('form.cv', locale)}</strong> - Max {docLimits.cvMb}MB</span>
       </li>
       <li>
         <i class="fa-solid fa-check reg-checklist-icon"></i>
-        <span><strong>Pakta Integritas (PI)</strong> - Max {docLimits.piMb}MB</span>
+        <span><strong>{t('form.pi', locale)}</strong> - Max {docLimits.piMb}MB</span>
         {piTemplateUrl && (
           <a href={piTemplateUrl} target="_blank" rel="noopener noreferrer" class="checklist-download-btn">
             <i class="fa-solid fa-file-arrow-down"></i>
-            <span>Download Template</span>
+            <span>{t('form.downloadPiTemplate', locale)}</span>
           </a>
         )}
       </li>
       <li>
         <i class="fa-solid fa-user-graduate reg-checklist-icon"></i>
-        <span><strong>Eligible Student Years:</strong> {studentYears.join(", ")}</span>
+        <span><strong>{locale === 'en' ? 'Eligible Student Years:' : 'Angkatan Mahasiswa:'}</strong> {studentYears.join(", ")}</span>
       </li>
     </ul>
   </div>
 
   <BackToHomeButton />
 </div>
-
-

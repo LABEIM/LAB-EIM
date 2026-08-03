@@ -1,4 +1,6 @@
 ---
+import { getLocaleFromUrl } from '../../utils/i18n';
+
 interface Props {
   iconClass: string;
   message: string;
@@ -7,6 +9,8 @@ interface Props {
   locationInfo?: string;
   locationIconClass?: string;
 }
+
+const locale = getLocaleFromUrl(Astro.url);
 
 const {
   iconClass,
@@ -24,7 +28,7 @@ const {
   
   {estimatedAnnouncementDate && (
     <div class="badge-date-info">
-      <i class="fa-solid fa-calendar-day reg-icon-mr"></i> Estimated Announcement: <strong>{estimatedAnnouncementDate}</strong>
+      <i class="fa-solid fa-calendar-day reg-icon-mr"></i> {locale === 'en' ? 'Estimated Announcement:' : 'Perkiraan Pengumuman:'} <strong>{estimatedAnnouncementDate}</strong>
     </div>
   )}
 
@@ -32,12 +36,12 @@ const {
     <div class="reg-btn-group">
       {scheduleInfo && (
         <div class="badge-date-info">
-          <i class="fa-solid fa-calendar-days reg-icon-mr"></i> Schedule: <strong>{scheduleInfo}</strong>
+          <i class="fa-solid fa-calendar-days reg-icon-mr"></i> {locale === 'en' ? 'Schedule:' : 'Jadwal:'} <strong>{scheduleInfo}</strong>
         </div>
       )}
       {locationInfo && (
         <div class="badge-location-info">
-          <i class={`fa-solid ${locationIconClass} reg-checklist-icon`}></i> Location: <strong>{locationInfo}</strong>
+          <i class={`fa-solid ${locationIconClass} reg-checklist-icon`}></i> {locale === 'en' ? 'Location:' : 'Lokasi:'} <strong>{locationInfo}</strong>
         </div>
       )}
     </div>

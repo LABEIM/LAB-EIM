@@ -11,7 +11,6 @@ export function initRegistrationDraft(
   medhumPortoInputParam?: HTMLInputElement | null,
   portfolioTriggerListParam?: string[]
 ) {
-  // Support both context object and legacy positional parameters
   let formElement: HTMLFormElement | null = null;
   let div1Select: HTMLSelectElement | null = null;
   let div2Select: HTMLSelectElement | null = null;
@@ -37,6 +36,8 @@ export function initRegistrationDraft(
     medhumPortoInput = medhumPortoInputParam || null;
     portfolioTriggerList = portfolioTriggerListParam || portfolioTriggerList;
   }
+
+  const isEn = formElement?.getAttribute('data-locale') === 'en' || window.location.pathname.startsWith('/en');
 
   const draftToast = document.getElementById('draft-toast');
   const draftToastIcon = document.getElementById('draft-toast-icon');
@@ -84,7 +85,6 @@ export function initRegistrationDraft(
     }
   };
 
-  // Portfolio Visibility Toggle
   const requiresPortfolio = (val: string) => portfolioTriggerList.includes(val.trim().toLowerCase());
 
   const toggleMedhumPorto = () => {
@@ -176,7 +176,7 @@ export function initRegistrationDraft(
       
       if (saveDraftTimeout) clearTimeout(saveDraftTimeout);
       saveDraftTimeout = setTimeout(() => {
-        showDraftToast(`Draft auto-saved at ${draft.savedAt}`);
+        showDraftToast(isEn ? `Draft auto-saved at ${draft.savedAt}` : `Draf tersimpan otomatis pukul ${draft.savedAt}`);
       }, 400);
     } catch (e) {}
   };
@@ -211,7 +211,7 @@ export function initRegistrationDraft(
           if (clearDraftBtn) clearDraftBtn.style.display = 'inline-flex';
           if (draftRestoredBanner) {
             draftRestoredBanner.style.display = 'flex';
-            if (draftRestoredTime) draftRestoredTime.innerText = draft.savedAt || 'recently';
+            if (draftRestoredTime) draftRestoredTime.innerText = draft.savedAt || (isEn ? 'recently' : 'baru saja');
           }
         }
       }
@@ -229,7 +229,7 @@ export function initRegistrationDraft(
       if (draftRestoredBanner) draftRestoredBanner.style.display = 'none';
       if (clearDraftBtn) clearDraftBtn.style.display = 'none';
       if (clearDraftModal) clearDraftModal.style.display = 'none';
-      showDraftToast('Draft cleared', false);
+      showDraftToast(isEn ? 'Draft cleared' : 'Draf berhasil dihapus', false);
     } catch (e) {}
     updateWordCounters();
   };

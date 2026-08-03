@@ -1,14 +1,18 @@
 ---
+import { getLocaleFromUrl, getLocalizedPath } from '../../utils/i18n';
+
 interface Props {
   wrapperClass?: string;
   href?: string;
   label?: string;
 }
 
+const locale = getLocaleFromUrl(Astro.url);
+
 const {
   wrapperClass = "reg-btn-wrapper",
-  href = "/",
-  label = "Back to Home"
+  href = getLocalizedPath('/', locale),
+  label = locale === 'en' ? "Back to Home" : "Kembali ke Beranda"
 } = Astro.props;
 ---
 

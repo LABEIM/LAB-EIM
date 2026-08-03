@@ -64,7 +64,17 @@ function setResultDisplay(box: HTMLElement, statusClass: 'status-passed' | 'stat
   box.innerHTML = htmlContent;
 }
 
+function getIsEnglish(): boolean {
+  const container = document.getElementById('registration-container');
+  if (container && container.getAttribute('data-locale')) {
+    return container.getAttribute('data-locale') === 'en';
+  }
+  return window.location.pathname.startsWith('/en');
+}
+
 export function initRegistrationSearch() {
+  const isEn = getIsEnglish();
+
   // 1. Document Screening Results Lookup
   const searchScreeningInput = document.getElementById('search-screening-nim-input') as HTMLInputElement | null;
   const searchScreeningBtn = document.getElementById('search-screening-nim-btn');
@@ -77,7 +87,7 @@ export function initRegistrationSearch() {
       setResultDisplay(
         searchScreeningResultBox,
         'status-error',
-        '<i class="fa-solid fa-circle-exclamation"></i> Please enter a NIM to search.'
+        `<i class="fa-solid fa-circle-exclamation"></i> ${isEn ? 'Please enter a NIM to search.' : 'Masukkan NIM untuk mencari.'}`
       );
       return;
     }
@@ -90,11 +100,13 @@ export function initRegistrationSearch() {
         isPassed ? 'status-passed' : 'status-muted',
         `
           <div class="search-result-title">
-            ${isPassed ? 'PASSED DOCUMENT SCREENING' : 'Document Screening Status'}
+            ${isPassed ? (isEn ? 'PASSED DOCUMENT SCREENING' : 'LOLOS SELEKSI BERKAS') : (isEn ? 'Document Screening Status' : 'Status Seleksi Berkas')}
           </div>
           <div class="search-result-nim">NIM: <strong>${match.nim || ''}</strong></div>
           <p class="search-result-desc">
-            ${isPassed ? 'Congratulations! You have qualified for the Technical Test phase. Please check your email for technical test details.' : (match.notes || 'Thank you for applying. Keep striving for future opportunities.')}
+            ${isPassed
+              ? (isEn ? 'Congratulations! You have qualified for the Technical Test phase. Please check your email for details.' : 'Selamat! Anda dinyatakan lolos seleksi berkas dan berhak mengikuti Tes Teknikal. Cek email Anda untuk informasi lebih lanjut.')
+              : (match.notes || (isEn ? 'Thank you for applying. Keep striving for future opportunities.' : 'Terima kasih telah mendaftar. Tetap semangat untuk kesempatan berikutnya.'))}
           </p>
         `
       );
@@ -102,7 +114,9 @@ export function initRegistrationSearch() {
       setResultDisplay(
         searchScreeningResultBox,
         'status-muted',
-        `No screening result record found for NIM "<strong>${query}</strong>".`
+        isEn
+          ? `No screening result record found for NIM "<strong>${query}</strong>".`
+          : `Data hasil seleksi berkas tidak ditemukan untuk NIM "<strong>${query}</strong>".`
       );
     }
   };
@@ -122,7 +136,7 @@ export function initRegistrationSearch() {
       setResultDisplay(
         searchTechResultBox,
         'status-error',
-        '<i class="fa-solid fa-circle-exclamation"></i> Please enter a NIM to search.'
+        `<i class="fa-solid fa-circle-exclamation"></i> ${isEn ? 'Please enter a NIM to search.' : 'Masukkan NIM untuk mencari.'}`
       );
       return;
     }
@@ -135,11 +149,13 @@ export function initRegistrationSearch() {
         isPassed ? 'status-passed' : 'status-muted',
         `
           <div class="search-result-title">
-            ${isPassed ? 'PASSED TECHNICAL TEST' : 'Technical Test Status'}
+            ${isPassed ? (isEn ? 'PASSED TECHNICAL TEST' : 'LOLOS TES TEKNIKAL') : (isEn ? 'Technical Test Status' : 'Status Tes Teknikal')}
           </div>
           <div class="search-result-nim">NIM: <strong>${match.nim || ''}</strong></div>
           <p class="search-result-desc">
-            ${isPassed ? 'Congratulations! You have qualified for the Interview phase. Please check your email for interview schedule details.' : (match.notes || 'Thank you for participating in the technical test.')}
+            ${isPassed
+              ? (isEn ? 'Congratulations! You have qualified for the Interview phase. Please check your email for interview schedule details.' : 'Selamat! Anda dinyatakan lolos Tes Teknikal dan berhak mengikuti tahap Wawancara. Cek email Anda untuk jadwal wawancara.')
+              : (match.notes || (isEn ? 'Thank you for participating in the technical test.' : 'Terima kasih telah mengikuti tes teknikal.'))}
           </p>
         `
       );
@@ -147,7 +163,9 @@ export function initRegistrationSearch() {
       setResultDisplay(
         searchTechResultBox,
         'status-muted',
-        `No technical test result record found for NIM "<strong>${query}</strong>".`
+        isEn
+          ? `No technical test result record found for NIM "<strong>${query}</strong>".`
+          : `Data hasil tes teknikal tidak ditemukan untuk NIM "<strong>${query}</strong>".`
       );
     }
   };
@@ -167,7 +185,7 @@ export function initRegistrationSearch() {
       setResultDisplay(
         resultBox,
         'status-error',
-        '<i class="fa-solid fa-circle-exclamation"></i> Please enter a NIM to search.'
+        `<i class="fa-solid fa-circle-exclamation"></i> ${isEn ? 'Please enter a NIM to search.' : 'Masukkan NIM untuk mencari.'}`
       );
       return;
     }
@@ -180,10 +198,10 @@ export function initRegistrationSearch() {
           resultBox,
           'status-passed',
           `
-            <div class="search-result-title-lg"><i class="fa-solid fa-circle-check"></i> CONGRATULATIONS!</div>
+            <div class="search-result-title-lg"><i class="fa-solid fa-circle-check"></i> ${isEn ? 'CONGRATULATIONS!' : 'SELAMAT! ANDA DITERIMA'}</div>
             <div class="search-result-nim">NIM: <strong>${match.nim || ''}</strong></div>
-            <div class="search-result-division">Division: <strong>${match.division || ''}</strong></div>
-            <p class="search-result-desc">${match.notes || 'You have been accepted as an assistant at EIM Research Lab.'}</p>
+            <div class="search-result-division">${isEn ? 'Division:' : 'Divisi:'} <strong>${match.division || ''}</strong></div>
+            <p class="search-result-desc">${match.notes || (isEn ? 'You have been accepted as an assistant at EIM Research Lab.' : 'Selamat! Anda diterima menjadi asisten di EIM Research Lab.')}</p>
           `
         );
       } else {
@@ -193,7 +211,7 @@ export function initRegistrationSearch() {
           `
             <div class="search-result-title"><i class="fa-solid fa-info-circle"></i> Status: ${(match.finalStatus || match.status || 'evaluated').toUpperCase()}</div>
             <div class="search-result-nim">NIM: <strong>${match.nim || ''}</strong></div>
-            <p class="search-result-desc">${match.notes || 'Thank you for participating in this recruitment cycle.'}</p>
+            <p class="search-result-desc">${match.notes || (isEn ? 'Thank you for participating in this recruitment cycle.' : 'Terima kasih telah berpartisipasi dalam rekrutmen ini.')}</p>
           `
         );
       }
@@ -201,7 +219,9 @@ export function initRegistrationSearch() {
       setResultDisplay(
         resultBox,
         'status-muted',
-        `No matching candidate record found for NIM "<strong>${query}</strong>".`
+        isEn
+          ? `No matching candidate record found for NIM "<strong>${query}</strong>".`
+          : `Data kandidat tidak ditemukan untuk NIM "<strong>${query}</strong>".`
       );
     }
   };

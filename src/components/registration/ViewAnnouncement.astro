@@ -2,6 +2,7 @@
 import TimelineSteps from './TimelineSteps.astro';
 import NimSearchBox from './NimSearchBox.astro';
 import BackToHomeButton from './BackToHomeButton.astro';
+import { getLocaleFromUrl, t } from '../../utils/i18n';
 
 interface Candidate {
   nim: string | number;
@@ -25,6 +26,7 @@ interface Props {
   candidatesByDivision: Record<string, Candidate[]>;
 }
 
+const locale = getLocaleFromUrl(Astro.url);
 const { initialStage, announcementCfg } = Astro.props;
 ---
 
@@ -38,11 +40,11 @@ const { initialStage, announcementCfg } = Astro.props;
 
   {/* Interactive Final Status Search Lookup */}
   <NimSearchBox
-    title="Check Final Selection Result"
+    title={locale === 'en' ? "Check Final Selection Result" : "Cek Hasil Seleksi Akhir"}
     inputId="search-nim-input"
     buttonId="search-nim-btn"
     resultBoxId="search-result-box"
-    buttonLabel="Check"
+    buttonLabel={t('btn.search', locale)}
     containerClass="reg-timer-mb"
   />
 

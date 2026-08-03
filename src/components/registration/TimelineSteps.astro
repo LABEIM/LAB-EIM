@@ -1,12 +1,9 @@
 ---
-import { getLocaleFromUrl } from '../../utils/i18n';
-
 interface Props {
   activeStepIndex: number;
   markCurrentAsCompleted?: boolean;
 }
 
-const locale = getLocaleFromUrl(Astro.url);
 const { activeStepIndex, markCurrentAsCompleted = false } = Astro.props;
 
 const steps = [

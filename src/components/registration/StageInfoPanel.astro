@@ -1,6 +1,4 @@
 ---
-import { getLocaleFromUrl } from '../../utils/i18n';
-
 interface Props {
   iconClass: string;
   message: string;
@@ -9,8 +7,6 @@ interface Props {
   locationInfo?: string;
   locationIconClass?: string;
 }
-
-const locale = getLocaleFromUrl(Astro.url);
 
 const {
   iconClass,

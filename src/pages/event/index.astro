@@ -2,8 +2,12 @@
 import { getCollection } from 'astro:content';
 import Layout from '../../layouts/Layout.astro';
 import EventCard from '../../components/cards/EventCard.astro';
+import { getLocaleFromUrl, getCollectionEntriesForLocale, t } from '../../utils/i18n';
 
-const events = await getCollection('events');
+const locale = getLocaleFromUrl(Astro.url);
+const rawEvents = await getCollection('events');
+const events = getCollectionEntriesForLocale(rawEvents, locale);
+
 const sortedEvents = events.sort((a, b) => {
   const timeA = new Date(a.data.event_date).getTime();
   const timeB = new Date(b.data.event_date).getTime();
@@ -11,12 +15,12 @@ const sortedEvents = events.sort((a, b) => {
 });
 ---
 
-<Layout title="Events & Agenda - EIM Research Lab">
+<Layout title={`${t('events.title', locale)} - EIM Research Lab`}>
   <section class="page-header event-page-header">
     <div class="container">
       <div class="page-header-content">
-        <h1>Events & <span class="text-gradient-dual">Agenda</span></h1>
-        <p class="event-page-subtitle">Stay tuned for the latest events, training sessions, and research activities from EIM Laboratory.</p>
+        <h1>{t('events.title', locale)}</h1>
+        <p class="event-page-subtitle">{t('events.subtitle', locale)}</p>
       </div>
     </div>
   </section>

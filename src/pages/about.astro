@@ -1,6 +1,6 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import aboutData from '../data/about.json';
+import { getLocaleFromUrl, getLocalizedJsonData, t } from '../utils/i18n';
 
 interface ValueItem {
   title: string;
@@ -9,40 +9,18 @@ interface ValueItem {
   isAccent?: boolean;
 }
 
-const values: ValueItem[] = aboutData.values || [
-  {
-    title: "Reliability",
-    description: "Building trust through a strong and consistent identity in every research and service.",
-    icon: "fa-handshake",
-    isAccent: true
-  },
-  {
-    title: "Commitment",
-    description: "Demonstrating high dedication to creating technology innovations that impact society.",
-    icon: "fa-award",
-    isAccent: false
-  },
-  {
-    title: "Availability",
-    description: "Always present as a platform for collaboration, exchanging ideas, and developing digital science.",
-    icon: "fa-people-arrows",
-    isAccent: true
-  },
-  {
-    title: "Quality",
-    description: "Delivering research work, practical solutions, and training with the highest quality standards.",
-    icon: "fa-circle-check",
-    isAccent: false
-  }
-];
+const locale = getLocaleFromUrl(Astro.url);
+const aboutData = await getLocalizedJsonData<any>('about', locale);
+
+const values: ValueItem[] = aboutData.values || [];
 ---
 
-<Layout title={`${aboutData.title} - EIM Research Lab`}>
+<Layout title={`${aboutData.title || 'About Us'} - EIM Research Lab`}>
   <section class="page-header">
     <div class="container">
       <div class="page-header-content">
-        <div class="hero-tag"><span></span> About Us</div>
-        <h1>About <span class="text-gradient-red">EIM</span> Research Lab</h1>
+        <div class="hero-tag"><span></span> {t('nav.about', locale)}</div>
+        <h1>{aboutData.title}</h1>
         <p class="hero-desc">{aboutData.description}</p>
       </div>
     </div>
@@ -69,7 +47,7 @@ const values: ValueItem[] = aboutData.values || [
         <div class="vm-grid">
           <div>
             <h3 class="vision-heading">
-              <i class="fa-solid fa-eye"></i> Vision
+              <i class="fa-solid fa-eye"></i> {t('about.vision', locale)}
             </h3>
             <p class="vm-text">
               {aboutData.vision}
@@ -77,10 +55,10 @@ const values: ValueItem[] = aboutData.values || [
           </div>
           <div>
             <h3 class="mission-heading">
-              <i class="fa-solid fa-bullseye"></i> Mission
+              <i class="fa-solid fa-bullseye"></i> {t('about.mission', locale)}
             </h3>
             <ul class="mission-list">
-              {aboutData.missions.map((mission) => (
+              {aboutData.missions?.map((mission: string) => (
                 <li class="mission-item">{mission}</li>
               ))}
             </ul>
@@ -90,8 +68,8 @@ const values: ValueItem[] = aboutData.values || [
 
       <div>
         <div class="section-title">
-          <h2>Our Values</h2>
-          <p>Core values that serve as pillars and work culture in EIM Lab.</p>
+          <h2>{t('about.values', locale)}</h2>
+          <p>{locale === 'en' ? 'Core values that serve as pillars and work culture in EIM Lab.' : 'Nilai-nilai utama yang menjadi pilar dan budaya kerja di EIM Lab.'}</p>
         </div>
 
         <div class="focus-grid">

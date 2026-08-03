@@ -1,0 +1,21 @@
+{
+  "name": "EIM",
+  "subName": "Research Lab",
+  "fullName": "Enterprise Infrastructure Management Research Laboratory",
+  "defaultTitle": "EIM Research Lab - Enterprise Infrastructure Management",
+  "defaultDescription": "Official Website of Enterprise Infrastructure Management (EIM) Research Lab Telkom University.",
+  "defaultKeywords": "EIM, EIM Research Lab, Telkom University, Enterprise Infrastructure Management, Network Lab, Cloud Computing, Network Research",
+  "favicon": "/image/eim/logo_EIM_crop.png",
+  "logo": "/image/eim/logo_EIM_crop.avif",
+  "contact": {
+    "location": "TULT Building 8th Floor, Room TULT.08.09",
+    "university": "Telkom University, Bandung, Indonesia",
+    "email": "eimlab@telkomuniversity.ac.id"
+  },
+  "socials": {
+    "instagram": "https://www.instagram.com/eimresearchlab/",
+    "linkedin": "https://www.linkedin.com/company/keprofesian-enterprise-infrastructure-management-eim/",
+    "line": "https://line.me/ti/p/@eimresearchlab",
+    "youtube": "https://www.youtube.com/@eimresearchlab"
+  }
+}

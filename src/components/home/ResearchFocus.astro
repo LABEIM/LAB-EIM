@@ -1,32 +1,51 @@
 ---
+import { getLocaleFromUrl } from '../../utils/i18n';
+
+const locale = getLocaleFromUrl(Astro.url);
 ---
 
 <div class="research-focus-wrapper">
   <div class="section-title">
-    <h2>Research Focus & Laboratory</h2>
-    <p>We focus on the essential pillars of large-scale information technology infrastructure.</p>
+    <h2>{locale === 'en' ? 'Research Focus & Laboratory' : 'Fokus Riset & Laboratorium'}</h2>
+    <p>
+      {locale === 'en'
+        ? 'We focus on the essential pillars of large-scale information technology infrastructure.'
+        : 'Kami berfokus pada pilar-pilar utama infrastruktur teknologi informasi skala enterprise.'}
+    </p>
   </div>
   <div class="focus-grid">
     <div class="focus-card glass-panel">
       <div class="focus-icon">
         <i class="fa-solid fa-network-wired"></i>
       </div>
-      <h3>Network Optimization</h3>
-      <p>Assessing route efficiency, routing & switching protocols, network traffic load simulation, and enterprise-scale regional interconnection.</p>
+      <h3>{locale === 'en' ? 'Network Optimization' : 'Optimalisasi Jaringan'}</h3>
+      <p>
+        {locale === 'en'
+          ? 'Assessing route efficiency, routing & switching protocols, network traffic load simulation, and enterprise-scale regional interconnection.'
+          : 'Mengkaji efisiensi rute, protokol routing & switching, simulasi beban trafik jaringan, dan interkoneksi regional skala enterprise.'}
+      </p>
     </div>
     <div class="focus-card glass-panel">
       <div class="focus-icon">
         <i class="fa-solid fa-cloud-arrow-up"></i>
       </div>
-      <h3>Cloud Infrastructure</h3>
-      <p>Implementation of private & public cloud, containerization (Docker, Kubernetes), network virtualization, and hybrid data center integration.</p>
+      <h3>{locale === 'en' ? 'Cloud Infrastructure' : 'Infrastruktur Cloud'}</h3>
+      <p>
+        {locale === 'en'
+          ? 'Implementation of private & public cloud, containerization (Docker, Kubernetes), network virtualization, and hybrid data center integration.'
+          : 'Implementasi private & public cloud, kontainerisasi (Docker, Kubernetes), virtualisasi jaringan, serta integrasi data center hibrida.'}
+      </p>
     </div>
     <div class="focus-card glass-panel">
       <div class="focus-icon">
         <i class="fa-solid fa-robot"></i>
       </div>
-      <h3>Network Automation & AI</h3>
-      <p>Switch/router configuration automation using Ansible/Python, and intelligent network performance monitoring based on artificial intelligence.</p>
+      <h3>{locale === 'en' ? 'Network Automation & AI' : 'Otomasi Jaringan & AI'}</h3>
+      <p>
+        {locale === 'en'
+          ? 'Switch/router configuration automation using Ansible/Python, and intelligent network performance monitoring based on artificial intelligence.'
+          : 'Otomasi konfigurasi switch/router menggunakan Ansible/Python, serta pemantauan performa jaringan cerdas berbasis kecerdasan buatan.'}
+      </p>
     </div>
   </div>
 </div>

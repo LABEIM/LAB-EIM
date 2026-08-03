@@ -2,13 +2,16 @@
 import '../styles/globals.css';
 import Navbar from '../components/Navbar.astro';
 import Footer from '../components/Footer.astro';
-import siteData from '../data/site.json';
+import { getLocaleFromUrl, getLocalizedJsonData } from '../utils/i18n';
 
 interface Props {
   title?: string;
   description?: string;
   keywords?: string;
 }
+
+const locale = getLocaleFromUrl(Astro.url);
+const siteData = await getLocalizedJsonData<any>('site', locale);
 
 const {
   title = siteData.defaultTitle,
@@ -18,16 +21,29 @@ const {
 ---
 
 <!DOCTYPE html>
-<html lang="id" data-scroll-behavior="smooth">
+<html lang={locale} data-scroll-behavior="smooth">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{title}</title>
     <meta name="description" content={description} />
     <meta name="keywords" content={keywords} />
+    
+    <script is:inline>
+      (function() {
+        try {
+          const savedLang = localStorage.getItem('eim_preferred_lang');
+          const pathname = window.location.pathname;
+          if (savedLang === 'en' && (pathname === '/' || pathname === '')) {
+            window.location.replace('/en');
+          }
+        } catch (e) {}
+      })();
+    </script>
+
     {/* Dynamic favicon type helper */}
     {(() => {
-      const fav = siteData.favicon;
+      const fav = siteData.favicon || '/image/eim/logo_EIM_crop.png';
       let type = 'image/x-icon';
       if (fav.endsWith('.png')) type = 'image/png';
       else if (fav.endsWith('.svg')) type = 'image/svg+xml';

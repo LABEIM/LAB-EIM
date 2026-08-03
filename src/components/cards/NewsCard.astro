@@ -1,19 +1,24 @@
 ---
 import type { CollectionEntry } from 'astro:content';
 import { DEFAULT_COVER_IMAGE } from '../../utils/constants';
+import { getLocaleFromUrl, getCleanSlug, getLocalizedPath, t } from '../../utils/i18n';
 
 interface Props {
   news: CollectionEntry<'news'>;
   showButton?: boolean;
 }
 
+const locale = getLocaleFromUrl(Astro.url);
 const { news, showButton = true } = Astro.props;
 
 const coverImg = (news.data.image && news.data.image.length > 0)
   ? news.data.image[0]
   : DEFAULT_COVER_IMAGE;
 
-const formattedDate = new Date(news.data.news_date).toLocaleDateString('en-US', {
+const cleanSlug = getCleanSlug(news.id);
+const detailUrl = getLocalizedPath(`/news/${cleanSlug}`, locale);
+
+const formattedDate = new Date(news.data.news_date).toLocaleDateString(locale === 'en' ? 'en-US' : 'id-ID', {
   year: 'numeric',
   month: 'long',
   day: 'numeric'
@@ -34,14 +39,14 @@ const formattedDate = new Date(news.data.news_date).toLocaleDateString('en-US', 
 
     <div class="news-footer-group">
       {showButton && (
-        <a href={`/news/${news.id}`} class="btn btn-secondary btn-read-more">
-          Read More <i class="fa-solid fa-arrow-right"></i>
+        <a href={detailUrl} class="btn btn-secondary btn-read-more">
+          {t('btn.learnMore', locale)} <i class="fa-solid fa-arrow-right"></i>
         </a>
       )}
 
       <div class="news-footer">
         <span class="news-author">
-          <i class="fa-solid fa-pen-nib"></i> By: {news.data.author}
+          <i class="fa-solid fa-pen-nib"></i> {locale === 'en' ? 'By:' : 'Oleh:'} {news.data.author}
         </span>
       </div>
     </div>

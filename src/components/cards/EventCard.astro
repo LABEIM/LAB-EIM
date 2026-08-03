@@ -1,30 +1,35 @@
 ---
 import type { CollectionEntry } from 'astro:content';
 import { DEFAULT_COVER_IMAGE } from '../../utils/constants';
+import { getLocaleFromUrl, getCleanSlug, getLocalizedPath, t } from '../../utils/i18n';
 
 interface Props {
   event: CollectionEntry<'events'>;
 }
 
+const locale = getLocaleFromUrl(Astro.url);
 const { event } = Astro.props;
 
 let statusClass = 'upcoming';
 let statusIcon = 'fa-clock';
-let statusText = 'Upcoming';
+let statusText = t('badge.upcoming', locale);
 
 if (event.data.status === 'completed') {
   statusClass = 'completed';
   statusIcon = 'fa-circle-check';
-  statusText = 'Completed';
+  statusText = t('badge.completed', locale);
 } else if (event.data.status === 'ongoing') {
   statusClass = 'ongoing';
   statusIcon = 'fa-spinner fa-spin';
-  statusText = 'Ongoing';
+  statusText = t('badge.ongoing', locale);
 }
 
 const coverImg = (event.data.image && event.data.image.length > 0)
   ? event.data.image[0]
   : DEFAULT_COVER_IMAGE;
+
+const cleanSlug = getCleanSlug(event.id);
+const detailUrl = getLocalizedPath(`/event/${cleanSlug}`, locale);
 ---
 
 <div class="event-card glass-panel">
@@ -38,11 +43,11 @@ const coverImg = (event.data.image && event.data.image.length > 0)
     <i class={`fa-solid ${event.data.icon || 'fa-calendar'}`}></i>
   </div>
   <h3>{event.data.title}</h3>
-  <p class="event-cat">Category: {event.data.category}</p>
+  <p class="event-cat">{locale === 'en' ? 'Category:' : 'Kategori:'} {event.data.category}</p>
   <p>{event.data.description}</p>
 
-  <a href={`/event/${event.id}`} class="btn btn-secondary btn-read-more">
-    Read More <i class="fa-solid fa-arrow-right"></i>
+  <a href={detailUrl} class="btn btn-secondary btn-read-more">
+    {t('btn.learnMore', locale)} <i class="fa-solid fa-arrow-right"></i>
   </a>
 
   <div class="event-footer">

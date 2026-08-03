@@ -1,19 +1,30 @@
 ---
 import { getCollection } from 'astro:content';
 import Layout from '../layouts/Layout.astro';
-import divisionsData from '../data/divisions.json';
-import registrationConfig from '../data/registration.json';
 import { getCurrentRecruitmentStage } from '../utils/recruitment';
 import { parseDivisions } from '../utils/division-mapper';
 import { STAGE_ACTION_CONFIG, DEFAULT_ACTION_BTN } from '../utils/constants';
 import ResearchFocus from '../components/home/ResearchFocus.astro';
 import NewsCard from '../components/cards/NewsCard.astro';
+import {
+  getLocaleFromUrl,
+  getLocalizedJsonData,
+  getCollectionEntriesForLocale,
+  getLocalizedPath,
+  t
+} from '../utils/i18n';
+
+const locale = getLocaleFromUrl(Astro.url);
+const divisionsData = await getLocalizedJsonData<any>('divisions', locale);
+const registrationConfig = await getLocalizedJsonData<any>('registration', locale);
 
 const divisions = parseDivisions(divisionsData);
 
-// Fetch and sort news
-const allNews = await getCollection('news');
-const latestNews = allNews
+// Fetch and filter news for active locale
+const rawNews = await getCollection('news');
+const localizedNews = getCollectionEntriesForLocale(rawNews, locale);
+
+const latestNews = localizedNews
   .sort((a, b) => new Date(b.data.news_date).getTime() - new Date(a.data.news_date).getTime())
   .slice(0, 3);
 
@@ -22,28 +33,28 @@ const currentStage = getCurrentRecruitmentStage(registrationConfig);
 const actionBtn = STAGE_ACTION_CONFIG[currentStage] || DEFAULT_ACTION_BTN;
 ---
 
-<Layout title="EIM Research Lab - Enterprise Infrastructure Management">
+<Layout title={`EIM Research Lab - ${t('home.heroTag', locale)}`}>
   <header class="hero" id="home">
     <div class="container">
       <div class="hero-grid">
         <div class="hero-content">
           <div class="hero-tag">
-            <span></span> Enterprise Infrastructure Management Lab
+            <span></span> {t('home.heroTag', locale)}
           </div>
           <h1>
-            Building <span class="text-gradient-red">Digital Infrastructure</span> of the Future with <span class="text-gradient-cyan">Research & AI</span>
+            {t('home.heroTitle', locale)}
           </h1>
           <p class="hero-desc">
-            We conduct research, in-depth studies, and training in enterprise network technology, data center optimization, cloud computing, and infrastructure automation.
+            {t('home.heroDesc', locale)}
           </p>
           <div class="hero-actions">
             {actionBtn && (
-              <a href="/registration" class="btn btn-primary hero-action-primary">
+              <a href={getLocalizedPath('/registration', locale)} class="btn btn-primary hero-action-primary">
                 {actionBtn.label} <i class={`fa-solid ${actionBtn.icon}`}></i>
               </a>
             )}
-            <a href="/structure" class="btn btn-secondary">
-              View Assistant Structure <i class="fa-solid fa-users"></i>
+            <a href={getLocalizedPath('/structure', locale)} class="btn btn-secondary">
+              {t('nav.structure', locale)} <i class="fa-solid fa-users"></i>
             </a>
           </div>
         </div>
@@ -74,12 +85,12 @@ const actionBtn = STAGE_ACTION_CONFIG[currentStage] || DEFAULT_ACTION_BTN;
       {/* Lab Divisions */}
       <div class="home-section-wrapper">
         <div class="section-title">
-          <h2>EIM Laboratory Divisions</h2>
-          <p>EIM Laboratory consists of 6 main divisions collaborating in integrated research and operations.</p>
+          <h2>{t('struct.divisions', locale)}</h2>
+          <p>{t('struct.subtitle', locale)}</p>
         </div>
         <div class="divisions-brief-grid">
           {divisions.map(div => (
-            <a href={`/structure?div=${div.id}`} class="div-brief-card glass-panel division-card-link">
+            <a href={getLocalizedPath(`/structure?div=${div.id}`, locale)} class="div-brief-card glass-panel division-card-link">
               <h4>{div.displayName}</h4>
               <p>{div.description}</p>
             </a>
@@ -90,8 +101,8 @@ const actionBtn = STAGE_ACTION_CONFIG[currentStage] || DEFAULT_ACTION_BTN;
       {/* Latest News */}
       <div class="home-section-wrapper latest-news-section">
         <div class="section-title">
-          <h2>Latest News</h2>
-          <p>Latest news and article releases from EIM Research Lab.</p>
+          <h2>{t('home.latestNews', locale)}</h2>
+          <p>{t('news.subtitle', locale)}</p>
         </div>
         <div class="news-grid">
           {latestNews.length === 0 ? (
@@ -106,8 +117,8 @@ const actionBtn = STAGE_ACTION_CONFIG[currentStage] || DEFAULT_ACTION_BTN;
           )}
         </div>
         <div class="view-all-news-wrapper">
-          <a href="/news" class="btn btn-secondary">
-            View All News <i class="fa-solid fa-arrow-right"></i>
+          <a href={getLocalizedPath('/news', locale)} class="btn btn-secondary">
+            {t('home.viewAllNews', locale)} <i class="fa-solid fa-arrow-right"></i>
           </a>
         </div>
       </div>

@@ -1,14 +1,25 @@
 ---
-import siteData from '../data/site.json';
+import { getLocaleFromUrl, getLocalizedPath, getLocalizedJsonData, t } from '../utils/i18n';
 
+const locale = getLocaleFromUrl(Astro.url);
+const siteData = await getLocalizedJsonData<any>('site', locale);
 const currentYear = new Date().getFullYear();
+
+const navLinks = [
+  { href: '/', key: 'nav.home' },
+  { href: '/about', key: 'nav.about' },
+  { href: '/structure', key: 'nav.structure' },
+  { href: '/event', key: 'nav.event' },
+  { href: '/news', key: 'nav.news' },
+  { href: '/registration', key: 'nav.register' },
+];
 ---
 
 <footer class="footer">
   <div class="container">
     <div class="footer-grid">
       <div class="footer-about">
-        <a href="/" class="logo-container">
+        <a href={getLocalizedPath('/', locale)} class="logo-container">
           <div class="logo-icon logo-icon-sm">
             <img src={siteData.logo} alt={`${siteData.name} Logo`} width="30" height="30" />
           </div>
@@ -17,29 +28,28 @@ const currentYear = new Date().getFullYear();
             <span class="logo-sub logo-sub-sm">{siteData.subName}</span>
           </div>
         </a>
-        <p>{siteData.fullName} is part of the Enterprise & Industrial System (EIS) Expertise Group, Bachelor of Information Systems Study Program, Faculty of Industrial Engineering, Telkom University.</p>
+        <p>{siteData.fullName} — {t('footer.description', locale)}</p>
       </div>
 
       <div>
-        <h4 class="footer-title">Quick Links</h4>
+        <h4 class="footer-title">{t('footer.quickLinks', locale)}</h4>
         <ul class="footer-links">
-          <li><a href="/">Home</a></li>
-          <li><a href="/about">About</a></li>
-          <li><a href="/structure">Structure</a></li>
-          <li><a href="/event">Event</a></li>
-          <li><a href="/news">News</a></li>
-          <li><a href="/registration">Registration</a></li>
+          {navLinks.map((link) => (
+            <li>
+              <a href={getLocalizedPath(link.href, locale)}>{t(link.key, locale)}</a>
+            </li>
+          ))}
         </ul>
       </div>
 
       <div>
-        <h4 class="footer-title">Contact & Location</h4>
+        <h4 class="footer-title">{t('footer.contact', locale)}</h4>
         <ul class="footer-links footer-contact-list">
           <li><i class="fa-solid fa-location-dot footer-icon-red"></i> {siteData.contact.location}</li>
           <li><i class="fa-solid fa-university footer-icon-red"></i> {siteData.contact.university}</li>
           <li><i class="fa-solid fa-envelope footer-icon-cyan"></i> {siteData.contact.email}</li>
         </ul>
-        <h4 class="footer-title footer-social-title">Follow Our Social Media</h4>
+        <h4 class="footer-title footer-social-title">Social Media</h4>
         <div class="footer-connect-list">
           {siteData.socials.instagram && (
             <a href={siteData.socials.instagram} target="_blank" rel="noopener noreferrer" class="footer-connect-btn" title="Instagram @eimresearchlab">
@@ -95,12 +105,11 @@ const currentYear = new Date().getFullYear();
             </a>
           )}
         </div>
-
       </div>
     </div>
 
     <div class="footer-bottom">
-      <p>&copy; {currentYear} {siteData.fullName}. All Rights Reserved.</p>
+      <p>&copy; {currentYear} {siteData.fullName}. {t('footer.rights', locale)}</p>
       <p>Designed with <i class="fa-solid fa-heart footer-heart-icon"></i> in Telkom University</p>
     </div>
   </div>

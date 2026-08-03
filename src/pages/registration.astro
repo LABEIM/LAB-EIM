@@ -1,11 +1,9 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import registrationConfig from '../data/registration.json';
-import resultsConfig from '../data/recruitment_results.json';
-import divisionsData from '../data/divisions.json';
 import { getCurrentRecruitmentStage } from '../utils/recruitment';
 import { parseDivisions } from '../utils/division-mapper';
 import { getRegistrationPageConfigs } from '../utils/registration-config';
+import { getLocaleFromUrl, getLocalizedJsonData, t } from '../utils/i18n';
 
 import ViewUpcoming from '../components/registration/ViewUpcoming.astro';
 import ViewOpenForm from '../components/registration/ViewOpenForm.astro';
@@ -18,6 +16,11 @@ import ViewAnnouncement from '../components/registration/ViewAnnouncement.astro'
 import ViewClosed from '../components/registration/ViewClosed.astro';
 import ViewFallback from '../components/registration/ViewFallback.astro';
 import ContactPersonBox from '../components/registration/ContactPersonBox.astro';
+
+const locale = getLocaleFromUrl(Astro.url);
+const registrationConfig = await getLocalizedJsonData<any>('registration', locale);
+const resultsConfig = await getLocalizedJsonData<any>('recruitment_results', locale);
+const divisionsData = await getLocalizedJsonData<any>('divisions', locale);
 
 const divisions = parseDivisions(divisionsData);
 
@@ -47,10 +50,10 @@ const initialStage = getCurrentRecruitmentStage(registrationConfig);
 
 // Group accepted candidates by division for final announcement view
 const candidatesList = resultsConfig.candidates || [];
-const acceptedCandidates = candidatesList.filter(c => (c as any).finalStatus === 'accepted' || (c as any).status === 'accepted');
+const acceptedCandidates = candidatesList.filter((c: any) => c.finalStatus === 'accepted' || c.status === 'accepted');
 
 const candidatesByDivision: Record<string, typeof candidatesList> = {};
-acceptedCandidates.forEach(candidate => {
+acceptedCandidates.forEach((candidate: any) => {
   const divisionKey = candidate.division || 'General';
   if (!candidatesByDivision[divisionKey]) {
     candidatesByDivision[divisionKey] = [];
@@ -59,12 +62,12 @@ acceptedCandidates.forEach(candidate => {
 });
 ---
 
-<Layout title={`${registrationConfig.heroTitle || 'Assistant Lab Registration'} - EIM Research Lab`}>
+<Layout title={`${registrationConfig.heroTitle || t('reg.title', locale)} - EIM Research Lab`}>
   <section class="page-header registration-page-header">
     <div class="container">
       <div class="page-header-content">
         <div class="hero-tag"><span></span> {registrationConfig.heroTag || 'Assistant Recruitment'}</div>
-        <h1 id="page-hero-title">{registrationConfig.heroTitle || 'Assistant Lab Registration'}</h1>
+        <h1 id="page-hero-title">{registrationConfig.heroTitle || t('reg.title', locale)}</h1>
         <p class="hero-desc" id="page-hero-desc">{registrationConfig.heroDescription || 'Join us and become a part of EIM Research Lab.'}</p>
       </div>
     </div>

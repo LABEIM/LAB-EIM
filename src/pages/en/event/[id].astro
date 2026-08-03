@@ -1,7 +1,7 @@
 ---
 import { getCollection } from 'astro:content';
-import Layout from '../../layouts/Layout.astro';
-import { getLocaleFromUrl, getCleanSlug, getLocalizedPath, t } from '../../utils/i18n';
+import Layout from '../../../layouts/Layout.astro';
+import { getLocaleFromUrl, getCleanSlug, getLocalizedPath, t } from '../../../utils/i18n';
 
 export async function getStaticPaths() {
   const events = await getCollection('events');
@@ -12,11 +12,11 @@ export async function getStaticPaths() {
   ]);
 
   return Array.from(allSlugs).map((slug) => {
-    const idEvent = events.find(e => e.id === `id/${slug}`);
     const enEvent = events.find(e => e.id === `en/${slug}`);
+    const idEvent = events.find(e => e.id === `id/${slug}`);
     return {
       params: { id: slug },
-      props: { event: idEvent || enEvent! },
+      props: { event: enEvent || idEvent! },
     };
   });
 }
@@ -176,6 +176,6 @@ const statusLabel = isCompleted ? t('badge.completed', locale) : (isOngoing ? t(
 </Layout>
 
 <script>
-  import { initShareButtons } from '../../scripts/share';
+  import { initShareButtons } from '../../../scripts/share';
   initShareButtons('Event');
 </script>

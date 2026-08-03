@@ -1,19 +1,22 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import membersData from '../data/members.json';
-import divisionsData from '../data/divisions.json';
 import { getDivisionInfo, parseDivisions } from '../utils/division-mapper';
+import { getLocaleFromUrl, getLocalizedJsonData, t } from '../utils/i18n';
+
+const locale = getLocaleFromUrl(Astro.url);
+const membersData = await getLocalizedJsonData<any>('members', locale);
+const divisionsData = await getLocalizedJsonData<any>('divisions', locale);
 
 const initialMembers = membersData.list || [];
 const divisions = parseDivisions(divisionsData);
 ---
 
-<Layout title="Organizational Structure - EIM Research Lab">
+<Layout title={`${t('struct.title', locale)} - EIM Research Lab`}>
   <section class="page-header structure-page-header">
     <div class="container">
       <div class="page-header-content">
-        <h1>Organizational <span class="text-gradient-cyan">Structure</span></h1>
-        <p class="structure-page-subtitle">Meet the EIM laboratory assistants in each division.</p>
+        <h1>{t('struct.title', locale)}</h1>
+        <p class="structure-page-subtitle">{t('struct.subtitle', locale)}</p>
       </div>
     </div>
   </section>
@@ -21,7 +24,7 @@ const divisions = parseDivisions(divisionsData);
   <section class="section-padding" id="structure">
     <div class="container">
       <div class="filter-container" id="filter-tabs" data-divisions={JSON.stringify(divisions)}>
-        <button class="filter-tab active" data-filter="all">All Divisions</button>
+        <button class="filter-tab active" data-filter="all">{t('struct.allDivisions', locale)}</button>
         {divisions.map(div => (
           <button class="filter-tab" data-filter={div.id}>{div.name}</button>
         ))}
@@ -31,13 +34,15 @@ const divisions = parseDivisions(divisionsData);
       <div class="division-banner-panel" id="division-banner">
         <div class="banner-header-row">
           <div class="banner-title-group">
-            <h2 id="banner-title">All Divisions</h2>
+            <h2 id="banner-title">{t('struct.allDivisions', locale)}</h2>
             <span class="division-badge-tag" id="banner-badge">OVERVIEW</span>
           </div>
-          <span class="banner-member-count" id="banner-count">{initialMembers.length} Members</span>
+          <span class="banner-member-count" id="banner-count">{initialMembers.length} {t('struct.members', locale)}</span>
         </div>
         <p class="banner-description" id="banner-desc">
-          Meet our dedicated laboratory assistants working across research, networking, public relations, competition, and community service.
+          {locale === 'en'
+            ? 'Meet our dedicated laboratory assistants working across research, networking, public relations, competition, and community service.'
+            : 'Mengenal asisten laboratorium kami yang berdedikasi dalam bidang riset, jaringan, media & humas, kompetisi, dan pengabdian masyarakat.'}
         </p>
       </div>
 
@@ -46,12 +51,12 @@ const divisions = parseDivisions(divisionsData);
         <div class="empty-state-icon">
           <i class="fa-solid fa-users-slash"></i>
         </div>
-        <h4>No Members Found</h4>
-        <p>There are currently no staff entries assigned to this division. Select another division tab or check back later.</p>
+        <h4>{locale === 'en' ? 'No Members Found' : 'Anggota Tidak Ditemukan'}</h4>
+        <p>{locale === 'en' ? 'There are currently no staff entries assigned to this division.' : 'Belum ada anggota yang terdaftar di divisi ini.'}</p>
       </div>
 
       <div class="member-grid" id="member-grid">
-        {initialMembers.map((member, idx) => {
+        {initialMembers.map((member: any, idx: number) => {
           const divInfo = getDivisionInfo(member.division, divisions);
           const borderColor = divInfo?.borderColor || 'rgba(255, 255, 255, 0.1)';
           const roleColor = divInfo?.roleColor || 'var(--text-secondary)';

@@ -2,8 +2,12 @@
 import { getCollection } from 'astro:content';
 import Layout from '../../layouts/Layout.astro';
 import NewsCard from '../../components/cards/NewsCard.astro';
+import { getLocaleFromUrl, getCollectionEntriesForLocale, t } from '../../utils/i18n';
 
-const news = await getCollection('news');
+const locale = getLocaleFromUrl(Astro.url);
+const rawNews = await getCollection('news');
+const news = getCollectionEntriesForLocale(rawNews, locale);
+
 const sortedNews = news.sort((a, b) => {
   const timeA = new Date(a.data.news_date).getTime();
   const timeB = new Date(b.data.news_date).getTime();
@@ -11,12 +15,12 @@ const sortedNews = news.sort((a, b) => {
 });
 ---
 
-<Layout title="News & Articles - EIM Research Lab">
+<Layout title={`${t('news.title', locale)} - EIM Research Lab`}>
   <section class="page-header news-page-header">
     <div class="container">
       <div class="page-header-content">
-        <h1>News & <span class="text-gradient-cyan">Articles</span></h1>
-        <p class="news-page-subtitle">Latest news, research, and announcements from the EIM Laboratory.</p>
+        <h1>{t('news.title', locale)}</h1>
+        <p class="news-page-subtitle">{t('news.subtitle', locale)}</p>
       </div>
     </div>
   </section>

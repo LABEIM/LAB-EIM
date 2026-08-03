@@ -1,0 +1,37 @@
+{
+  "batch": "Recruitment Assistant 2026",
+  "publishedDate": "2026-08-01",
+  "candidates": [
+    {
+      "nim": "1202210001",
+      "screeningStatus": "passed",
+      "technicalTestStatus": "passed",
+      "finalStatus": "accepted",
+      "notes": "Congratulations! Please check your email for onboarding details."
+    },
+    {
+      "nim": "1202210002",
+      "division": "Network & Infrastructure",
+      "screeningStatus": "passed",
+      "technicalTestStatus": "passed",
+      "finalStatus": "accepted",
+      "notes": "Congratulations! Please check your email for onboarding details."
+    },
+    {
+      "nim": "1202210003",
+      "division": "Media & Humas",
+      "screeningStatus": "passed",
+      "technicalTestStatus": "passed",
+      "finalStatus": "accepted",
+      "notes": "Congratulations! Please check your email for onboarding details."
+    },
+    {
+      "nim": "1202210004",
+      "division": "Cyber Security",
+      "screeningStatus": "passed",
+      "technicalTestStatus": "failed",
+      "finalStatus": "rejected",
+      "notes": "Thank you for participating in the Technical Test. Keep striving for future opportunities!"
+    }
+  ]
+}

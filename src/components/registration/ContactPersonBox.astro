@@ -1,4 +1,6 @@
 ---
+import { getLocaleFromUrl, t } from '../../utils/i18n';
+
 export interface ContactPerson {
   name: string;
   role?: string;
@@ -14,9 +16,13 @@ interface Props {
   compact?: boolean;
 }
 
+const locale = getLocaleFromUrl(Astro.url);
+
 const {
-  title = "Need Help or Have Questions?",
-  subtitle = "Reach out directly to our recruitment contact persons for any inquiries during the recruitment process.",
+  title = locale === 'en' ? "Need Help or Have Questions?" : "Butuh Bantuan atau Memiliki Pertanyaan?",
+  subtitle = locale === 'en'
+    ? "Reach out directly to our recruitment contact persons for any inquiries during the recruitment process."
+    : "Hubungi langsung narahubung rekrutmen kami untuk pertanyaan apapun selama proses rekrutmen.",
   contactPersons = [],
   compact = false
 } = Astro.props;
@@ -54,7 +60,7 @@ const platformConfig: Record<string, { label: string; iconClass: string; color: 
   <div class={`cp-box ${compact ? 'compact' : ''}`}>
     <div class="cp-header">
       <div class="cp-badge">
-        <i class="fa-solid fa-headset"></i> Contact Person
+        <i class="fa-solid fa-headset"></i> {t('reg.contactPerson', locale)}
       </div>
       <h3 class="cp-title">{title}</h3>
       {subtitle && <p class="cp-subtitle">{subtitle}</p>}
@@ -68,7 +74,7 @@ const platformConfig: Record<string, { label: string; iconClass: string; color: 
         return (
           <div class={`cp-card cp-${platKey}`}>
             <div class="cp-card-header">
-              <span class="cp-role-badge">{cp.role || 'Contact Person'}</span>
+              <span class="cp-role-badge">{cp.role || t('reg.contactPerson', locale)}</span>
               <div class="cp-plat-icon">
                 <i class={platInfo.iconClass}></i>
               </div>
@@ -86,7 +92,7 @@ const platformConfig: Record<string, { label: string; iconClass: string; color: 
                 rel="noopener noreferrer"
                 class="cp-action-btn"
               >
-                <span>Contact via {platInfo.label}</span>
+                <span>{locale === 'en' ? `Contact via ${platInfo.label}` : `Hubungi via ${platInfo.label}`}</span>
                 <i class="fa-solid fa-arrow-up-right-from-square"></i>
               </a>
             )}
@@ -96,5 +102,3 @@ const platformConfig: Record<string, { label: string; iconClass: string; color: 
     </div>
   </div>
 )}
-
-

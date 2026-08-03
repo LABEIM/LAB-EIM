@@ -1,8 +1,8 @@
 ---
 import { getCollection, render } from 'astro:content';
 import { Image } from 'astro:assets';
-import Layout from '../../layouts/Layout.astro';
-import { getLocaleFromUrl, getCleanSlug, getLocalizedPath, t } from '../../utils/i18n';
+import Layout from '../../../layouts/Layout.astro';
+import { getLocaleFromUrl, getCleanSlug, getLocalizedPath, t } from '../../../utils/i18n';
 
 export async function getStaticPaths() {
   const news = await getCollection('news');
@@ -13,11 +13,11 @@ export async function getStaticPaths() {
   ]);
 
   return Array.from(allSlugs).map((slug) => {
-    const idItem = news.find(e => e.id === `id/${slug}`);
     const enItem = news.find(e => e.id === `en/${slug}`);
+    const idItem = news.find(e => e.id === `id/${slug}`);
     return {
       params: { id: slug },
-      props: { item: idItem || enItem! },
+      props: { item: enItem || idItem! },
     };
   });
 }
@@ -129,6 +129,6 @@ const formattedDate = new Date(item.data.news_date).toLocaleDateString(locale ==
 </Layout>
 
 <script>
-  import { initShareButtons } from '../../scripts/share';
+  import { initShareButtons } from '../../../scripts/share';
   initShareButtons('News');
 </script>

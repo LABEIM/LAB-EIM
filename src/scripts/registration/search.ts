@@ -1,4 +1,4 @@
-import resultsData from '../../data/recruitment_results.json';
+import resultsData from '../../data/id/recruitment_results.json';
 
 interface Candidate {
   nim?: string | number;

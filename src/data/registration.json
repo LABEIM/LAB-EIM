@@ -12,11 +12,11 @@
   "interviewStartDate": "2026-09-05T00:00:00",
   "interviewEndDate": "2026-09-06T23:59:59",
   "announcementDate": "2026-09-09T00:00:00",
-  "title": "Assistant Registration Form",
-  "subtitle": "Complete the form below with valid and correct information.",
-  "heroTag": "Assistant Recruitment",
-  "heroTitle": "Assistant Lab Registration",
-  "heroDescription": "Join us and become a part of EIM Research Lab. Develop your potential in IT infrastructure, networks, and technology research.",
+  "title": "Formulir Pendaftaran Asisten",
+  "subtitle": "Lengkapi formulir di bawah ini dengan informasi yang valid dan benar.",
+  "heroTag": "Rekrutmen Asisten",
+  "heroTitle": "Pendaftaran Asisten Lab",
+  "heroDescription": "Bergabunglah bersama kami menjadi bagian dari EIM Research Lab. Kembangkan potensi Anda dalam bidang infrastruktur IT, jaringan, dan riset teknologi.",
   "studentYears": [
     "2024",
     "2025"
@@ -26,11 +26,11 @@
   "piTemplateUrl": "https://bit.ly/Template-PI-EIM",
   "minReasonWords": 30,
   "allowedFileExtensions": {
-    "ksm": "pdf, png, jpg, jpeg",
-    "khs": "pdf, png, jpg, jpeg",
-    "ml": "pdf, png, jpg, jpeg",
-    "cv": "pdf, png, jpg, jpeg",
-    "pi": "pdf, png, jpg, jpeg"
+    "ksm": "pdf",
+    "khs": "pdf",
+    "ml": "pdf",
+    "cv": "pdf",
+    "pi": "pdf"
   },
   "documentLimits": {
     "ksmMb": 3,
@@ -41,54 +41,54 @@
     "totalMb": 15
   },
   "upcomingConfig": {
-    "title": "Recruitment Opening Soon!",
-    "subtitle": "Get your documents ready. Registration will officially open soon.",
-    "prepNotice": "Prepare the required files in advance so you can apply as soon as registration opens."
+    "title": "Pendaftaran Segera Dibuka!",
+    "subtitle": "Persiapkan berkas Anda. Pendaftaran akan resmi dibuka dalam waktu dekat.",
+    "prepNotice": "Persiapkan berkas yang diperlukan terlebih dahulu agar Anda dapat langsung mendaftar saat pendaftaran dibuka."
   },
   "extendedConfig": {
-    "bannerTitle": "Pendaftaran Diperpanjang! (Registration Extended)",
-    "bannerMessage": "Good news! The assistant registration deadline has been extended. Don't miss this opportunity to submit your application."
+    "bannerTitle": "Pendaftaran Diperpanjang!",
+    "bannerMessage": "Kabar baik! Batas waktu pendaftaran asisten diperpanjang. Jangan lewatkan kesempatan ini untuk mengirimkan aplikasi Anda."
   },
   "selectionConfig": {
-    "title": "Document Screening In Progress",
-    "subtitle": "Our team is currently evaluating all submitted administrative documents.",
-    "message": "Thank you for registering! Document verification and administrative screening are underway.",
+    "title": "Tahap Seleksi Berkas Sedang Berlangsung",
+    "subtitle": "Tim kami sedang melakukan verifikasi seluruh berkas administrasi yang telah dikirimkan.",
+    "message": "Terima kasih telah mendaftar! Verifikasi dokumen dan seleksi administratif sedang berjalan.",
     "estimatedAnnouncementDate": "26 Agustus 2026"
   },
   "selectionResultsConfig": {
-    "title": "Pengumuman Seleksi Berkas (Document Screening Results)",
-    "subtitle": "Check if you passed document screening and qualify for the Technical Test.",
+    "title": "Pengumuman Seleksi Berkas",
+    "subtitle": "Cek apakah Anda lolos seleksi berkas dan berhak mengikuti Tes Teknikal.",
     "newsUrl": "/news/pengumuman-rekrutmen-2026"
   },
   "technicalTestConfig": {
-    "title": "Technical Test Phase In Progress",
-    "subtitle": "Practical skills assessment and technical challenge in progress.",
-    "message": "Please check your registered email for your technical test instructions and submission brief.",
+    "title": "Tahap Tes Teknikal Sedang Berlangsung",
+    "subtitle": "Penilaian keterampilan praktis dan tantangan teknikal sedang berjalan.",
+    "message": "Silakan cek email terdaftar Anda untuk instruksi tes teknikal dan petunjuk pengumpulan.",
     "scheduleInfo": "29 - 30 Agustus 2026",
-    "locationInfo": "EIM Research Lab / Online Submission"
+    "locationInfo": "EIM Research Lab / Pengumpulan Online"
   },
   "technicalTestResultsConfig": {
-    "title": "Pengumuman Tes Teknikal (Technical Test Results)",
-    "subtitle": "Check if you passed the Technical Test and qualify for the Interview phase.",
+    "title": "Pengumuman Tes Teknikal",
+    "subtitle": "Cek apakah Anda lolos Tes Teknikal dan berhak mengikuti tahap Wawancara.",
     "newsUrl": "/news/pengumuman-rekrutmen-2026"
   },
   "interviewConfig": {
-    "title": "Interview Phase In Progress",
-    "subtitle": "Candidate interview sessions in progress with EIM Research Lab team.",
-    "message": "Please check your registered email for your assigned interview time slot and Zoom call details.",
+    "title": "Tahap Wawancara Sedang Berlangsung",
+    "subtitle": "Sesi wawancara kandidat sedang berlangsung bersama tim EIM Research Lab.",
+    "message": "Silakan cek email terdaftar Anda untuk jadwal sesi wawancara dan tautan Zoom.",
     "scheduleInfo": "05 - 06 September 2026",
-    "locationInfo": "EIM Research Lab / Online Zoom Room"
+    "locationInfo": "EIM Research Lab / Zoom Room Online"
   },
   "announcementConfig": {
-    "title": "Final Selection Announcement",
-    "subtitle": "Check your final selection status below. Congratulations to all accepted candidates!",
+    "title": "Pengumuman Seleksi Akhir",
+    "subtitle": "Cek hasil kelulusan akhir Anda di bawah ini. Selamat kepada seluruh kandidat yang diterima!",
     "newsUrl": "/news/pengumuman-rekrutmen-2026"
   },
   "closedConfig": {
-    "title": "Recruitment Period Ended",
-    "subtitle": "Assistant recruitment for this batch is officially closed.",
-    "message": "Thank you to everyone who applied. Follow our social media for future recruitment cycles!",
-    "nextBatchInfo": "Next recruitment expected in early 2027."
+    "title": "Periode Pendaftaran Telah Berakhir",
+    "subtitle": "Pendaftaran asisten untuk batch ini telah resmi ditutup.",
+    "message": "Terima kasih kepada semua yang telah mendaftar. Pantau media sosial kami untuk rekruitmen berikutnya!",
+    "nextBatchInfo": "Rekrutmen berikutnya diperkirakan awal tahun 2027."
   },
   "fallbackConfig": {
     "title": "Sistem Pendaftaran Utama Sedang Pemeliharaan",
@@ -99,15 +99,15 @@
   },
   "contactPersons": [
     {
-      "name": "CP Info & Recruitment",
-      "role": "General & Selection Info",
+      "name": "CP Informasi & Seleksi",
+      "role": "Informasi Umum & Seleksi",
       "platform": "whatsapp",
       "contactId": "+62 812-3456-7890",
       "link": "https://wa.me/6281234567890"
     },
     {
-      "name": "CP Technical Support",
-      "role": "Technical & Submission",
+      "name": "CP Bantuan Teknis",
+      "role": "Kendala Teknis & Berkas",
       "platform": "line",
       "contactId": "@eim_techsupport",
       "link": "https://line.me/ti/p/~eim_techsupport"

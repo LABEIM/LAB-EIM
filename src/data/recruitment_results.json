@@ -1,6 +1,7 @@
 {
-  "batch": "Recruitment Assistant 2026",
+  "batch": "Rekrutmen Asisten 2026",
   "publishedDate": "2026-08-01",
+  "bulkImportText": "",
   "candidates": [
     {
       "nim": "1202210001",
@@ -8,7 +9,7 @@
       "screeningStatus": "passed",
       "technicalTestStatus": "passed",
       "finalStatus": "accepted",
-      "notes": "Congratulations! Please check your email for onboarding details."
+      "notes": "Selamat! Silakan cek email Anda untuk instruksi onboarding."
     },
     {
       "nim": "1202210002",
@@ -16,7 +17,7 @@
       "screeningStatus": "passed",
       "technicalTestStatus": "passed",
       "finalStatus": "accepted",
-      "notes": "Congratulations! Please check your email for onboarding details."
+      "notes": "Selamat! Silakan cek email Anda untuk instruksi onboarding."
     },
     {
       "nim": "1202210003",
@@ -24,7 +25,7 @@
       "screeningStatus": "passed",
       "technicalTestStatus": "passed",
       "finalStatus": "accepted",
-      "notes": "Congratulations! Please check your email for onboarding details."
+      "notes": "Selamat! Silakan cek email Anda untuk instruksi onboarding."
     },
     {
       "nim": "1202210004",
@@ -32,7 +33,7 @@
       "screeningStatus": "passed",
       "technicalTestStatus": "failed",
       "finalStatus": "rejected",
-      "notes": "Thank you for participating in the Technical Test. Keep striving for future opportunities!"
+      "notes": "Terima kasih telah mengikuti Tes Teknikal. Tetap semangat untuk kesempatan berikutnya!"
     }
   ]
 }

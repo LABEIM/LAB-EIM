@@ -199,10 +199,10 @@ export default config({
       kind: 'local',
     },
   collections: {
-    news_id: collection({
-      label: 'News (Indonesian)',
+    news: collection({
+      label: 'News',
       slugField: 'title',
-      path: 'src/content/news/id/*',
+      path: 'src/content/news/*',
       format: { contentField: 'content' },
       schema: {
         title: fields.slug({ name: { label: 'Title' } }),
@@ -219,70 +219,10 @@ export default config({
         }),
       },
     }),
-    news_en: collection({
-      label: 'News (English)',
+    events: collection({
+      label: 'Events',
       slugField: 'title',
-      path: 'src/content/news/en/*',
-      format: { contentField: 'content' },
-      schema: {
-        title: fields.slug({ name: { label: 'Title' } }),
-        category: fields.text({ label: 'Category' }),
-        author: fields.text({ label: 'Author', defaultValue: 'Admin EIM' }),
-        news_date: fields.date({ label: 'Date' }),
-        image: fields.array(fields.text({ label: 'Image URL' }), {
-          label: 'Images',
-          itemLabel: props => props.value,
-        }),
-        content: fields.markdoc({
-          label: 'Content',
-          extension: 'md',
-        }),
-      },
-    }),
-    events_id: collection({
-      label: 'Events (Indonesian)',
-      slugField: 'title',
-      path: 'src/content/events/id/*',
-      format: { contentField: 'description' },
-      schema: {
-        title: fields.slug({ name: { label: 'Title' } }),
-        category: fields.text({ label: 'Category' }),
-        status: fields.select({
-          label: 'Status',
-          options: [
-            { label: 'Upcoming', value: 'upcoming' },
-            { label: 'Ongoing', value: 'ongoing' },
-            { label: 'Completed', value: 'completed' },
-          ],
-          defaultValue: 'upcoming',
-        }),
-        event_date: fields.date({ label: 'Event Date' }),
-        description: fields.markdoc({
-          label: 'Description/Content',
-          extension: 'md',
-        }),
-        link: fields.text({ label: 'Link (Optional)' }),
-        image: fields.array(fields.text({ label: 'Image URL' }), {
-          label: 'Images',
-          itemLabel: props => props.value,
-        }),
-        icon: fields.text({ label: 'FontAwesome Icon class (e.g., fa-building-columns)' }),
-        organizer: fields.text({ label: 'Organizer', defaultValue: 'EIM Research Lab' }),
-        benefits: fields.array(fields.text({ label: 'Benefit' }), {
-          label: 'Benefits',
-          itemLabel: props => props.value,
-        }),
-        requirements: fields.array(fields.text({ label: 'Requirement' }), {
-          label: 'Requirements',
-          itemLabel: props => props.value,
-        }),
-        show_register: fields.checkbox({ label: 'Show Register Button', defaultValue: true }),
-      },
-    }),
-    events_en: collection({
-      label: 'Events (English)',
-      slugField: 'title',
-      path: 'src/content/events/en/*',
+      path: 'src/content/events/*',
       format: { contentField: 'description' },
       schema: {
         title: fields.slug({ name: { label: 'Title' } }),
@@ -479,27 +419,15 @@ export default config({
         ),
       },
     }),
-    registration_id: singleton({
-      label: 'Registration (Indonesian)',
-      path: 'src/data/id/registration',
+    registration: singleton({
+      label: 'Registration Settings',
+      path: 'src/data/registration',
       format: { data: 'json' },
       schema: registrationSchema,
     }),
-    registration_en: singleton({
-      label: 'Registration (English)',
-      path: 'src/data/en/registration',
-      format: { data: 'json' },
-      schema: registrationSchema,
-    }),
-    recruitment_results_id: singleton({
-      label: 'Recruitment Results (Indonesian)',
-      path: 'src/data/id/recruitment_results',
-      format: { data: 'json' },
-      schema: recruitmentResultsSchema,
-    }),
-    recruitment_results_en: singleton({
-      label: 'Recruitment Results (English)',
-      path: 'src/data/en/recruitment_results',
+    recruitment_results: singleton({
+      label: 'Recruitment Results',
+      path: 'src/data/recruitment_results',
       format: { data: 'json' },
       schema: recruitmentResultsSchema,
     }),

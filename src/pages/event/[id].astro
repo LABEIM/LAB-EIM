@@ -5,18 +5,11 @@ import { getLocaleFromUrl, getCleanSlug, getLocalizedPath, t } from '../../utils
 
 export async function getStaticPaths() {
   const events = await getCollection('events');
-  const idEntries = events.filter(e => e.id.startsWith('id/'));
-  const allSlugs = new Set([
-    ...idEntries.map(e => getCleanSlug(e.id)),
-    ...events.map(e => getCleanSlug(e.id))
-  ]);
-
-  return Array.from(allSlugs).map((slug) => {
-    const idEvent = events.find(e => e.id === `id/${slug}`);
-    const enEvent = events.find(e => e.id === `en/${slug}`);
+  return events.map((event) => {
+    const slug = getCleanSlug(event.id);
     return {
       params: { id: slug },
-      props: { event: idEvent || enEvent! },
+      props: { event },
     };
   });
 }

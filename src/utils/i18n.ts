@@ -372,12 +372,17 @@ export function mergeWithFallback<T extends Record<string, any>>(idData: T, enDa
 }
 
 // Statically load all data files using Vite import.meta.glob (works in browser, node, vercel, etc.)
-const allDataFiles = import.meta.glob<Record<string, any>>('../data/*/*.json', { eager: true, import: 'default' });
+const allDataFiles = import.meta.glob<Record<string, any>>('../data/**/*.json', { eager: true, import: 'default' });
 
 /**
- * Helper to load localized JSON data from src/data/{id,en}/{filename}.json
+ * Helper to load localized JSON data from src/data/{filename}.json or src/data/{id,en}/{filename}.json
  */
 export function getLocalizedJsonData<T extends Record<string, any>>(filename: string, locale: Locale = DEFAULT_LOCALE): T {
+  const rootKey = `../data/${filename}.json`;
+  if (allDataFiles[rootKey]) {
+    return allDataFiles[rootKey] as T;
+  }
+
   const idKey = `../data/id/${filename}.json`;
   const enKey = `../data/en/${filename}.json`;
 
@@ -397,19 +402,25 @@ export function getCollectionEntriesForLocale<T extends { id: string }>(entries:
 
   const targetEntriesMap = new Map<string, T>();
   const defaultEntriesMap = new Map<string, T>();
+  const flatEntries: T[] = [];
 
   for (const entry of entries) {
     if (entry.id.startsWith(localePrefix)) {
       const cleanSlug = entry.id.replace(localePrefix, '');
       targetEntriesMap.set(cleanSlug, entry);
-    }
-    if (entry.id.startsWith(defaultPrefix)) {
+    } else if (entry.id.startsWith(defaultPrefix)) {
       const cleanSlug = entry.id.replace(defaultPrefix, '');
       defaultEntriesMap.set(cleanSlug, entry);
+    } else {
+      flatEntries.push(entry);
     }
   }
 
-  const result: T[] = [];
+  if (targetEntriesMap.size === 0 && defaultEntriesMap.size === 0) {
+    return entries;
+  }
+
+  const result: T[] = [...flatEntries];
   const allSlugs = new Set([...defaultEntriesMap.keys(), ...targetEntriesMap.keys()]);
   for (const slug of allSlugs) {
     const entry = targetEntriesMap.get(slug) || defaultEntriesMap.get(slug);

@@ -4,7 +4,7 @@
       "id": "inti",
       "name": "Inti",
       "displayName": "INTI",
-      "description": "Coordinator, Secretary, and Treasurer managing internal lab operations.",
+      "description": "Koordinator, Sekretaris, dan Bendahara yang mengelola operasional internal lab.",
       "registrationLabel": "Inti",
       "registrationValue": "core",
       "aliases": [
@@ -18,7 +18,7 @@
       "id": "riset",
       "name": "Riset",
       "displayName": "RISET",
-      "description": "Focuses on infrastructure research and scientific publications.",
+      "description": "Berfokus pada riset infrastruktur digital dan publikasi ilmiah.",
       "registrationLabel": "Riset",
       "registrationValue": "Riset",
       "aliases": [
@@ -32,7 +32,7 @@
       "id": "pku",
       "name": "Pelatihan & Kuliah Umum",
       "displayName": "PELATIHAN & KULIAH UMUM",
-      "description": "Primary Capacity Development through training and public lectures events.",
+      "description": "Pengembangan kapasitas utama melalui pelatihan teknis dan seminar/kuliah umum.",
       "registrationLabel": "Pelatihan & Kuliah Umum (PKU)",
       "registrationValue": "PKU",
       "aliases": [
@@ -46,7 +46,7 @@
       "id": "competition",
       "name": "Competition & Event",
       "displayName": "COMPETITION & EVENT",
-      "description": "Prepares competitive teams for national IT & networking championships.",
+      "description": "Mempersiapkan tim kompetitif untuk kejuaraan IT & jaringan skala nasional.",
       "registrationLabel": "Competition & Event",
       "registrationValue": "competition",
       "aliases": [
@@ -60,7 +60,7 @@
       "id": "media",
       "name": "Media & Humas",
       "displayName": "MEDIA & HUMAS",
-      "description": "Media and Humas for branding and information dissemination.",
+      "description": "Pengelolaan media dan hubungan masyarakat untuk branding dan penyebaran informasi.",
       "registrationLabel": "Media & Humas (MEDHUM)",
       "registrationValue": "Medhum",
       "aliases": [
@@ -75,7 +75,7 @@
       "id": "care",
       "name": "Community Action & Empowerment",
       "displayName": "COMMUNITY ACTION & EMPOWERMENT",
-      "description": "Community Service conducted periodically to help society.",
+      "description": "Pengabdian masyarakat yang dilakukan secara berkala untuk membantu publik.",
       "registrationLabel": "Community Action & Empowerment (CARE)",
       "registrationValue": "care",
       "aliases": [

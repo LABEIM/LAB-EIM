@@ -1,40 +1,40 @@
 {
-  "title": "About EIM Research Lab",
-  "description": "Getting closer to the Enterprise Infrastructure Management research laboratory at Telkom University.",
-  "overviewTitle": "Enterprise Infrastructure Management Laboratory",
-  "overviewContent1": "EIM (Enterprise Infrastructure Management) is a research laboratory under the S1 Information Systems Study Program, Enterprise and Industrial System Expertise Group, Faculty of Industrial Engineering, Telkom University.",
-  "overviewContent2": "We focus on understanding and developing digital infrastructure such as computer networks, operating systems, cloud computing, and cybersecurity. We conduct research, in-depth studies, and large-scale technology training to prepare future digital talents.",
+  "title": "Tentang EIM Research Lab",
+  "description": "Mengenal lebih dekat laboratorium riset Enterprise Infrastructure Management Telkom University.",
+  "overviewTitle": "Laboratorium Enterprise Infrastructure Management",
+  "overviewContent1": "EIM (Enterprise Infrastructure Management) adalah laboratorium riset di bawah naungan Program Studi S1 Sistem Informasi, Kelompok Keahlian Rekayasa Industri dan Sistem Informasi, Fakultas Rekayasa Industri, Telkom University.",
+  "overviewContent2": "Kami berfokus pada pemahaman dan pengembangan infrastruktur digital seperti jaringan komputer, sistem operasi, cloud computing, dan keamanan siber. Kami melakukan riset, studi mendalam, dan pelatihan teknologi skala besar untuk mempersiapkan talenta digital masa depan.",
   "overviewImage": "/image/eim/EIM.avif",
-  "vision": "To establish the Enterprise Infrastructure Management (EIM) Research Laboratory as a hub for optimal assistant potential development, creating a leading, collaborative, and competitive research laboratory capable of producing innovative and professional human resources ready to contribute academically and industrially.",
+  "vision": "Mewujudkan Laboratorium Riset Enterprise Infrastructure Management (EIM) sebagai wadah pengembangan potensi asisten yang optimal, menciptakan laboratorium riset yang unggul, kolaboratif, dan berdaya saing tinggi yang mampu menghasilkan SDM yang inovatif dan profesional serta siap berkontribusi secara akademis maupun industri.",
   "missions": [
-    "Strengthening faith and devotion as a moral foundation in every activity of the EIM Research Laboratory.",
-    "Fostering smart, professional, and responsible assistants in academics, research, and community service.",
-    "Creating a conducive and productive laboratory environment by upholding EIM Work values.",
-    "Developing sustainable work programs through innovation and quality improvement.",
-    "Strengthening communication and collaboration with all stakeholders."
+    "Penguatan iman dan takwa sebagai landasan moral dalam setiap kegiatan Laboratorium Riset EIM.",
+    "Membina asisten yang cerdas, profesional, dan bertanggung jawab dalam bidang akademis, riset, serta pengabdian masyarakat.",
+    "Menciptakan lingkungan laboratorium yang kondusif dan produktif dengan menjunjung tinggi nilai EIM Work.",
+    "Mengembangkan program kerja yang berkelanjutan melalui inovasi dan peningkatan kualitas secara bertahap.",
+    "Mempererat komunikasi dan kolaborasi dengan seluruh pemangku kepentingan."
   ],
   "values": [
     {
-      "title": "Reliability",
-      "description": "Building trust through a strong and consistent identity in every research and service.",
+      "title": "Reliability (Keandalan)",
+      "description": "Membangun kepercayaan melalui identitas yang kuat dan konsisten dalam setiap riset dan layanan.",
       "icon": "fa-handshake",
       "isAccent": true
     },
     {
-      "title": "Commitment",
-      "description": "Demonstrating high dedication to creating technology innovations that impact society.",
+      "title": "Commitment (Komitmen)",
+      "description": "Menunjukkan dedikasi tinggi untuk menciptakan inovasi teknologi yang berdampak bagi masyarakat.",
       "icon": "fa-award",
       "isAccent": false
     },
     {
-      "title": "Availability",
-      "description": "Always present as a platform for collaboration, exchanging ideas, and developing digital science.",
+      "title": "Availability (Ketersediaan)",
+      "description": "Selalu hadir sebagai wadah kolaborasi, bertukar ide, dan pengembangan ilmu digital.",
       "icon": "fa-people-arrows",
       "isAccent": true
     },
     {
-      "title": "Quality",
-      "description": "Delivering research work, practical solutions, and training with the highest quality standards.",
+      "title": "Quality (Kualitas)",
+      "description": "Menghasilkan karya riset, solusi praktis, dan pelatihan dengan standar kualitas tertinggi.",
       "icon": "fa-circle-check",
       "isAccent": false
     }

@@ -378,19 +378,24 @@ const allDataFiles = import.meta.glob<Record<string, any>>('../data/**/*.json', 
  * Helper to load localized JSON data from src/data/{filename}.json or src/data/{id,en}/{filename}.json
  */
 export function getLocalizedJsonData<T extends Record<string, any>>(filename: string, locale: Locale = DEFAULT_LOCALE): T {
+  const idKey = `../data/id/${filename}.json`;
+  const enKey = `../data/en/${filename}.json`;
   const rootKey = `../data/${filename}.json`;
+
+  const hasLocalized = Boolean(allDataFiles[idKey] || allDataFiles[enKey]);
+  if (hasLocalized) {
+    const idData: T = (allDataFiles[idKey] as T) || (allDataFiles[rootKey] as T) || ({} as T);
+    if (locale === 'id') return idData;
+
+    const enData: Partial<T> = (allDataFiles[enKey] as Partial<T>) || {};
+    return mergeWithFallback(idData, enData);
+  }
+
   if (allDataFiles[rootKey]) {
     return allDataFiles[rootKey] as T;
   }
 
-  const idKey = `../data/id/${filename}.json`;
-  const enKey = `../data/en/${filename}.json`;
-
-  const idData: T = (allDataFiles[idKey] as T) || ({} as T);
-  if (locale === 'id') return idData;
-
-  const enData: Partial<T> = (allDataFiles[enKey] as Partial<T>) || {};
-  return mergeWithFallback(idData, enData);
+  return {} as T;
 }
 
 /**

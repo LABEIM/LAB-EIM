@@ -15,7 +15,7 @@ const aboutData = await getLocalizedJsonData<any>('about', locale);
 const values: ValueItem[] = aboutData.values || [];
 ---
 
-<Layout title={`${aboutData.title || 'About Us'} - EIM Research Lab`}>
+<Layout title={`${aboutData.title || t('nav.about', locale)} - EIM Research Lab`}>
   <section class="page-header">
     <div class="container">
       <div class="page-header-content">

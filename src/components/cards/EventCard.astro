@@ -43,7 +43,7 @@ const detailUrl = getLocalizedPath(`/event/${cleanSlug}`, locale);
     <i class={`fa-solid ${event.data.icon || 'fa-calendar'}`}></i>
   </div>
   <h3>{event.data.title}</h3>
-  <p class="event-cat">{locale === 'en' ? 'Category:' : 'Kategori:'} {event.data.category}</p>
+  <p class="event-cat">Kategori: {event.data.category}</p>
   <p>{event.data.description}</p>
 
   <a href={detailUrl} class="btn btn-secondary btn-read-more">

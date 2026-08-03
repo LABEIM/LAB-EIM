@@ -34,25 +34,25 @@ const { initialStage, upcomingCfg, docLimits, studentYears, piTemplateUrl } = As
   <div class="registration-timer reg-timer-mb" id="upcoming-timer">
     <div class="timer-block">
       <div id="u-timer-days" class="reg-timer-days">0</div>
-      <div class="reg-timer-label">{locale === 'en' ? 'Days' : 'Hari'}</div>
+      <div class="reg-timer-label">Hari</div>
     </div>
     <div class="timer-block">
       <div id="u-timer-hours" class="reg-timer-val">0</div>
-      <div class="reg-timer-label">{locale === 'en' ? 'Hours' : 'Jam'}</div>
+      <div class="reg-timer-label">Jam</div>
     </div>
     <div class="timer-block">
       <div id="u-timer-minutes" class="reg-timer-val">0</div>
-      <div class="reg-timer-label">{locale === 'en' ? 'Minutes' : 'Menit'}</div>
+      <div class="reg-timer-label">Menit</div>
     </div>
     <div class="timer-block">
       <div id="u-timer-seconds" class="reg-timer-val-red">0</div>
-      <div class="reg-timer-label">{locale === 'en' ? 'Seconds' : 'Detik'}</div>
+      <div class="reg-timer-label">Detik</div>
     </div>
   </div>
 
   <div class="checklist-box">
     <h3 class="checklist-title">
-      <i class="fa-solid fa-list-check reg-icon-mr-sm"></i> {locale === 'en' ? 'Document Checklist & Requirements' : 'Daftar Berkas & Persyaratan'}
+      <i class="fa-solid fa-list-check reg-icon-mr-sm"></i> Daftar Berkas & Persyaratan
     </h3>
     <p class="reg-checklist-notice">{upcomingCfg.prepNotice}</p>
     <ul class="checklist-list">
@@ -84,7 +84,7 @@ const { initialStage, upcomingCfg, docLimits, studentYears, piTemplateUrl } = As
       </li>
       <li>
         <i class="fa-solid fa-user-graduate reg-checklist-icon"></i>
-        <span><strong>{locale === 'en' ? 'Eligible Student Years:' : 'Angkatan Mahasiswa:'}</strong> {studentYears.join(", ")}</span>
+        <span><strong>Angkatan Mahasiswa:</strong> {studentYears.join(", ")}</span>
       </li>
     </ul>
   </div>

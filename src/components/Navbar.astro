@@ -60,33 +60,6 @@ const enPath = getLocalizedPath(pathname, 'en');
       ))}
     </ul>
 
-    {/* Language Switcher Pill */}
-    <div class="lang-switcher" id="lang-switcher">
-      <span class="lang-globe-icon" aria-hidden="true" title="Language / Bahasa">
-        <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-          <circle cx="12" cy="12" r="10"/>
-          <path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/>
-          <path d="M2 12h20"/>
-        </svg>
-      </span>
-      <a
-        href={idPath}
-        data-lang="id"
-        class={`lang-btn ${locale === 'id' ? 'active' : ''}`}
-        title="Bahasa Indonesia"
-      >
-        ID
-      </a>
-      <a
-        href={enPath}
-        data-lang="en"
-        class={`lang-btn ${locale === 'en' ? 'active' : ''}`}
-        title="English"
-      >
-        EN
-      </a>
-    </div>
-
     <div class="nav-toggle" id="nav-toggle">
       <span></span>
       <span></span>
@@ -98,19 +71,4 @@ const enPath = getLocalizedPath(pathname, 'en');
 <script>
   import { initNavbar } from '../scripts/components/navbar';
   initNavbar();
-
-  // Handle language persistence on click
-  document.addEventListener('DOMContentLoaded', () => {
-    const langBtns = document.querySelectorAll('.lang-btn');
-    langBtns.forEach((btn) => {
-      btn.addEventListener('click', () => {
-        const lang = btn.getAttribute('data-lang');
-        if (lang) {
-          try {
-            localStorage.setItem('eim_preferred_lang', lang);
-          } catch (err) {}
-        }
-      });
-    });
-  });
 </script>

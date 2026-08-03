@@ -1,35 +1,23 @@
-export type Locale = 'id' | 'en';
+export type Locale = 'id';
 
 export const DEFAULT_LOCALE: Locale = 'id';
-export const LOCALES: Locale[] = ['id', 'en'];
+export const LOCALES: Locale[] = ['id'];
 
 /**
- * Determine locale from URL object or pathname string
+ * Determine locale from URL object or pathname string (always 'id')
  */
-export function getLocaleFromUrl(url: URL | string): Locale {
-  const pathname = typeof url === 'string' ? url : url.pathname;
-  const parts = pathname.split('/').filter(Boolean);
-  if (parts.length > 0 && parts[0] === 'en') {
-    return 'en';
-  }
+export function getLocaleFromUrl(_url?: URL | string): Locale {
   return DEFAULT_LOCALE;
 }
 
 /**
- * Helper to build localized URL paths
+ * Helper to build URL paths (ensures clean non-prefixed paths)
  */
-export function getLocalizedPath(path: string, locale: Locale): string {
-  // Normalize path to start with '/'
+export function getLocalizedPath(path: string, _locale?: string): string {
   const normalized = path.startsWith('/') ? path : `/${path}`;
-
-  // Strip existing locale prefix if any
   let cleanPath = normalized;
   if (cleanPath === '/en' || cleanPath.startsWith('/en/')) {
     cleanPath = cleanPath.slice(3) || '/';
-  }
-
-  if (locale === 'en') {
-    return cleanPath === '/' ? '/en' : `/en${cleanPath}`;
   }
   return cleanPath;
 }

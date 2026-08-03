@@ -21,25 +21,13 @@ const {
 ---
 
 <!DOCTYPE html>
-<html lang={locale} data-scroll-behavior="smooth">
+<html lang="id" data-scroll-behavior="smooth">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{title}</title>
     <meta name="description" content={description} />
     <meta name="keywords" content={keywords} />
-    
-    <script is:inline>
-      (function() {
-        try {
-          const savedLang = localStorage.getItem('eim_preferred_lang');
-          const pathname = window.location.pathname;
-          if (savedLang === 'en' && (pathname === '/' || pathname === '')) {
-            window.location.replace('/en');
-          }
-        } catch (e) {}
-      })();
-    </script>
 
     {/* Dynamic favicon type helper */}
     {(() => {

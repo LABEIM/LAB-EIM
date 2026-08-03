@@ -19,10 +19,8 @@ interface Props {
 const locale = getLocaleFromUrl(Astro.url);
 
 const {
-  title = locale === 'en' ? "Need Help or Have Questions?" : "Butuh Bantuan atau Memiliki Pertanyaan?",
-  subtitle = locale === 'en'
-    ? "Reach out directly to our recruitment contact persons for any inquiries during the recruitment process."
-    : "Hubungi langsung narahubung rekrutmen kami untuk pertanyaan apapun selama proses rekrutmen.",
+  title = "Butuh Bantuan atau Memiliki Pertanyaan?",
+  subtitle = "Hubungi langsung narahubung rekrutmen kami untuk pertanyaan apapun selama proses rekrutmen.",
   contactPersons = [],
   compact = false
 } = Astro.props;
@@ -92,7 +90,7 @@ const platformConfig: Record<string, { label: string; iconClass: string; color: 
                 rel="noopener noreferrer"
                 class="cp-action-btn"
               >
-                <span>{locale === 'en' ? `Contact via ${platInfo.label}` : `Hubungi via ${platInfo.label}`}</span>
+                <span>{`Hubungi via ${platInfo.label}`}</span>
                 <i class="fa-solid fa-arrow-up-right-from-square"></i>
               </a>
             )}

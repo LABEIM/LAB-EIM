@@ -40,9 +40,7 @@ const divisions = parseDivisions(divisionsData);
           <span class="banner-member-count" id="banner-count">{initialMembers.length} {t('struct.members', locale)}</span>
         </div>
         <p class="banner-description" id="banner-desc">
-          {locale === 'en'
-            ? 'Meet our dedicated laboratory assistants working across research, networking, public relations, competition, and community service.'
-            : 'Mengenal asisten laboratorium kami yang berdedikasi dalam bidang riset, jaringan, media & humas, kompetisi, dan pengabdian masyarakat.'}
+          Mengenal asisten laboratorium kami yang berdedikasi dalam bidang riset, jaringan, media & humas, kompetisi, dan pengabdian masyarakat.
         </p>
       </div>
 
@@ -51,8 +49,8 @@ const divisions = parseDivisions(divisionsData);
         <div class="empty-state-icon">
           <i class="fa-solid fa-users-slash"></i>
         </div>
-        <h4>{locale === 'en' ? 'No Members Found' : 'Anggota Tidak Ditemukan'}</h4>
-        <p>{locale === 'en' ? 'There are currently no staff entries assigned to this division.' : 'Belum ada anggota yang terdaftar di divisi ini.'}</p>
+        <h4>Anggota Tidak Ditemukan</h4>
+        <p>Belum ada anggota yang terdaftar di divisi ini.</p>
       </div>
 
       <div class="member-grid" id="member-grid">

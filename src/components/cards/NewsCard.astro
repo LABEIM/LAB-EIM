@@ -18,7 +18,7 @@ const coverImg = (news.data.image && news.data.image.length > 0)
 const cleanSlug = getCleanSlug(news.id);
 const detailUrl = getLocalizedPath(`/news/${cleanSlug}`, locale);
 
-const formattedDate = new Date(news.data.news_date).toLocaleDateString(locale === 'en' ? 'en-US' : 'id-ID', {
+const formattedDate = new Date(news.data.news_date).toLocaleDateString('id-ID', {
   year: 'numeric',
   month: 'long',
   day: 'numeric'
@@ -46,7 +46,7 @@ const formattedDate = new Date(news.data.news_date).toLocaleDateString(locale ==
 
       <div class="news-footer">
         <span class="news-author">
-          <i class="fa-solid fa-pen-nib"></i> {locale === 'en' ? 'By:' : 'Oleh:'} {news.data.author}
+          <i class="fa-solid fa-pen-nib"></i> Oleh: {news.data.author}
         </span>
       </div>
     </div>

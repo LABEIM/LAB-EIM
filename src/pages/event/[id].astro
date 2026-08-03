@@ -61,7 +61,7 @@ const statusLabel = isCompleted ? t('badge.completed', locale) : (isOngoing ? t(
           {/* Description */}
           <div>
             <h3 class="section-subheading">
-              <i class="fa-solid fa-circle-info"></i> {locale === 'en' ? 'Event Description' : 'Deskripsi Kegiatan'}
+              <i class="fa-solid fa-circle-info"></i> Deskripsi Kegiatan
             </h3>
             <p class="section-body-text">
               {event.data.description}
@@ -100,7 +100,7 @@ const statusLabel = isCompleted ? t('badge.completed', locale) : (isOngoing ? t(
           {images.length > 0 && (
             <div>
               <h3 class="section-subheading">
-                <i class="fa-solid fa-image"></i> {locale === 'en' ? 'Documentation' : 'Dokumentasi'}
+                <i class="fa-solid fa-image"></i> Dokumentasi
               </h3>
               <div class="doc-images-grid">
                 {images.map((img, idx) => (
@@ -117,7 +117,7 @@ const statusLabel = isCompleted ? t('badge.completed', locale) : (isOngoing ? t(
         {/* Right Column (Sidebar) */}
         <div class="glass-panel sidebar-card">
           <h3 class="sidebar-title">
-            {locale === 'en' ? 'Key Information' : 'Informasi Utama'}
+            Informasi Utama
           </h3>
           
           <div class="sidebar-info-group">
@@ -149,7 +149,7 @@ const statusLabel = isCompleted ? t('badge.completed', locale) : (isOngoing ? t(
                 <i class="fa-solid fa-tag"></i>
               </div>
               <div>
-                <div class="info-label">{locale === 'en' ? 'Category' : 'Kategori'}</div>
+                <div class="info-label">Kategori</div>
                 <div class="info-val">{event.data.category || "-"}</div>
               </div>
             </div>

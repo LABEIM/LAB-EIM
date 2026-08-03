@@ -181,7 +181,7 @@
     line-height: 1.5;
 }
 
-/* Structure Page Filter Navbar (Dark Glassmorphism) */
+/* Structure Page Filter Navbar (Solid White Design) */
 .filter-container {
     display: flex;
     justify-content: center;
@@ -190,12 +190,12 @@
     gap: 8px;
     margin-bottom: 30px;
     padding: 8px 12px;
-    background: rgba(18, 24, 38, 0.75);
+    background: #ffffff;
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
     border-radius: 50px;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.6);
+    border: 1px solid rgba(0, 0, 0, 0.08);
     max-width: fit-content;
     margin-left: auto;
     margin-right: auto;
@@ -205,7 +205,7 @@
     padding: 10px 22px;
     font-size: 0.9rem;
     font-weight: 600;
-    color: rgba(255, 255, 255, 0.7);
+    color: #475569;
     background: transparent;
     border: 1px solid transparent;
     border-radius: 30px;
@@ -215,30 +215,30 @@
 }
 
 .filter-tab:hover {
-    color: #ffffff;
-    background: rgba(255, 255, 255, 0.1);
-    border-color: rgba(255, 255, 255, 0.2);
+    color: #0284c7;
+    background: rgba(14, 165, 233, 0.1);
+    border-color: rgba(14, 165, 233, 0.2);
 }
 
 .filter-tab.active {
-    background: linear-gradient(135deg, rgba(var(--accent-cyan-rgb), 0.35) 0%, rgba(13, 20, 36, 0.95) 100%);
+    background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%);
     color: #ffffff;
-    border: 1px solid var(--accent-cyan);
-    box-shadow: 0 4px 20px rgba(var(--accent-cyan-rgb), 0.4);
+    border: 1px solid #0284c7;
+    box-shadow: 0 4px 14px rgba(14, 165, 233, 0.4);
     transform: translateY(-1px);
 }
 
 /* Division Summary Banner Panel */
 .division-banner-panel {
-    background: rgba(18, 24, 38, 0.85);
+    background: #ffffff;
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
-    border: 1px solid rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(0, 0, 0, 0.08);
     border-radius: 20px;
     padding: 24px 30px;
     margin-bottom: 40px;
     transition: all 0.3s ease;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
 }
 
 .banner-header-row {
@@ -259,7 +259,7 @@
 .banner-title-group h2 {
     font-size: 1.5rem;
     font-weight: 700;
-    color: #ffffff;
+    color: #0f172a;
     margin: 0;
 }
 
@@ -270,24 +270,24 @@
     font-weight: 700;
     letter-spacing: 0.5px;
     text-transform: uppercase;
-    background: rgba(var(--accent-cyan-rgb), 0.2);
-    color: var(--accent-cyan);
-    border: 1px solid rgba(var(--accent-cyan-rgb), 0.4);
+    background: #e0f2fe;
+    color: #0284c7;
+    border: 1px solid rgba(14, 165, 233, 0.3);
 }
 
 .banner-member-count {
     font-size: 0.85rem;
     font-weight: 600;
-    color: rgba(255, 255, 255, 0.85);
-    background: rgba(255, 255, 255, 0.08);
+    color: #334155;
+    background: #f1f5f9;
     padding: 6px 16px;
     border-radius: 20px;
-    border: 1px solid rgba(255, 255, 255, 0.12);
+    border: 1px solid #e2e8f0;
 }
 
 .banner-description {
     font-size: 0.95rem;
-    color: rgba(255, 255, 255, 0.75);
+    color: #475569;
     line-height: 1.6;
     margin: 0;
 }
@@ -296,29 +296,30 @@
 .empty-state-panel {
     text-align: center;
     padding: 60px 20px;
-    background: rgba(18, 24, 38, 0.75);
+    background: #ffffff;
     border-radius: 20px;
-    border: 1px dashed rgba(255, 255, 255, 0.2);
+    border: 1px dashed rgba(0, 0, 0, 0.15);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
     margin: 40px 0;
 }
 
 .empty-state-icon {
     font-size: 3rem;
-    color: var(--accent-cyan);
+    color: #0284c7;
     margin-bottom: 16px;
-    opacity: 0.8;
+    opacity: 0.85;
 }
 
 .empty-state-panel h4 {
     font-size: 1.25rem;
     font-weight: 600;
-    color: #ffffff;
+    color: #0f172a;
     margin-bottom: 8px;
 }
 
 .empty-state-panel p {
     font-size: 0.9rem;
-    color: rgba(255, 255, 255, 0.75);
+    color: #475569;
     max-width: 450px;
     margin: 0 auto;
 }

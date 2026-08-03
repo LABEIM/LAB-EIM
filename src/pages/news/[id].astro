@@ -20,7 +20,7 @@ const { item } = Astro.props;
 const images = item.data.image || [];
 const { Content } = await render(item);
 
-const formattedDate = new Date(item.data.news_date).toLocaleDateString(locale === 'en' ? 'en-US' : 'id-ID', {
+const formattedDate = new Date(item.data.news_date).toLocaleDateString('id-ID', {
   day: 'numeric',
   month: 'long',
   year: 'numeric'
@@ -74,7 +74,7 @@ const formattedDate = new Date(item.data.news_date).toLocaleDateString(locale ==
         {/* Right Column (Sidebar) */}
         <div class="glass-panel sidebar-card">
           <h3 class="sidebar-title">
-            {locale === 'en' ? 'News Info' : 'Informasi Berita'}
+            Informasi Berita
           </h3>
           
           <div class="sidebar-info-group">
@@ -95,7 +95,7 @@ const formattedDate = new Date(item.data.news_date).toLocaleDateString(locale ==
                 <i class="fa-solid fa-tag"></i>
               </div>
               <div>
-                <div class="info-label">{locale === 'en' ? 'Category' : 'Kategori'}</div>
+                <div class="info-label">Kategori</div>
                 <div class="info-val">{item.data.category || "-"}</div>
               </div>
             </div>

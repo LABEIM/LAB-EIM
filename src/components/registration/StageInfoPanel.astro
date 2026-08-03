@@ -28,7 +28,7 @@ const {
   
   {estimatedAnnouncementDate && (
     <div class="badge-date-info">
-      <i class="fa-solid fa-calendar-day reg-icon-mr"></i> {locale === 'en' ? 'Estimated Announcement:' : 'Perkiraan Pengumuman:'} <strong>{estimatedAnnouncementDate}</strong>
+      <i class="fa-solid fa-calendar-day reg-icon-mr"></i> Perkiraan Pengumuman: <strong>{estimatedAnnouncementDate}</strong>
     </div>
   )}
 
@@ -36,12 +36,12 @@ const {
     <div class="reg-btn-group">
       {scheduleInfo && (
         <div class="badge-date-info">
-          <i class="fa-solid fa-calendar-days reg-icon-mr"></i> {locale === 'en' ? 'Schedule:' : 'Jadwal:'} <strong>{scheduleInfo}</strong>
+          <i class="fa-solid fa-calendar-days reg-icon-mr"></i> Jadwal: <strong>{scheduleInfo}</strong>
         </div>
       )}
       {locationInfo && (
         <div class="badge-location-info">
-          <i class={`fa-solid ${locationIconClass} reg-checklist-icon`}></i> {locale === 'en' ? 'Location:' : 'Lokasi:'} <strong>{locationInfo}</strong>
+          <i class={`fa-solid ${locationIconClass} reg-checklist-icon`}></i> Lokasi: <strong>{locationInfo}</strong>
         </div>
       )}
     </div>

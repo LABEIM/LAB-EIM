@@ -67,10 +67,10 @@ const piAccept = formatAccept(piExts);
   <div id="draft-restored-banner" class="draft-restored-banner is-hidden">
     <div class="draft-restored-content">
       <i class="fa-solid fa-floppy-disk draft-icon"></i>
-      <span>{locale === 'en' ? 'Form draft restored from local storage (' : 'Draf formulir dipulihkan dari penyimpanan lokal ('}<strong id="draft-restored-time"></strong>).</span>
+      <span>Draf formulir dipulihkan dari penyimpanan lokal (<strong id="draft-restored-time"></strong>).</span>
     </div>
     <button type="button" id="banner-clear-draft-btn" class="btn-clear-draft-link">
-      <i class="fa-solid fa-trash-can"></i> {locale === 'en' ? 'Clear Draft' : 'Hapus Draf'}
+      <i class="fa-solid fa-trash-can"></i> Hapus Draf
     </button>
   </div>
 
@@ -82,19 +82,19 @@ const piAccept = formatAccept(piExts);
   <div class="registration-timer reg-timer-mb" id="registration-timer">
     <div class="timer-block">
       <div id="timer-days" class="reg-timer-val">0</div>
-      <div class="reg-timer-label">{locale === 'en' ? 'Days' : 'Hari'}</div>
+      <div class="reg-timer-label">Hari</div>
     </div>
     <div class="timer-block">
       <div id="timer-hours" class="reg-timer-val">0</div>
-      <div class="reg-timer-label">{locale === 'en' ? 'Hours' : 'Jam'}</div>
+      <div class="reg-timer-label">Jam</div>
     </div>
     <div class="timer-block">
       <div id="timer-minutes" class="reg-timer-val">0</div>
-      <div class="reg-timer-label">{locale === 'en' ? 'Minutes' : 'Menit'}</div>
+      <div class="reg-timer-label">Menit</div>
     </div>
     <div class="timer-block">
       <div id="timer-seconds" class="reg-timer-val-red">0</div>
-      <div class="reg-timer-label">{locale === 'en' ? 'Seconds' : 'Detik'}</div>
+      <div class="reg-timer-label">Detik</div>
     </div>
   </div>
 
@@ -105,7 +105,7 @@ const piAccept = formatAccept(piExts);
 
     {/* Section 1: Data Diri */}
     <div class="form-section-heading">
-      <i class="fa-solid fa-user reg-icon-mr-sm"></i> 1. {locale === 'en' ? 'Personal Identity' : 'Data Diri & Akademik'}
+      <i class="fa-solid fa-user reg-icon-mr-sm"></i> 1. Data Diri & Akademik
     </div>
 
     <div class="form-group">
@@ -142,7 +142,7 @@ const piAccept = formatAccept(piExts);
 
     {/* Section 2: Pemilihan Divisi */}
     <div class="form-section-heading">
-      <i class="fa-solid fa-layer-group reg-icon-mr-sm"></i> 2. {locale === 'en' ? 'Division Selection & Motivation' : 'Pemilihan Divisi & Alasan'}
+      <i class="fa-solid fa-layer-group reg-icon-mr-sm"></i> 2. Pemilihan Divisi & Alasan
     </div>
 
     <div class="form-row">
@@ -167,18 +167,18 @@ const piAccept = formatAccept(piExts);
     </div>
 
     <div class="form-group reg-form-row-mt">
-      <label for="alasan_divisi_1">{locale === 'en' ? 'Reason for Choosing Division 1' : 'Alasan Memilih Divisi 1'} <span class="required-asterisk">*</span></label>
+      <label for="alasan_divisi_1">Alasan Memilih Divisi 1 <span class="required-asterisk">*</span></label>
       <textarea class="form-control" id="alasan_divisi_1" rows="3" placeholder={t('form.reasonPlaceholder', locale)} required></textarea>
       <small class="reg-small-desc word-count-info" id="alasan_divisi_1_counter" data-min-words={minReasonWords}>
-        {locale === 'en' ? 'Word count:' : 'Jumlah kata:'} <span class="word-count-val" id="alasan_divisi_1_count">0</span> / {minReasonWords} {locale === 'en' ? 'words minimum' : 'kata minimal'}
+        Jumlah kata: <span class="word-count-val" id="alasan_divisi_1_count">0</span> / {minReasonWords} kata minimal
       </small>
     </div>
 
     <div class="form-group reg-form-row-mt">
-      <label for="alasan_divisi_2">{locale === 'en' ? 'Reason for Choosing Division 2' : 'Alasan Memilih Divisi 2'} <span class="required-asterisk">*</span></label>
+      <label for="alasan_divisi_2">Alasan Memilih Divisi 2 <span class="required-asterisk">*</span></label>
       <textarea class="form-control" id="alasan_divisi_2" rows="3" placeholder={t('form.reasonPlaceholder', locale)} required></textarea>
       <small class="reg-small-desc word-count-info" id="alasan_divisi_2_counter" data-min-words={minReasonWords}>
-        {locale === 'en' ? 'Word count:' : 'Jumlah kata:'} <span class="word-count-val" id="alasan_divisi_2_count">0</span> / {minReasonWords} {locale === 'en' ? 'words minimum' : 'kata minimal'}
+        Jumlah kata: <span class="word-count-val" id="alasan_divisi_2_count">0</span> / {minReasonWords} kata minimal
       </small>
     </div>
 
@@ -189,24 +189,22 @@ const piAccept = formatAccept(piExts);
       </label>
       <input type="url" class="form-control" id="portofolio_medhum" placeholder={t('form.portfolioPlaceholder', locale)} />
       <small class="reg-small-desc">
-        {locale === 'en'
-          ? 'Since you selected a division that requires a portfolio, please provide a public URL link to your design, work, or project portfolio.'
-          : 'Karena Anda memilih divisi yang membutuhkan portofolio, sertakan tautan URL publik portofolio desain/karya Anda.'}
+        Karena Anda memilih divisi yang membutuhkan portofolio, sertakan tautan URL publik portofolio desain/karya Anda.
       </small>
     </div>
 
     <div class="form-group reg-form-row-mt">
-      <label for="bersedia_dipindah">{locale === 'en' ? 'Willing to be moved to another division if needed?' : 'Bersedia dipindahkan ke divisi lain jika diperlukan?'} <span class="required-asterisk">*</span></label>
+      <label for="bersedia_dipindah">Bersedia dipindahkan ke divisi lain jika diperlukan? <span class="required-asterisk">*</span></label>
       <select class="form-control" id="bersedia_dipindah" required>
-        <option value="" disabled selected>{locale === 'en' ? 'Select Preference' : '-- Pilih Jawaban --'}</option>
-        <option value="Ya">{locale === 'en' ? 'Ya (Yes)' : 'Ya'}</option>
-        <option value="Tidak">{locale === 'en' ? 'Tidak (No)' : 'Tidak'}</option>
+        <option value="" disabled selected>-- Pilih Jawaban --</option>
+        <option value="Ya">Ya</option>
+        <option value="Tidak">Tidak</option>
       </select>
     </div>
 
     {/* Section 3: Berkas Pendaftaran */}
     <div class="form-section-heading">
-      <i class="fa-solid fa-folder-open reg-icon-mr-sm"></i> 3. {locale === 'en' ? 'Document Uploads (PDF / Images)' : 'Unggah Berkas Pendaftaran'}
+      <i class="fa-solid fa-folder-open reg-icon-mr-sm"></i> 3. Unggah Berkas Pendaftaran
     </div>
 
     <div class="form-row">
@@ -245,7 +243,7 @@ const piAccept = formatAccept(piExts);
       <small class="reg-small-desc">
         {t('form.uploadNotice', locale)}
         {piTemplateUrl && (
-          <span> {locale === 'en' ? "Don't have the template yet?" : "Belum punya template?"} <a href={piTemplateUrl} target="_blank" rel="noopener noreferrer" class="reg-pi-sublink">{t('form.downloadPiTemplate', locale)}</a>.</span>
+          <span> Belum punya template? <a href={piTemplateUrl} target="_blank" rel="noopener noreferrer" class="reg-pi-sublink">{t('form.downloadPiTemplate', locale)}</a>.</span>
         )}
       </small>
     </div>
@@ -273,17 +271,15 @@ const piAccept = formatAccept(piExts);
         <div class="progress-modal-icon-wrapper reg-modal-icon-red">
           <i class="fa-solid fa-triangle-exclamation"></i>
         </div>
-        <h3 class="progress-modal-title">{locale === 'en' ? 'Clear Registration Draft?' : 'Hapus Draf Pendaftaran?'}</h3>
+        <h3 class="progress-modal-title">Hapus Draf Pendaftaran?</h3>
         <p class="progress-modal-subtitle reg-modal-subtitle-mt">
-          {locale === 'en'
-            ? 'All saved text responses in this form will be permanently deleted and reset.'
-            : 'Seluruh isian data yang telah tersimpan di browser ini akan dihapus dan direset.'}
+          Seluruh isian data yang telah tersimpan di browser ini akan dihapus dan direset.
         </p>
       </div>
 
       <div class="reg-btn-group reg-form-row-mt">
-        <button type="button" id="cancel-clear-draft-btn" class="btn btn-modal-cancel">{locale === 'en' ? 'Cancel' : 'Batal'}</button>
-        <button type="button" id="confirm-clear-draft-btn" class="btn btn-modal-confirm">{locale === 'en' ? 'Clear Draft' : 'Hapus Draf'}</button>
+        <button type="button" id="cancel-clear-draft-btn" class="btn btn-modal-cancel">Batal</button>
+        <button type="button" id="confirm-clear-draft-btn" class="btn btn-modal-confirm">Hapus Draf</button>
       </div>
     </div>
   </div>
@@ -297,16 +293,14 @@ const piAccept = formatAccept(piExts);
         </div>
         <h3 id="progress-modal-title" class="progress-modal-title">{t('form.submitting', locale)}</h3>
         <p id="progress-modal-subtitle" class="progress-modal-subtitle">
-          {locale === 'en'
-            ? 'Please stay on this page while we process your documents and transmit data.'
-            : 'Mohon tetap di halaman ini selagi sistem memproses dokumen dan mengirim data Anda.'}
+          Mohon tetap di halaman ini selagi sistem memproses dokumen dan mengirim data Anda.
         </p>
       </div>
 
       <!-- Progress Bar & Percentage -->
       <div class="progress-bar-container">
         <div class="progress-bar-header">
-          <span id="submit-progress-detail" class="progress-detail-text">{locale === 'en' ? 'Validating form data...' : 'Memvalidasi data formulir...'}</span>
+          <span id="submit-progress-detail" class="progress-detail-text">Memvalidasi data formulir...</span>
           <span id="submit-progress-percent" class="progress-percent-badge">0%</span>
         </div>
         <div class="progress-bar-track">
@@ -318,19 +312,19 @@ const piAccept = formatAccept(piExts);
       <div class="progress-stages-list">
         <div id="stage-item-1" class="progress-stage-item stage-pending">
           <span id="stage-1-icon" class="stage-icon"><i class="fa-regular fa-circle"></i></span>
-          <span id="stage-1-text" class="stage-label">1. {locale === 'en' ? 'Document & Field Validation' : 'Validasi Berkas & Data'}</span>
+          <span id="stage-1-text" class="stage-label">1. Validasi Berkas & Data</span>
         </div>
         <div id="stage-item-2" class="progress-stage-item stage-pending">
           <span id="stage-2-icon" class="stage-icon"><i class="fa-regular fa-circle"></i></span>
-          <span id="stage-2-text" class="stage-label">2. {locale === 'en' ? 'Encoding Documents (Base64)' : 'Mengodekan Dokumen'}</span>
+          <span id="stage-2-text" class="stage-label">2. Mengodekan Dokumen</span>
         </div>
         <div id="stage-item-3" class="progress-stage-item stage-pending">
           <span id="stage-3-icon" class="stage-icon"><i class="fa-regular fa-circle"></i></span>
-          <span id="stage-3-text" class="stage-label">3. {locale === 'en' ? 'Transmitting Data Payload' : 'Mengirimkan Berkas'}</span>
+          <span id="stage-3-text" class="stage-label">3. Mengirimkan Berkas</span>
         </div>
         <div id="stage-item-4" class="progress-stage-item stage-pending">
           <span id="stage-4-icon" class="stage-icon"><i class="fa-regular fa-circle"></i></span>
-          <span id="stage-4-text" class="stage-label">4. {locale === 'en' ? 'Server Processing & Confirmation' : 'Konfirmasi Server'}</span>
+          <span id="stage-4-text" class="stage-label">4. Konfirmasi Server</span>
         </div>
       </div>
 

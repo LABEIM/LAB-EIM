@@ -261,137 +261,84 @@ export default config({
     }),
   },
   singletons: {
-    divisions_id: singleton({
-      label: 'Divisions (Indonesian)',
-      path: 'src/data/id/divisions',
+    site: singleton({
+      label: 'Site Metadata',
+      path: 'src/data/site',
       format: { data: 'json' },
       schema: {
-        list: fields.array(
-          fields.object({
-            id: fields.text({ label: 'ID' }),
-            name: fields.text({ label: 'Name' }),
-            displayName: fields.text({ label: 'Display Name' }),
-            description: fields.text({ label: 'Description', multiline: true }),
-            registrationLabel: fields.text({ label: 'Registration Label' }),
-            registrationValue: fields.text({ label: 'Registration Value' }),
-            aliases: fields.array(fields.text({ label: 'Alias' }), {
-              label: 'Aliases',
-              itemLabel: props => props.value,
-            }),
-            borderColor: fields.text({ label: 'Border Color' }),
-            roleColor: fields.text({ label: 'Role Color' }),
-          }),
-          {
-            label: 'Divisions List (ID)',
-            itemLabel: props => props.fields.name.value || 'Division',
-          }
-        ),
-      },
-    }),
-    divisions_en: singleton({
-      label: 'Divisions (English)',
-      path: 'src/data/en/divisions',
-      format: { data: 'json' },
-      schema: {
-        list: fields.array(
-          fields.object({
-            id: fields.text({ label: 'ID' }),
-            name: fields.text({ label: 'Name' }),
-            displayName: fields.text({ label: 'Display Name' }),
-            description: fields.text({ label: 'Description', multiline: true }),
-            registrationLabel: fields.text({ label: 'Registration Label' }),
-            registrationValue: fields.text({ label: 'Registration Value' }),
-            aliases: fields.array(fields.text({ label: 'Alias' }), {
-              label: 'Aliases',
-              itemLabel: props => props.value,
-            }),
-            borderColor: fields.text({ label: 'Border Color' }),
-            roleColor: fields.text({ label: 'Role Color' }),
-          }),
-          {
-            label: 'Divisions List (EN)',
-            itemLabel: props => props.fields.name.value || 'Division',
-          }
-        ),
-      },
-    }),
-    members_id: singleton({
-      label: 'Members (Indonesian)',
-      path: 'src/data/id/members',
-      format: { data: 'json' },
-      schema: {
-        list: fields.array(
-          fields.object({
-            id: fields.number({ label: 'ID' }),
-            name: fields.text({ label: 'Name' }),
-            role: fields.text({ label: 'Role' }),
-            division: fields.text({ label: 'Division' }),
-            image: fields.text({ label: 'Image Path' }),
-            scale: fields.text({ label: 'Scale Factor' }),
-            position: fields.text({ label: 'Position' }),
-          }),
-          {
-            label: 'Members List (ID)',
-            itemLabel: props => props.fields.name.value || 'Member',
-          }
-        ),
-      },
-    }),
-    members_en: singleton({
-      label: 'Members (English)',
-      path: 'src/data/en/members',
-      format: { data: 'json' },
-      schema: {
-        list: fields.array(
-          fields.object({
-            id: fields.number({ label: 'ID' }),
-            name: fields.text({ label: 'Name' }),
-            role: fields.text({ label: 'Role' }),
-            division: fields.text({ label: 'Division' }),
-            image: fields.text({ label: 'Image Path' }),
-            scale: fields.text({ label: 'Scale Factor' }),
-            position: fields.text({ label: 'Position' }),
-          }),
-          {
-            label: 'Members List (EN)',
-            itemLabel: props => props.fields.name.value || 'Member',
-          }
-        ),
-      },
-    }),
-    about_id: singleton({
-      label: 'About Page (Indonesian)',
-      path: 'src/data/id/about',
-      format: { data: 'json' },
-      schema: {
-        title: fields.text({ label: 'Title' }),
-        description: fields.text({ label: 'Hero Description' }),
-        overviewTitle: fields.text({ label: 'Overview Title' }),
-        overviewContent1: fields.text({ label: 'Overview Paragraph 1', multiline: true }),
-        overviewContent2: fields.text({ label: 'Overview Paragraph 2', multiline: true }),
-        overviewImage: fields.text({ label: 'Overview Image' }),
-        vision: fields.text({ label: 'Vision Statement', multiline: true }),
-        missions: fields.array(fields.text({ label: 'Mission Point' }), {
-          label: 'Missions',
-          itemLabel: props => props.value,
+        name: fields.text({ label: 'Short Name' }),
+        subName: fields.text({ label: 'Sub Name' }),
+        fullName: fields.text({ label: 'Full Name' }),
+        defaultTitle: fields.text({ label: 'Default Page Title' }),
+        defaultDescription: fields.text({ label: 'Default Meta Description', multiline: true }),
+        defaultKeywords: fields.text({ label: 'Default Meta Keywords', multiline: true }),
+        favicon: fields.text({ label: 'Favicon Path' }),
+        logo: fields.text({ label: 'Logo Image Path' }),
+        contact: fields.object({
+          location: fields.text({ label: 'Location' }),
+          university: fields.text({ label: 'University' }),
+          email: fields.text({ label: 'Email Address' }),
         }),
-        values: fields.array(
+        socials: fields.object({
+          instagram: fields.text({ label: 'Instagram URL' }),
+          linkedin: fields.text({ label: 'LinkedIn URL' }),
+          line: fields.text({ label: 'LINE Official URL' }),
+          youtube: fields.text({ label: 'YouTube Channel URL' }),
+        }),
+      },
+    }),
+    divisions: singleton({
+      label: 'Divisions',
+      path: 'src/data/divisions',
+      format: { data: 'json' },
+      schema: {
+        list: fields.array(
           fields.object({
-            title: fields.text({ label: 'Title' }),
+            id: fields.text({ label: 'ID' }),
+            name: fields.text({ label: 'Name' }),
+            displayName: fields.text({ label: 'Display Name' }),
             description: fields.text({ label: 'Description', multiline: true }),
-            icon: fields.text({ label: 'FontAwesome Icon' }),
-            isAccent: fields.checkbox({ label: 'Red Accent Icon' }),
+            registrationLabel: fields.text({ label: 'Registration Label' }),
+            registrationValue: fields.text({ label: 'Registration Value' }),
+            aliases: fields.array(fields.text({ label: 'Alias' }), {
+              label: 'Aliases',
+              itemLabel: props => props.value,
+            }),
+            borderColor: fields.text({ label: 'Border Color' }),
+            roleColor: fields.text({ label: 'Role Color' }),
           }),
           {
-            label: 'Core Values',
-            itemLabel: props => props.fields.title.value || 'Value',
+            label: 'Divisions List',
+            itemLabel: props => props.fields.name.value || 'Division',
           }
         ),
       },
     }),
-    about_en: singleton({
-      label: 'About Page (English)',
-      path: 'src/data/en/about',
+    members: singleton({
+      label: 'Members',
+      path: 'src/data/members',
+      format: { data: 'json' },
+      schema: {
+        list: fields.array(
+          fields.object({
+            id: fields.number({ label: 'ID' }),
+            name: fields.text({ label: 'Name' }),
+            role: fields.text({ label: 'Role' }),
+            division: fields.text({ label: 'Division' }),
+            image: fields.text({ label: 'Image Path' }),
+            scale: fields.text({ label: 'Scale Factor' }),
+            position: fields.text({ label: 'Position' }),
+          }),
+          {
+            label: 'Members List',
+            itemLabel: props => props.fields.name.value || 'Member',
+          }
+        ),
+      },
+    }),
+    about: singleton({
+      label: 'About Page',
+      path: 'src/data/about',
       format: { data: 'json' },
       schema: {
         title: fields.text({ label: 'Title' }),

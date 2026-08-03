@@ -10,11 +10,11 @@ const locale = getLocaleFromUrl(Astro.url);
 const { activeStepIndex, markCurrentAsCompleted = false } = Astro.props;
 
 const steps = [
-  { label: locale === 'en' ? "1. Registration" : "1. Pendaftaran Berkas", index: 1 },
-  { label: locale === 'en' ? "2. Document Screening" : "2. Seleksi Berkas", index: 2 },
-  { label: locale === 'en' ? "3. Technical Test" : "3. Tes Teknikal", index: 3 },
-  { label: locale === 'en' ? "4. Interview Phase" : "4. Tahap Wawancara", index: 4 },
-  { label: locale === 'en' ? "5. Final Announcement" : "5. Pengumuman Kelulusan", index: 5 },
+  { label: "1. Pendaftaran Berkas", index: 1 },
+  { label: "2. Seleksi Berkas", index: 2 },
+  { label: "3. Tes Teknikal", index: 3 },
+  { label: "4. Tahap Wawancara", index: 4 },
+  { label: "5. Pengumuman Kelulusan", index: 5 },
 ];
 ---
 

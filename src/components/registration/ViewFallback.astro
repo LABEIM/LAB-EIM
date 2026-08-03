@@ -35,7 +35,7 @@ const { initialStage, fallbackCfg, piTemplateUrl } = Astro.props;
           rel="noopener noreferrer" 
           class="btn btn-secondary reg-btn-action-padded"
         >
-          <i class="fa-solid fa-file-pdf reg-btn-icon-abs reg-btn-icon-red"></i>{locale === 'en' ? 'Download Integrity Pact Template' : 'Download Template Pakta Integritas'}
+          <i class="fa-solid fa-file-pdf reg-btn-icon-abs reg-btn-icon-red"></i>Download Template Pakta Integritas
         </a>
       )}
 
@@ -45,13 +45,13 @@ const { initialStage, fallbackCfg, piTemplateUrl } = Astro.props;
         rel="noopener noreferrer" 
         class="btn btn-primary reg-btn-action-padded"
       >
-        <i class="fa-solid fa-arrow-up-right-from-square reg-btn-icon-abs"></i>{fallbackCfg.buttonText || (locale === 'en' ? 'Open External Backup Form' : 'Buka Formulir Pendaftaran Cadangan')}
+        <i class="fa-solid fa-arrow-up-right-from-square reg-btn-icon-abs"></i>{fallbackCfg.buttonText || 'Buka Formulir Pendaftaran Cadangan'}
       </a>
     </div>
 
     <div class="reg-border-top-box">
       <a href={getLocalizedPath('/', locale)} class="btn btn-secondary reg-btn-padded">
-        <i class="fa-solid fa-house reg-btn-icon-abs"></i>{locale === 'en' ? 'Back to Home' : 'Kembali ke Beranda'}
+        <i class="fa-solid fa-house reg-btn-icon-abs"></i>Kembali ke Beranda
       </a>
     </div>
   </div>

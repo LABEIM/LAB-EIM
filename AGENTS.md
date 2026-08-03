@@ -5,10 +5,9 @@
 ### 1.1 Startup Workflow
 Before writing any code, the agent must complete these steps:
 1. Confirm the working directory using `pwd`.
-2. Read `claude-progress.md` for the latest verified state and the next required step (if present).
-3. Check content collection files in `src/content/events/` and `src/content/news/` to understand current configuration states.
-4. Review recent repository history by checking the last 5 commits using `git log --oneline -5`.
-5. Run the required build verification using `npm run build` or `npx astro check` before starting new work. If baseline verification fails, fix that issue first before stacking new feature work on top of a broken starting state.
+2. Check content collection files in `src/content/events/` and `src/content/news/` to understand current configuration states.
+3. Review recent repository history by checking the last 5 commits using `git log --oneline -5`.
+4. Run the required build verification using `npm run build` or `npx astro check` before starting new work. If baseline verification fails, fix that issue first before stacking new feature work on top of a broken starting state.
 
 ### 1.2 Working Rules
 1. Focus entirely on one feature or task at a time.
@@ -18,9 +17,11 @@ Before writing any code, the agent must complete these steps:
 5. Prefer durable repository artifacts over transient chat summaries.
 
 ### 1.3 Required Artifacts
-1. `src/content.config.ts`: Defines Zod schemas and loaders for static content collections.
-2. `src/content/`: Contains Markdown entries representing news articles and laboratory events.
-3. `package.json`: Main repository dependencies, runtime constraints, and script targets.
+1. `src/content.config.ts`: Defines Zod schemas and loaders for static content collections (`news`, `events`).
+2. `keystatic.config.ts`: Defines Keystatic CMS schemas, singletons, and content collections.
+3. `astro.config.mjs`: Central Astro configuration including i18n routing, Vercel adapter, integrations, and Vite plugins.
+4. `src/content/`: Contains Markdown entries representing news articles and laboratory events.
+5. `package.json`: Main repository dependencies, runtime constraints, and script targets.
 
 ### 1.4 Definition Of Done
 A feature achieves the status of completed only when all of the following conditions are met:
@@ -40,23 +41,35 @@ Before ending a session, the agent must perform these tasks:
 ## Section 2: Tech Stack & Architecture
 
 ### 2.1 Framework & Core Stack
-- **Framework**: Astro v7.0.9 (configured as a static site generator / SSG).
-- **Styling**: Tailwind CSS v4.0.0 (integrated using `@tailwindcss/vite` plugin).
-- **Languages**: TypeScript, HTML5, Vanilla CSS.
-- **Runtime & Build Tools**: Node.js v22, npm.
+- **Framework**: Astro v7.1.1 (configured as a static site generator / SSG with `@astrojs/vercel` adapter).
+- **CMS**: Keystatic CMS (`@keystatic/astro` v5.0.0, `@keystatic/core` v0.5.2).
+- **UI Components**: React v19.0.0 (`@astrojs/react` v6.0.0) combined with Astro components.
+- **Styling**: Tailwind CSS v4.3.3 (integrated via `@tailwindcss/vite` plugin) combined with a modular Vanilla CSS architecture (`src/styles/`).
+- **Internationalization (i18n)**: Native Astro i18n (`locales: ['id', 'en']`, `defaultLocale: 'id'`) with helper utilities (`src/utils/i18n.ts`).
+- **Typography**: `@fontsource/inter`, `@fontsource/montserrat`, `@fontsource/poppins`.
+- **Languages**: TypeScript (v6.0.3), HTML5, Vanilla CSS.
+- **Runtime & Build Tools**: Node.js `>=22.12.0`, npm.
 
 ### 2.2 Directory Layout & Component Roles
-- `src/content.config.ts`: Collection loaders and configuration schema.
-- `src/content/`: Directory containing static Markdown files.
+- `astro.config.mjs`: Astro configuration for i18n, Vercel analytics, integrations, and Vite alias (`@/`).
+- `keystatic.config.ts`: Keystatic CMS singletons (e.g. recruitment settings) and collections.
+- `src/content.config.ts`: Collection loaders and Zod schemas (`news`, `events`).
+- `src/content/`: Static Markdown and MDX content files (`news/`, `events/`).
+- `src/styles/`: Modular design system and stylesheets:
+  - `variables.css`, `base.css`, `globals.css`, `mobile.css`, `icons.css`.
+  - `src/styles/components/`: Dedicated stylesheets for UI components (`navbar.css`, `footer.css`, `event-card.css`, `news-card.css`, `contact-person.css`).
+  - `src/styles/pages/`: Page-specific stylesheets.
 - `src/layouts/Layout.astro`: Base wrapper page layout.
-- `src/components/`: Reusable Astro components (Navbar, Footer).
-- `src/pages/`: File-system routing directories.
+- `src/components/`: Reusable Astro and React UI components (Navbar, Footer, etc.).
+- `src/pages/`: File-system routing directories, including localized routes and Keystatic admin (`/keystatic`).
+- `src/utils/`: Business logic, i18n helpers, registration logic, and TypeScript interfaces (`i18n.ts`, `registration-config.ts`, `recruitment.ts`, `division-mapper.ts`, `types.ts`, `constants.ts`).
 
 ### 2.3 Role-Based Access Control & Scoping (If Applicable)
-- **Not Applicable**: The EIM Research Lab website is a fully public-facing static application. There are no users, authentication schemas, session tokens, or active database connections.
+- **Not Applicable**: The EIM Research Lab website is a fully public-facing static application. Keystatic CMS operates locally or via GitHub integration without a database backend or authentication schemas.
 
 ### 2.4 Service & Business Logic Layer
-- **Pendaftaran Form**: Posts payload client-side to Google Apps Script.
+- **Pendaftaran Form**: Posts payload client-side to Google Apps Script (`code.gs`).
+- **Recruitment Pipeline**: Configured dynamically via Keystatic CMS singletons (`keystatic.config.ts`) and loaded through `src/utils/registration-config.ts`.
 
 ---
 
@@ -70,7 +83,7 @@ Before ending a session, the agent must perform these tasks:
 1. XSS: Escape dynamic inputs and query params. Utilize Astro's standard HTML escaping.
 
 ### 3.3 Database Status & State Codes (If Applicable)
-- **Not Applicable**: Moved from MySQL database to static markdown collections.
+- **Not Applicable**: Moved from MySQL database to static markdown collections and Keystatic CMS.
 
 ---
 
@@ -79,7 +92,8 @@ Before ending a session, the agent must perform these tasks:
 ### 4.1 Coding Standards & Formatting
 1. Indentation: 2 spaces for HTML, CSS, JS, TS, Astro, JSON, and YAML configurations.
 2. Formatting: Enforced using standard Astro framework standards and strict TypeScript compiler settings.
-3. Commit conventions: All commits must follow the Conventional Commits specification.
+3. Modular CSS: Component-specific styles must be placed in `src/styles/components/` (e.g. `src/styles/components/navbar.css`) and imported cleanly into the respective component or layout.
+4. Commit conventions: All commits must follow the Conventional Commits specification.
 
 ### 4.2 Testing & Portability
 1. Verification: 
@@ -88,3 +102,4 @@ Before ending a session, the agent must perform these tasks:
 2. Test Isolation: Since this is a static site without database state modification, assure local web dev environments run on isolated local host ports (default: `http://localhost:4321`).
 
 ### 4.3 Containerization & Ports (If Applicable)
+- **Dev Server**: Standard local host port `http://localhost:4321`.

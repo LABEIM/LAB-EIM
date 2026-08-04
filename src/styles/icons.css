@@ -113,6 +113,7 @@
 .fa-envelope::before { content: "\f0e0"; }
 .fa-instagram::before { content: "\f16d"; }
 .fa-linkedin::before, .fa-linkedin-in::before { content: "\f0e1"; }
+.fa-github::before { content: "\f09b"; }
 .fa-line::before { content: "\f3c0"; }
 .fa-youtube::before { content: "\f167"; }
 .fa-tiktok::before { content: "\e07b"; }

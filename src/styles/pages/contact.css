@@ -149,8 +149,7 @@
 
 .social-icon.instagram { background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888); }
 .social-icon.linkedin { background: #0077b5; }
-.social-icon.line { background: #00c300; }
-.social-icon.youtube { background: #ff0000; }
+.social-icon.github { background: #24292e; }
 
 .social-info {
     display: flex;

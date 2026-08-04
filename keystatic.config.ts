@@ -283,8 +283,7 @@ export default config({
         socials: fields.object({
           instagram: fields.text({ label: 'Instagram URL' }),
           linkedin: fields.text({ label: 'LinkedIn URL' }),
-          line: fields.text({ label: 'LINE Official URL' }),
-          youtube: fields.text({ label: 'YouTube Channel URL' }),
+          github: fields.text({ label: 'GitHub Organization URL' }),
         }),
       },
     }),

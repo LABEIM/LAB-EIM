@@ -39,6 +39,7 @@ export const uiTranslations: Record<Locale, Record<string, string>> = {
 
     // Common Buttons & Badges
     'btn.learnMore': 'Pelajari Selengkapnya',
+    'btn.details': 'Lihat Detail',
     'btn.register': 'Daftar Sekarang',
     'btn.back': 'Kembali',
     'btn.search': 'Cari',

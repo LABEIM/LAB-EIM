@@ -1,0 +1,365 @@
+/* --- EVENT POSTER POPUP MODAL STYLES --- */
+
+.event-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: rgba(7, 26, 30, 0.75);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.25rem;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.event-modal-overlay.is-active {
+  opacity: 1;
+  visibility: visible;
+}
+
+.event-modal-container {
+  position: relative;
+  width: 100%;
+  max-width: 680px;
+  max-height: 90vh;
+  background: rgba(255, 255, 255, 0.96);
+  border: 1px solid rgba(17, 180, 189, 0.25);
+  border-radius: var(--border-radius-lg, 24px);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.35), 0 0 30px rgba(17, 180, 189, 0.2);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  transform: scale(0.92) translateY(20px);
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.event-modal-overlay.is-active .event-modal-container {
+  transform: scale(1) translateY(0);
+}
+
+/* Modal Header */
+.event-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid var(--border-color, rgba(14, 85, 95, 0.08));
+  background: rgba(248, 249, 250, 0.8);
+}
+
+.event-modal-header-info {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.event-modal-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  background: linear-gradient(135deg, var(--brand-dark-azure) 0%, var(--brand-cyan) 100%);
+  color: #ffffff;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 0.25rem 0.65rem;
+  border-radius: 20px;
+}
+
+.event-modal-title {
+  font-family: var(--font-heading);
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 320px;
+}
+
+.event-modal-close-btn {
+  background: transparent;
+  border: none;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-muted);
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.event-modal-close-btn:hover {
+  background: rgba(14, 85, 95, 0.1);
+  color: var(--brand-dark-azure);
+}
+
+/* Slide viewport & items */
+.event-modal-carousel-viewport {
+  position: relative;
+  width: 100%;
+  flex: 1;
+  min-height: 320px;
+  max-height: 60vh;
+  overflow: hidden;
+  background: #091b1e;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.event-modal-slides {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  transition: transform 0.35s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.event-modal-slide {
+  min-width: 100%;
+  height: 100%;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  user-select: none;
+}
+
+/* Poster Image Container & Zoom Pan */
+.poster-zoom-wrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  cursor: grab;
+}
+
+.poster-zoom-wrapper.is-dragging {
+  cursor: grabbing;
+}
+
+.poster-img {
+  max-width: 100%;
+  max-height: 55vh;
+  object-fit: contain;
+  transform-origin: center center;
+  transition: transform 0.1s ease-out;
+  pointer-events: auto;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+}
+
+/* Zoom Toolbar Controls */
+.poster-zoom-controls {
+  position: absolute;
+  bottom: 1rem;
+  right: 1rem;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  background: rgba(7, 26, 30, 0.82);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  padding: 0.3rem 0.5rem;
+  border-radius: 30px;
+  border: 1px solid rgba(17, 180, 189, 0.3);
+}
+
+.zoom-btn {
+  background: transparent;
+  border: none;
+  color: #ffffff;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.15s ease;
+}
+
+.zoom-btn:hover {
+  background: rgba(17, 180, 189, 0.25);
+  color: var(--brand-cyan);
+  transform: scale(1.08);
+}
+
+.zoom-reset-btn {
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 0 0.5rem;
+  width: auto;
+  border-radius: 12px;
+}
+
+/* Carousel Navigation Arrows */
+.carousel-nav-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 10;
+  background: rgba(7, 26, 30, 0.75);
+  border: 1px solid rgba(17, 180, 189, 0.3);
+  color: #ffffff;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  cursor: pointer;
+  backdrop-filter: blur(4px);
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.carousel-nav-btn:hover {
+  background: var(--brand-cyan);
+  color: #ffffff;
+}
+
+.carousel-prev {
+  left: 0.75rem;
+}
+
+.carousel-next {
+  right: 0.75rem;
+}
+
+/* Carousel Indicator Dots */
+.carousel-dots {
+  position: absolute;
+  bottom: 1rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: rgba(7, 26, 30, 0.75);
+  backdrop-filter: blur(6px);
+  padding: 0.35rem 0.75rem;
+  border-radius: 20px;
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.4);
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.dot.is-active {
+  background: var(--brand-cyan);
+  transform: scale(1.3);
+}
+
+/* Modal Footer */
+.event-modal-footer {
+  padding: 1rem 1.25rem;
+  background: #ffffff;
+  border-top: 1px solid var(--border-color, rgba(14, 85, 95, 0.08));
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.event-modal-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.event-modal-meta-date {
+  font-size: 0.82rem;
+  color: var(--brand-dark-azure);
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.event-modal-meta-desc {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 320px;
+}
+
+.event-modal-cta-btn {
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.65rem 1.25rem;
+  border-radius: var(--border-radius-sm, 8px);
+  font-family: var(--font-heading);
+  font-size: 0.88rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+/* Responsive adjustments */
+@media (max-width: 640px) {
+  .event-modal-container {
+    max-width: 100%;
+    max-height: 92vh;
+  }
+
+  .event-modal-header {
+    padding: 0.85rem 1rem;
+  }
+
+  .event-modal-title {
+    max-width: 180px;
+    font-size: 0.9rem;
+  }
+
+  .event-modal-footer {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.75rem;
+  }
+
+  .event-modal-meta-desc {
+    max-width: 100%;
+    white-space: normal;
+  }
+
+  .event-modal-cta-btn {
+    justify-content: center;
+    width: 100%;
+  }
+
+  .poster-zoom-controls {
+    bottom: 0.5rem;
+    right: 0.5rem;
+  }
+
+  .carousel-dots {
+    bottom: 0.5rem;
+  }
+}

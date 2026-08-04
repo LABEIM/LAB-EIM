@@ -1,0 +1,369 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { getCleanSlug, getLocalizedPath, t, type Locale } from '../../utils/i18n';
+
+interface Props {
+  upcomingEvents: CollectionEntry<'events'>[];
+  locale?: Locale;
+}
+
+const { upcomingEvents = [], locale = 'id' } = Astro.props;
+
+if (!upcomingEvents || upcomingEvents.length === 0) {
+  // Render nothing if there are no upcoming events
+}
+
+const preparedEvents = upcomingEvents.map((event) => {
+  const slug = getCleanSlug(event.id);
+  const posterUrl =
+    event.data.poster ||
+    (event.data.image && event.data.image.length > 0 ? event.data.image[0] : '');
+  const detailUrl = getLocalizedPath(`/event/${slug}`, locale);
+
+  return {
+    id: event.id,
+    title: event.data.title,
+    category: event.data.category,
+    eventDate: event.data.event_date || '',
+    description: event.data.description || '',
+    posterUrl,
+    detailUrl,
+  };
+}).filter(item => Boolean(item.posterUrl));
+---
+
+{preparedEvents.length > 0 && (
+  <div id="eventPosterModal" class="event-modal-overlay" aria-hidden="true" role="dialog">
+    <div class="event-modal-container">
+      {/* Header */}
+      <div class="event-modal-header">
+        <div class="event-modal-header-info">
+          <span class="event-modal-badge">
+            <i class="fa-solid fa-calendar-star"></i> {t('badge.upcoming', locale) || 'Upcoming Event'}
+          </span>
+          <h3 id="modalEventTitle" class="event-modal-title">
+            {preparedEvents[0].title}
+          </h3>
+        </div>
+        <button id="closePosterModal" class="event-modal-close-btn" aria-label="Close modal">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      {/* Viewport & Poster Slides */}
+      <div class="event-modal-carousel-viewport">
+        <div id="modalSlidesContainer" class="event-modal-slides">
+          {preparedEvents.map((event, index) => (
+            <div class="event-modal-slide" data-slide-index={index}>
+              <div class="poster-zoom-wrapper">
+                <img
+                  src={event.posterUrl}
+                  alt={`Poster ${event.title}`}
+                  class="poster-img"
+                  draggable="false"
+                  data-detail-url={event.detailUrl}
+                />
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Interactive Zoom Toolbar Controls */}
+        <div class="poster-zoom-controls">
+          <button id="zoomOutBtn" class="zoom-btn" title="Zoom Out (-)">
+            <i class="fa-solid fa-minus"></i>
+          </button>
+          <button id="zoomResetBtn" class="zoom-btn zoom-reset-btn" title="Reset Zoom">
+            100%
+          </button>
+          <button id="zoomInBtn" class="zoom-btn" title="Zoom In (+)">
+            <i class="fa-solid fa-plus"></i>
+          </button>
+        </div>
+
+        {/* Carousel Prev/Next Controls (If multiple) */}
+        {preparedEvents.length > 1 && (
+          <>
+            <button id="carouselPrevBtn" class="carousel-nav-btn carousel-prev" aria-label="Previous event">
+              <i class="fa-solid fa-chevron-left"></i>
+            </button>
+            <button id="carouselNextBtn" class="carousel-nav-btn carousel-next" aria-label="Next event">
+              <i class="fa-solid fa-chevron-right"></i>
+            </button>
+            
+            <div id="carouselDots" class="carousel-dots">
+              {preparedEvents.map((_, idx) => (
+                <button
+                  class={`dot ${idx === 0 ? 'is-active' : ''}`}
+                  data-dot-index={idx}
+                  aria-label={`Go to slide ${idx + 1}`}
+                />
+              ))}
+            </div>
+          </>
+        )}
+      </div>
+
+      {/* Footer Meta & Direct Link Action */}
+      <div class="event-modal-footer">
+        <div class="event-modal-meta">
+          <div id="modalEventDate" class="event-modal-meta-date">
+            <i class="fa-regular fa-calendar-days"></i>
+            <span>{preparedEvents[0].eventDate ? preparedEvents[0].eventDate : '-'}</span>
+          </div>
+          <div id="modalEventDesc" class="event-modal-meta-desc">
+            {preparedEvents[0].description}
+          </div>
+        </div>
+
+        <a
+          id="modalCtaBtn"
+          href={preparedEvents[0].detailUrl}
+          class="btn btn-primary event-modal-cta-btn"
+        >
+          {t('btn.details', locale)} <i class="fa-solid fa-arrow-right"></i>
+        </a>
+      </div>
+    </div>
+  </div>
+)}
+
+<script>
+  // Event details payload injected from SSR
+  const eventDataElement = document.getElementById('eventPosterModal');
+
+  if (eventDataElement) {
+    const modal = eventDataElement as HTMLElement;
+    const closeBtn = document.getElementById('closePosterModal');
+    const slidesContainer = document.getElementById('modalSlidesContainer');
+    const prevBtn = document.getElementById('carouselPrevBtn');
+    const nextBtn = document.getElementById('carouselNextBtn');
+    const dotsContainer = document.getElementById('carouselDots');
+    const ctaBtn = document.getElementById('modalCtaBtn') as HTMLAnchorElement;
+
+    const zoomInBtn = document.getElementById('zoomInBtn');
+    const zoomOutBtn = document.getElementById('zoomOutBtn');
+    const zoomResetBtn = document.getElementById('zoomResetBtn');
+
+    const slides = Array.from(document.querySelectorAll('.event-modal-slide'));
+    const totalSlides = slides.length;
+    let currentIndex = 0;
+
+    // Zoom & Pan state
+    let currentScale = 1;
+    let currentX = 0;
+    let currentY = 0;
+    let isDragging = false;
+    let startX = 0;
+    let startY = 0;
+
+    // Collect metadata per slide
+    const images = Array.from(document.querySelectorAll('.poster-img')) as HTMLImageElement[];
+    
+    // Auto-display modal once per session
+    const SESSION_KEY = 'eim_upcoming_event_poster_dismissed';
+    const isDismissed = sessionStorage.getItem(SESSION_KEY);
+
+    if (!isDismissed) {
+      setTimeout(() => {
+        modal.classList.add('is-active');
+        modal.setAttribute('aria-hidden', 'false');
+      }, 400);
+    }
+
+    function closeModal() {
+      modal.classList.remove('is-active');
+      modal.setAttribute('aria-hidden', 'true');
+      sessionStorage.setItem(SESSION_KEY, 'true');
+      resetZoom();
+    }
+
+    if (closeBtn) {
+      closeBtn.addEventListener('click', closeModal);
+    }
+
+    // Backdrop click close
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) {
+        closeModal();
+      }
+    });
+
+    // Escape key close
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && modal.classList.contains('is-active')) {
+        closeModal();
+      }
+    });
+
+    // Carousel Navigation
+    function updateSlide(index: number) {
+      if (totalSlides <= 1) return;
+      currentIndex = (index + totalSlides) % totalSlides;
+      
+      if (slidesContainer) {
+        slidesContainer.style.transform = `translateX(-${currentIndex * 100}%)`;
+      }
+
+      resetZoom();
+
+      // Update active dot
+      if (dotsContainer) {
+        const dots = Array.from(dotsContainer.querySelectorAll('.dot'));
+        dots.forEach((dot, i) => {
+          if (i === currentIndex) dot.classList.add('is-active');
+          else dot.classList.remove('is-active');
+        });
+      }
+
+      // Update metadata in footer/header if target image exists
+      const targetImg = images[currentIndex];
+      if (targetImg) {
+        const detailUrl = targetImg.dataset.detailUrl || '#';
+        
+        if (ctaBtn) ctaBtn.href = detailUrl;
+      }
+    }
+
+    if (prevBtn) {
+      prevBtn.addEventListener('click', () => updateSlide(currentIndex - 1));
+    }
+
+    if (nextBtn) {
+      nextBtn.addEventListener('click', () => updateSlide(currentIndex + 1));
+    }
+
+    if (dotsContainer) {
+      dotsContainer.addEventListener('click', (e) => {
+        const target = e.target as HTMLElement;
+        if (target && target.classList.contains('dot')) {
+          const dotIdx = parseInt(target.dataset.dotIndex || '0', 10);
+          updateSlide(dotIdx);
+        }
+      });
+    }
+
+    // Zoom Functions
+    function applyTransform() {
+      const activeImg = images[currentIndex];
+      if (!activeImg) return;
+
+      if (currentScale <= 1) {
+        currentScale = 1;
+        currentX = 0;
+        currentY = 0;
+      } else if (currentScale > 3) {
+        currentScale = 3;
+      }
+
+      activeImg.style.transform = `translate(${currentX}px, ${currentY}px) scale(${currentScale})`;
+
+      if (zoomResetBtn) {
+        zoomResetBtn.textContent = `${Math.round(currentScale * 100)}%`;
+      }
+    }
+
+    function resetZoom() {
+      currentScale = 1;
+      currentX = 0;
+      currentY = 0;
+      applyTransform();
+    }
+
+    if (zoomInBtn) {
+      zoomInBtn.addEventListener('click', () => {
+        currentScale = Math.min(3, currentScale + 0.25);
+        applyTransform();
+      });
+    }
+
+    if (zoomOutBtn) {
+      zoomOutBtn.addEventListener('click', () => {
+        currentScale = Math.max(1, currentScale - 0.25);
+        applyTransform();
+      });
+    }
+
+    if (zoomResetBtn) {
+      zoomResetBtn.addEventListener('click', resetZoom);
+    }
+
+    // Click poster image to go to detail page if not dragging
+    let dragThreshold = false;
+
+    images.forEach((img) => {
+      const wrapper = img.closest('.poster-zoom-wrapper') as HTMLElement;
+      
+      if (wrapper) {
+        // Wheel zoom
+        wrapper.addEventListener('wheel', (e) => {
+          e.preventDefault();
+          if (e.deltaY < 0) {
+            currentScale = Math.min(3, currentScale + 0.15);
+          } else {
+            currentScale = Math.max(1, currentScale - 0.15);
+          }
+          applyTransform();
+        }, { passive: false });
+
+        // Mouse Drag / Touch Pan
+        wrapper.addEventListener('mousedown', (e) => {
+          if (currentScale <= 1) return;
+          isDragging = true;
+          dragThreshold = false;
+          wrapper.classList.add('is-dragging');
+          startX = e.clientX - currentX;
+          startY = e.clientY - currentY;
+        });
+
+        window.addEventListener('mousemove', (e) => {
+          if (!isDragging) return;
+          dragThreshold = true;
+          currentX = e.clientX - startX;
+          currentY = e.clientY - startY;
+          applyTransform();
+        });
+
+        window.addEventListener('mouseup', () => {
+          if (isDragging) {
+            isDragging = false;
+            wrapper.classList.remove('is-dragging');
+          }
+        });
+
+        // Touch gestures for mobile
+        wrapper.addEventListener('touchstart', (e) => {
+          if (e.touches.length === 1 && currentScale > 1) {
+            isDragging = true;
+            dragThreshold = false;
+            startX = e.touches[0].clientX - currentX;
+            startY = e.touches[0].clientY - currentY;
+          }
+        }, { passive: true });
+
+        wrapper.addEventListener('touchmove', (e) => {
+          if (isDragging && e.touches.length === 1) {
+            dragThreshold = true;
+            currentX = e.touches[0].clientX - startX;
+            currentY = e.touches[0].clientY - startY;
+            applyTransform();
+          }
+        }, { passive: true });
+
+        wrapper.addEventListener('touchend', () => {
+          isDragging = false;
+        });
+      }
+
+      // Handle image click navigation
+      img.addEventListener('click', () => {
+        if (!dragThreshold) {
+          const detailUrl = img.dataset.detailUrl;
+          if (detailUrl) {
+            window.location.href = detailUrl;
+          }
+        }
+      });
+    });
+  }
+</script>

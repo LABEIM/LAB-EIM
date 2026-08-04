@@ -6,6 +6,7 @@ import { parseDivisions } from '../utils/division-mapper';
 import { STAGE_ACTION_CONFIG, DEFAULT_ACTION_BTN } from '../utils/constants';
 import ResearchFocus from '../components/home/ResearchFocus.astro';
 import NewsCard from '../components/cards/NewsCard.astro';
+import EventPosterModal from '../components/events/EventPosterModal.astro';
 import {
   getLocaleFromUrl,
   getLocalizedJsonData,
@@ -28,12 +29,17 @@ const latestNews = localizedNews
   .sort((a, b) => new Date(b.data.news_date).getTime() - new Date(a.data.news_date).getTime())
   .slice(0, 3);
 
+// Fetch upcoming events for poster popup
+const rawEvents = await getCollection('events');
+const upcomingEvents = rawEvents.filter(event => event.data.status === 'upcoming');
+
 // Calculate active recruitment stage
 const currentStage = getCurrentRecruitmentStage(registrationConfig);
 const actionBtn = STAGE_ACTION_CONFIG[currentStage] || DEFAULT_ACTION_BTN;
 ---
 
 <Layout title={`EIM Research Lab - ${t('home.heroTag', locale)}`}>
+  <EventPosterModal upcomingEvents={upcomingEvents} locale={locale} />
   <header class="hero" id="home">
     <div class="container">
       <div class="hero-grid">

@@ -242,6 +242,7 @@ export default config({
           extension: 'md',
         }),
         link: fields.text({ label: 'Link (Optional)' }),
+        poster: fields.text({ label: 'Poster / Banner Image URL (Optional)' }),
         image: fields.array(fields.text({ label: 'Image URL' }), {
           label: 'Images',
           itemLabel: props => props.value,

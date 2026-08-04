@@ -22,6 +22,7 @@ const eventsCollection = defineCollection({
     event_date: z.string(),
     description: z.string(),
     link: z.string().optional(),
+    poster: z.string().optional(),
     image: z.array(z.string()).optional(),
     icon: z.string().optional(),
     organizer: z.string().optional(),

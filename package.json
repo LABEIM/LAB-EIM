@@ -19,7 +19,7 @@
   },
   "dependencies": {
     "@astrojs/check": "^0.9.9",
-    "@astrojs/react": "^6.0.0",
+    "@astrojs/react": "^6.0.2",
     "@astrojs/vercel": "^11.0.3",
     "@fontsource/inter": "^5.1.0",
     "@fontsource/montserrat": "^5.1.0",

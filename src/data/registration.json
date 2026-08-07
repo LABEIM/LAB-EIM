@@ -1,5 +1,5 @@
 {
-  "status": "open",
+  "status": "auto",
   "upcomingStartDate": "2026-08-01T00:00:00",
   "openDate": "2026-08-13T00:00:00",
   "deadline": "2026-08-20T23:59:59",
@@ -100,17 +100,17 @@
   "contactPersons": [
     {
       "name": "CP Informasi & Seleksi",
-      "role": "Informasi Umum & Seleksi",
+      "role": "Kya",
       "platform": "whatsapp",
-      "contactId": "+62 812-3456-7890",
-      "link": "https://wa.me/6281234567890"
+      "contactId": "082121527003",
+      "link": "https://wa.me/6282121527003"
     },
     {
       "name": "CP Bantuan Teknis",
-      "role": "Kendala Teknis & Berkas",
-      "platform": "line",
-      "contactId": "@eim_techsupport",
-      "link": "https://line.me/ti/p/~eim_techsupport"
+      "role": "Alta",
+      "platform": "whatsapp",
+      "contactId": "081387524339",
+      "link": " https://wa.me/6281387524339"
     }
   ]
 }

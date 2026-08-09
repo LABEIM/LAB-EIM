@@ -150,14 +150,14 @@ jobs:
         if: github.event_name == 'pull_request'
         id: deploy_preview
         run: |
-          DEPLOY_URL=$(vercel deploy dist --yes --token=${{ secrets.VERCEL_TOKEN }})
+          DEPLOY_URL=$(vercel deploy --yes --token=${{ secrets.VERCEL_TOKEN }})
           echo "deploy_url=$DEPLOY_URL" >> $GITHUB_OUTPUT
 
       - name: Deploy static output to Vercel (Production)
         if: github.event_name != 'pull_request'
         id: deploy_production
         run: |
-          DEPLOY_URL=$(vercel deploy dist --prod --yes --token=${{ secrets.VERCEL_TOKEN }})
+          DEPLOY_URL=$(vercel deploy --prod --yes --token=${{ secrets.VERCEL_TOKEN }})
           echo "deploy_url=$DEPLOY_URL" >> $GITHUB_OUTPUT
 
   comment-pr:

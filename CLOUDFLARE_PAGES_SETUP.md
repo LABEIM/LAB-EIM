@@ -86,7 +86,7 @@ In your GitHub repository, navigate to **Settings** > **Secrets and variables** 
 | :--- | :--- | :--- |
 | `CLOUDFLARE_API_TOKEN` | API Token with Cloudflare Pages Edit permission | Created in Step 3B |
 | `CLOUDFLARE_ACCOUNT_ID` | Your Cloudflare Account ID hex string | Found in Step 3A |
-| `CLOUDFLARE_PROJECT_NAME` | Project name in Cloudflare Pages | `website-eim` |
+| `CLOUDFLARE_PROJECT_NAME` | Project name in Cloudflare Pages | `lab-eim` |
 | `VERCEL_TOKEN` | Vercel Personal Access Token | Vercel Account Settings > Tokens |
 | `VERCEL_ORG_ID` | Vercel Organization / Team ID | `.vercel/project.json` or Vercel Team Settings |
 | `VERCEL_PROJECT_ID` | Vercel Project ID | `.vercel/project.json` or Vercel Project Settings |

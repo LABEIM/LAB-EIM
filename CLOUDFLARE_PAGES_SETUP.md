@@ -137,9 +137,8 @@ For Keystatic CMS (`/keystatic`) to function properly when hosted on Cloudflare 
 
 - **Automatic Trigger on Push (`main` branch)**:
   1. `validate`: Cleans cache (`rm -rf .astro dist`), runs `npx astro check` & `npm run build`, uploading static `dist/` artifact.
-  2. `deploy-cloudflare`: Downloads `dist/` and deploys directly to Cloudflare Pages using `npx wrangler pages deploy`.
-  3. `deploy-vercel-backup`: Skipped if Cloudflare deployment succeeds. **Automatically triggers** if Cloudflare Pages deployment fails.
-  4. `lighthouse`: Audits live performance on `https://lab-eim.pages.dev`.
+  2. `deploy-cloudflare` & `deploy-vercel`: Run in parallel, deploying the pre-built `dist/` artifact to **both** Cloudflare Pages and Vercel simultaneously.
+  3. `lighthouse`: Audits live performance on `https://lab-eim.pages.dev`.
 
 - **Manual Trigger (`workflow_dispatch`)**:
   Go to GitHub repository **Actions** tab > **Unified CI/CD Pipeline** > **Run workflow**, and select `deploy_target`:

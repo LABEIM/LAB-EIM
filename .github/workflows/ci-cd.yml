@@ -110,15 +110,10 @@ jobs:
           echo "Captured live deployment URL: $DEPLOY_URL"
           echo "url=$DEPLOY_URL" >> $GITHUB_OUTPUT
 
-  deploy-vercel-backup:
-    name: Deploy to Vercel (Failover Backup)
-    needs: [validate, deploy-cloudflare]
-    if: |
-      always() &&
-      needs.validate.result == 'success' && (
-        needs.deploy-cloudflare.result == 'failure' ||
-        (github.event_name == 'workflow_dispatch' && (inputs.deploy_target == 'backup' || inputs.deploy_target == 'both'))
-      )
+  deploy-vercel:
+    name: Deploy to Vercel (Parallel Target)
+    needs: validate
+    if: github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && (inputs.deploy_target == 'backup' || inputs.deploy_target == 'both'))
     runs-on: ubuntu-latest
     permissions:
       contents: read

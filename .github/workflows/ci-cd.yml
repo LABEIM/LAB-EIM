@@ -62,13 +62,13 @@ jobs:
   deploy-cloudflare:
     name: Deploy to Cloudflare Pages (Primary)
     needs: validate
-    if: github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && (inputs.deploy_target == 'primary' || inputs.deploy_target == 'both'))
+    if: github.event_name == 'push' || github.event_name == 'pull_request' || (github.event_name == 'workflow_dispatch' && (inputs.deploy_target == 'primary' || inputs.deploy_target == 'both'))
     runs-on: ubuntu-latest
     permissions:
       contents: read
       deployments: write
     environment:
-      name: production
+      name: ${{ github.event_name == 'pull_request' && 'preview' || 'production' }}
       url: ${{ steps.deploy_cloudflare.outputs.url }}
     outputs:
       deploy_url: ${{ steps.deploy_cloudflare.outputs.url }}
@@ -94,10 +94,10 @@ jobs:
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
         run: |
           PROJECT_NAME="${{ secrets.CLOUDFLARE_PROJECT_NAME || 'lab-eim' }}"
-          BRANCH_NAME="${{ github.ref_name }}"
+          BRANCH_NAME="${{ github.head_ref || github.ref_name }}"
           
           # Auto-create Pages project shell if it does not exist yet
-          npx wrangler pages project create "$PROJECT_NAME" --production-branch="$BRANCH_NAME" > /dev/null 2>&1 || true
+          npx wrangler pages project create "$PROJECT_NAME" --production-branch="main" > /dev/null 2>&1 || true
 
           # Deploy prebuilt static assets to Cloudflare Pages / Workers
           npx wrangler pages deploy dist --project-name="$PROJECT_NAME" --branch="$BRANCH_NAME" --commit-dirty=true | tee deploy.log
@@ -113,16 +113,17 @@ jobs:
   deploy-vercel:
     name: Deploy to Vercel (Parallel Target)
     needs: validate
-    if: github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && (inputs.deploy_target == 'backup' || inputs.deploy_target == 'both'))
+    if: github.event_name == 'push' || github.event_name == 'pull_request' || (github.event_name == 'workflow_dispatch' && (inputs.deploy_target == 'backup' || inputs.deploy_target == 'both'))
     runs-on: ubuntu-latest
     permissions:
       contents: read
+      pull-requests: write
       deployments: write
     environment:
-      name: backup-production
-      url: ${{ steps.deploy_production.outputs.deploy_url }}
+      name: ${{ github.event_name == 'pull_request' && 'preview' || 'backup-production' }}
+      url: ${{ steps.deploy_preview.outputs.deploy_url || steps.deploy_production.outputs.deploy_url }}
     outputs:
-      deploy_url: ${{ steps.deploy_production.outputs.deploy_url }}
+      deploy_url: ${{ steps.deploy_preview.outputs.deploy_url || steps.deploy_production.outputs.deploy_url }}
     env:
       VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
       VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
@@ -145,11 +146,38 @@ jobs:
       - name: Install Vercel CLI
         run: npm install --global vercel@latest
 
-      - name: Deploy static output to Vercel
+      - name: Deploy static output to Vercel (Preview)
+        if: github.event_name == 'pull_request'
+        id: deploy_preview
+        run: |
+          DEPLOY_URL=$(vercel deploy dist --yes --token=${{ secrets.VERCEL_TOKEN }})
+          echo "deploy_url=$DEPLOY_URL" >> $GITHUB_OUTPUT
+
+      - name: Deploy static output to Vercel (Production)
+        if: github.event_name != 'pull_request'
         id: deploy_production
         run: |
           DEPLOY_URL=$(vercel deploy dist --prod --yes --token=${{ secrets.VERCEL_TOKEN }})
           echo "deploy_url=$DEPLOY_URL" >> $GITHUB_OUTPUT
+
+  comment-pr:
+    name: Post PR Preview Comment
+    needs: [deploy-cloudflare, deploy-vercel]
+    if: github.event_name == 'pull_request' && success()
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+    steps:
+      - name: Comment PR Preview URLs
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          CF_URL: ${{ needs.deploy-cloudflare.outputs.deploy_url }}
+          VERCEL_URL: ${{ needs.deploy-vercel.outputs.deploy_url }}
+        run: |
+          gh pr comment ${{ github.event.pull_request.number }} --body "🚀 **Preview Deployments Ready!**
+
+          - ☁️ **Cloudflare Pages Preview**: $CF_URL
+          - ▲ **Vercel Preview**: $VERCEL_URL"
 
   lighthouse:
     name: Lighthouse Audit

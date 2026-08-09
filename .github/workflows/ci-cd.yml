@@ -79,15 +79,21 @@ jobs:
           name: dist-static-build
           path: dist/
 
-      - name: Deploy to Cloudflare Pages
-        id: deploy_cloudflare
-        uses: cloudflare/pages-action@v1
+      - name: Setup Node
+        uses: actions/setup-node@v4
         with:
-          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          projectName: ${{ secrets.CLOUDFLARE_PROJECT_NAME || 'lab-eim' }}
-          directory: dist
-          branch: ${{ github.ref_name }}
+          node-version: 22
+
+      - name: Deploy to Cloudflare Pages via Wrangler
+        id: deploy_cloudflare
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          DEPLOY_OUTPUT=$(npx wrangler pages deploy dist --project-name="${{ secrets.CLOUDFLARE_PROJECT_NAME || 'lab-eim' }}" --branch="${{ github.ref_name }}")
+          echo "$DEPLOY_OUTPUT"
+          DEPLOY_URL=$(echo "$DEPLOY_OUTPUT" | grep -oE 'https://[^ ]+\.pages\.dev' | head -n 1)
+          echo "url=$DEPLOY_URL" >> $GITHUB_OUTPUT
 
   deploy-vercel-backup:
     name: Deploy to Vercel (Failover Backup)

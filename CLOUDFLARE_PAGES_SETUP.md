@@ -87,6 +87,35 @@ In your GitHub repository, navigate to **Settings** > **Secrets and variables** 
 | `VERCEL_ORG_ID` | Vercel Organization / Team ID | `.vercel/project.json` or Vercel Team Settings |
 | `VERCEL_PROJECT_ID` | Vercel Project ID | `.vercel/project.json` or Vercel Project Settings |
 | `PUBLIC_GOOGLE_SHEET_SCRIPT_URL` | App Script webhook endpoint URL | Form submission endpoint |
+| `PUBLIC_KEYSTATIC_GITHUB_APP_SLUG` | Keystatic GitHub App slug | e.g. `eim-lab-cms` |
+
+---
+
+## 4.1 Keystatic CMS Setup on Cloudflare Pages
+
+For Keystatic CMS (`/keystatic`) to function properly when hosted on Cloudflare Pages, you must configure environment variables, Cloudflare compatibility flags, and update your GitHub App callback URL:
+
+### A. Environment Variables in Cloudflare Pages Dashboard
+1. Go to **Cloudflare Dashboard** > **Workers & Pages** > Select your project (`lab-eim`).
+2. Go to **Settings** > **Environment variables**.
+3. Add the following variables under both **Production** and **Preview**:
+   - `KEYSTATIC_GITHUB_CLIENT_ID`: GitHub App Client ID (e.g. `Iv1.xxxxxxxxxxxx`)
+   - `KEYSTATIC_GITHUB_CLIENT_SECRET`: GitHub App Client Secret
+   - `PUBLIC_KEYSTATIC_GITHUB_APP_SLUG`: GitHub App Slug (e.g. `eim-lab-cms`)
+   - `KEYSTATIC_SECRET`: Random secret string used for session cookie signing
+
+### B. Enable Functions Compatibility Flag (`nodejs_compat`)
+1. In Cloudflare Pages project (`lab-eim`), go to **Settings** > **Functions**.
+2. Under **Compatibility flags**, click **Add flag** (or Edit).
+3. Add `nodejs_compat` for both Production and Preview environments. *(Required for Keystatic server-side Node.js built-ins).*
+
+### C. Update GitHub App Callback & Homepage URLs
+1. Navigate to your GitHub App settings at [GitHub Developer Settings](https://github.com/settings/apps).
+2. Select your Keystatic GitHub App (e.g. `EIM Lab CMS`).
+3. Update the URLs to match your Cloudflare Pages domain (or primary custom domain):
+   - **Homepage URL**: `https://lab-eim.pages.dev` (or `https://eim-lab.org`)
+   - **Authorization callback URL**: `https://lab-eim.pages.dev/api/keystatic/github/oauth/callback` (or `https://eim-lab.org/api/keystatic/github/oauth/callback`)
+4. Save changes.
 
 ---
 

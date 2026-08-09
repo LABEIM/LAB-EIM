@@ -14,6 +14,7 @@ export default defineConfig({
         : process.env.VERCEL_URL
           ? `https://${process.env.VERCEL_URL}`
           : 'http://localhost:4321',
+  output: 'static',
   integrations: [react(), keystatic()],
   build: {
     inlineStylesheets: 'always',

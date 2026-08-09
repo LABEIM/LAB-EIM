@@ -39,7 +39,7 @@ jobs:
           cache: npm
 
       - name: Install dependencies
-        run: npm ci
+        run: npm ci --legacy-peer-deps
 
       - name: Run Astro diagnostics
         run: npx astro check
@@ -151,7 +151,7 @@ jobs:
           cache: npm
 
       - name: Install dependencies
-        run: npm ci
+        run: npm ci --legacy-peer-deps
 
       - name: Run Lighthouse audit (Live Cloudflare URL)
         if: ${{ needs.deploy-cloudflare.outputs.deploy_url }}

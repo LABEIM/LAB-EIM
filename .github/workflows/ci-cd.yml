@@ -96,10 +96,15 @@ jobs:
           # Auto-create Pages project shell if it does not exist yet
           npx wrangler pages project create "$PROJECT_NAME" --production-branch="$BRANCH_NAME" || true
 
-          # Deploy prebuilt static assets
-          DEPLOY_OUTPUT=$(npx wrangler pages deploy dist --project-name="$PROJECT_NAME" --branch="$BRANCH_NAME")
-          echo "$DEPLOY_OUTPUT"
-          DEPLOY_URL=$(echo "$DEPLOY_OUTPUT" | grep -oE 'https://[^ ]+\.pages\.dev' | head -n 1)
+          # Deploy prebuilt static assets to Cloudflare Pages / Workers
+          npx wrangler pages deploy dist --project-name="$PROJECT_NAME" --branch="$BRANCH_NAME" --commit-dirty=true | tee deploy.log
+
+          # Extract live deployment URL (.workers.dev or .pages.dev)
+          DEPLOY_URL=$(grep -oE 'https://[a-zA-Z0-9.-]+\.(workers\.dev|pages\.dev)' deploy.log | head -n 1)
+          if [ -z "$DEPLOY_URL" ]; then
+            DEPLOY_URL="https://${PROJECT_NAME}.laboratoriumeim.workers.dev"
+          fi
+          echo "Captured live deployment URL: $DEPLOY_URL"
           echo "url=$DEPLOY_URL" >> $GITHUB_OUTPUT
 
   deploy-vercel-backup:
@@ -166,6 +171,12 @@ jobs:
       - name: Install dependencies
         run: npm ci --legacy-peer-deps
 
+      - name: Download dist build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: dist-static-build
+          path: dist/
+
       - name: Run Lighthouse audit (Live Cloudflare URL)
         if: ${{ needs.deploy-cloudflare.outputs.deploy_url }}
         uses: treosh/lighthouse-ci-action@v12
@@ -179,4 +190,3 @@ jobs:
         uses: treosh/lighthouse-ci-action@v12
         with:
           configPath: './.lighthouserc.json'
-

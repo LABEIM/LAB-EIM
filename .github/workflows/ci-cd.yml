@@ -94,7 +94,7 @@ jobs:
           BRANCH_NAME="${{ github.ref_name }}"
           
           # Auto-create Pages project shell if it does not exist yet
-          npx wrangler pages project create "$PROJECT_NAME" --production-branch="$BRANCH_NAME" || true
+          npx wrangler pages project create "$PROJECT_NAME" --production-branch="$BRANCH_NAME" > /dev/null 2>&1 || true
 
           # Deploy prebuilt static assets to Cloudflare Pages / Workers
           npx wrangler pages deploy dist --project-name="$PROJECT_NAME" --branch="$BRANCH_NAME" --commit-dirty=true | tee deploy.log

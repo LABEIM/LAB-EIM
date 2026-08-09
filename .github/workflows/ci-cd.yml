@@ -1,4 +1,4 @@
-name: Unified CI/CD Pipeline
+name: Unified CI/CD Pipeline (Cloudflare Primary + Vercel Backup)
 
 on:
   push:
@@ -6,6 +6,16 @@ on:
   pull_request:
     branches: [ "main", "master", "astro-version" ]
   workflow_dispatch:
+    inputs:
+      deploy_target:
+        description: 'Target platform for deployment'
+        required: true
+        default: 'primary'
+        type: choice
+        options:
+          - primary
+          - backup
+          - both
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -16,7 +26,7 @@ env:
 
 jobs:
   validate:
-    name: CI Validation (Lint & Build)
+    name: CI Validation & Static Build
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -34,32 +44,81 @@ jobs:
       - name: Run Astro diagnostics
         run: npx astro check
 
-      - name: Verify build compilation
+      - name: Build static site export
         run: npm run build
+        env:
+          PUBLIC_GOOGLE_SHEET_SCRIPT_URL: ${{ secrets.PUBLIC_GOOGLE_SHEET_SCRIPT_URL }}
 
-  deploy:
-    name: Deploy to Vercel
+      - name: Upload dist build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist-static-build
+          path: dist/
+          retention-days: 1
+
+  deploy-cloudflare:
+    name: Deploy to Cloudflare Pages (Primary)
     needs: validate
+    if: github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && (inputs.deploy_target == 'primary' || inputs.deploy_target == 'both'))
     runs-on: ubuntu-latest
     permissions:
       contents: read
-      pull-requests: write
       deployments: write
     environment:
-      name: ${{ github.event_name == 'pull_request' && 'preview' || 'production' }}
-      url: ${{ steps.deploy_preview.outputs.deploy_url || steps.deploy_production.outputs.deploy_url }}
+      name: production
+      url: ${{ steps.deploy_cloudflare.outputs.url }}
     outputs:
-      deploy_url: ${{ steps.deploy_preview.outputs.deploy_url || steps.deploy_production.outputs.deploy_url }}
-    env:
-      VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-      VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
-      PUBLIC_GOOGLE_SHEET_SCRIPT_URL: ${{ secrets.PUBLIC_GOOGLE_SHEET_SCRIPT_URL }}
-      # Required so Keystatic builds the correct OAuth redirect_uri during CI.
-      VERCEL_URL: ${{ secrets.VERCEL_PRODUCTION_URL }}
-      VERCEL_PROJECT_PRODUCTION_URL: ${{ secrets.VERCEL_PRODUCTION_URL }}
+      deploy_url: ${{ steps.deploy_cloudflare.outputs.url }}
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
+
+      - name: Download dist build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: dist-static-build
+          path: dist/
+
+      - name: Deploy to Cloudflare Pages
+        id: deploy_cloudflare
+        uses: cloudflare/pages-action@v1
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          projectName: ${{ secrets.CLOUDFLARE_PROJECT_NAME || 'website-eim' }}
+          directory: dist
+          gitBranch: ${{ github.ref_name }}
+
+  deploy-vercel-backup:
+    name: Deploy to Vercel (Failover Backup)
+    needs: [validate, deploy-cloudflare]
+    if: |
+      always() &&
+      needs.validate.result == 'success' && (
+        needs.deploy-cloudflare.result == 'failure' ||
+        (github.event_name == 'workflow_dispatch' && (inputs.deploy_target == 'backup' || inputs.deploy_target == 'both'))
+      )
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      deployments: write
+    environment:
+      name: backup-production
+      url: ${{ steps.deploy_production.outputs.deploy_url }}
+    outputs:
+      deploy_url: ${{ steps.deploy_production.outputs.deploy_url }}
+    env:
+      VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+      VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Download dist build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: dist-static-build
+          path: dist/
 
       - name: Setup Node
         uses: actions/setup-node@v4
@@ -67,55 +126,19 @@ jobs:
           node-version: 22
           cache: npm
 
-      - name: Install dependencies
-        run: npm ci
-
       - name: Install Vercel CLI
         run: npm install --global vercel@latest
 
-      - name: Pull Vercel Environment Info (Preview)
-        if: github.event_name == 'pull_request'
-        run: vercel pull --yes --environment=preview --token=${{ secrets.VERCEL_TOKEN }}
-
-      - name: Pull Vercel Environment Info (Production)
-        if: github.event_name != 'pull_request'
-        run: vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
-
-      - name: Build Project Artifacts (Preview)
-        if: github.event_name == 'pull_request'
-        run: vercel build --yes --token=${{ secrets.VERCEL_TOKEN }}
-
-      - name: Build Project Artifacts (Production)
-        if: github.event_name != 'pull_request'
-        run: vercel build --prod --yes --token=${{ secrets.VERCEL_TOKEN }}
-
-      - name: Deploy to Vercel (Preview)
-        id: deploy_preview
-        if: github.event_name == 'pull_request'
-        run: |
-          DEPLOY_URL=$(vercel deploy --prebuilt --yes --token=${{ secrets.VERCEL_TOKEN }})
-          echo "deploy_url=$DEPLOY_URL" >> $GITHUB_OUTPUT
-
-      - name: Deploy to Vercel (Production)
+      - name: Deploy static output to Vercel
         id: deploy_production
-        if: github.event_name != 'pull_request'
         run: |
-          DEPLOY_URL=$(vercel deploy --prebuilt --prod --yes --token=${{ secrets.VERCEL_TOKEN }})
+          DEPLOY_URL=$(vercel deploy dist --prod --yes --token=${{ secrets.VERCEL_TOKEN }})
           echo "deploy_url=$DEPLOY_URL" >> $GITHUB_OUTPUT
-
-      - name: Post preview URL to PR
-        if: github.event_name == 'pull_request' && success()
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          DEPLOY_URL: ${{ steps.deploy_preview.outputs.deploy_url }}
-        run: |
-          gh pr comment ${{ github.event.pull_request.number }} --body "🚀 **Vercel Preview Deployment Ready!**
-          
-          🔗 Preview URL: $DEPLOY_URL"
 
   lighthouse:
     name: Lighthouse Audit
-    needs: deploy
+    needs: deploy-cloudflare
+    if: always() && needs.deploy-cloudflare.result == 'success'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -130,19 +153,17 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Build Astro project for Lighthouse audit
-        run: npm run build
-
-      - name: Run Lighthouse audit (Live URL)
-        if: ${{ needs.deploy.outputs.deploy_url }}
+      - name: Run Lighthouse audit (Live Cloudflare URL)
+        if: ${{ needs.deploy-cloudflare.outputs.deploy_url }}
         uses: treosh/lighthouse-ci-action@v12
         with:
           configPath: './.lighthouserc.json'
           urls: |
-            ${{ needs.deploy.outputs.deploy_url }}
+            ${{ needs.deploy-cloudflare.outputs.deploy_url }}
 
       - name: Run Lighthouse audit (Static Fallback)
-        if: ${{ !needs.deploy.outputs.deploy_url }}
+        if: ${{ !needs.deploy-cloudflare.outputs.deploy_url }}
         uses: treosh/lighthouse-ci-action@v12
         with:
           configPath: './.lighthouserc.json'
+

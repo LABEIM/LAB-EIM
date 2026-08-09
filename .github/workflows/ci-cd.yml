@@ -45,7 +45,9 @@ jobs:
         run: npx astro check
 
       - name: Build static site export
-        run: npm run build
+        run: |
+          rm -rf .astro dist
+          npm run build
         env:
           PUBLIC_GOOGLE_SHEET_SCRIPT_URL: ${{ secrets.PUBLIC_GOOGLE_SHEET_SCRIPT_URL }}
 

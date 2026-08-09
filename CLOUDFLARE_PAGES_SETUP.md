@@ -24,7 +24,7 @@ This guide explains how to set up, configure, and maintain the dual-hosting CI/C
         ┌─────────────────────────────┐   ┌─────────────────────────────┐
         │   Cloudflare Pages          │   │   Vercel Deployment         │
         │   Direct Upload (dist)      │   │   (If Cloudflare Fails or   │
-        │                             │   │    Manual Dispatch Trigger)│
+        │   via npx wrangler pages    │   │    Manual Dispatch Trigger)│
         └──────────────┬──────────────┘   └──────────────┬──────────────┘
                        │                                 │
                        ▼                                 ▼
@@ -34,22 +34,19 @@ This guide explains how to set up, configure, and maintain the dual-hosting CI/C
 ```
 
 - **Build Export**: Pure static SSG HTML/CSS/JS export in `dist/` (`astro build`).
-- **Primary Hosting**: Cloudflare Pages (`cloudflare/pages-action@v1`).
+- **Primary Hosting**: Cloudflare Pages (`npx wrangler pages deploy`).
 - **Backup Hosting**: Vercel Static Deployment (`vercel deploy dist --prod`).
 
 ---
 
 ## 2. Setting Up Cloudflare Pages Project
 
-To ensure GitHub Actions handles type-checking, building, and automatic failover to Vercel without duplicate or conflicting Cloudflare builds:
+**Zero Manual Dashboard Creation Required**:
+You **do not** need to create the project manually in the Cloudflare Dashboard. 
 
-1. Log in to the [Cloudflare Dashboard](https://dash.cloudflare.com/).
-2. Navigate to **Workers & Pages** > **lab-eim** > **Settings** > **Build**.
-3. Under **Git repository** (`LABEIM/LAB-EIM`), click **Disconnect**.
+Our GitHub Actions pipeline automatically creates the Cloudflare Pages project (`lab-eim`) via `npx wrangler pages project create` on its very first run using your `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID`.
 
-> **Why Disconnect Git on Cloudflare?**
-> Cloudflare's connected Git mode automatically triggers a build on every push and does not offer a "Pause" toggle. Disconnecting turns the project into a **Direct Upload** project. 
-> This allows GitHub Actions to handle `npx astro check`, build the site, upload `dist/` via `CLOUDFLARE_API_TOKEN`, and trigger Vercel failover if Cloudflare fails. You can re-connect GitHub in the Cloudflare Dashboard anytime if you decide to switch back to native builds.
+Simply follow Section 3 and Section 4 to set up your API Token and GitHub Secrets, then push to `main`!
 
 
 
@@ -58,8 +55,8 @@ To ensure GitHub Actions handles type-checking, building, and automatic failover
 ## 3. Obtaining Cloudflare Credentials
 
 ### A. Cloudflare Account ID
-1. On your Cloudflare Dashboard overview page, look at the right sidebar.
-2. Under **Account ID**, copy your Account ID hex string (e.g. `a1b2c3d4e5f6...`).
+1. On your Cloudflare Dashboard overview page (or **Workers & Pages** right sidebar), find **Account Details**.
+2. Under **Account ID**, click the copy icon to copy your hex Account ID string (e.g. `f9bfa5167a145b0c2ff643b...`).
 
 ### B. Cloudflare API Token
 1. Go to **Manage account** > **Account API Tokens** (or **My Profile** > **API Tokens**).
@@ -70,11 +67,10 @@ To ensure GitHub Actions handles type-checking, building, and automatic failover
    - Set account scope: **Entire Account** (or select your specific Account).
    - Expand **Developer Platform**.
    - Next to **Pages**, click **Edit** (Grants write access to Cloudflare Pages).
-   - *(Optional)* Next to **Workers Scripts**, click **Edit** (Grants write access to Cloudflare Workers scripts/assets).
+   - *(Optional)* Next to **Workers Scripts**, click **Edit**.
 6. Under **Token expiration**, select **No expiration** (recommended for automated CI/CD).
-7. Click **Continue to summary** (blue button at bottom right) -> **Create Token**.
+7. Click **Continue to summary** -> **Create Token**.
 8. Copy the generated secret token string.
-
 
 ---
 
@@ -97,9 +93,9 @@ In your GitHub repository, navigate to **Settings** > **Secrets and variables** 
 ## 5. Domain Setup & Failover Strategy
 
 ### Primary Domain Configuration (Cloudflare Pages)
-1. In Cloudflare Pages, go to **Custom Domains** > **Set up a custom domain**.
+1. In Cloudflare Pages (`lab-eim`), go to **Custom Domains** > **Set up a custom domain**.
 2. Enter your main domain (e.g., `eim-lab.org` or `www.eim-lab.org`).
-3. Follow the prompt to activate DNS routing automatically (if DNS is hosted on Cloudflare) or add CNAME record pointing to `<project-name>.pages.dev`.
+3. Follow the prompt to activate DNS routing automatically (if DNS is hosted on Cloudflare) or add CNAME record pointing to `lab-eim.pages.dev`.
 
 ### Backup Domain Configuration (Vercel)
 1. In Vercel Project Settings, go to **Domains**.
@@ -111,10 +107,10 @@ In your GitHub repository, navigate to **Settings** > **Secrets and variables** 
 ## 6. How the CI/CD Pipeline Operates
 
 - **Automatic Trigger on Push (`main` branch)**:
-  1. `validate`: Runs `npx astro check` & `npm run build`, uploading static `dist/` artifact.
-  2. `deploy-cloudflare`: Downloads `dist/` and deploys directly to Cloudflare Pages.
+  1. `validate`: Cleans cache (`rm -rf .astro dist`), runs `npx astro check` & `npm run build`, uploading static `dist/` artifact.
+  2. `deploy-cloudflare`: Downloads `dist/` and deploys directly to Cloudflare Pages using `npx wrangler pages deploy`.
   3. `deploy-vercel-backup`: Skipped if Cloudflare deployment succeeds. **Automatically triggers** if Cloudflare Pages deployment fails.
-  4. `lighthouse`: Audits live performance.
+  4. `lighthouse`: Audits live performance on `https://lab-eim.pages.dev`.
 
 - **Manual Trigger (`workflow_dispatch`)**:
   Go to GitHub repository **Actions** tab > **Unified CI/CD Pipeline** > **Run workflow**, and select `deploy_target`:
@@ -133,4 +129,4 @@ If Cloudflare experiences outages:
    - Select `deploy_target: backup` and click **Run workflow**.
 
 2. **Option B: Switch DNS CNAME / A Records**:
-   - In Cloudflare DNS management, temporarily update `eim-lab.org` / `www` CNAME target from `<project-name>.pages.dev` to `cname.vercel-dns.com` (or Vercel CNAME IP).
+   - In Cloudflare DNS management, temporarily update `eim-lab.org` / `www` CNAME target from `lab-eim.pages.dev` to `cname.vercel-dns.com` (or Vercel CNAME IP).

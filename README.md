@@ -1,6 +1,8 @@
 # EIM Research Lab Website
 
 Official website of the Enterprise Infrastructure Management (EIM) Research Lab, Faculty of Industrial Engineering, Telkom University.
+Primary: https://lab-eim.pages.dev/
+Backup: https://lab-eim.vercel.app/
 
 ## Key Technologies
 

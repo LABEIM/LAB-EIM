@@ -2,6 +2,7 @@ import { defineConfig } from 'astro/config';
 import tailwindcss from '@tailwindcss/vite';
 import keystatic from '@keystatic/astro';
 import react from '@astrojs/react';
+import cloudflare from '@astrojs/cloudflare';
 
 // https://astro.build/config
 export default defineConfig({
@@ -14,7 +15,9 @@ export default defineConfig({
         : process.env.VERCEL_URL
           ? `https://${process.env.VERCEL_URL}`
           : 'http://localhost:4321',
-  output: 'static',
+  adapter: cloudflare({
+    imageService: 'compile',
+  }),
   integrations: [react(), keystatic()],
   build: {
     inlineStylesheets: 'always',

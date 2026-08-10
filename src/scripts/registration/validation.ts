@@ -101,7 +101,7 @@ export function validateRegistrationForm(
     };
   }
 
-  if (!validatePhone(nomor_telp)) {
+  if (nomor_telp && !validatePhone(nomor_telp)) {
     return {
       valid: false,
       errorMsg: isEn
@@ -110,7 +110,7 @@ export function validateRegistrationForm(
     };
   }
 
-  if (divisi_1 === divisi_2) {
+  if (divisi_2 && divisi_1 === divisi_2) {
     return {
       valid: false,
       errorMsg: isEn
@@ -129,14 +129,17 @@ export function validateRegistrationForm(
     };
   }
 
-  const words2 = countWords(alasan_divisi_2);
-  if (words2 < minReasonWords) {
-    return {
-      valid: false,
-      errorMsg: isEn
-        ? `Reason for Choosing Division 2 must contain at least ${minReasonWords} words (currently ${words2} words).`
-        : `Alasan Memilih Divisi 2 minimal ${minReasonWords} kata (saat ini ${words2} kata).`
-    };
+  const elAlasan2 = document.getElementById('alasan_divisi_2') as HTMLTextAreaElement | null;
+  if (elAlasan2 && elAlasan2.required && alasan_divisi_2) {
+    const words2 = countWords(alasan_divisi_2);
+    if (words2 < minReasonWords) {
+      return {
+        valid: false,
+        errorMsg: isEn
+          ? `Reason for Choosing Division 2 must contain at least ${minReasonWords} words (currently ${words2} words).`
+          : `Alasan Memilih Divisi 2 minimal ${minReasonWords} kata (saat ini ${words2} kata).`
+      };
+    }
   }
 
   if ((requiresPortfolio(divisi_1) || requiresPortfolio(divisi_2)) && !portofolio_medhum) {

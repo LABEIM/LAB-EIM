@@ -41,9 +41,109 @@ const registrationSchema = {
     itemLabel: props => props.value,
   }),
   portfolioDivisionTriggerValues: fields.text({ label: 'Portfolio Division Trigger Values (Comma-separated, e.g. Medhum, Front-End)', defaultValue: 'Medhum' }),
-  medhumDivisionValue: fields.text({ label: 'MedHum Division Trigger Value (Legacy Fallback)', defaultValue: 'Medhum' }),
   piTemplateUrl: fields.text({ label: 'Pakta Integritas (PI) Template Link', defaultValue: 'https://bit.ly/Template-PI-EIM' }),
   minReasonWords: fields.number({ label: 'Minimum Word Count for Reason for Choosing Division', defaultValue: 30 }),
+  fieldStates: fields.object({
+    ksm: fields.select({
+      label: 'Kartu Studi Mahasiswa (KSM)',
+      options: [
+        { label: 'Required (Wajib)', value: 'required' },
+        { label: 'Optional (Opsional)', value: 'optional' },
+        { label: 'Disabled (Disembunyikan)', value: 'disabled' },
+      ],
+      defaultValue: 'disabled',
+    }),
+    khs: fields.select({
+      label: 'Kartu Hasil Studi (KHS)',
+      options: [
+        { label: 'Required (Wajib)', value: 'required' },
+        { label: 'Optional (Opsional)', value: 'optional' },
+        { label: 'Disabled (Disembunyikan)', value: 'disabled' },
+      ],
+      defaultValue: 'required',
+    }),
+    ml: fields.select({
+      label: 'Motivation Letter (ML)',
+      options: [
+        { label: 'Required (Wajib)', value: 'required' },
+        { label: 'Optional (Opsional)', value: 'optional' },
+        { label: 'Disabled (Disembunyikan)', value: 'disabled' },
+      ],
+      defaultValue: 'required',
+    }),
+    cv: fields.select({
+      label: 'Curriculum Vitae (CV)',
+      options: [
+        { label: 'Required (Wajib)', value: 'required' },
+        { label: 'Optional (Opsional)', value: 'optional' },
+        { label: 'Disabled (Disembunyikan)', value: 'disabled' },
+      ],
+      defaultValue: 'required',
+    }),
+    pi: fields.select({
+      label: 'Pakta Integritas (PI)',
+      options: [
+        { label: 'Required (Wajib)', value: 'required' },
+        { label: 'Optional (Opsional)', value: 'optional' },
+        { label: 'Disabled (Disembunyikan)', value: 'disabled' },
+      ],
+      defaultValue: 'required',
+    }),
+    nomor_telp: fields.select({
+      label: 'Nomor Telepon / WhatsApp',
+      options: [
+        { label: 'Required (Wajib)', value: 'required' },
+        { label: 'Optional (Opsional)', value: 'optional' },
+        { label: 'Disabled (Disembunyikan)', value: 'disabled' },
+      ],
+      defaultValue: 'required',
+    }),
+    angkatan: fields.select({
+      label: 'Angkatan Mahasiswa',
+      options: [
+        { label: 'Required (Wajib)', value: 'required' },
+        { label: 'Optional (Opsional)', value: 'optional' },
+        { label: 'Disabled (Disembunyikan)', value: 'disabled' },
+      ],
+      defaultValue: 'required',
+    }),
+    divisi_2: fields.select({
+      label: 'Pilihan Divisi Kedua',
+      options: [
+        { label: 'Required (Wajib)', value: 'required' },
+        { label: 'Optional (Opsional)', value: 'optional' },
+        { label: 'Disabled (Disembunyikan)', value: 'disabled' },
+      ],
+      defaultValue: 'required',
+    }),
+    alasan_divisi_2: fields.select({
+      label: 'Alasan Memilih Divisi Kedua',
+      options: [
+        { label: 'Required (Wajib)', value: 'required' },
+        { label: 'Optional (Opsional)', value: 'optional' },
+        { label: 'Disabled (Disembunyikan)', value: 'disabled' },
+      ],
+      defaultValue: 'required',
+    }),
+    bersedia_dipindah: fields.select({
+      label: 'Bersedia Dipindahkan Divisi',
+      options: [
+        { label: 'Required (Wajib)', value: 'required' },
+        { label: 'Optional (Opsional)', value: 'optional' },
+        { label: 'Disabled (Disembunyikan)', value: 'disabled' },
+      ],
+      defaultValue: 'required',
+    }),
+    portofolio: fields.select({
+      label: 'Tautan Portofolio Divisi',
+      options: [
+        { label: 'Required (Wajib bila memilih divisi portofolio)', value: 'required' },
+        { label: 'Optional (Opsional)', value: 'optional' },
+        { label: 'Disabled (Disembunyikan)', value: 'disabled' },
+      ],
+      defaultValue: 'required',
+    }),
+  }),
   allowedFileExtensions: fields.object({
     ksm: fields.text({ label: 'KSM Allowed Extensions', description: 'e.g. pdf, png, jpg, jpeg', defaultValue: 'pdf, png, jpg, jpeg' }),
     khs: fields.text({ label: 'KHS Allowed Extensions', description: 'e.g. pdf, png, jpg, jpeg', defaultValue: 'pdf, png, jpg, jpeg' }),

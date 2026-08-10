@@ -100,8 +100,28 @@ export function getRegistrationPageConfigs(
     buttonText: "Buka Formulir Pendaftaran Cadangan (Google Form)",
   };
 
+  const defaultFieldStates = {
+    ksm: 'disabled' as const,
+    khs: 'required' as const,
+    ml: 'required' as const,
+    cv: 'required' as const,
+    pi: 'required' as const,
+    nomor_telp: 'required' as const,
+    angkatan: 'required' as const,
+    divisi_2: 'required' as const,
+    alasan_divisi_2: 'required' as const,
+    bersedia_dipindah: 'required' as const,
+    portofolio: 'required' as const,
+  };
+
+  const fieldStates = {
+    ...defaultFieldStates,
+    ...(config.fieldStates || {}),
+  };
+
   return {
     studentYears,
+    fieldStates,
     docLimits,
     piTemplateUrl,
     minReasonWords,

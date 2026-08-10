@@ -23,7 +23,7 @@ export function initRegistrationSubmit(
   let div1Select: HTMLSelectElement | null = null;
   let div2Select: HTMLSelectElement | null = null;
   let medhumPortoInput: HTMLInputElement | null = null;
-  let requiresPortfolio = (val: string) => val.toLowerCase().includes('medhum');
+  let requiresPortfolio = (val: string) => Boolean(val && val.trim());
   let clearDraft = () => {};
   let toggleMedhumPorto = () => {};
   let ctxScriptUrl: string | undefined = undefined;

@@ -120,6 +120,22 @@ export interface FallbackConfig {
   buttonText: string;
 }
 
+export type FieldState = 'required' | 'optional' | 'disabled';
+
+export interface FieldStates {
+  ksm?: FieldState;
+  khs?: FieldState;
+  ml?: FieldState;
+  cv?: FieldState;
+  pi?: FieldState;
+  nomor_telp?: FieldState;
+  angkatan?: FieldState;
+  divisi_2?: FieldState;
+  alasan_divisi_2?: FieldState;
+  bersedia_dipindah?: FieldState;
+  portofolio?: FieldState;
+}
+
 export interface RecruitmentConfig {
   status?: string;
   upcomingStartDate?: string;
@@ -133,6 +149,7 @@ export interface RecruitmentConfig {
   interviewEndDate?: string;
   announcementDate?: string;
   studentYears?: string[];
+  fieldStates?: FieldStates;
   documentLimits?: DocumentLimits;
   piTemplateUrl?: string;
   minReasonWords?: number;
@@ -151,6 +168,7 @@ export interface RecruitmentConfig {
 
 export interface RegistrationPageConfigs {
   studentYears: string[];
+  fieldStates: FieldStates;
   docLimits: DocumentLimits;
   piTemplateUrl: string;
   minReasonWords: number;

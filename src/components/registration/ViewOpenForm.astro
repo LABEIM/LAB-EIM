@@ -1,6 +1,7 @@
 ---
 import type { DivisionConfig } from '../../utils/division-mapper';
 import { getLocaleFromUrl, t } from '../../utils/i18n';
+import type { FieldStates } from '../../utils/types';
 
 interface Props {
   initialStage: string;
@@ -21,10 +22,11 @@ interface Props {
   divisions: DivisionConfig[];
   piTemplateUrl?: string;
   minReasonWords?: number;
+  fieldStates?: FieldStates;
 }
 
 const locale = getLocaleFromUrl(Astro.url);
-const { initialStage, registrationConfig, extendedCfg, studentYears, docLimits, divisions, piTemplateUrl, minReasonWords = 30 } = Astro.props;
+const { initialStage, registrationConfig, extendedCfg, studentYears, docLimits, divisions, piTemplateUrl, minReasonWords = 30, fieldStates = {} } = Astro.props;
 
 const allowedExtsCfg = (registrationConfig as any).allowedFileExtensions || {};
 const formatAccept = (extsStr?: string) => (extsStr || "pdf, png, jpg, jpeg")
@@ -32,17 +34,87 @@ const formatAccept = (extsStr?: string) => (extsStr || "pdf, png, jpg, jpeg")
   .map((ext: string) => '.' + ext.trim().replace(/^\./, ''))
   .join(',');
 
+const formatExtsLabel = (extsStr?: string) => (extsStr || "pdf, png, jpg, jpeg")
+  .split(',')
+  .map((e: string) => e.trim().toUpperCase().replace(/^\./, ''))
+  .join(', ');
+
 const ksmExts = allowedExtsCfg.ksm || "pdf, png, jpg, jpeg";
 const khsExts = allowedExtsCfg.khs || "pdf, png, jpg, jpeg";
 const mlExts = allowedExtsCfg.ml || "pdf, png, jpg, jpeg";
 const cvExts = allowedExtsCfg.cv || "pdf, png, jpg, jpeg";
 const piExts = allowedExtsCfg.pi || "pdf, png, jpg, jpeg";
 
+const ksmExtsDisplay = formatExtsLabel(ksmExts);
+const khsExtsDisplay = formatExtsLabel(khsExts);
+const mlExtsDisplay = formatExtsLabel(mlExts);
+const cvExtsDisplay = formatExtsLabel(cvExts);
+const piExtsDisplay = formatExtsLabel(piExts);
+
 const ksmAccept = formatAccept(ksmExts);
 const khsAccept = formatAccept(khsExts);
 const mlAccept = formatAccept(mlExts);
 const cvAccept = formatAccept(cvExts);
 const piAccept = formatAccept(piExts);
+
+const ksmState = fieldStates.ksm || 'disabled';
+const khsState = fieldStates.khs || 'required';
+const mlState = fieldStates.ml || 'required';
+const cvState = fieldStates.cv || 'required';
+const piState = fieldStates.pi || 'required';
+
+const telpState = fieldStates.nomor_telp || 'required';
+const angkatanState = fieldStates.angkatan || 'required';
+const div2State = fieldStates.divisi_2 || 'required';
+const alasan2State = fieldStates.alasan_divisi_2 || 'required';
+const bersediaState = fieldStates.bersedia_dipindah || 'required';
+const portoState = fieldStates.portofolio || 'required';
+
+const hasSection3Files = ksmState !== 'disabled' || khsState !== 'disabled' || mlState !== 'disabled' || cvState !== 'disabled' || piState !== 'disabled';
+
+const standardDocs = [
+  ksmState !== 'disabled' && {
+    id: 'file_ksm',
+    label: t('form.ksm', locale),
+    maxMb: docLimits.ksmMb,
+    accept: ksmAccept,
+    exts: ksmExts,
+    extsDisplay: ksmExtsDisplay,
+    state: ksmState
+  },
+  khsState !== 'disabled' && {
+    id: 'file_khs',
+    label: t('form.khs', locale),
+    maxMb: docLimits.khsMb,
+    accept: khsAccept,
+    exts: khsExts,
+    extsDisplay: khsExtsDisplay,
+    state: khsState
+  },
+  mlState !== 'disabled' && {
+    id: 'file_ml',
+    label: t('form.motivationLetter', locale),
+    maxMb: docLimits.mlMb,
+    accept: mlAccept,
+    exts: mlExts,
+    extsDisplay: mlExtsDisplay,
+    state: mlState
+  },
+  cvState !== 'disabled' && {
+    id: 'file_cv',
+    label: t('form.cv', locale),
+    maxMb: docLimits.cvMb,
+    accept: cvAccept,
+    exts: cvExts,
+    extsDisplay: cvExtsDisplay,
+    state: cvState
+  }
+].filter((d): d is NonNullable<typeof d> => Boolean(d));
+
+const docRows: typeof standardDocs[] = [];
+for (let i = 0; i < standardDocs.length; i += 2) {
+  docRows.push(standardDocs.slice(i, i + 2));
+}
 ---
 
 <div id="view-open" class={(initialStage === 'open' || initialStage === 'extended') ? '' : 'is-hidden'}>
@@ -113,39 +185,83 @@ const piAccept = formatAccept(piExts);
       <input type="text" class="form-control" id="nama_lengkap" placeholder={t('form.fullNamePlaceholder', locale)} required />
     </div>
 
-    <div class="form-row reg-form-row-mt">
-      <div class="form-group">
+    {angkatanState !== 'disabled' ? (
+      <div class="form-row reg-form-row-mt">
+        <div class="form-group">
+          <label for="nim">{t('form.nim', locale)} <span class="required-asterisk">*</span></label>
+          <input type="text" class="form-control" id="nim" placeholder={t('form.nimPlaceholder', locale)} pattern="[0-9]+" required />
+        </div>
+        <div class="form-group">
+          <label for="angkatan">
+            {t('form.classYear', locale)}
+            {angkatanState === 'required' ? <span class="required-asterisk">*</span> : <span class="reg-file-label-small">(Opsional)</span>}
+          </label>
+          <select class="form-control" id="angkatan" required={angkatanState === 'required'}>
+            <option value="" disabled selected>{t('form.selectClassYear', locale)}</option>
+            {studentYears.map(yr => (
+              <option value={yr}>{yr}</option>
+            ))}
+          </select>
+        </div>
+      </div>
+    ) : (
+      <div class="form-group reg-form-row-mt">
         <label for="nim">{t('form.nim', locale)} <span class="required-asterisk">*</span></label>
         <input type="text" class="form-control" id="nim" placeholder={t('form.nimPlaceholder', locale)} pattern="[0-9]+" required />
       </div>
-      <div class="form-group">
-        <label for="angkatan">{t('form.classYear', locale)} <span class="required-asterisk">*</span></label>
-        <select class="form-control" id="angkatan" required>
-          <option value="" disabled selected>{t('form.selectClassYear', locale)}</option>
-          {studentYears.map(yr => (
-            <option value={yr}>{yr}</option>
-          ))}
-        </select>
-      </div>
-    </div>
+    )}
 
-    <div class="form-row reg-form-row-mt">
-      <div class="form-group">
+    {telpState !== 'disabled' ? (
+      <div class="form-row reg-form-row-mt">
+        <div class="form-group">
+          <label for="email">{t('form.email', locale)} <span class="required-asterisk">*</span></label>
+          <input type="email" class="form-control" id="email" placeholder={t('form.emailPlaceholder', locale)} required />
+        </div>
+        <div class="form-group">
+          <label for="nomor_telp">
+            {t('form.phone', locale)}
+            {telpState === 'required' ? <span class="required-asterisk">*</span> : <span class="reg-file-label-small">(Opsional)</span>}
+          </label>
+          <input type="tel" class="form-control" id="nomor_telp" placeholder={t('form.phonePlaceholder', locale)} pattern="[0-9]+" required={telpState === 'required'} />
+        </div>
+      </div>
+    ) : (
+      <div class="form-group reg-form-row-mt">
         <label for="email">{t('form.email', locale)} <span class="required-asterisk">*</span></label>
         <input type="email" class="form-control" id="email" placeholder={t('form.emailPlaceholder', locale)} required />
       </div>
-      <div class="form-group">
-        <label for="nomor_telp">{t('form.phone', locale)} <span class="required-asterisk">*</span></label>
-        <input type="tel" class="form-control" id="nomor_telp" placeholder={t('form.phonePlaceholder', locale)} pattern="[0-9]+" required />
-      </div>
-    </div>
+    )}
 
     {/* Section 2: Pemilihan Divisi */}
     <div class="form-section-heading">
       <i class="fa-solid fa-layer-group reg-icon-mr-sm"></i> 2. Pemilihan Divisi & Alasan
     </div>
 
-    <div class="form-row">
+    {div2State !== 'disabled' ? (
+      <div class="form-row">
+        <div class="form-group">
+          <label for="divisi_1">{t('form.div1', locale)} <span class="required-asterisk">*</span></label>
+          <select class="form-control" id="divisi_1" required>
+            <option value="" disabled selected>{t('form.selectDiv1', locale)}</option>
+            {divisions.map(div => (
+              <option value={div.registrationValue || div.id}>{div.registrationLabel || div.name}</option>
+            ))}
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="divisi_2">
+            {t('form.div2', locale)}
+            {div2State === 'required' ? <span class="required-asterisk">*</span> : <span class="reg-file-label-small">(Opsional)</span>}
+          </label>
+          <select class="form-control" id="divisi_2" required={div2State === 'required'}>
+            <option value="" disabled selected>{t('form.selectDiv2', locale)}</option>
+            {divisions.map(div => (
+              <option value={div.registrationValue || div.id}>{div.registrationLabel || div.name}</option>
+            ))}
+          </select>
+        </div>
+      </div>
+    ) : (
       <div class="form-group">
         <label for="divisi_1">{t('form.div1', locale)} <span class="required-asterisk">*</span></label>
         <select class="form-control" id="divisi_1" required>
@@ -155,16 +271,7 @@ const piAccept = formatAccept(piExts);
           ))}
         </select>
       </div>
-      <div class="form-group">
-        <label for="divisi_2">{t('form.div2', locale)} <span class="required-asterisk">*</span></label>
-        <select class="form-control" id="divisi_2" required>
-          <option value="" disabled selected>{t('form.selectDiv2', locale)}</option>
-          {divisions.map(div => (
-            <option value={div.registrationValue || div.id}>{div.registrationLabel || div.name}</option>
-          ))}
-        </select>
-      </div>
-    </div>
+    )}
 
     <div class="form-group reg-form-row-mt">
       <label for="alasan_divisi_1">Alasan Memilih Divisi 1 <span class="required-asterisk">*</span></label>
@@ -174,79 +281,90 @@ const piAccept = formatAccept(piExts);
       </small>
     </div>
 
-    <div class="form-group reg-form-row-mt">
-      <label for="alasan_divisi_2">Alasan Memilih Divisi 2 <span class="required-asterisk">*</span></label>
-      <textarea class="form-control" id="alasan_divisi_2" rows="3" placeholder={t('form.reasonPlaceholder', locale)} required></textarea>
-      <small class="reg-small-desc word-count-info" id="alasan_divisi_2_counter" data-min-words={minReasonWords}>
-        Jumlah kata: <span class="word-count-val" id="alasan_divisi_2_count">0</span> / {minReasonWords} kata minimal
-      </small>
-    </div>
+    {alasan2State !== 'disabled' && (
+      <div class="form-group reg-form-row-mt">
+        <label for="alasan_divisi_2">
+          Alasan Memilih Divisi 2
+          {alasan2State === 'required' ? <span class="required-asterisk">*</span> : <span class="reg-file-label-small">(Opsional)</span>}
+        </label>
+        <textarea class="form-control" id="alasan_divisi_2" rows="3" placeholder={t('form.reasonPlaceholder', locale)} required={alasan2State === 'required'}></textarea>
+        <small class="reg-small-desc word-count-info" id="alasan_divisi_2_counter" data-min-words={minReasonWords}>
+          Jumlah kata: <span class="word-count-val" id="alasan_divisi_2_count">0</span> / {minReasonWords} kata minimal
+        </small>
+      </div>
+    )}
 
     {/* Dynamic Portfolio Link */}
-    <div class="form-group medhum-porto-container" id="container-medhum-porto">
-      <label for="portofolio_medhum" class="medhum-porto-label">
-        <i class="fa-solid fa-palette reg-icon-mr"></i> {t('form.portfolioLink', locale)} <span class="required-asterisk">*</span>
-      </label>
-      <input type="url" class="form-control" id="portofolio_medhum" placeholder={t('form.portfolioPlaceholder', locale)} />
-      <small class="reg-small-desc">
-        Karena Anda memilih divisi yang membutuhkan portofolio, sertakan tautan URL publik portofolio desain/karya Anda.
-      </small>
-    </div>
+    {portoState !== 'disabled' && (
+      <div class="form-group medhum-porto-container" id="container-medhum-porto">
+        <label for="portofolio_medhum" class="medhum-porto-label">
+          <i class="fa-solid fa-palette reg-icon-mr"></i> {t('form.portfolioLink', locale)}
+          {portoState === 'required' ? <span class="required-asterisk">*</span> : <span class="reg-file-label-small">(Opsional)</span>}
+        </label>
+        <input type="url" class="form-control" id="portofolio_medhum" placeholder={t('form.portfolioPlaceholder', locale)} required={portoState === 'required'} />
+        <small class="reg-small-desc">
+          Karena Anda memilih divisi yang membutuhkan portofolio, sertakan tautan URL publik portofolio desain/karya Anda.
+        </small>
+      </div>
+    )}
 
-    <div class="form-group reg-form-row-mt">
-      <label for="bersedia_dipindah">Bersedia dipindahkan ke divisi lain jika diperlukan? <span class="required-asterisk">*</span></label>
-      <select class="form-control" id="bersedia_dipindah" required>
-        <option value="" disabled selected>-- Pilih Jawaban --</option>
-        <option value="Ya">Ya</option>
-        <option value="Tidak">Tidak</option>
-      </select>
-    </div>
+    {bersediaState !== 'disabled' && (
+      <div class="form-group reg-form-row-mt">
+        <label for="bersedia_dipindah">
+          Bersedia dipindahkan ke divisi lain jika diperlukan?
+          {bersediaState === 'required' ? <span class="required-asterisk">*</span> : <span class="reg-file-label-small">(Opsional)</span>}
+        </label>
+        <select class="form-control" id="bersedia_dipindah" required={bersediaState === 'required'}>
+          <option value="" disabled selected>-- Pilih Jawaban --</option>
+          <option value="Ya">Ya</option>
+          <option value="Tidak">Tidak</option>
+        </select>
+      </div>
+    )}
 
     {/* Section 3: Berkas Pendaftaran */}
-    <div class="form-section-heading">
-      <i class="fa-solid fa-folder-open reg-icon-mr-sm"></i> 3. Unggah Berkas Pendaftaran
-    </div>
+    {hasSection3Files && (
+      <div class="form-section-heading">
+        <i class="fa-solid fa-folder-open reg-icon-mr-sm"></i> 3. Unggah Berkas Pendaftaran
+      </div>
+    )}
 
-    <div class="form-row">
-      <div class="form-group">
-        <label for="file_ksm">{t('form.ksm', locale)} <span class="reg-file-label-small">(Max {docLimits.ksmMb}MB)</span> <span class="required-asterisk">*</span></label>
-        <input type="file" class="form-control" id="file_ksm" accept={ksmAccept} data-allowed-exts={ksmExts} data-max-mb={docLimits.ksmMb} required />
+    {docRows.map((row, rIdx) => (
+      <div class={`form-row ${rIdx > 0 ? 'reg-form-row-mt' : ''}`}>
+        {row.map((doc) => (
+          <div class="form-group" style={row.length === 1 ? 'grid-column: 1 / -1;' : ''}>
+            <label for={doc.id}>
+              {doc.label} <span class="reg-file-label-small">({doc.extsDisplay} • Max {doc.maxMb}MB)</span>
+              {doc.state === 'required' ? <span class="required-asterisk">*</span> : <span class="reg-file-label-small">(Opsional)</span>}
+            </label>
+            <input type="file" class="form-control" id={doc.id} accept={doc.accept} data-allowed-exts={doc.exts} data-max-mb={doc.maxMb} required={doc.state === 'required'} />
+          </div>
+        ))}
       </div>
-      <div class="form-group">
-        <label for="file_khs">{t('form.khs', locale)} <span class="reg-file-label-small">(Max {docLimits.khsMb}MB)</span> <span class="required-asterisk">*</span></label>
-        <input type="file" class="form-control" id="file_khs" accept={khsAccept} data-allowed-exts={khsExts} data-max-mb={docLimits.khsMb} required />
-      </div>
-    </div>
+    ))}
 
-    <div class="form-row reg-form-row-mt">
-      <div class="form-group">
-        <label for="file_ml">{t('form.motivationLetter', locale)} <span class="reg-file-label-small">(Max {docLimits.mlMb}MB)</span> <span class="required-asterisk">*</span></label>
-        <input type="file" class="form-control" id="file_ml" accept={mlAccept} data-allowed-exts={mlExts} data-max-mb={docLimits.mlMb} required />
-      </div>
-      <div class="form-group">
-        <label for="file_cv">{t('form.cv', locale)} <span class="reg-file-label-small">(Max {docLimits.cvMb}MB)</span> <span class="required-asterisk">*</span></label>
-        <input type="file" class="form-control" id="file_cv" accept={cvAccept} data-allowed-exts={cvExts} data-max-mb={docLimits.cvMb} required />
-      </div>
-    </div>
-
-    <div class="form-group reg-form-row-mt">
-      <div class="reg-pi-label-row">
-        <label for="file_pi" class="reg-mb-0">{t('form.pi', locale)} <span class="reg-file-label-small">(Max {docLimits.piMb}MB)</span> <span class="required-asterisk">*</span></label>
+    {piState !== 'disabled' && (
+      <div class="form-group reg-form-row-mt">
+        <div class="reg-pi-label-row">
+          <label for="file_pi" class="reg-mb-0">
+            {t('form.pi', locale)} <span class="reg-file-label-small">({piExtsDisplay} • Max {docLimits.piMb}MB)</span>
+            {piState === 'required' ? <span class="required-asterisk">*</span> : <span class="reg-file-label-small">(Opsional)</span>}
+          </label>
+          {piTemplateUrl && (
+            <a href={piTemplateUrl} target="_blank" rel="noopener noreferrer" class="reg-pi-link-inline">
+              <i class="fa-solid fa-file-arrow-down"></i>
+              <span>{t('form.downloadPiTemplate', locale)}</span>
+            </a>
+          )}
+        </div>
+        <input type="file" class="form-control" id="file_pi" accept={piAccept} data-allowed-exts={piExts} data-max-mb={docLimits.piMb} required={piState === 'required'} />
         {piTemplateUrl && (
-          <a href={piTemplateUrl} target="_blank" rel="noopener noreferrer" class="reg-pi-link-inline">
-            <i class="fa-solid fa-file-arrow-down"></i>
-            <span>{t('form.downloadPiTemplate', locale)}</span>
-          </a>
+          <small class="reg-small-desc">
+            <span>Belum punya template? <a href={piTemplateUrl} target="_blank" rel="noopener noreferrer" class="reg-pi-sublink">{t('form.downloadPiTemplate', locale)}</a>.</span>
+          </small>
         )}
       </div>
-      <input type="file" class="form-control" id="file_pi" accept={piAccept} data-allowed-exts={piExts} data-max-mb={docLimits.piMb} required />
-      <small class="reg-small-desc">
-        {t('form.uploadNotice', locale)}
-        {piTemplateUrl && (
-          <span> Belum punya template? <a href={piTemplateUrl} target="_blank" rel="noopener noreferrer" class="reg-pi-sublink">{t('form.downloadPiTemplate', locale)}</a>.</span>
-        )}
-      </small>
-    </div>
+    )}
 
     <div class="form-actions form-actions-submit">
       <button type="submit" id="submit-btn" class="btn btn-primary btn-submit-registration">

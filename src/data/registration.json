@@ -1,5 +1,5 @@
 {
-  "status": "auto",
+  "status": "open",
   "upcomingStartDate": "2026-08-01T00:00:00",
   "openDate": "2026-08-13T00:00:00",
   "deadline": "2026-08-20T23:59:59",
@@ -22,9 +22,21 @@
     "2025"
   ],
   "portfolioDivisionTriggerValues": "Medhum",
-  "medhumDivisionValue": "Medhum",
   "piTemplateUrl": "https://docs.google.com/document/d/1Uv-S_jSEJx77hY_96NA_cXjPjOQViHVz/edit?usp=sharing&ouid=105717872277990358898&rtpof=true&sd=true",
   "minReasonWords": 30,
+  "fieldStates": {
+    "ksm": "disabled",
+    "khs": "required",
+    "ml": "required",
+    "cv": "required",
+    "pi": "required",
+    "nomor_telp": "required",
+    "angkatan": "required",
+    "divisi_2": "required",
+    "alasan_divisi_2": "required",
+    "bersedia_dipindah": "required",
+    "portofolio": "required"
+  },
   "allowedFileExtensions": {
     "ksm": "pdf",
     "khs": "pdf",
@@ -63,7 +75,7 @@
   "technicalTestConfig": {
     "title": "Tahap Tes Teknikal Sedang Berlangsung",
     "subtitle": "Penilaian keterampilan praktis dan tantangan teknikal sedang berjalan.",
-    "message": "Silakan cek email terdaftar Anda untuk instruksi tes teknikal dan petunjuk pengumpulan.",
+    "message": "Silakan cek WhatsApp Group Recruitmen untuk informasi terkait tahap Teknikal.",
     "scheduleInfo": "29 - 30 Agustus 2026",
     "locationInfo": "EIM Research Lab / Pengumpulan Online"
   },
@@ -75,7 +87,7 @@
   "interviewConfig": {
     "title": "Tahap Wawancara Sedang Berlangsung",
     "subtitle": "Sesi wawancara kandidat sedang berlangsung bersama tim EIM Research Lab.",
-    "message": "Silakan cek email terdaftar Anda untuk jadwal sesi wawancara dan tautan Zoom.",
+    "message": "Silakan WhatsApp Group Recruitmen untuk informasi terkait tahap wawancara.",
     "scheduleInfo": "05 - 06 September 2026",
     "locationInfo": "EIM Research Lab / Zoom Room Online"
   },
@@ -88,7 +100,7 @@
     "title": "Periode Pendaftaran Telah Berakhir",
     "subtitle": "Pendaftaran asisten untuk batch ini telah resmi ditutup.",
     "message": "Terima kasih kepada semua yang telah mendaftar. Pantau media sosial kami untuk rekruitmen berikutnya!",
-    "nextBatchInfo": "Rekrutmen berikutnya diperkirakan awal tahun 2027."
+    "nextBatchInfo": "Rekrutmen berikutnya diperkirakan pertengahan tahun 2027."
   },
   "fallbackConfig": {
     "title": "Sistem Pendaftaran Utama Sedang Pemeliharaan",

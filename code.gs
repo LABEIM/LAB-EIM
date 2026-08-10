@@ -569,7 +569,7 @@ function doPost(e) {
     const nimColIdx1 = headers.indexOf('NIM') + 1;
     if (nimColIdx1 > 0 && sheet.getLastRow() > headerRow) {
       const dataRowCount = sheet.getLastRow() - headerRow;
-      const nimColValues = sheet.getRange(headerRow + 1, nimColIdx1, dataRowCount, 1).getValues();
+      const nimColValues = sheet.getRange(headerRow + 1, nimColIdx1, dataRowCount, 1).getDisplayValues();
       for (let ri = nimColValues.length - 1; ri >= 0; ri--) {
         if (String(nimColValues[ri][0]).trim() !== '') {
           nextRow = headerRow + ri + 2;
@@ -618,10 +618,11 @@ function doPost(e) {
         const nimColIndex = headers.indexOf('NIM') + 1;
         if (nimColIndex > 0) {
           const startCheckRow = Math.max(headerRow + 1, lastRow - 50);
-          const existingNims = sheet.getRange(startCheckRow, nimColIndex, lastRow - startCheckRow + 1, 1).getValues();
+          const existingNims = sheet.getRange(startCheckRow, nimColIndex, lastRow - startCheckRow + 1, 1).getDisplayValues();
+          const targetNimStr = String(dataData['NIM']).replace(/\D/g, '').trim();
           for (let r = 0; r < existingNims.length; r++) {
-            const existingNimStr = String(existingNims[r][0]).trim();
-            if (existingNimStr !== '' && existingNimStr === String(dataData['NIM']).trim()) {
+            const existingNimStr = String(existingNims[r][0]).replace(/\D/g, '').trim();
+            if (existingNimStr !== '' && (existingNimStr === targetNimStr || String(existingNims[r][0]).trim() === String(dataData['NIM']).trim())) {
               isRevision = true;
               Logger.log('Resubmission detected for NIM: ' + existingNimStr + ' - marking as REVISI.');
               break;

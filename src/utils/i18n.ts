@@ -77,7 +77,7 @@ export const uiTranslations: Record<Locale, Record<string, string>> = {
     'form.fullNamePlaceholder': 'Masukkan nama lengkap Anda',
     'form.nim': 'NIM (Nomor Induk Mahasiswa)',
     'form.nimPlaceholder': 'Contoh: 1202210001',
-    'form.email': 'Email Student / Telkom University',
+    'form.email': 'Email',
     'form.emailPlaceholder': 'nama@student.telkomuniversity.ac.id',
     'form.phone': 'Nomor WhatsApp / HP',
     'form.phonePlaceholder': 'Contoh: 081234567890',
@@ -93,7 +93,7 @@ export const uiTranslations: Record<Locale, Record<string, string>> = {
     'form.selectDiv2': '-- Pilih Divisi Pilihan 2 --',
     'form.reason': 'Alasan Memilih Divisi',
     'form.reasonPlaceholder': 'Jelaskan motivasi dan alasan Anda memilih divisi tersebut (minimal 30 kata)...',
-    'form.portfolioLink': 'Tautan Portofolio (Opsional / Khusus Medhum)',
+    'form.portfolioLink': 'Tautan Portofolio',
     'form.portfolioPlaceholder': 'https://drive.google.com/... atau link Behance/GitHub',
     'form.motivationLetter': 'Surat Motivasi (Motivation Letter)',
     'form.cv': 'Curriculum Vitae (CV)',
@@ -101,7 +101,7 @@ export const uiTranslations: Record<Locale, Record<string, string>> = {
     'form.khs': 'Kartu Hasil Studi (KHS)',
     'form.pi': 'Pakta Integritas (PI)',
     'form.downloadPiTemplate': 'Unduh Template Pakta Integritas',
-    'form.uploadNotice': 'Format berkas yang diperbolehkan: PDF, PNG, JPG. Perhatikan batas ukuran maksimum per berkas.',
+    'form.uploadNotice': 'Format berkas yang diperbolehkan: {exts}. Perhatikan batas ukuran maksimum per berkas.',
     'form.termsAgree': 'Saya menyatakan bahwa seluruh data dan dokumen yang saya unggah adalah benar, valid, dan dapat dipertanggungjawabkan.',
     'form.submit': 'Kirim Pendaftaran',
     'form.submitting': 'Mengirim Pendaftaran...',
@@ -182,14 +182,14 @@ export const uiTranslations: Record<Locale, Record<string, string>> = {
 /**
  * Get translation with automatic fallback to Indonesian
  */
-export function t(key: string, locale: Locale = DEFAULT_LOCALE): string {
-  if (uiTranslations[locale]?.[key]) {
-    return uiTranslations[locale][key];
+export function t(key: string, locale: Locale = DEFAULT_LOCALE, params?: Record<string, string>): string {
+  let str = uiTranslations[locale]?.[key] || uiTranslations[DEFAULT_LOCALE]?.[key] || key;
+  if (params) {
+    for (const [k, v] of Object.entries(params)) {
+      str = str.replace(new RegExp(`\\{${k}\\}`, 'g'), v);
+    }
   }
-  if (uiTranslations[DEFAULT_LOCALE]?.[key]) {
-    return uiTranslations[DEFAULT_LOCALE][key];
-  }
-  return key;
+  return str;
 }
 
 /**

@@ -26,6 +26,7 @@ const divisions = parseDivisions(divisionsData);
 
 const {
   studentYears,
+  fieldStates,
   docLimits,
   piTemplateUrl,
   minReasonWords,
@@ -81,13 +82,14 @@ acceptedCandidates.forEach((candidate: any) => {
         data-open-date={openDateStr}
         data-deadline={deadlineStr} 
         data-extended-deadline={extendedDeadlineStr}
-        data-portfolio-trigger-vals={registrationConfig.portfolioDivisionTriggerValues || registrationConfig.medhumDivisionValue || "Medhum"}
+        data-portfolio-trigger-vals={registrationConfig.portfolioDivisionTriggerValues || "Medhum"}
         data-min-reason-words={minReasonWords}
+        data-field-states={JSON.stringify(fieldStates)}
         data-script-url={import.meta.env.PUBLIC_GOOGLE_SHEET_SCRIPT_URL}
         data-secret-token={import.meta.env.PUBLIC_RECRUITMENT_SECRET}
       >
-        <ViewUpcoming initialStage={initialStage} upcomingCfg={upcomingCfg} docLimits={docLimits} studentYears={studentYears} piTemplateUrl={piTemplateUrl} />
-        <ViewOpenForm initialStage={initialStage} registrationConfig={registrationConfig} extendedCfg={extendedCfg} studentYears={studentYears} docLimits={docLimits} divisions={divisions} piTemplateUrl={piTemplateUrl} minReasonWords={minReasonWords} />
+        <ViewUpcoming initialStage={initialStage} upcomingCfg={upcomingCfg} docLimits={docLimits} studentYears={studentYears} piTemplateUrl={piTemplateUrl} fieldStates={fieldStates} allowedFileExtensions={registrationConfig.allowedFileExtensions} />
+        <ViewOpenForm initialStage={initialStage} registrationConfig={registrationConfig} extendedCfg={extendedCfg} studentYears={studentYears} docLimits={docLimits} divisions={divisions} piTemplateUrl={piTemplateUrl} minReasonWords={minReasonWords} fieldStates={fieldStates} />
         <ViewScreening initialStage={initialStage} selectionCfg={selectionCfg} />
         <ViewScreeningResults initialStage={initialStage} selectionResultsCfg={selectionResultsCfg} />
         <ViewTechnicalTest initialStage={initialStage} technicalTestCfg={technicalTestCfg} />

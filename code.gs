@@ -476,14 +476,18 @@ function doPost(e) {
     }
 
     // 3. CEK SECRET AUTH TOKEN (Opsional / Jika dikonfigurasi di Script Properties)
-    const expectedSecret = scriptProp.getProperty('SECRET_KEY');
-    if (expectedSecret && String(rawData.secret_token || '').trim() !== expectedSecret.trim()) {
-      return ContentService
-        .createTextOutput(JSON.stringify({ 
-          'result': 'error', 
-          'error': 'Unauthorized request signature.' 
-        }))
-        .setMimeType(ContentService.MimeType.JSON);
+    const rawExpectedSecret = scriptProp.getProperty('SECRET_KEY');
+    if (rawExpectedSecret && rawExpectedSecret.trim() !== '') {
+      const cleanExpected = rawExpectedSecret.replace(/^["']|["']$/g, '').trim();
+      const cleanIncoming = String(rawData.secret_token || '').replace(/^["']|["']$/g, '').trim();
+      if (cleanIncoming !== cleanExpected) {
+        return ContentService
+          .createTextOutput(JSON.stringify({ 
+            'result': 'error', 
+            'error': 'Unauthorized request signature.' 
+          }))
+          .setMimeType(ContentService.MimeType.JSON);
+      }
     }
 
     let doc;

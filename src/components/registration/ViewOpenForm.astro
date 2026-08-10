@@ -72,7 +72,7 @@ const portoState = fieldStates.portofolio || 'required';
 
 const hasSection3Files = ksmState !== 'disabled' || khsState !== 'disabled' || mlState !== 'disabled' || cvState !== 'disabled' || piState !== 'disabled';
 
-const standardDocs = [
+const rawDocs = [
   ksmState !== 'disabled' && {
     id: 'file_ksm',
     label: t('form.ksm', locale),
@@ -109,9 +109,12 @@ const standardDocs = [
     extsDisplay: cvExtsDisplay,
     state: cvState
   }
-].filter((d): d is NonNullable<typeof d> => Boolean(d));
+];
 
-const docRows: typeof standardDocs[] = [];
+type DocItem = Exclude<typeof rawDocs[number], false>;
+const standardDocs = rawDocs.filter((d): d is DocItem => d !== false);
+
+const docRows: DocItem[][] = [];
 for (let i = 0; i < standardDocs.length; i += 2) {
   docRows.push(standardDocs.slice(i, i + 2));
 }

@@ -87,6 +87,7 @@ In your GitHub repository, navigate to **Settings** > **Secrets and variables** 
 | `VERCEL_ORG_ID` | Vercel Organization / Team ID | `.vercel/project.json` or Vercel Team Settings |
 | `VERCEL_PROJECT_ID` | Vercel Project ID | `.vercel/project.json` or Vercel Project Settings |
 | `PUBLIC_GOOGLE_SHEET_SCRIPT_URL` | App Script webhook endpoint URL | Form submission endpoint |
+| `PUBLIC_RECRUITMENT_SECRET` | Secret token passphrase matching `SECRET_KEY` in Apps Script | Security passphrase for form submissions |
 | `PUBLIC_KEYSTATIC_GITHUB_APP_SLUG` | Keystatic GitHub App slug | e.g. `eim-lab-cms` |
 
 ---
@@ -103,6 +104,8 @@ For Keystatic CMS (`/keystatic`) to function properly when hosted on Cloudflare 
    - `KEYSTATIC_GITHUB_CLIENT_SECRET`: GitHub App Client Secret
    - `PUBLIC_KEYSTATIC_GITHUB_APP_SLUG`: GitHub App Slug (e.g. `eim-lab-cms`)
    - `KEYSTATIC_SECRET`: Random secret string used for session cookie signing
+   - `PUBLIC_GOOGLE_SHEET_SCRIPT_URL`: Google Apps Script Web App URL (`https://script.google.com/macros/s/.../exec`)
+   - `PUBLIC_RECRUITMENT_SECRET`: Secret passphrase for form payload authentication
 
 ### B. Enable Functions Compatibility Flag (`nodejs_compat`)
 1. In Cloudflare Pages project (`lab-eim`), go to **Settings** > **Functions**.

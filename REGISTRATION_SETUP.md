@@ -89,13 +89,13 @@ PUBLIC_GOOGLE_SHEET_SCRIPT_URL="https://script.google.com/macros/s/YOUR_APPS_SCR
 PUBLIC_RECRUITMENT_SECRET="your_custom_passphrase"
 ```
 
-### 2. Configure Production Secrets (Vercel / GitHub)
-If deploying to **Vercel** or using **GitHub Actions**:
-1. Go to your **Vercel Dashboard > Project > Settings > Environment Variables**.
+### 2. Configure Production Secrets (Cloudflare Pages / Vercel / GitHub)
+If deploying to **Cloudflare Pages**, **Vercel**, or using **GitHub Actions**:
+1. Go to your **Cloudflare Dashboard > Workers & Pages > lab-eim > Settings > Environment variables** (or Vercel Dashboard > Project Settings).
 2. Add:
    * `PUBLIC_GOOGLE_SHEET_SCRIPT_URL`: `https://script.google.com/macros/s/.../exec`
    * `PUBLIC_RECRUITMENT_SECRET`: `your_custom_passphrase`
-3. Add the same `PUBLIC_GOOGLE_SHEET_SCRIPT_URL` to **GitHub Repository Secrets** (`Settings > Secrets > Actions`) if building via GitHub Actions.
+3. Add the same `PUBLIC_GOOGLE_SHEET_SCRIPT_URL` & `PUBLIC_RECRUITMENT_SECRET` to **GitHub Repository Secrets** (`Settings > Secrets > Actions`) if building via GitHub Actions.
 
 ---
 

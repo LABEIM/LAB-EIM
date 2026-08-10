@@ -1,15 +1,23 @@
 # EIM Research Lab Website
 
 Official website of the Enterprise Infrastructure Management (EIM) Research Lab, Faculty of Industrial Engineering, Telkom University.
-- Primary: https://lab-eim.pages.dev/
-- Backup: https://lab-eim.vercel.app/
+- **Primary Host**: [https://lab-eim.pages.dev/](https://lab-eim.pages.dev/)
+- **Failover Backup**: [https://lab-eim.vercel.app/](https://lab-eim.vercel.app/)
 
 ## Key Technologies
 
-- **Framework**: [Astro v7.0.9](https://astro.build/)
-- **Styling**: [Tailwind CSS v4.0.0](https://tailwindcss.com/) via `@tailwindcss/vite`
-- **Language**: TypeScript
-- **Runtime**: Node.js v22
+- **Framework**: [Astro v7.1.3](https://astro.build/)
+- **Styling**: [Tailwind CSS v4.3.3](https://tailwindcss.com/) via `@tailwindcss/vite`
+- **Language**: TypeScript (`v6.0.3`)
+- **Runtime**: Node.js `>=22.12.0`
+
+## Documentation Index
+
+For detailed instructions on local development, deployment, backend integrations, and data management, refer to the guides below:
+
+1. **[Deployment & Hosting Guide](DEPLOYMENT.md)**: Local development setup, Cloudflare Pages primary deployment, Keystatic CMS configuration, Vercel backup hosting, and dual-hosting CI/CD pipeline.
+2. **[Registration Setup & Operations Guide](REGISTRATION_SETUP.md)**: Google Apps Script (`code.gs`) backend setup, Google Drive permissions, recruitment pipeline stages, and candidate selection announcement management.
+3. **[Data & Content Configuration Guide](src/data/CONFIG_GUIDE.md)**: Customizing laboratory divisions, staff member profiles, site metadata, and Keystatic CMS singletons.
 
 ## Directory Structure
 
@@ -19,15 +27,6 @@ Official website of the Enterprise Infrastructure Management (EIM) Research Lab,
 - `src/pages/`: File-system routing directories for Astro.
 - `src/layouts/`: Base wrapper page layout (`Layout.astro`).
 - `src/components/`: Reusable components such as `Navbar.astro` and `Footer.astro`.
-- `src/styles/`: Global stylesheet (`globals.css`).
+- `src/styles/`: Modular CSS stylesheets (`variables.css`, `base.css`, `globals.css`, component styles).
 - `public/`: Static folder hosting images, logos, and assistant profiles.
 
-## Setup & Deployment
-
-For a step-by-step guide to installing dependencies, running local development, configuring Google Sheets integration, setting up Keystatic CMS, and deploying to Vercel, refer to the [Setup and Deployment Guide](SETUP.md).
-
-## Website Configuration
-
-The website's metadata, laboratory divisions, active members, and registration settings can be customized by editing the JSON files in `src/data/`.
-
-For detailed instructions and schema templates, refer to the [Configuration Guide](src/data/CONFIG_GUIDE.md).

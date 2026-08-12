@@ -150,6 +150,7 @@ export const uiTranslations: Record<Locale, Record<string, string>> = {
     'home.upcomingEvents': 'Kegiatan Lab',
     'home.viewAllNews': 'Lihat Semua Berita',
     'home.viewAllEvents': 'Lihat Semua Kegiatan',
+    'home.noNews': 'Belum ada berita terkini.',
 
     // Structure Page
     'struct.title': 'Struktur Organisasi Lab',

@@ -113,8 +113,7 @@
 }
 
 .event-page-header {
-    background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
-    padding: 120px 0 60px 0;
+    padding: 140px 0 60px 0;
     text-align: center;
 }
 

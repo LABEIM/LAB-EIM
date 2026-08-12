@@ -127,7 +127,7 @@ const actionBtn = STAGE_ACTION_CONFIG[currentStage] || DEFAULT_ACTION_BTN;
           {latestNews.length === 0 ? (
             <div class="news-empty-state glass-panel news-empty-full">
               <i class="fa-regular fa-newspaper"></i>
-              <p class="text-secondary-muted">No latest news available.</p>
+              <p class="text-secondary-muted">{t('home.noNews', locale)}</p>
             </div>
           ) : (
             latestNews.map(newsItem => (
@@ -135,11 +135,13 @@ const actionBtn = STAGE_ACTION_CONFIG[currentStage] || DEFAULT_ACTION_BTN;
             ))
           )}
         </div>
-        <div class="view-all-news-wrapper">
-          <a href={getLocalizedPath('/news', locale)} class="btn btn-secondary">
-            {t('home.viewAllNews', locale)} <i class="fa-solid fa-arrow-right"></i>
-          </a>
-        </div>
+        {latestNews.length > 0 && (
+          <div class="view-all-news-wrapper">
+            <a href={getLocalizedPath('/news', locale)} class="btn btn-secondary">
+              {t('home.viewAllNews', locale)} <i class="fa-solid fa-arrow-right"></i>
+            </a>
+          </div>
+        )}
       </div>
     </div>
   </header>

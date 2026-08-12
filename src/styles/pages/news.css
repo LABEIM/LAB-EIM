@@ -183,10 +183,8 @@
 }
 
 .news-page-header {
-    background: linear-gradient(135deg, var(--bg-dark-secondary) 0%, var(--bg-dark) 100%);
     padding: 140px 0 60px 0;
     text-align: center;
-    border-bottom: 1px solid var(--border-color);
 }
 
 .news-page-header h1 {

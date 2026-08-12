@@ -2,7 +2,9 @@
 import { getCollection, render } from 'astro:content';
 import { Image } from 'astro:assets';
 import Layout from '../../layouts/Layout.astro';
-import { getLocaleFromUrl, getCleanSlug, getLocalizedPath, t } from '../../utils/i18n';
+import NewsCard from '../../components/cards/NewsCard.astro';
+import { getLocaleFromUrl, getCleanSlug, getLocalizedPath, getCollectionEntriesForLocale, t } from '../../utils/i18n';
+import { calculateReadingTime, getRelatedNews } from '../../utils/news-helpers';
 
 export async function getStaticPaths() {
   const news = await getCollection('news');
@@ -18,16 +20,24 @@ export async function getStaticPaths() {
 const locale = getLocaleFromUrl(Astro.url);
 const { item } = Astro.props;
 const images = item.data.image || [];
+const tags = item.data.tags || [];
 const { Content } = await render(item);
+
+const rawAllNews = await getCollection('news');
+const allNews = getCollectionEntriesForLocale(rawAllNews, locale);
+const relatedNews = getRelatedNews(item.id, allNews, 3);
 
 const formattedDate = new Date(item.data.news_date).toLocaleDateString('id-ID', {
   day: 'numeric',
   month: 'long',
   year: 'numeric'
 });
+
+const readTime = calculateReadingTime(item.body);
+const metaDesc = item.data.excerpt || `${item.data.title} - EIM Research Lab`;
 ---
 
-<Layout title={`${item.data.title} - EIM Research Lab`}>
+<Layout title={`${item.data.title} - EIM Research Lab`} description={metaDesc}>
   <div class="page-min-height">
     {/* Top Section */}
     <section class="detail-header-section">
@@ -38,9 +48,20 @@ const formattedDate = new Date(item.data.news_date).toLocaleDateString('id-ID', 
         
         <div class="header-title-row">
           <div>
+            {item.data.featured && (
+              <span class="detail-featured-badge">
+                <i class="fa-solid fa-thumbtack"></i> Berita Utama
+              </span>
+            )}
             <h1 class="news-title">{item.data.title}</h1>
-            <div class="author-badge">
-              <i class="fa-regular fa-building"></i> {item.data.author}
+            <div class="author-badge-row">
+              <span class="author-badge">
+                <i class="fa-regular fa-building"></i> {item.data.author}
+              </span>
+              <span class="meta-dot">•</span>
+              <span class="read-time-badge">
+                <i class="fa-regular fa-clock"></i> {readTime}
+              </span>
             </div>
           </div>
           
@@ -65,10 +86,29 @@ const formattedDate = new Date(item.data.news_date).toLocaleDateString('id-ID', 
             </div>
           )}
 
+          {/* Excerpt Lead Box */}
+          {item.data.excerpt && (
+            <div class="news-lead-box glass-panel">
+              <p>{item.data.excerpt}</p>
+            </div>
+          )}
+
           {/* Content */}
           <div class="news-content-body">
             <Content />
           </div>
+
+          {/* Article Tags */}
+          {tags.length > 0 && (
+            <div class="article-tags-section">
+              <span class="tags-label"><i class="fa-solid fa-tags"></i> Topik:</span>
+              <div class="article-tags-list">
+                {tags.map(tag => (
+                  <span class="article-tag-chip">#{tag}</span>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Right Column (Sidebar) */}
@@ -86,6 +126,17 @@ const formattedDate = new Date(item.data.news_date).toLocaleDateString('id-ID', 
               <div>
                 <div class="info-label">{t('news.date', locale)}</div>
                 <div class="info-val">{formattedDate}</div>
+              </div>
+            </div>
+
+            {/* Reading Time */}
+            <div class="info-item">
+              <div class="info-icon-box">
+                <i class="fa-regular fa-clock"></i>
+              </div>
+              <div>
+                <div class="info-label">Waktu Baca</div>
+                <div class="info-val">{readTime}</div>
               </div>
             </div>
 
@@ -118,6 +169,23 @@ const formattedDate = new Date(item.data.news_date).toLocaleDateString('id-ID', 
         </div>
       </div>
     </section>
+
+    {/* Related News Section */}
+    {relatedNews.length > 0 && (
+      <section class="section-padding related-news-section">
+        <div class="container">
+          <div class="section-title">
+            <h2>Berita Terkait</h2>
+            <p>Baca juga artikel dan pengumuman menarik lainnya dari EIM Research Lab.</p>
+          </div>
+          <div class="news-grid">
+            {relatedNews.map(relItem => (
+              <NewsCard news={relItem} showButton={true} />
+            ))}
+          </div>
+        </div>
+      </section>
+    )}
   </div>
 </Layout>
 

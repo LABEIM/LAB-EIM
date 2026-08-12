@@ -2,6 +2,7 @@
 import type { CollectionEntry } from 'astro:content';
 import { DEFAULT_COVER_IMAGE } from '../../utils/constants';
 import { getLocaleFromUrl, getCleanSlug, getLocalizedPath, t } from '../../utils/i18n';
+import { calculateReadingTime } from '../../utils/news-helpers';
 
 interface Props {
   news: CollectionEntry<'news'>;
@@ -23,19 +24,51 @@ const formattedDate = new Date(news.data.news_date).toLocaleDateString('id-ID', 
   month: 'long',
   day: 'numeric'
 });
+
+const readTime = calculateReadingTime(news.body);
+const excerptText = news.data.excerpt || news.body || '';
+const tags = news.data.tags || [];
+
+const searchText = `${news.data.title} ${news.data.category} ${news.data.author || ''} ${excerptText} ${tags.join(' ')}`.toLowerCase();
 ---
 
-<div class="news-card glass-panel">
+<div
+  class={`news-card glass-panel grid-card-item ${news.data.featured ? 'featured-card' : ''}`}
+  data-title={news.data.title}
+  data-category={news.data.category}
+  data-date={news.data.news_date}
+  data-author={news.data.author}
+  data-search-text={searchText}
+>
   <div class="news-img">
     <img src={coverImg} alt={`Cover ${news.data.title}`} />
     <span class="news-tag">{news.data.category}</span>
+    {news.data.featured && (
+      <span class="news-featured-badge">
+        <i class="fa-solid fa-thumbtack"></i> Utama
+      </span>
+    )}
   </div>
   <div class="news-content">
-    <div class="news-date">
-      <i class="fa-regular fa-calendar"></i> {formattedDate}
+    <div class="news-meta-row">
+      <span class="news-date">
+        <i class="fa-regular fa-calendar"></i> {formattedDate}
+      </span>
+      <span class="news-read-time">
+        <i class="fa-regular fa-clock"></i> {readTime}
+      </span>
     </div>
+
     <h3>{news.data.title}</h3>
-    <p class="news-desc">{news.body}</p>
+    <p class="news-desc">{excerptText}</p>
+
+    {tags.length > 0 && (
+      <div class="news-card-tags">
+        {tags.slice(0, 3).map(tag => (
+          <span class="card-tag-item">#{tag}</span>
+        ))}
+      </div>
+    )}
 
     <div class="news-footer-group">
       {showButton && (

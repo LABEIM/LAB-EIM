@@ -30,9 +30,18 @@ const coverImg = (event.data.image && event.data.image.length > 0)
 
 const cleanSlug = getCleanSlug(event.id);
 const detailUrl = getLocalizedPath(`/event/${cleanSlug}`, locale);
+
+const searchText = `${event.data.title} ${event.data.category} ${event.data.description || ''} ${event.data.organizer || ''}`.toLowerCase();
 ---
 
-<div class="event-card glass-panel">
+<div
+  class="event-card glass-panel grid-card-item"
+  data-title={event.data.title}
+  data-category={event.data.category}
+  data-status={event.data.status}
+  data-date={event.data.event_date}
+  data-search-text={searchText}
+>
   <div class="event-cover-img">
     <img src={coverImg} alt={`Cover ${event.data.title}`} />
   </div>

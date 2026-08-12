@@ -309,6 +309,12 @@ export default config({
         category: fields.text({ label: 'Category' }),
         author: fields.text({ label: 'Author', defaultValue: 'Admin EIM' }),
         news_date: fields.date({ label: 'Date' }),
+        featured: fields.checkbox({ label: 'Pin as Featured News', defaultValue: false }),
+        excerpt: fields.text({ label: 'Excerpt / Short Summary', multiline: true }),
+        tags: fields.array(fields.text({ label: 'Tag' }), {
+          label: 'Tags',
+          itemLabel: props => props.value,
+        }),
         image: fields.array(fields.text({ label: 'Image URL' }), {
           label: 'Images',
           itemLabel: props => props.value,

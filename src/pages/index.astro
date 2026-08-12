@@ -26,7 +26,12 @@ const rawNews = await getCollection('news');
 const localizedNews = getCollectionEntriesForLocale(rawNews, locale);
 
 const latestNews = localizedNews
-  .sort((a, b) => new Date(b.data.news_date).getTime() - new Date(a.data.news_date).getTime())
+  .sort((a, b) => {
+    if (a.data.featured !== b.data.featured) {
+      return a.data.featured ? -1 : 1;
+    }
+    return new Date(b.data.news_date).getTime() - new Date(a.data.news_date).getTime();
+  })
   .slice(0, 3);
 
 // Fetch upcoming events for poster popup

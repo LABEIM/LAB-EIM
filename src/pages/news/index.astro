@@ -2,11 +2,15 @@
 import { getCollection } from 'astro:content';
 import Layout from '../../layouts/Layout.astro';
 import NewsCard from '../../components/cards/NewsCard.astro';
+import FilterControlBar from '../../components/common/FilterControlBar.astro';
+import Pagination from '../../components/common/Pagination.astro';
 import { getLocaleFromUrl, getCollectionEntriesForLocale, t } from '../../utils/i18n';
 
 const locale = getLocaleFromUrl(Astro.url);
 const rawNews = await getCollection('news');
 const news = getCollectionEntriesForLocale(rawNews, locale);
+
+const categories = Array.from(new Set(news.map(item => item.data.category).filter(Boolean))).sort();
 
 const sortedNews = news.sort((a, b) => {
   const timeA = new Date(a.data.news_date).getTime();
@@ -27,19 +31,49 @@ const sortedNews = news.sort((a, b) => {
 
   <section class="section-padding news-section-main">
     <div class="container">
+      <!-- Filter Control Bar -->
+      <FilterControlBar
+        categories={categories}
+        searchPlaceholder="Cari judul berita, penulis, atau kata kunci..."
+        totalCount={sortedNews.length}
+      />
+
+      <!-- Empty State Notice for Filters -->
+      <div class="news-empty-state glass-panel empty-state-box" id="empty-state-notice" style="display: none;">
+        <i class="fa-regular fa-newspaper empty-state-icon"></i>
+        <h3>Berita Tidak Ditemukan</h3>
+        <p>Tidak ada berita yang cocok dengan kriteria pencarian atau filter Anda.</p>
+      </div>
+
       {sortedNews.length === 0 ? (
         <div class="news-empty-state glass-panel empty-state-box">
           <i class="fa-regular fa-newspaper empty-state-icon"></i>
-          <h3>No News Yet</h3>
-          <p>No articles or news have been published yet.</p>
+          <h3>Belum Ada Berita</h3>
+          <p>Belum ada artikel atau berita yang dipublikasikan.</p>
         </div>
       ) : (
-        <div class="news-grid" id="news-grid">
-          {sortedNews.map(item => (
-            <NewsCard news={item} showButton={true} />
-          ))}
-        </div>
+        <>
+          <div class="news-grid" id="news-grid">
+            {sortedNews.map(item => (
+              <NewsCard news={item} showButton={true} />
+            ))}
+          </div>
+
+          <!-- Pagination -->
+          <Pagination />
+        </>
       )}
     </div>
   </section>
 </Layout>
+
+<script>
+  import { initContentFilter } from '../../scripts/content-filter';
+  initContentFilter({
+    gridId: 'news-grid',
+    cardClass: 'grid-card-item',
+    itemsPerPage: 6,
+    emptyStateId: 'empty-state-notice',
+    itemName: 'Berita',
+  });
+</script>

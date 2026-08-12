@@ -1,0 +1,81 @@
+---
+interface Props {
+  categories: string[];
+  statuses?: { value: string; label: string }[];
+  searchPlaceholder?: string;
+  totalCount: number;
+}
+
+const {
+  categories = [],
+  statuses = [],
+  searchPlaceholder = 'Cari berdasarkan judul, kata kunci...',
+  totalCount = 0,
+} = Astro.props;
+---
+
+<div class="content-filter-bar" id="content-filter-bar">
+  <div class="filter-top-row">
+    <!-- Search input box -->
+    <div class="search-box-wrapper">
+      <i class="fa-solid fa-magnifying-glass search-icon"></i>
+      <input
+        type="search"
+        id="filter-search-input"
+        class="filter-search-input"
+        placeholder={searchPlaceholder}
+        autocomplete="off"
+      />
+      <button type="button" id="search-clear-btn" class="search-clear-btn" title="Clear Search">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+
+    <!-- Sort Selector -->
+    <div class="sort-select-wrapper">
+      <label for="filter-sort-select" class="sort-label">Urutkan:</label>
+      <select id="filter-sort-select" class="filter-sort-select">
+        <option value="desc">Terbaru (Newest)</option>
+        <option value="asc">Terlama (Oldest)</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Status Filter Pills (if events) -->
+  {statuses.length > 0 && (
+    <div class="filter-pills-row" id="status-pills-row">
+      <span class="sort-label">Status:</span>
+      <button type="button" class="filter-pill status-pill active" data-status="all">
+        Semua Status
+      </button>
+      {statuses.map(status => (
+        <button type="button" class="filter-pill status-pill" data-status={status.value}>
+          {status.label}
+        </button>
+      ))}
+    </div>
+  )}
+
+  <!-- Category Filter Pills -->
+  {categories.length > 0 && (
+    <div class="filter-pills-row" id="category-pills-row">
+      <span class="sort-label">Kategori:</span>
+      <button type="button" class="filter-pill category-pill active" data-category="all">
+        Semua Kategori
+      </button>
+      {categories.map(cat => (
+        <button type="button" class="filter-pill category-pill" data-category={cat}>
+          {cat}
+        </button>
+      ))}
+    </div>
+  )}
+
+  <!-- Filter Summary & Reset Bar -->
+  <div class="filter-summary-row" id="filter-summary-row">
+    <span id="filter-results-count">Menampilkan {totalCount} item</span>
+    <button type="button" id="filter-reset-btn" class="filter-reset-btn" style="display: none;">
+      <i class="fa-solid fa-rotate-left"></i> Reset Filter
+    </button>
+  </div>
+</div>

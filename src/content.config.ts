@@ -10,6 +10,9 @@ const newsCollection = defineCollection({
     author: z.string(),
     news_date: z.string(), // YYYY-MM-DD format
     image: z.array(z.string()).optional(),
+    excerpt: z.string().optional(),
+    tags: z.array(z.string()).optional(),
+    featured: z.boolean().optional().default(false),
   }),
 });
 

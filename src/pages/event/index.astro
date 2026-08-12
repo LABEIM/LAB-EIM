@@ -2,11 +2,21 @@
 import { getCollection } from 'astro:content';
 import Layout from '../../layouts/Layout.astro';
 import EventCard from '../../components/cards/EventCard.astro';
+import FilterControlBar from '../../components/common/FilterControlBar.astro';
+import Pagination from '../../components/common/Pagination.astro';
 import { getLocaleFromUrl, getCollectionEntriesForLocale, t } from '../../utils/i18n';
 
 const locale = getLocaleFromUrl(Astro.url);
 const rawEvents = await getCollection('events');
 const events = getCollectionEntriesForLocale(rawEvents, locale);
+
+const categories = Array.from(new Set(events.map(item => item.data.category).filter(Boolean))).sort();
+
+const statuses = [
+  { value: 'upcoming', label: t('badge.upcoming', locale) },
+  { value: 'ongoing', label: t('badge.ongoing', locale) },
+  { value: 'completed', label: t('badge.completed', locale) },
+];
 
 const sortedEvents = events.sort((a, b) => {
   const timeA = new Date(a.data.event_date).getTime();
@@ -27,19 +37,50 @@ const sortedEvents = events.sort((a, b) => {
 
   <section class="section-padding event-section-main">
     <div class="container">
+      <!-- Filter Control Bar -->
+      <FilterControlBar
+        categories={categories}
+        statuses={statuses}
+        searchPlaceholder="Cari nama kegiatan, penyelenggara, atau deskripsi..."
+        totalCount={sortedEvents.length}
+      />
+
+      <!-- Empty State Notice for Filters -->
+      <div class="news-empty-state glass-panel empty-state-box" id="empty-state-notice" style="display: none;">
+        <i class="fa-regular fa-folder-open empty-state-icon"></i>
+        <h3>Kegiatan Tidak Ditemukan</h3>
+        <p>Tidak ada kegiatan yang cocok dengan kriteria pencarian atau filter Anda.</p>
+      </div>
+
       {sortedEvents.length === 0 ? (
         <div class="news-empty-state empty-state-box">
           <i class="fa-regular fa-folder-open empty-state-icon"></i>
-          <h3>No Events Yet</h3>
-          <p>No events or agendas have been published yet.</p>
+          <h3>Belum Ada Kegiatan</h3>
+          <p>Belum ada agenda atau kegiatan yang dipublikasikan.</p>
         </div>
       ) : (
-        <div class="news-grid" id="events-grid">
-          {sortedEvents.map(event => (
-            <EventCard event={event} />
-          ))}
-        </div>
+        <>
+          <div class="news-grid" id="events-grid">
+            {sortedEvents.map(event => (
+              <EventCard event={event} />
+            ))}
+          </div>
+
+          <!-- Pagination -->
+          <Pagination />
+        </>
       )}
     </div>
   </section>
 </Layout>
+
+<script>
+  import { initContentFilter } from '../../scripts/content-filter';
+  initContentFilter({
+    gridId: 'events-grid',
+    cardClass: 'grid-card-item',
+    itemsPerPage: 6,
+    emptyStateId: 'empty-state-notice',
+    itemName: 'Kegiatan',
+  });
+</script>

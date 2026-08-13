@@ -145,7 +145,12 @@
 
     .page-header {
         padding-top: 110px !important;
-        padding-bottom: 45px !important;
+        padding-bottom: 20px !important;
+    }
+
+    .page-header + .section-padding,
+    .page-header + section {
+        padding-top: 24px !important;
     }
 
     .page-header-content h1 {

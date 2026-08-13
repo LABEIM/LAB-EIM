@@ -7,6 +7,8 @@
   "defaultKeywords": "EIM, EIM Research Lab, Telkom University, Enterprise Infrastructure Management, Laboratorium Jaringan, Cloud Computing, Riset Jaringan",
   "favicon": "/image/eim/logo_EIM_crop.png",
   "logo": "/image/eim/logo_EIM_crop.avif",
+  "timezone": "Asia/Jakarta",
+  "timezoneOffset": "+07:00",
   "contact": {
     "location": "Gedung TULT Lantai 8, Ruang TULT.08.09",
     "university": "Telkom University, Bandung, Indonesia",

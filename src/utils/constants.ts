@@ -3,6 +3,11 @@ import type { RecruitmentStage, StageActionConfig } from './types';
 export type { StageActionConfig };
 
 /**
+ * Global default timezone offset (WIB UTC+07:00).
+ */
+export const DEFAULT_TIMEZONE_OFFSET = "+07:00";
+
+/**
  * Default fallback dates for recruitment lifecycle stages.
  */
 export const DEFAULT_RECRUITMENT_DATES = {

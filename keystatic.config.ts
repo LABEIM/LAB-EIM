@@ -19,6 +19,7 @@ const registrationSchema = {
     ],
     defaultValue: 'auto',
   }),
+  timezoneOffset: fields.text({ label: 'Timezone Offset (e.g., +07:00 for WIB, +08:00 for WITA, +09:00 for WIT)', defaultValue: '+07:00' }),
   upcomingStartDate: fields.text({ label: 'Upcoming / Opening Soon Start Date (ISO format: YYYY-MM-DDTHH:mm:ss)', defaultValue: '2026-08-01T00:00:00' }),
   openDate: fields.text({ label: 'Opening Date (ISO format: YYYY-MM-DDTHH:mm:ss)', defaultValue: '2026-08-13T00:00:00' }),
   deadline: fields.text({ label: 'Initial Deadline Date (ISO format)', defaultValue: '2026-08-20T23:59:59' }),
@@ -381,6 +382,8 @@ export default config({
         defaultKeywords: fields.text({ label: 'Default Meta Keywords', multiline: true }),
         favicon: fields.text({ label: 'Favicon Path' }),
         logo: fields.text({ label: 'Logo Image Path' }),
+        timezone: fields.text({ label: 'Global IANA Timezone (e.g. Asia/Jakarta)', defaultValue: 'Asia/Jakarta' }),
+        timezoneOffset: fields.text({ label: 'Global Timezone Offset (e.g. +07:00 for WIB, +08:00 for WITA)', defaultValue: '+07:00' }),
         contact: fields.object({
           location: fields.text({ label: 'Location' }),
           university: fields.text({ label: 'University' }),

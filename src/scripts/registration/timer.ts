@@ -1,3 +1,5 @@
+import { syncRegistrationStage, syncServerTimeOffset, getEffectiveNowMs } from './stage';
+
 export interface TimeRemaining {
   days: string;
   hours: string;
@@ -27,7 +29,14 @@ export function formatTimeRemaining(targetTimeMs: number, nowMs: number): TimeRe
 }
 
 export function initRegistrationTimers(container: HTMLElement): () => void {
-  const stage = container.getAttribute('data-stage') || "auto";
+  // Initial synchronous stage check
+  syncRegistrationStage(container);
+
+  // Background Cloudflare Edge Server Time sync
+  syncServerTimeOffset().then(() => {
+    syncRegistrationStage(container);
+  });
+
   const openDateStr = container.getAttribute('data-open-date') || "2026-08-13T00:00:00";
   const deadlineStr = container.getAttribute('data-deadline') || "2026-08-20T23:59:59";
   const extendedDeadlineStr = container.getAttribute('data-extended-deadline') || "";
@@ -35,19 +44,6 @@ export function initRegistrationTimers(container: HTMLElement): () => void {
   const OPEN_TIME = new Date(openDateStr).getTime();
   const DEADLINE_TIME = new Date(deadlineStr).getTime();
   const EXTENDED_TIME = extendedDeadlineStr ? new Date(extendedDeadlineStr).getTime() : 0;
-
-  const nowMs = Date.now();
-  const isExtendedStage = stage === 'extended';
-  const activeDeadline = (EXTENDED_TIME > 0 && (isExtendedStage || (nowMs >= DEADLINE_TIME && nowMs < EXTENDED_TIME)))
-    ? EXTENDED_TIME 
-    : DEADLINE_TIME;
-
-  // Extended Banner Check
-  const extendedBanner = document.getElementById('extended-banner');
-  if (extendedBanner) {
-    const isExtendedNow = stage === 'extended' || (stage === 'auto' && EXTENDED_TIME > 0 && Date.now() >= DEADLINE_TIME && Date.now() < EXTENDED_TIME);
-    extendedBanner.style.display = isExtendedNow ? 'block' : 'none';
-  }
 
   // Dynamic Countdown Timers
   const daysEl = document.getElementById('timer-days');
@@ -74,7 +70,14 @@ export function initRegistrationTimers(container: HTMLElement): () => void {
   };
 
   const updateTimers = () => {
-    const currentMs = Date.now();
+    // Recalculate dynamic stage on tick (handles live transition when timer expires)
+    const currentStage = syncRegistrationStage(container);
+    const currentMs = getEffectiveNowMs();
+
+    const isExtendedStage = currentStage === 'extended';
+    const activeDeadline = (EXTENDED_TIME > 0 && (isExtendedStage || (currentMs >= DEADLINE_TIME && currentMs < EXTENDED_TIME)))
+      ? EXTENDED_TIME 
+      : DEADLINE_TIME;
 
     if (uDaysEl) {
       applyTimeDisplay(formatTimeRemaining(OPEN_TIME, currentMs), uDaysEl, uHoursEl, uMinutesEl, uSecondsEl);
@@ -90,3 +93,4 @@ export function initRegistrationTimers(container: HTMLElement): () => void {
 
   return () => clearInterval(timerInterval);
 }
+

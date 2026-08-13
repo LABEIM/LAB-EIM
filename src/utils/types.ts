@@ -138,6 +138,8 @@ export interface FieldStates {
 
 export interface RecruitmentConfig {
   status?: string;
+  timezone?: string;
+  timezoneOffset?: string;
   upcomingStartDate?: string;
   openDate?: string;
   deadline?: string;

@@ -82,6 +82,7 @@ This file configures the 10-stage recruitment pipeline landing page (`/registrat
   * `"closed"`: Recruitment Closed view.
   * `"fallback"`: Fallback / Maintenance view (replaces standard form with direct external Google Form link).
 * **Date Pipeline Fields**: `upcomingStartDate`, `openDate`, `deadline`, `extendedDeadline`, `selectionEndDate`, `selectionResultsDate`, `technicalTestStartDate`, `technicalTestEndDate`, `technicalTestResultsDate`, `interviewStartDate`, `interviewEndDate`, `announcementDate`. `upcomingStartDate` marks when the "Opening Soon" stage begins before registration officially opens (`openDate`). Each release date field (`selectionResultsDate`, `technicalTestResultsDate`, `announcementDate`) represents the exact start date of that announcement phase.
+* **`timezoneOffset`** (String, Optional): Specific recruitment timezone offset override (e.g. `"+07:00"` for WIB). Defaults to global site timezone offset if omitted.
 * **Stage Configurations**: `upcomingConfig`, `extendedConfig`, `selectionConfig`, `selectionResultsConfig`, `technicalTestConfig`, `technicalTestResultsConfig`, `interviewConfig`, `announcementConfig`, `closedConfig`, `fallbackConfig`.
   * **`fallbackConfig`**: Configures the maintenance/backup view text and link (`title`, `subtitle`, `message`, `formUrl`, `buttonText`).
 
@@ -187,6 +188,8 @@ This file configures the global branding, tab information, and social links of t
 * **`defaultKeywords`** (String): Fallback meta keywords list for SEO.
 * **`favicon`** (String): Path to the favicon/tab icon.
 * **`logo`** (String): Path to the logo image.
+* **`timezone`** (String): Global IANA timezone name for the website (e.g. `"Asia/Jakarta"`).
+* **`timezoneOffset`** (String): Global UTC offset for the website (e.g. `"+07:00"` for WIB).
 * **`contact`** (Object):
   * **`location`** (String): Room / building location.
   * **`university`** (String): Institution name and address.
@@ -205,6 +208,8 @@ This file configures the global branding, tab information, and social links of t
   "defaultKeywords": "EIM, EIM Research Lab, Telkom University, Enterprise Infrastructure Management, Laboratorium Jaringan, Cloud Computing, Riset Jaringan",
   "favicon": "/image/eim/logo_EIM.avif",
   "logo": "/image/eim/logo_EIM.avif",
+  "timezone": "Asia/Jakarta",
+  "timezoneOffset": "+07:00",
   "contact": {
     "location": "TULT Building 8th Floor, Room TULT.08.09",
     "university": "Telkom University, Bandung, Indonesia",

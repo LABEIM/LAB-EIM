@@ -1,6 +1,7 @@
 ---
 import { getLocaleFromUrl, getLocalizedJsonData } from '../../utils/i18n';
 import { getCurrentRecruitmentStage } from '../../utils/recruitment';
+import { applySimulationToConfig } from '../../utils/simulation';
 
 const locale = getLocaleFromUrl(Astro.url);
 
@@ -29,6 +30,19 @@ try {
   registrationConfig = await getLocalizedJsonData<any>('registration', locale);
 } catch (e) {
   registrationConfig = {};
+}
+
+// Support simulation parameters on SSR
+const simQueryParam = Astro.url.searchParams.get('sim');
+const stageQueryParam = Astro.url.searchParams.get('stage') || Astro.url.searchParams.get('sim_stage');
+
+if ((simQueryParam || stageQueryParam) && registrationConfig) {
+  registrationConfig = applySimulationToConfig(
+    registrationConfig,
+    simQueryParam ? parseInt(simQueryParam, 10) || 30 : 30,
+    Date.now(),
+    stageQueryParam
+  );
 }
 
 // Determine display values based on mode (auto_recruitment vs manual)
@@ -74,20 +88,6 @@ if (enabled && mode === 'auto_recruitment' && registrationConfig) {
     message = registrationConfig?.upcomingConfig?.title || 'Pendaftaran Asisten EIM Research Lab akan segera dibuka!';
     ctaText = 'Lihat Persyaratan';
     ctaLink = '/registration';
-  } else if (stage === 'selection_results') {
-    alertType = 'success';
-    icon = 'fa-solid fa-bullhorn';
-    badgeText = 'PENGUMUMAN';
-    message = 'Hasil Seleksi Berkas Pendaftaran Asisten telah diumumkan!';
-    ctaText = 'Cek Status';
-    ctaLink = '/registration';
-  } else if (stage === 'technical_test_results') {
-    alertType = 'success';
-    icon = 'fa-solid fa-bullhorn';
-    badgeText = 'PENGUMUMAN';
-    message = 'Hasil Tes Teknikal Pendaftaran Asisten telah diumumkan!';
-    ctaText = 'Cek Status';
-    ctaLink = '/registration';
   } else if (stage === 'announcement') {
     alertType = 'success';
     icon = 'fa-solid fa-trophy';
@@ -95,8 +95,25 @@ if (enabled && mode === 'auto_recruitment' && registrationConfig) {
     message = 'Pengumuman Akhir Kelulusan Asisten EIM Research Lab!';
     ctaText = 'Lihat Pengumuman';
     ctaLink = '/registration';
+  } else if (stage.endsWith('_results') || stage === 'selection_results' || stage === 'technical_test_results') {
+    alertType = 'success';
+    icon = 'fa-solid fa-bullhorn';
+    badgeText = 'PENGUMUMAN';
+    message = 'Pengumuman hasil seleksi rekrutmen asisten telah dibuka!';
+    ctaText = 'Cek Status';
+    ctaLink = '/registration';
+  } else if (stage === 'closed') {
+    enabled = false;
+  } else {
+    alertType = 'recruitment';
+    icon = 'fa-solid fa-spinner';
+    badgeText = 'TAHAP SELEKSI';
+    message = 'Tahap seleksi rekrutmen asisten sedang berlangsung!';
+    ctaText = 'Lihat Informasi';
+    ctaLink = '/registration';
   }
 }
+
 /**
  * Security helper to sanitize destination links against javascript: or data: XSS payloads
  */

@@ -33,8 +33,9 @@ This document is a step-by-step guide for setting up, configuring, and operating
 ### 2. Configure Script Properties & Initial Setup
 1. In the Apps Script editor toolbar, select the function `initialSetup` from the dropdown and click **Run**.
    > *This stores the active Spreadsheet ID into Script Properties so the script knows where to append form data.*
-2. Go to **Project Settings ⚙️** (left sidebar menu) > **Script Properties**.
+2. Go to **Project Settings** (left sidebar menu) > **Script Properties**.
 3. Click **Add script property** and configure any desired options:
+   * **`OPEN_DATE`**: `2026-08-15T00:00:00+07:00` *(ISO date string matching your registration opening date; submissions before this timestamp are rejected)*
    * **`DEADLINE`**: `2026-08-23T23:59:59+07:00` *(ISO date string matching your registration close date)*
    * **`HEADER_ROW`**: `1` *(Optional. Set to `4` if your column header row starts at row 4, e.g. when top rows contain metadata or title)*
    * **`SHEET_NAME`**: `Sheet1` *(Optional. Name of the target worksheet tab, defaults to `Sheet1`)*
@@ -54,14 +55,17 @@ This document is a step-by-step guide for setting up, configuring, and operating
 ### 4. Backend Key Customizations (`code.gs`)
 If you need to customize email text, sheet tab names, or folder fallback logic:
 
-* **📊 Target Worksheet Tab Name** (`code.gs` Line 1):
+* **Target Worksheet Tab Name** (`code.gs` Line 1):
   ```javascript
   const sheetName = 'Sheet1'; // Change to match your Google Sheet tab name (e.g. 'Pendaftar')
   ```
-* **📁 Google Drive Folder & Upload Logic** (`code.gs` Lines 128–204):
+* **Google Drive Folder & Upload Logic** (`code.gs` Lines 128–204):
   * Reads `FOLDER_ID` from Script Properties or automatically creates `"EIM Recruitment Uploads"` folder and caches the folder ID.
   * Validates MIME types against `ALLOWED_MIME_TYPES` whitelist and enforces file size limits.
-* **📧 Confirmation Email & Document Verification Links** (`code.gs` Lines 224–315):
+* **Registration Open & Deadline Server Validation** (`code.gs` Lines 438–466):
+  * Evaluates Google Server time (`new Date().getTime()`) against `OPEN_DATE` and `DEADLINE`.
+  * Automatically rejects any form submissions sent before `OPEN_DATE` or after `DEADLINE` to prevent local clock manipulation attacks.
+* **Confirmation Email & Document Verification Links** (`code.gs` Lines 224–315):
   * Recipient Email validation & Daily Quota check.
   * Dynamically includes portfolio links under **Link Portofolio** only if the candidate chose a portfolio-requiring division.
   * Includes direct verification links for all uploaded candidate documents (KSM, KHS, ML, CV, PI).
@@ -69,7 +73,7 @@ If you need to customize email text, sheet tab names, or folder fallback logic:
 
 ### 5. Deploy as Web App
 1. In the top right corner, click **Deploy > New deployment**.
-2. Click the gear icon ⚙️ next to *Select type* and select **Web app**.
+2. Click the gear icon next to *Select type* and select **Web app**.
 3. Fill out the deployment details:
    * **Description**: `EIM Registration API v1`
    * **Execute as**: **Me** (`your-email@gmail.com` or `@telkomuniversity.ac.id`)
@@ -114,23 +118,69 @@ Set the key dates for each phase in ISO format (`YYYY-MM-DDTHH:mm:ss`):
   "openDate": "2026-08-13T00:00:00",
   "deadline": "2026-08-20T23:59:59",
   "extendedDeadline": "2026-08-23T23:59:59",
-  "selectionEndDate": "2026-08-25T23:59:59",
-  "selectionResultsDate": "2026-08-26T00:00:00",
-  "technicalTestStartDate": "2026-08-29T00:00:00",
-  "technicalTestEndDate": "2026-08-30T23:59:59",
-  "technicalTestResultsDate": "2026-09-01T00:00:00",
-  "interviewStartDate": "2026-09-05T00:00:00",
-  "interviewEndDate": "2026-09-06T23:59:59",
-  "announcementDate": "2026-09-09T00:00:00"
+  "announcementDate": "2026-09-09T00:00:00",
+  "selectionSteps": [
+    {
+      "id": "selection",
+      "enabled": true,
+      "title": "Seleksi Berkas",
+      "shortLabel": "Seleksi Berkas",
+      "startDate": "2026-08-20T23:59:59",
+      "endDate": "2026-08-25T23:59:59",
+      "resultsDate": "2026-08-26T00:00:00"
+    },
+    {
+      "id": "technical_test",
+      "enabled": true,
+      "title": "Tes Teknikal",
+      "shortLabel": "Tes Teknikal",
+      "startDate": "2026-08-29T00:00:00",
+      "endDate": "2026-08-30T23:59:59",
+      "resultsDate": "2026-09-01T00:00:00"
+    }
+  ]
 }
 ```
 
-* **`minReasonWords`**: Minimum number of words required for each "Reason for Choosing Division" textarea (default: `30`). Can be changed directly in `registration.json` or via Keystatic Admin UI under Registration Settings.
+* **`minReasonWords`**: Minimum number of words required for each "Reason for Choosing Division" textarea (default: `30`).
+* **`selectionSteps`**: Fully dynamic selection pipeline list. Each step can be enabled/disabled (`enabled: true/false`), reordered, or edited directly via Keystatic CMS.
+
+### Dynamic Selection Step View Templates (`templateType`):
+
+Each step in `selectionSteps` can use one of three **Step View Templates** depending on the active phase requirements:
+
+1. **`in_progress` (In-Progress / Task Details View)**:
+   * **Visual Layout**: Renders an informative instruction panel ([`StageInfoPanel.astro`](file:///home/arukast/Projects/website-eim/src/components/registration/StageInfoPanel.astro)).
+   * **Key Components**: Active timeline step highlight, announcement notice message (`inProgressConfig.message`), schedule timeline info (`inProgressConfig.scheduleInfo`), and platform/location instructions (`inProgressConfig.locationInfo`).
+   * **Best For**: Ongoing assessment phases such as Document Screening in progress, Technical Test working window, or Interview schedule sessions.
+
+2. **`results` (Results Announcement View)**:
+   * **Visual Layout**: Renders a candidate lookup portal ([`NimSearchBox.astro`](file:///home/arukast/Projects/website-eim/src/components/registration/NimSearchBox.astro)).
+   * **Key Components**: Completed step timeline indicator, Student ID (NIM) search input with instant pass/fail status lookup against [`src/data/recruitment_results.json`](file:///home/arukast/Projects/website-eim/src/data/recruitment_results.json), and optional action buttons for official news posts (`newsUrl`) or downloaded PDF attachments (`documentUrl`).
+   * **Best For**: Step qualification releases such as Document Screening Results (`selection_results`), Technical Test Results (`technical_test_results`), or Interview Phase Results.
+
+3. **`info` (Informational Notice View)**:
+   * **Visual Layout**: Renders a clean notice panel without candidate input forms.
+   * **Key Components**: Timeline progress status, status announcement banner, and estimated next milestone date.
+   * **Best For**: Administrative buffer phases where staff are compiling marks or transitioning between stages (e.g. `final_selection`).
 
 ### Automatic vs Manual Stage Overrides:
-* **`"status": "auto"`** *(Recommended)*: System automatically computes the current active stage based on system time vs the dates above.
-* **Manual Override**: You can force a stage by changing `"status"` to one of:
-  `"upcoming"`, `"open"`, `"extended"`, `"selection"`, `"selection_results"`, `"technical_test"`, `"technical_test_results"`, `"interview"`, `"announcement"`, or `"closed"`.
+* **`"status": "auto"`** *(Recommended)*: System automatically computes the current active stage based on system time vs the global and dynamic step dates.
+* **Manual Override**: You can force any stage by entering its key in **Recruitment Stage Status Override**:
+
+| Desired Live Stage | Key to Enter in Status Override |
+| :--- | :--- |
+| **Automatic (Date-based)** | `auto` |
+| **Opening Soon** | `upcoming` |
+| **Registration Form Active** | `open` |
+| **Registration Extended** | `extended` |
+| **Step In-Progress Phase** | Step ID (e.g. `selection`, `technical_test`, `interview`, `fgd`) |
+| **Step Results Phase** | Step ID + `_results` (e.g. `selection_results`, `technical_test_results`, `interview_results`, `fgd_results`) |
+| **Final Selection Announcement** | `announcement` |
+| **Recruitment Closed** | `closed` |
+| **Google Form Fallback** | `fallback` |
+
+
 
 ---
 
@@ -170,9 +220,10 @@ Add or update candidates under the `"candidates"` list:
 ```
 
 ### Possible Status Values:
-* `screeningStatus`: `"passed"` | `"failed"`
-* `technicalTestStatus`: `"passed"` | `"failed"`
-* `finalStatus`: `"accepted"` | `"waitlist"` | `"rejected"`
+* `screeningStatus`: `"passed"` | `"failed"` (maps to `selection` / screening step)
+* `technicalTestStatus`: `"passed"` | `"failed"` (maps to `technical_test` step)
+* `{step_id}Status`: `"passed"` | `"failed"` (maps dynamically to any custom step with ID `{step_id}`, e.g., `fgdStatus`, `interviewStatus`)
+* `finalStatus`: `"accepted"` | `"waitlist"` | `"rejected"` (maps to final announcement step)
 
 ---
 
@@ -206,4 +257,4 @@ npm run build
 * **Form fails with CORS or Network Error**:
   Ensure the Web App deployment has access set to **Anyone** (not *Anyone with Google Account*).
 * **Changes to `code.gs` not reflecting**:
-  After modifying `code.gs`, you **must create a new deployment version**: `Deploy > Manage Deployments > Edit ✏️ > Version: New Version > Deploy`.
+  After modifying `code.gs`, you **must create a new deployment version**: `Deploy > Manage Deployments > Edit > Version: New Version > Deploy`.

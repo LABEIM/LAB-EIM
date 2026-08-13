@@ -16,10 +16,14 @@ const {
   locationInfo,
   locationIconClass = "fa-location-dot"
 } = Astro.props;
+
+const effectiveIconClass = iconClass.includes(' ') || iconClass.startsWith('fa-')
+  ? (iconClass.startsWith('fa-') && !iconClass.includes(' ') ? `fa-solid ${iconClass}` : iconClass)
+  : `fa-solid fa-${iconClass}`;
 ---
 
 <div class="info-card-panel">
-  <i class={`fa-solid ${iconClass} info-card-icon`}></i>
+  <i class={`${effectiveIconClass} info-card-icon`}></i>
   <p class="reg-checklist-notice">{message}</p>
   
   {estimatedAnnouncementDate && (

@@ -7,12 +7,8 @@ export type RecruitmentStage =
   | 'upcoming'
   | 'open'
   | 'extended'
-  | 'selection'
-  | 'selection_results'
-  | 'technical_test'
-  | 'technical_test_results'
-  | 'interview'
-  | 'announcement';
+  | 'announcement'
+  | (string & {});
 
 export interface StageActionConfig {
   label: string;
@@ -98,6 +94,13 @@ export interface InterviewConfig {
   locationInfo: string;
 }
 
+export interface FinalSelectionConfig {
+  title: string;
+  subtitle: string;
+  message: string;
+  estimatedAnnouncementDate?: string;
+}
+
 export interface AnnouncementConfig {
   title: string;
   subtitle: string;
@@ -163,9 +166,38 @@ export interface RecruitmentConfig {
   technicalTestConfig?: TechnicalTestConfig;
   technicalTestResultsConfig?: TechnicalTestResultsConfig;
   interviewConfig?: InterviewConfig;
+  finalSelectionConfig?: FinalSelectionConfig;
   announcementConfig?: AnnouncementConfig;
   closedConfig?: ClosedConfig;
   fallbackConfig?: FallbackConfig;
+  selectionSteps?: SelectionStepConfig[];
+}
+
+export type StepTemplateType = 'in_progress' | 'results' | 'info';
+
+export interface SelectionStepConfig {
+  id: string;
+  enabled: boolean;
+  title: string;
+  shortLabel: string;
+  icon?: string;
+  startDate?: string;
+  endDate?: string;
+  resultsDate?: string;
+  templateType: StepTemplateType;
+  inProgressConfig?: {
+    title: string;
+    subtitle: string;
+    message: string;
+    scheduleInfo?: string;
+    locationInfo?: string;
+  };
+  resultsConfig?: {
+    title: string;
+    subtitle: string;
+    newsUrl?: string;
+    documentUrl?: string;
+  };
 }
 
 export interface RegistrationPageConfigs {
@@ -185,7 +217,10 @@ export interface RegistrationPageConfigs {
   technicalTestCfg: TechnicalTestConfig;
   technicalTestResultsCfg: TechnicalTestResultsConfig;
   interviewCfg: InterviewConfig;
+  finalSelectionCfg: FinalSelectionConfig;
   announcementCfg: AnnouncementConfig;
   closedCfg: ClosedConfig;
   fallbackCfg: FallbackConfig;
+  selectionSteps: SelectionStepConfig[];
 }
+

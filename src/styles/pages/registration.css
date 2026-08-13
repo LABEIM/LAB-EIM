@@ -75,13 +75,18 @@
 
 /* Timeline Indicator */
 .timeline-indicator-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
   gap: 12px;
   margin-bottom: 35px;
 }
 
 .timeline-step-card {
+  width: 145px;
+  max-width: 100%;
+  flex-grow: 0;
+  flex-shrink: 0;
   border-radius: 10px;
   padding: 14px 8px;
   text-align: center;
@@ -138,44 +143,65 @@
   background: rgba(0, 240, 255, 0.05);
   border: 1px solid rgba(0, 240, 255, 0.2);
   border-radius: 12px;
-  padding: 25px;
+  padding: 28px 32px;
   margin-bottom: 30px;
+  text-align: center;
 }
 
 .checklist-title {
-  font-size: 1.2rem;
+  font-size: 1.25rem;
+  font-weight: 600;
   color: var(--accent-cyan);
-  margin-bottom: 12px;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  text-align: center;
+}
+
+.reg-checklist-notice {
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+  margin-bottom: 20px;
+  text-align: center;
+  line-height: 1.5;
 }
 
 .checklist-list {
   color: var(--text-secondary);
-  line-height: 1.8;
+  line-height: 1.7;
   list-style-type: none;
   padding-left: 0;
-  margin: 0;
+  margin: 0 auto;
+  text-align: left;
+  max-width: 600px;
 }
 
 .checklist-list li {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   flex-wrap: wrap;
   gap: 8px;
-  margin-bottom: 10px;
+  margin-bottom: 12px;
 }
 
 .checklist-list li:last-child {
   margin-bottom: 0;
 }
 
+.checklist-list li .reg-checklist-icon {
+  margin-top: 4px;
+  flex-shrink: 0;
+}
+
 .checklist-download-btn {
-  position: relative;
   display: inline-flex;
   align-items: center;
-  justify-content: center;
-  padding: 5px 28px;
+  gap: 6px;
+  padding: 4px 14px;
   font-size: 0.8rem;
-  line-height: 1.2;
+  line-height: 1.4;
   background: rgba(0, 242, 254, 0.12);
   color: var(--accent-cyan);
   border: 1px solid rgba(0, 242, 254, 0.3);
@@ -183,14 +209,12 @@
   text-decoration: none;
   font-weight: 500;
   transition: all 0.2s ease;
-  text-align: center;
+  margin-left: 4px;
 }
 
 .checklist-download-btn i {
-  position: absolute;
-  left: 10px;
-  top: 50%;
-  transform: translateY(-50%);
+  position: static;
+  transform: none;
 }
 
 .checklist-download-btn:hover {
@@ -538,6 +562,7 @@ input[type="file"].form-control::file-selector-button:hover {
     opacity: 0;
     transform: translateY(20px) scale(0.96);
   }
+
   to {
     opacity: 1;
     transform: translateY(0) scale(1);
@@ -808,6 +833,7 @@ input[type="file"].form-control::file-selector-button:hover {
     opacity: 0;
     transform: translateY(-8px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -1122,7 +1148,3 @@ input[type="file"].form-control::file-selector-button:hover {
 .reg-mb-0 {
   margin-bottom: 0;
 }
-
-
-
-

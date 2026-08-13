@@ -1,37 +1,22 @@
 import { config, fields, collection, singleton } from '@keystatic/core';
 
 const registrationSchema = {
-  status: fields.select({
-    label: 'Recruitment Stage Status',
-    options: [
-      { label: 'Auto (Date-based Pipeline)', value: 'auto' },
-      { label: 'Upcoming (Opening Soon)', value: 'upcoming' },
-      { label: 'Open (Registration Form Active)', value: 'open' },
-      { label: 'Extended (Registration Extended)', value: 'extended' },
-      { label: 'Document Screening In Progress', value: 'selection' },
-      { label: 'Document Screening Announcement', value: 'selection_results' },
-      { label: 'Technical Test In Progress', value: 'technical_test' },
-      { label: 'Technical Test Announcement', value: 'technical_test_results' },
-      { label: 'Interview Phase In Progress', value: 'interview' },
-      { label: 'Final Selection Announcement', value: 'announcement' },
-      { label: 'Recruitment Closed', value: 'closed' },
-      { label: 'Fallback / Maintenance (Google Form Link)', value: 'fallback' },
-    ],
+  status: fields.text({
+    label: 'Recruitment Stage Status Override',
+    description: 'Set to "auto" for automatic date-based calculation. Default lifecycle phases: "upcoming", "open", "extended", "final_selection", "announcement", "closed", "fallback". You can also override to any selection phase defined under Dynamic Selection Pipeline Steps by using its Step Identifier Key (e.g., "selection", "technical_test", "fgd", "interview"). To trigger a step\'s results announcement phase, append "_results" to its Step Identifier Key (e.g., "selection_results", "technical_test_results", "interview_results").',
     defaultValue: 'auto',
   }),
+
+
+
+
   timezoneOffset: fields.text({ label: 'Timezone Offset (e.g., +07:00 for WIB, +08:00 for WITA, +09:00 for WIT)', defaultValue: '+07:00' }),
   upcomingStartDate: fields.text({ label: 'Upcoming / Opening Soon Start Date (ISO format: YYYY-MM-DDTHH:mm:ss)', defaultValue: '2026-08-01T00:00:00' }),
   openDate: fields.text({ label: 'Opening Date (ISO format: YYYY-MM-DDTHH:mm:ss)', defaultValue: '2026-08-13T00:00:00' }),
   deadline: fields.text({ label: 'Initial Deadline Date (ISO format)', defaultValue: '2026-08-20T23:59:59' }),
   extendedDeadline: fields.text({ label: 'Extended Deadline Date (Optional ISO format)', defaultValue: '2026-08-23T23:59:59' }),
-  selectionEndDate: fields.text({ label: 'Document Screening End Date (ISO format)', defaultValue: '2026-08-25T23:59:59' }),
-  selectionResultsDate: fields.text({ label: 'Screening Announcement Start Date (ISO format)', defaultValue: '2026-08-26T00:00:00' }),
-  technicalTestStartDate: fields.text({ label: 'Technical Test Start Date (ISO format)', defaultValue: '2026-08-29T00:00:00' }),
-  technicalTestEndDate: fields.text({ label: 'Technical Test End Date (ISO format)', defaultValue: '2026-08-30T23:59:59' }),
-  technicalTestResultsDate: fields.text({ label: 'Technical Test Announcement Start Date (ISO format)', defaultValue: '2026-09-01T00:00:00' }),
-  interviewStartDate: fields.text({ label: 'Interview Phase Start Date (ISO format)', defaultValue: '2026-09-05T00:00:00' }),
-  interviewEndDate: fields.text({ label: 'Interview Phase End Date (ISO format)', defaultValue: '2026-09-06T23:59:59' }),
   announcementDate: fields.text({ label: 'Final Announcement Start Date (ISO format)', defaultValue: '2026-09-09T00:00:00' }),
+
   title: fields.text({ label: 'Form Section Title', defaultValue: 'Assistant Registration Form' }),
   subtitle: fields.text({ label: 'Form Section Subtitle', defaultValue: 'Complete the form below with valid and correct information.' }),
   heroTag: fields.text({ label: 'Hero Tag', defaultValue: 'Assistant Recruitment' }),
@@ -169,37 +154,11 @@ const registrationSchema = {
     bannerTitle: fields.text({ label: 'Extended Banner Title', defaultValue: 'Pendaftaran Diperpanjang! (Registration Extended)' }),
     bannerMessage: fields.text({ label: 'Extended Banner Message', defaultValue: 'Good news! The assistant registration deadline has been extended. Don\'t miss this opportunity to submit your application.' }),
   }),
-  selectionConfig: fields.object({
-    title: fields.text({ label: 'Screening Section Title', defaultValue: 'Document Screening In Progress' }),
-    subtitle: fields.text({ label: 'Screening Subtitle', defaultValue: 'Our team is currently evaluating all submitted administrative documents.' }),
-    message: fields.text({ label: 'Screening Notice Message', defaultValue: 'Thank you for registering! Document verification and administrative screening are underway.' }),
-    estimatedAnnouncementDate: fields.text({ label: 'Estimated Announcement Date Text', defaultValue: '06 August 2026' }),
-  }),
-  selectionResultsConfig: fields.object({
-    title: fields.text({ label: 'Screening Results Title', defaultValue: 'Pengumuman Seleksi Berkas (Document Screening Results)' }),
-    subtitle: fields.text({ label: 'Screening Results Subtitle', defaultValue: 'Check if you passed document screening and qualify for the Technical Test.' }),
-    newsUrl: fields.text({ label: 'Official News Post URL', defaultValue: '/news/pengumuman-rekrutmen-2026' }),
-    documentUrl: fields.text({ label: 'PDF Document Link (Optional)', defaultValue: '' }),
-  }),
-  technicalTestConfig: fields.object({
-    title: fields.text({ label: 'Technical Test Title', defaultValue: 'Technical Test Phase In Progress' }),
-    subtitle: fields.text({ label: 'Technical Test Subtitle', defaultValue: 'Practical skills assessment and technical challenge in progress.' }),
-    message: fields.text({ label: 'Technical Test Notice Message', defaultValue: 'Please check your registered email for your technical test instructions and submission brief.' }),
-    scheduleInfo: fields.text({ label: 'Schedule Info Text', defaultValue: '07 - 10 August 2026' }),
-    locationInfo: fields.text({ label: 'Location / Platform Info', defaultValue: 'EIM Research Lab / Online Submission' }),
-  }),
-  technicalTestResultsConfig: fields.object({
-    title: fields.text({ label: 'Technical Test Results Title', defaultValue: 'Pengumuman Tes Teknikal (Technical Test Results)' }),
-    subtitle: fields.text({ label: 'Technical Test Results Subtitle', defaultValue: 'Check if you passed the Technical Test and qualify for the Interview phase.' }),
-    newsUrl: fields.text({ label: 'Official News Post URL', defaultValue: '/news/pengumuman-rekrutmen-2026' }),
-    documentUrl: fields.text({ label: 'PDF Document Link (Optional)', defaultValue: '' }),
-  }),
-  interviewConfig: fields.object({
-    title: fields.text({ label: 'Interview Section Title', defaultValue: 'Interview Phase In Progress' }),
-    subtitle: fields.text({ label: 'Interview Subtitle', defaultValue: 'Candidate interview sessions in progress with EIM Research Lab team.' }),
-    message: fields.text({ label: 'Interview Notice Message', defaultValue: 'Please check your registered email for your assigned interview time slot and Zoom call details.' }),
-    scheduleInfo: fields.text({ label: 'Interview Schedule Info', defaultValue: '12 - 15 August 2026' }),
-    locationInfo: fields.text({ label: 'Location / Zoom Room', defaultValue: 'EIM Research Lab / Online Zoom Room' }),
+  finalSelectionConfig: fields.object({
+    title: fields.text({ label: 'Final Selection In Progress Title', defaultValue: 'Seleksi Akhir & Olah Nilai Sedang Berlangsung' }),
+    subtitle: fields.text({ label: 'Final Selection Subtitle', defaultValue: 'Seluruh rangkaian seleksi dan sesi wawancara telah selesai.' }),
+    message: fields.text({ label: 'Notice Message', multiline: true, defaultValue: 'Terima kasih kepada seluruh kandidat yang telah mengikuti seluruh rangkaian seleksi. Tim EIM Research Lab saat ini sedang melakukan rekapitulasi nilai dan verifikasi kelulusan akhir. Pengumuman kelulusan akhir akan dipublikasikan pada 9 September 2026.' }),
+    estimatedAnnouncementDate: fields.text({ label: 'Estimated Announcement Date Text', defaultValue: '9 September 2026' }),
   }),
   announcementConfig: fields.object({
     title: fields.text({ label: 'Final Announcement Title', defaultValue: 'Final Selection Announcement' }),
@@ -220,7 +179,46 @@ const registrationSchema = {
     formUrl: fields.text({ label: 'External Backup Form URL (Google Form)', defaultValue: 'https://forms.gle/sample-fallback-form' }),
     buttonText: fields.text({ label: 'Fallback Button Text', defaultValue: 'Buka Formulir Pendaftaran Cadangan (Google Form)' }),
   }),
+  selectionSteps: fields.array(
+    fields.object({
+      id: fields.text({ label: 'Step Identifier Key (e.g. selection, technical_test, fgd, interview)', defaultValue: 'custom_step' }),
+      enabled: fields.checkbox({ label: 'Enable this Selection Step (Uncheck to skip/disable step)', defaultValue: true }),
+      title: fields.text({ label: 'Full Step Title (e.g. Tes Teknikal & Case Study)', defaultValue: 'New Selection Step' }),
+      shortLabel: fields.text({ label: 'Timeline Bar Short Label (e.g. Tes Teknikal)', defaultValue: 'Step' }),
+      icon: fields.text({ label: 'FontAwesome Icon Class (e.g. fa-solid fa-code)', defaultValue: 'fa-solid fa-clipboard-list' }),
+      startDate: fields.text({ label: 'Start Date (ISO format: YYYY-MM-DDTHH:mm:ss)', defaultValue: '2026-08-25T00:00:00' }),
+      endDate: fields.text({ label: 'End Date (ISO format: YYYY-MM-DDTHH:mm:ss)', defaultValue: '2026-08-28T23:59:59' }),
+      resultsDate: fields.text({ label: 'Results Announcement Date (Optional ISO format)', defaultValue: '' }),
+      templateType: fields.select({
+        label: 'Step View Template',
+        options: [
+          { label: 'In-Progress / Task Details View', value: 'in_progress' },
+          { label: 'Results Announcement View', value: 'results' },
+          { label: 'Informational Notice View', value: 'info' },
+        ],
+        defaultValue: 'in_progress',
+      }),
+      inProgressConfig: fields.object({
+        title: fields.text({ label: 'In-Progress Section Title', defaultValue: 'Step In Progress' }),
+        subtitle: fields.text({ label: 'In-Progress Subtitle', defaultValue: 'Candidate evaluation in progress.' }),
+        message: fields.text({ label: 'Notice Message', defaultValue: 'Please check your email/WhatsApp group for details.' }),
+        scheduleInfo: fields.text({ label: 'Schedule Info (Optional)', defaultValue: '' }),
+        locationInfo: fields.text({ label: 'Location / Platform Info (Optional)', defaultValue: '' }),
+      }),
+      resultsConfig: fields.object({
+        title: fields.text({ label: 'Results Section Title', defaultValue: 'Step Results Announcement' }),
+        subtitle: fields.text({ label: 'Results Subtitle', defaultValue: 'Check if you passed this step.' }),
+        newsUrl: fields.text({ label: 'Official News Post URL (Optional)', defaultValue: '' }),
+        documentUrl: fields.text({ label: 'PDF Document Link (Optional)', defaultValue: '' }),
+      }),
+    }),
+    {
+      label: 'Dynamic Selection Pipeline Steps',
+      itemLabel: props => `${props.fields.enabled.value ? '✓' : '✗'} ${props.fields.shortLabel.value || 'Step'} (${props.fields.id.value || 'id'})`,
+    }
+  ),
   contactPersons: fields.array(
+
     fields.object({
       name: fields.text({ label: 'Contact Person Name' }),
       role: fields.text({ label: 'Role / Division Label (e.g. CP Information & Selection)' }),

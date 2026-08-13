@@ -168,12 +168,31 @@ export function initRegistrationSubmit(
     }
   };
 
+    if (formElement) {
+    if (formElement.getAttribute('data-submit-bound') === 'true') return;
+    formElement.setAttribute('data-submit-bound', 'true');
+  }
+
   modalCloseBtn?.addEventListener('click', hideProgressModal);
 
   formElement?.addEventListener('submit', async (e) => {
     e.preventDefault();
     if (isSubmitting) return;
     isSubmitting = true;
+
+    const website_hp = (document.getElementById('website_hp') as HTMLInputElement | null)?.value.trim() || '';
+    if (website_hp !== '') {
+      showModalSuccess(false);
+      if (formElement) formElement.reset();
+      clearDraft();
+      toggleMedhumPorto();
+      isSubmitting = false;
+      if (submitBtn && btnText) {
+        submitBtn.disabled = false;
+        btnText.innerHTML = `${isEn ? 'Submit Application' : 'Kirim Pendaftaran'} <i class="fa-solid fa-paper-plane" style="margin-left: 8px;"></i>`;
+      }
+      return;
+    }
 
     if (submitBtn && btnText) {
       submitBtn.disabled = true;
@@ -230,8 +249,6 @@ export function initRegistrationSubmit(
       const portofolio_medhum = medhumPortoInput?.value.trim() || (document.getElementById('portofolio_medhum') as HTMLInputElement | null)?.value.trim() || '';
       const bersedia_dipindah = (document.getElementById('bersedia_dipindah') as HTMLSelectElement | null)?.value || '';
 
-      const website_hp = (document.getElementById('website_hp') as HTMLInputElement | null)?.value || '';
-
       const fileKsmInput = document.getElementById('file_ksm') as HTMLInputElement | null;
       const fileKhsInput = document.getElementById('file_khs') as HTMLInputElement | null;
       const fileMlInput = document.getElementById('file_ml') as HTMLInputElement | null;
@@ -272,11 +289,13 @@ export function initRegistrationSubmit(
 
       updateModalStage(2, 25, isEn ? 'Encoding documents to Base64...' : 'Mengodekan dokumen ke Base64...');
 
-      const fileKsm = fileKsmInput?.files?.[0] ? await readFileAsBase64(fileKsmInput.files[0]) : null;
-      const fileKhs = fileKhsInput?.files?.[0] ? await readFileAsBase64(fileKhsInput.files[0]) : null;
-      const fileMl = fileMlInput?.files?.[0] ? await readFileAsBase64(fileMlInput.files[0]) : null;
-      const fileCv = fileCvInput?.files?.[0] ? await readFileAsBase64(fileCvInput.files[0]) : null;
-      const filePi = filePiInput?.files?.[0] ? await readFileAsBase64(filePiInput.files[0]) : null;
+      const [fileKsm, fileKhs, fileMl, fileCv, filePi] = await Promise.all([
+        fileKsmInput?.files?.[0] ? readFileAsBase64(fileKsmInput.files[0]) : Promise.resolve(null),
+        fileKhsInput?.files?.[0] ? readFileAsBase64(fileKhsInput.files[0]) : Promise.resolve(null),
+        fileMlInput?.files?.[0] ? readFileAsBase64(fileMlInput.files[0]) : Promise.resolve(null),
+        fileCvInput?.files?.[0] ? readFileAsBase64(fileCvInput.files[0]) : Promise.resolve(null),
+        filePiInput?.files?.[0] ? readFileAsBase64(filePiInput.files[0]) : Promise.resolve(null)
+      ]);
 
       updateModalStage(3, 60, isEn ? 'Transmitting payload to server...' : 'Mengirimkan berkas pendaftaran ke server...');
 

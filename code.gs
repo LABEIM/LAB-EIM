@@ -1,7 +1,8 @@
 const sheetName = 'Sheet1';
 const scriptProp = PropertiesService.getScriptProperties();
 
-// Fallback registration deadline (ISO format with timezone offset)
+// Fallback registration dates (ISO format with timezone offset)
+const DEFAULT_OPEN_DATE_STR = '2026-08-15T00:00:00+07:00';
 const DEFAULT_DEADLINE_STR = '2026-08-23T23:59:59+07:00';
 
 // Allowed MIME types for uploaded documents (Security Whitelist)
@@ -435,18 +436,33 @@ function doPost(e) {
   }
 
   try {
-    // 1. CEK DEADLINE
+    // 1. CEK STATIS TANGGAL BUKA & DEADLINE DENGAN WAKTU SERVER GOOGLE
+    const openConfig = scriptProp.getProperty('OPEN_DATE') || DEFAULT_OPEN_DATE_STR;
     const deadlineConfig = scriptProp.getProperty('DEADLINE') || DEFAULT_DEADLINE_STR;
-    const deadlineTime = new Date(deadlineConfig).getTime();
     const nowTime = new Date().getTime();
 
-    if (nowTime > deadlineTime) {
-      return ContentService
-        .createTextOutput(JSON.stringify({ 
-          'result': 'error', 
-          'error': 'Registration period has officially ended.' 
-        }))
-        .setMimeType(ContentService.MimeType.JSON);
+    if (openConfig) {
+      const openTime = new Date(openConfig).getTime();
+      if (!isNaN(openTime) && nowTime < openTime) {
+        return ContentService
+          .createTextOutput(JSON.stringify({ 
+            'result': 'error', 
+            'error': 'Registration period has not opened yet.' 
+          }))
+          .setMimeType(ContentService.MimeType.JSON);
+      }
+    }
+
+    if (deadlineConfig) {
+      const deadlineTime = new Date(deadlineConfig).getTime();
+      if (!isNaN(deadlineTime) && nowTime > deadlineTime) {
+        return ContentService
+          .createTextOutput(JSON.stringify({ 
+            'result': 'error', 
+            'error': 'Registration period has officially ended.' 
+          }))
+          .setMimeType(ContentService.MimeType.JSON);
+      }
     }
 
     // Parser data pendaftaran

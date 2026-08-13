@@ -1,0 +1,442 @@
+
+<div id="sim-toolbar" class="sim-toolbar-container glass-panel">
+  <div class="sim-toolbar-header">
+    <div class="sim-title">
+      <i class="fa-solid fa-vial-circle-check"></i>
+      <span>Auto Stage Simulator</span>
+    </div>
+    <span id="sim-status-badge" class="sim-badge inactive">REAL CONFIG</span>
+    <button id="sim-toggle-btn" class="sim-minimize-btn" title="Toggle toolbar">
+      <i class="fa-solid fa-chevron-down"></i>
+    </button>
+  </div>
+
+  <div class="sim-toolbar-body" id="sim-toolbar-body">
+    <div class="sim-control-group">
+      <label class="sim-label"><i class="fa-solid fa-play"></i> Auto Simulation Speed</label>
+      <div class="sim-btn-row">
+        <button id="sim-btn-30s" class="sim-btn btn-primary-sim">
+          <i class="fa-solid fa-bolt"></i> 30s / Stage
+        </button>
+        <button id="sim-btn-10s" class="sim-btn btn-secondary-sim">
+          <i class="fa-solid fa-gauge-high"></i> 10s Fast
+        </button>
+      </div>
+    </div>
+
+    <div class="sim-control-group">
+      <label class="sim-label"><i class="fa-solid fa-sliders"></i> Force Manual Stage Override</label>
+      <select id="sim-stage-select" class="sim-select">
+        <option value="auto">Auto (Calculate from Dates)</option>
+        <option value="upcoming">Upcoming (Preview)</option>
+        <option value="open">Form Open</option>
+        <option value="extended">Extended Deadline</option>
+        <option value="announcement">Pengumuman Kelulusan Akhir</option>
+        <option value="closed">Closed (Ended)</option>
+      </select>
+    </div>
+
+    <div class="sim-footer-row">
+      <button id="sim-reset-btn" class="sim-btn btn-reset">
+        <i class="fa-solid fa-rotate-left"></i> Reset to Real Config
+      </button>
+    </div>
+  </div>
+</div>
+
+<style>
+  .sim-toolbar-container {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    z-index: 99999;
+    width: 320px;
+    padding: 16px;
+    border-radius: 16px;
+    background: rgba(15, 23, 42, 0.92);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5), 0 0 20px rgba(99, 102, 241, 0.2);
+    font-family: inherit;
+    color: #f8fafc;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .sim-toolbar-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+  }
+
+  .sim-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 700;
+    font-size: 0.9rem;
+    color: #a5b4fc;
+  }
+
+  .sim-badge {
+    font-size: 0.65rem;
+    font-weight: 800;
+    letter-spacing: 0.05em;
+    padding: 3px 8px;
+    border-radius: 999px;
+    text-transform: uppercase;
+  }
+
+  .sim-badge.active {
+    background: rgba(16, 185, 129, 0.2);
+    color: #34d399;
+    border: 1px solid rgba(52, 211, 153, 0.4);
+    animation: pulseGlow 2s infinite;
+  }
+
+  .sim-badge.inactive {
+    background: rgba(148, 163, 184, 0.15);
+    color: #94a3b8;
+    border: 1px solid rgba(148, 163, 184, 0.2);
+  }
+
+  @keyframes pulseGlow {
+    0%, 100% { box-shadow: 0 0 5px rgba(52, 211, 153, 0.4); }
+    50% { box-shadow: 0 0 15px rgba(52, 211, 153, 0.8); }
+  }
+
+  .sim-minimize-btn {
+    background: none;
+    border: none;
+    color: #94a3b8;
+    cursor: pointer;
+    padding: 4px;
+    font-size: 0.85rem;
+    transition: color 0.2s ease;
+  }
+
+  .sim-minimize-btn:hover {
+    color: #ffffff;
+  }
+
+  .sim-toolbar-body {
+    margin-top: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .sim-toolbar-container.is-minimized .sim-toolbar-body {
+    display: none;
+  }
+
+  .sim-toolbar-container.is-minimized {
+    width: auto;
+    padding: 10px 16px;
+  }
+
+  .sim-control-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .sim-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #cbd5e1;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .sim-btn-row {
+    display: flex;
+    gap: 8px;
+  }
+
+  .sim-btn {
+    flex: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s ease;
+  }
+
+  .btn-primary-sim {
+    background: linear-gradient(135deg, #6366f1, #4f46e5);
+    color: #ffffff;
+    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+  }
+
+  .btn-primary-sim:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(99, 102, 241, 0.4);
+  }
+
+  .btn-secondary-sim {
+    background: rgba(255, 255, 255, 0.08);
+    color: #e2e8f0;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+  }
+
+  .btn-secondary-sim:hover {
+    background: rgba(255, 255, 255, 0.15);
+    color: #ffffff;
+  }
+
+  .sim-select {
+    width: 100%;
+    padding: 8px 10px;
+    border-radius: 8px;
+    background: rgba(15, 23, 42, 0.8);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    color: #f8fafc;
+    font-size: 0.8rem;
+    cursor: pointer;
+    outline: none;
+  }
+
+  .sim-select option {
+    background: #0f172a;
+    color: #f8fafc;
+  }
+
+  .sim-footer-row {
+    margin-top: 4px;
+  }
+
+  .btn-reset {
+    width: 100%;
+    background: rgba(239, 68, 68, 0.15);
+    color: #fca5a5;
+    border: 1px solid rgba(239, 68, 68, 0.3);
+  }
+
+  .btn-reset:hover {
+    background: rgba(239, 68, 68, 0.25);
+    color: #ffffff;
+  }
+</style>
+
+<script>
+  import { generateSimulationTimestamps, SIMULATION_STORAGE_KEY } from '../../utils/simulation';
+  import { syncRegistrationStage } from '../../scripts/registration/stage';
+
+  function initSimulationToolbar() {
+    const toolbar = document.getElementById('sim-toolbar');
+    const container = document.getElementById('registration-container');
+    if (!toolbar || !container) return;
+
+    const badge = document.getElementById('sim-status-badge');
+    const toggleBtn = document.getElementById('sim-toggle-btn');
+    const btn30s = document.getElementById('sim-btn-30s');
+    const btn10s = document.getElementById('sim-btn-10s');
+    const stageSelect = document.getElementById('sim-stage-select') as HTMLSelectElement | null;
+    const resetBtn = document.getElementById('sim-reset-btn');
+
+    // Store original dataset backup
+    if (!(container as any)._originalData) {
+      (container as any)._originalData = {
+        status: container.getAttribute('data-status'),
+        upcomingStartDate: container.getAttribute('data-upcoming-start-date'),
+        openDate: container.getAttribute('data-open-date'),
+        deadline: container.getAttribute('data-deadline'),
+        extendedDeadline: container.getAttribute('data-extended-deadline'),
+        announcementDate: container.getAttribute('data-announcement-date'),
+        selectionSteps: container.getAttribute('data-selection-steps')
+      };
+    }
+
+    // Populate stageSelect dynamically from data-selection-steps
+    const populateDynamicStageSelect = () => {
+      if (!stageSelect) return;
+      let steps: any[] = [];
+      try {
+        const rawSteps = (container as any)._originalData?.selectionSteps || container.getAttribute('data-selection-steps');
+        if (rawSteps) steps = JSON.parse(rawSteps);
+      } catch(e) {}
+
+      const currentVal = stageSelect.value;
+      stageSelect.innerHTML = '';
+
+      const addOpt = (val: string, label: string) => {
+        const opt = document.createElement('option');
+        opt.value = val;
+        opt.textContent = label;
+        stageSelect.appendChild(opt);
+      };
+
+      addOpt('auto', 'Auto (Calculate from Dates)');
+      addOpt('upcoming', 'Upcoming (Preview)');
+      addOpt('open', 'Form Open');
+      addOpt('extended', 'Extended Deadline');
+
+      const enabledSteps = steps.filter((s: any) => s.enabled !== false);
+      enabledSteps.forEach((s: any, idx: number) => {
+        const stepNum = idx + 1;
+        const title = s.shortLabel || s.title || s.id;
+        addOpt(s.id, `${stepNum}. Tahap: ${title}`);
+        if (s.resultsDate) {
+          addOpt(`${s.id}_results`, `${stepNum}. Hasil: ${title}`);
+        }
+      });
+
+      addOpt('announcement', 'Pengumuman Kelulusan Akhir');
+      addOpt('closed', 'Closed (Ended)');
+
+      if (currentVal) stageSelect.value = currentVal;
+    };
+
+    populateDynamicStageSelect();
+
+    // Load initial simulation state from sessionStorage
+    let simData: any = null;
+    try {
+      const raw = sessionStorage.getItem(SIMULATION_STORAGE_KEY);
+      if (raw) simData = JSON.parse(raw);
+    } catch(e) {}
+
+    const applySimState = (data: any) => {
+      if (!data || !data.active) {
+        // Restore original dataset
+        const orig = (container as any)._originalData;
+        if (orig) {
+          if (orig.status) container.setAttribute('data-status', orig.status);
+          if (orig.upcomingStartDate) container.setAttribute('data-upcoming-start-date', orig.upcomingStartDate);
+          if (orig.openDate) container.setAttribute('data-open-date', orig.openDate);
+          if (orig.deadline) container.setAttribute('data-deadline', orig.deadline);
+          if (orig.extendedDeadline) container.setAttribute('data-extended-deadline', orig.extendedDeadline);
+          if (orig.announcementDate) container.setAttribute('data-announcement-date', orig.announcementDate);
+          if (orig.selectionSteps) container.setAttribute('data-selection-steps', orig.selectionSteps);
+        }
+        if (badge) {
+          badge.textContent = 'REAL CONFIG';
+          badge.className = 'sim-badge inactive';
+        }
+        if (stageSelect) stageSelect.value = 'auto';
+        sessionStorage.removeItem(SIMULATION_STORAGE_KEY);
+        syncRegistrationStage(container);
+        return;
+      }
+
+      // Read current steps array
+      let steps: any[] = [];
+      try {
+        const origSteps = (container as any)._originalData?.selectionSteps || container.getAttribute('data-selection-steps');
+        if (origSteps) steps = JSON.parse(origSteps);
+      } catch(e) {}
+
+      // Simulation active
+      if (data.forcedStage) {
+        container.setAttribute('data-status', data.forcedStage);
+      } else {
+        container.setAttribute('data-status', 'auto');
+        const timestamps = generateSimulationTimestamps(data.intervalSec || 30, data.startTimeMs || Date.now(), steps);
+        container.setAttribute('data-upcoming-start-date', timestamps.upcomingStartDate);
+        container.setAttribute('data-open-date', timestamps.openDate);
+        container.setAttribute('data-deadline', timestamps.deadline);
+        container.setAttribute('data-extended-deadline', timestamps.extendedDeadline);
+        container.setAttribute('data-announcement-date', timestamps.announcementDate);
+
+        const updatedSteps = steps.map((st) => {
+          const stepSim = (timestamps.steps as any)[st.id];
+          if (stepSim) {
+            return {
+              ...st,
+              startDate: stepSim.startDate || st.startDate,
+              endDate: stepSim.endDate || st.endDate,
+              resultsDate: stepSim.resultsDate || st.resultsDate
+            };
+          }
+          return st;
+        });
+
+        container.setAttribute('data-selection-steps', JSON.stringify(updatedSteps));
+      }
+
+      if (badge) {
+        badge.textContent = data.forcedStage ? `FORCED: ${data.forcedStage.toUpperCase()}` : `SIM: ${data.intervalSec || 30}s AUTO`;
+        badge.className = 'sim-badge active';
+      }
+      if (stageSelect && data.forcedStage) {
+        stageSelect.value = data.forcedStage;
+      }
+
+      sessionStorage.setItem(SIMULATION_STORAGE_KEY, JSON.stringify(data));
+      syncRegistrationStage(container);
+    };
+
+    if (simData) {
+      applySimState(simData);
+    }
+
+    // Toggle minimize
+    toggleBtn?.addEventListener('click', () => {
+      toolbar.classList.toggle('is-minimized');
+      const icon = toggleBtn.querySelector('i');
+      if (icon) {
+        icon.className = toolbar.classList.contains('is-minimized') ? 'fa-solid fa-chevron-up' : 'fa-solid fa-chevron-down';
+      }
+    });
+
+    // Start 30s Sim
+    btn30s?.addEventListener('click', () => {
+      applySimState({
+        active: true,
+        intervalSec: 30,
+        startTimeMs: Date.now(),
+        forcedStage: null
+      });
+    });
+
+    // Start 10s Sim
+    btn10s?.addEventListener('click', () => {
+      applySimState({
+        active: true,
+        intervalSec: 10,
+        startTimeMs: Date.now(),
+        forcedStage: null
+      });
+    });
+
+    // Manual Stage Select Override
+    stageSelect?.addEventListener('change', (e) => {
+      const val = (e.target as HTMLSelectElement).value;
+      if (val === 'auto') {
+        applySimState({
+          active: true,
+          intervalSec: 30,
+          startTimeMs: Date.now(),
+          forcedStage: null
+        });
+      } else {
+        applySimState({
+          active: true,
+          intervalSec: 30,
+          startTimeMs: Date.now(),
+          forcedStage: val
+        });
+      }
+    });
+
+    // Reset
+    resetBtn?.addEventListener('click', () => {
+      applySimState({ active: false });
+    });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initSimulationToolbar);
+  } else {
+    initSimulationToolbar();
+  }
+</script>

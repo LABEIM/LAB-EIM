@@ -1,4 +1,4 @@
-import type { RecruitmentStage } from '../../utils/types';
+import type { RecruitmentStage, SelectionStepConfig } from '../../utils/types';
 import { parseGlobalDateStr, GLOBAL_SITE_TIMEZONE_OFFSET } from '../../utils/date';
 
 let cachedServerTimeOffset: number | null = null;
@@ -9,7 +9,7 @@ function parseDateWithOffset(dateStr?: string, offset: string = GLOBAL_SITE_TIME
 }
 
 /**
- * Calculates recruitment stage from dates and current timestamp.
+ * Calculates recruitment stage from dates, status override, dynamic pipeline steps, and current timestamp.
  */
 export function calculateStageFromDates(
   config: {
@@ -25,31 +25,37 @@ export function calculateStageFromDates(
     interviewStartDate?: string;
     interviewEndDate?: string;
     announcementDate?: string;
+    selectionSteps?: SelectionStepConfig[];
   },
   nowMs: number = Date.now()
-): RecruitmentStage {
+): RecruitmentStage | string {
   const rawStatus = config.status || 'auto';
-  const offset = config.timezoneOffset || '+07:00';
+  const offset = config.timezoneOffset || GLOBAL_SITE_TIMEZONE_OFFSET;
+  const rawSteps = config.selectionSteps || [];
 
-  const validStages: RecruitmentStage[] = [
-    'closed', 'upcoming', 'open', 'extended', 'selection',
-    'selection_results', 'technical_test', 'technical_test_results',
-    'interview', 'announcement'
-  ];
-
-  if (rawStatus !== 'auto' && validStages.includes(rawStatus as RecruitmentStage)) {
-    return rawStatus as RecruitmentStage;
+  if (rawStatus !== 'auto') {
+    const matchedStep = rawSteps.find((s) => rawStatus === s.id || rawStatus === `${s.id}_results`);
+    if (matchedStep && matchedStep.enabled === false) {
+      const stepIdx = rawSteps.findIndex((s) => s.id === matchedStep.id);
+      let fallbackStage = '';
+      for (let i = stepIdx - 1; i >= 0; i--) {
+        if (rawSteps[i].enabled !== false) {
+          fallbackStage = rawSteps[i].resultsDate ? `${rawSteps[i].id}_results` : rawSteps[i].id;
+          break;
+        }
+      }
+      if (fallbackStage) {
+        return fallbackStage;
+      }
+    } else {
+      return rawStatus;
+    }
   }
 
   const upcomingStartTime = parseDateWithOffset(config.upcomingStartDate, offset);
   const openTime = parseDateWithOffset(config.openDate, offset);
   const deadlineTime = parseDateWithOffset(config.deadline, offset);
   const extendedTime = parseDateWithOffset(config.extendedDeadline, offset);
-  const selectionResultsTime = parseDateWithOffset(config.selectionResultsDate, offset);
-  const technicalTestStartTime = parseDateWithOffset(config.technicalTestStartDate, offset);
-  const technicalTestEndTime = parseDateWithOffset(config.technicalTestEndDate, offset);
-  const interviewStartTime = parseDateWithOffset(config.interviewStartDate, offset);
-  const interviewEndTime = parseDateWithOffset(config.interviewEndDate, offset);
   const announcementTime = parseDateWithOffset(config.announcementDate, offset);
 
   if (upcomingStartTime > 0 && nowMs < upcomingStartTime) {
@@ -60,21 +66,55 @@ export function calculateStageFromDates(
     return 'open';
   } else if (extendedTime > 0 && nowMs < extendedTime) {
     return 'extended';
-  } else if (selectionResultsTime > 0 && nowMs < selectionResultsTime) {
-    return 'selection';
-  } else if (technicalTestStartTime > 0 && nowMs < technicalTestStartTime) {
-    return 'selection_results';
-  } else if (technicalTestEndTime > 0 && nowMs <= technicalTestEndTime) {
-    return 'technical_test';
-  } else if (interviewStartTime > 0 && nowMs < interviewStartTime) {
-    return 'technical_test_results';
-  } else if (interviewEndTime > 0 && nowMs <= interviewEndTime) {
-    return 'interview';
-  } else if (announcementTime > 0 && nowMs >= announcementTime) {
-    return 'announcement';
-  } else {
-    return 'closed';
   }
+
+  const enabledSteps = rawSteps.filter((s) => s.enabled !== false);
+
+  if (enabledSteps.length > 0) {
+    for (let i = 0; i < enabledSteps.length; i++) {
+      const step = enabledSteps[i];
+      const stepStartTime = step.startDate ? parseDateWithOffset(step.startDate, offset) : 0;
+      const stepEndTime = step.endDate ? parseDateWithOffset(step.endDate, offset) : 0;
+      const stepResultsTime = step.resultsDate ? parseDateWithOffset(step.resultsDate, offset) : 0;
+
+      if (stepEndTime > 0 && nowMs <= stepEndTime) {
+        if (stepStartTime > 0 && nowMs < stepStartTime && i > 0) {
+          const prevStep = enabledSteps[i - 1];
+          return prevStep.resultsDate ? `${prevStep.id}_results` : prevStep.id;
+        }
+        return step.id;
+      }
+
+      if (stepResultsTime > 0 && nowMs < stepResultsTime) {
+        return `${step.id}_results`;
+      }
+
+      const nextStep = enabledSteps[i + 1];
+      if (nextStep && nextStep.startDate) {
+        const nextStartTime = parseDateWithOffset(nextStep.startDate, offset);
+        if (nowMs < nextStartTime) {
+          return `${step.id}_results`;
+        }
+      }
+    }
+  } else {
+    // Fallback legacy calculation
+    const selectionResultsTime = parseDateWithOffset(config.selectionResultsDate, offset);
+    const technicalTestStartTime = parseDateWithOffset(config.technicalTestStartDate, offset);
+    const technicalTestEndTime = parseDateWithOffset(config.technicalTestEndDate, offset);
+    const interviewStartTime = parseDateWithOffset(config.interviewStartDate, offset);
+    const interviewEndTime = parseDateWithOffset(config.interviewEndDate, offset);
+
+    if (selectionResultsTime > 0 && nowMs < selectionResultsTime) return 'selection';
+    if (technicalTestStartTime > 0 && nowMs < technicalTestStartTime) return 'selection_results';
+    if (technicalTestEndTime > 0 && nowMs <= technicalTestEndTime) return 'technical_test';
+    if (interviewStartTime > 0 && nowMs < interviewStartTime) return 'technical_test_results';
+    if (interviewEndTime > 0 && nowMs <= interviewEndTime) return 'interview';
+  }
+
+  return announcementTime > 0 && nowMs < announcementTime
+    ? (enabledSteps.length > 0 ? `${enabledSteps[enabledSteps.length - 1].id}_results` : 'interview')
+    : 'announcement';
 }
 
 /**
@@ -97,8 +137,30 @@ export async function syncServerTimeOffset(): Promise<number> {
       }
     }
   } catch (e) {
+    // Secondary fallback to external time API below
+  }
+
+  // Secondary Fallback: Query public World Time API (Asia/Jakarta)
+  try {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 2500);
+    const res = await fetch('https://worldtimeapi.org/api/timezone/Asia/Jakarta', { signal: controller.signal });
+    clearTimeout(timeoutId);
+    if (res.ok) {
+      const data = await res.json();
+      if (data && data.datetime) {
+        const serverMs = new Date(data.datetime).getTime();
+        if (!isNaN(serverMs)) {
+          cachedServerTimeOffset = serverMs - Date.now();
+          isFetchingServerTime = false;
+          return cachedServerTimeOffset;
+        }
+      }
+    }
+  } catch (e) {
     // Fallback to local clock on fetch failure
   }
+
   isFetchingServerTime = false;
   cachedServerTimeOffset = 0;
   return 0;
@@ -117,6 +179,15 @@ export function getEffectiveNowMs(): number {
 export function syncRegistrationStage(container: HTMLElement): RecruitmentStage {
   const status = container.getAttribute('data-status') || 'auto';
   const timezoneOffset = container.getAttribute('data-timezone-offset') || '+07:00';
+
+  let selectionSteps: SelectionStepConfig[] = [];
+  try {
+    const rawStepsStr = container.getAttribute('data-selection-steps');
+    if (rawStepsStr) {
+      selectionSteps = JSON.parse(rawStepsStr);
+    }
+  } catch (e) {}
+
   const config = {
     status,
     timezoneOffset,
@@ -130,48 +201,49 @@ export function syncRegistrationStage(container: HTMLElement): RecruitmentStage 
     interviewStartDate: container.getAttribute('data-interview-start-date') || undefined,
     interviewEndDate: container.getAttribute('data-interview-end-date') || undefined,
     announcementDate: container.getAttribute('data-announcement-date') || undefined,
+    selectionSteps,
   };
 
   const activeStage = calculateStageFromDates(config, getEffectiveNowMs());
   container.setAttribute('data-stage', activeStage);
 
-  const stageViewMap: Record<string, string> = {
-    upcoming: 'view-upcoming',
-    open: 'view-open',
-    extended: 'view-open',
-    selection: 'view-screening',
-    selection_results: 'view-screening-results',
-    technical_test: 'view-technical-test',
-    technical_test_results: 'view-technical-test-results',
-    interview: 'view-interview',
-    announcement: 'view-announcement',
-    closed: 'view-closed',
-    fallback: 'view-fallback',
-  };
+  let activeViewId = 'view-closed';
 
-  const activeViewId = stageViewMap[activeStage] || 'view-closed';
+  if (activeStage === 'upcoming') {
+    activeViewId = 'view-upcoming';
+  } else if (activeStage === 'open' || activeStage === 'extended') {
+    activeViewId = 'view-open';
+  } else if (activeStage === 'announcement') {
+    activeViewId = 'view-announcement';
+  } else if (activeStage === 'closed') {
+    activeViewId = 'view-closed';
+  } else if (activeStage === 'fallback') {
+    activeViewId = 'view-fallback';
+  } else {
+    const dynTarget = `view-${activeStage.replace('_results', '-results')}`;
+    const hypTarget = dynTarget.replace(/_/g, '-');
+    const undTarget = dynTarget.replace(/-/g, '_');
+    const dynElement = document.getElementById(dynTarget) || document.getElementById(hypTarget) || document.getElementById(undTarget);
+    if (dynElement) {
+      activeViewId = dynElement.id;
+    } else {
+      const legacyMap: Record<string, string> = {
+        selection: 'view-selection',
+        selection_results: 'view-selection-results',
+        technical_test: 'view-technical-test',
+        technical_test_results: 'view-technical-test-results',
+        interview: 'view-interview',
+      };
+      activeViewId = legacyMap[activeStage] || 'view-closed';
+    }
+  }
 
-  const viewIds = [
-    'view-upcoming',
-    'view-open',
-    'view-screening',
-    'view-screening-results',
-    'view-technical-test',
-    'view-technical-test-results',
-    'view-interview',
-    'view-announcement',
-    'view-closed',
-    'view-fallback',
-  ];
-
-  viewIds.forEach((viewId) => {
-    const el = document.getElementById(viewId);
-    if (el) {
-      if (viewId === activeViewId) {
-        el.classList.remove('is-hidden');
-      } else {
-        el.classList.add('is-hidden');
-      }
+  const allViews = document.querySelectorAll<HTMLElement>('[id^="view-"]');
+  allViews.forEach((el) => {
+    if (el.id === activeViewId) {
+      el.classList.remove('is-hidden');
+    } else {
+      el.classList.add('is-hidden');
     }
   });
 
@@ -181,5 +253,77 @@ export function syncRegistrationStage(container: HTMLElement): RecruitmentStage 
     extendedBanner.style.display = activeStage === 'extended' ? 'block' : 'none';
   }
 
+  updateGlobalAnnouncementBanner(activeStage);
+
   return activeStage;
+}
+
+export function updateGlobalAnnouncementBanner(stage: string): void {
+  const banner = document.getElementById('global-announcement-banner');
+  if (!banner) return;
+
+  const badgeIcon = banner.querySelector('.announcement-badge i');
+  const badgeText = banner.querySelector('.badge-text');
+  const messageText = banner.querySelector('.announcement-text');
+  const ctaSpan = banner.querySelector('.announcement-cta span');
+
+  let alertType = 'recruitment';
+  let iconClass = 'fa-solid fa-bullhorn';
+  let bText = 'REKRUTMEN';
+  let msg = 'Pendaftaran Asisten EIM Research Lab sedang berlangsung!';
+  let cta = 'Lihat Informasi';
+  let isVisible = true;
+
+  if (stage === 'open') {
+    alertType = 'recruitment';
+    iconClass = 'fa-solid fa-user-plus';
+    bText = 'REKRUTMEN DIBUKA';
+    msg = 'Pendaftaran Asisten EIM Research Lab telah resmi dibuka!';
+    cta = 'Daftar Sekarang';
+  } else if (stage === 'extended') {
+    alertType = 'recruitment';
+    iconClass = 'fa-solid fa-clock-rotate-left';
+    bText = 'DIPERPANJANG';
+    msg = 'Pendaftaran Asisten EIM Research Lab diperpanjang!';
+    cta = 'Daftar Sekarang';
+  } else if (stage === 'upcoming') {
+    alertType = 'recruitment';
+    iconClass = 'fa-solid fa-calendar-check';
+    bText = 'SEGERA DIBUKA';
+    msg = 'Pendaftaran Asisten EIM Research Lab akan segera dibuka!';
+    cta = 'Lihat Persyaratan';
+  } else if (stage === 'announcement') {
+    alertType = 'success';
+    iconClass = 'fa-solid fa-trophy';
+    bText = 'HASIL AKHIR';
+    msg = 'Pengumuman Akhir Kelulusan Asisten EIM Research Lab!';
+    cta = 'Lihat Pengumuman';
+  } else if (stage.endsWith('_results') || stage === 'selection_results' || stage === 'technical_test_results') {
+    alertType = 'success';
+    iconClass = 'fa-solid fa-bullhorn';
+    bText = 'PENGUMUMAN';
+    msg = 'Pengumuman hasil seleksi rekrutmen asisten telah dibuka!';
+    cta = 'Cek Status';
+  } else if (stage === 'closed') {
+    isVisible = false;
+  } else {
+    alertType = 'recruitment';
+    iconClass = 'fa-solid fa-spinner';
+    bText = 'TAHAP SELEKSI';
+    msg = 'Tahap seleksi rekrutmen asisten sedang berlangsung!';
+    cta = 'Lihat Informasi';
+  }
+
+  if (!isVisible) {
+    banner.style.display = 'none';
+    document.body.classList.remove('has-announcement-banner');
+  } else {
+    banner.style.display = '';
+    banner.className = `global-announcement-bar theme-${alertType}`;
+    document.body.classList.add('has-announcement-banner');
+    if (badgeIcon) badgeIcon.className = iconClass;
+    if (badgeText) badgeText.textContent = bText;
+    if (messageText) messageText.textContent = msg;
+    if (ctaSpan) ctaSpan.textContent = cta;
+  }
 }

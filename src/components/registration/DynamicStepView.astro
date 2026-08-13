@@ -1,0 +1,84 @@
+---
+import TimelineSteps from './TimelineSteps.astro';
+import StageInfoPanel from './StageInfoPanel.astro';
+import NimSearchBox from './NimSearchBox.astro';
+import BackToHomeButton from './BackToHomeButton.astro';
+import { getLocaleFromUrl, t } from '../../utils/i18n';
+import type { SelectionStepConfig } from '../../utils/types';
+
+interface Props {
+  step: SelectionStepConfig;
+  stepIndex: number;
+  initialStage: string;
+  isResultsView?: boolean;
+  selectionSteps?: SelectionStepConfig[];
+}
+
+const locale = getLocaleFromUrl(Astro.url);
+const { step, initialStage, isResultsView = false, selectionSteps = [] } = Astro.props;
+
+const viewId = isResultsView ? `view-${step.id}-results` : `view-${step.id}`;
+const expectedStage = isResultsView ? `${step.id}_results` : step.id;
+const isVisible = initialStage === expectedStage;
+
+const inProgressCfg = step.inProgressConfig || {
+  title: `${step.title} Sedang Berlangsung`,
+  subtitle: `Tahap ${step.title} sedang berjalan.`,
+  message: 'Silakan cek email atau grup WhatsApp resmi untuk informasi pelaksanaan.',
+};
+
+const resultsCfg = step.resultsConfig || {
+  title: `Pengumuman ${step.title}`,
+  subtitle: `Cek status hasil kelulusan Anda untuk tahap ${step.title}.`,
+};
+---
+
+<div id={viewId} class={isVisible ? '' : 'is-hidden'}>
+  <div class="registration-header">
+    <h2>{isResultsView ? resultsCfg.title : inProgressCfg.title}</h2>
+    <p class="registration-hero-subtitle">{isResultsView ? resultsCfg.subtitle : inProgressCfg.subtitle}</p>
+  </div>
+
+  <TimelineSteps
+    activeStage={expectedStage}
+    markCurrentAsCompleted={isResultsView}
+    selectionSteps={selectionSteps}
+  />
+
+
+  {!isResultsView ? (
+    <StageInfoPanel
+      iconClass={step.icon || 'fa-solid fa-clipboard-list'}
+      message={inProgressCfg.message}
+      scheduleInfo={inProgressCfg.scheduleInfo}
+      locationInfo={inProgressCfg.locationInfo}
+    />
+  ) : (
+    <div class="results-container space-y-4">
+      <NimSearchBox
+        title={`Cek Hasil ${step.title}`}
+        inputId={`search-${step.id}-nim-input`}
+        buttonId={`search-${step.id}-nim-btn`}
+        resultBoxId={`search-${step.id}-result-box`}
+        buttonLabel={t('btn.search', locale)}
+      />
+
+      {(resultsCfg.newsUrl || resultsCfg.documentUrl) && (
+        <div class="text-center pt-4 space-x-3">
+          {resultsCfg.newsUrl && (
+            <a href={resultsCfg.newsUrl} class="btn btn-outline btn-sm">
+              <i class="fa-solid fa-newspaper mr-1"></i> Baca Pengumuman Resmi
+            </a>
+          )}
+          {resultsCfg.documentUrl && (
+            <a href={resultsCfg.documentUrl} target="_blank" rel="noopener noreferrer" class="btn btn-outline btn-sm">
+              <i class="fa-solid fa-file-pdf mr-1"></i> Unduh Lampiran SK (PDF)
+            </a>
+          )}
+        </div>
+      )}
+    </div>
+  )}
+
+  <BackToHomeButton />
+</div>

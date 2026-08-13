@@ -40,8 +40,19 @@ const upcomingEvents = rawEvents.filter(event => event.data.status === 'upcoming
 
 // Calculate active recruitment stage
 const currentStage = getCurrentRecruitmentStage(registrationConfig);
-const actionBtn = STAGE_ACTION_CONFIG[currentStage] || DEFAULT_ACTION_BTN;
+let actionBtn = (STAGE_ACTION_CONFIG as Record<string, any>)[currentStage];
+if (!actionBtn) {
+  if (currentStage.endsWith('_results')) {
+    actionBtn = { label: 'Check Selection Results', icon: 'fa-square-poll-vertical' };
+  } else if (currentStage !== 'closed') {
+    actionBtn = { label: 'Check Selection Phase Info', icon: 'fa-info-circle' };
+  } else {
+    actionBtn = DEFAULT_ACTION_BTN;
+  }
+}
 ---
+
+
 
 <Layout title={`EIM Research Lab - ${t('home.heroTag', locale)}`}>
   <EventPosterModal upcomingEvents={upcomingEvents} locale={locale} />

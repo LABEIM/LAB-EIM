@@ -1,4 +1,5 @@
 import { syncRegistrationStage, syncServerTimeOffset, getEffectiveNowMs } from './stage';
+import { parseGlobalDateStr, GLOBAL_SITE_TIMEZONE_OFFSET } from '../../utils/date';
 
 export interface TimeRemaining {
   days: string;
@@ -37,14 +38,6 @@ export function initRegistrationTimers(container: HTMLElement): () => void {
     syncRegistrationStage(container);
   });
 
-  const openDateStr = container.getAttribute('data-open-date') || "2026-08-13T00:00:00";
-  const deadlineStr = container.getAttribute('data-deadline') || "2026-08-20T23:59:59";
-  const extendedDeadlineStr = container.getAttribute('data-extended-deadline') || "";
-
-  const OPEN_TIME = new Date(openDateStr).getTime();
-  const DEADLINE_TIME = new Date(deadlineStr).getTime();
-  const EXTENDED_TIME = extendedDeadlineStr ? new Date(extendedDeadlineStr).getTime() : 0;
-
   // Dynamic Countdown Timers
   const daysEl = document.getElementById('timer-days');
   const hoursEl = document.getElementById('timer-hours');
@@ -74,13 +67,22 @@ export function initRegistrationTimers(container: HTMLElement): () => void {
     const currentStage = syncRegistrationStage(container);
     const currentMs = getEffectiveNowMs();
 
+    const timezoneOffset = container.getAttribute('data-timezone-offset') || GLOBAL_SITE_TIMEZONE_OFFSET;
+    const openDateStr = container.getAttribute('data-open-date') || "2026-08-13T00:00:00";
+    const deadlineStr = container.getAttribute('data-deadline') || "2026-08-20T23:59:59";
+    const extendedDeadlineStr = container.getAttribute('data-extended-deadline') || "";
+
+    const openTime = parseGlobalDateStr(openDateStr, timezoneOffset);
+    const deadlineTime = parseGlobalDateStr(deadlineStr, timezoneOffset);
+    const extendedTime = extendedDeadlineStr ? parseGlobalDateStr(extendedDeadlineStr, timezoneOffset) : 0;
+
     const isExtendedStage = currentStage === 'extended';
-    const activeDeadline = (EXTENDED_TIME > 0 && (isExtendedStage || (currentMs >= DEADLINE_TIME && currentMs < EXTENDED_TIME)))
-      ? EXTENDED_TIME 
-      : DEADLINE_TIME;
+    const activeDeadline = (extendedTime > 0 && (isExtendedStage || (currentMs >= deadlineTime && currentMs < extendedTime)))
+      ? extendedTime 
+      : deadlineTime;
 
     if (uDaysEl) {
-      applyTimeDisplay(formatTimeRemaining(OPEN_TIME, currentMs), uDaysEl, uHoursEl, uMinutesEl, uSecondsEl);
+      applyTimeDisplay(formatTimeRemaining(openTime, currentMs), uDaysEl, uHoursEl, uMinutesEl, uSecondsEl);
     }
 
     if (daysEl) {

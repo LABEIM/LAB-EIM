@@ -78,6 +78,13 @@ export function getRegistrationPageConfigs(
     locationInfo: "EIM Research Lab / Online Zoom Room",
   };
 
+  const finalSelectionCfg = config.finalSelectionConfig || {
+    title: "Seleksi Akhir & Olah Nilai Sedang Berlangsung",
+    subtitle: "Seluruh rangkaian seleksi dan sesi wawancara telah selesai.",
+    message: "Terima kasih kepada seluruh kandidat yang telah mengikuti seluruh rangkaian seleksi. Tim EIM Research Lab saat ini sedang melakukan rekapitulasi nilai dan verifikasi kelulusan akhir. Pengumuman kelulusan akhir akan dipublikasikan pada 9 September 2026.",
+    estimatedAnnouncementDate: "9 September 2026",
+  };
+
   const announcementCfg = config.announcementConfig || {
     title: "Final Selection Announcement",
     subtitle: "Check your final selection status below. Congratulations to all accepted candidates!",
@@ -119,6 +126,62 @@ export function getRegistrationPageConfigs(
     ...(config.fieldStates || {}),
   };
 
+  const defaultSelectionSteps = [
+    {
+      id: "selection",
+      enabled: true,
+      title: "Seleksi Berkas",
+      shortLabel: "Seleksi Berkas",
+      icon: "fa-solid fa-file-lines",
+      startDate: (config as any).selectionStartDate || DEFAULT_RECRUITMENT_DATES.deadline,
+      endDate: (config as any).selectionEndDate || "2026-08-25T23:59:59",
+      resultsDate: (config as any).selectionResultsDate || DEFAULT_RECRUITMENT_DATES.selectionResultsDate,
+      templateType: "in_progress" as const,
+      inProgressConfig: selectionCfg,
+      resultsConfig: selectionResultsCfg,
+    },
+    {
+      id: "technical_test",
+      enabled: true,
+      title: "Tes Teknikal",
+      shortLabel: "Tes Teknikal",
+      icon: "fa-solid fa-laptop-code",
+      startDate: (config as any).technicalTestStartDate || DEFAULT_RECRUITMENT_DATES.technicalTestStartDate,
+      endDate: (config as any).technicalTestEndDate || DEFAULT_RECRUITMENT_DATES.technicalTestEndDate,
+      resultsDate: (config as any).technicalTestResultsDate || "2026-09-01T00:00:00",
+      templateType: "in_progress" as const,
+      inProgressConfig: technicalTestCfg,
+      resultsConfig: technicalTestResultsCfg,
+    },
+    {
+      id: "interview",
+      enabled: true,
+      title: "Tahap Wawancara",
+      shortLabel: "Tahap Wawancara",
+      icon: "fa-solid fa-comments",
+      startDate: (config as any).interviewStartDate || DEFAULT_RECRUITMENT_DATES.interviewStartDate,
+      endDate: (config as any).interviewEndDate || DEFAULT_RECRUITMENT_DATES.interviewEndDate,
+      templateType: "in_progress" as const,
+      inProgressConfig: interviewCfg,
+    },
+    {
+      id: "final_selection",
+      enabled: true,
+      title: "Seleksi Akhir & Olah Nilai",
+      shortLabel: "Seleksi Akhir",
+      icon: "fa-solid fa-user-check",
+      startDate: (config as any).interviewEndDate || DEFAULT_RECRUITMENT_DATES.interviewEndDate,
+      endDate: (config as any).announcementDate || DEFAULT_RECRUITMENT_DATES.announcementDate,
+      templateType: "info" as const,
+      inProgressConfig: finalSelectionCfg,
+    },
+  ];
+
+
+  const selectionSteps = (config.selectionSteps && config.selectionSteps.length > 0)
+    ? config.selectionSteps
+    : defaultSelectionSteps;
+
   return {
     studentYears,
     fieldStates,
@@ -136,8 +199,11 @@ export function getRegistrationPageConfigs(
     technicalTestCfg,
     technicalTestResultsCfg,
     interviewCfg,
+    finalSelectionCfg,
     announcementCfg,
     closedCfg,
     fallbackCfg,
+    selectionSteps,
   };
 }
+

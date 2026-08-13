@@ -4,6 +4,8 @@ import NimSearchBox from './NimSearchBox.astro';
 import BackToHomeButton from './BackToHomeButton.astro';
 import { getLocaleFromUrl, t } from '../../utils/i18n';
 
+import type { SelectionStepConfig } from '../../utils/types';
+
 interface Candidate {
   nim: string | number;
   division?: string;
@@ -24,10 +26,11 @@ interface Props {
   };
   acceptedCandidates: Candidate[];
   candidatesByDivision: Record<string, Candidate[]>;
+  selectionSteps?: SelectionStepConfig[];
 }
 
 const locale = getLocaleFromUrl(Astro.url);
-const { initialStage, announcementCfg } = Astro.props;
+const { initialStage, announcementCfg, selectionSteps = [] } = Astro.props;
 ---
 
 <div id="view-announcement" class={initialStage === 'announcement' ? '' : 'is-hidden'}>
@@ -36,7 +39,8 @@ const { initialStage, announcementCfg } = Astro.props;
     <p class="registration-hero-subtitle">{announcementCfg.subtitle}</p>
   </div>
 
-  <TimelineSteps activeStepIndex={5} markCurrentAsCompleted={true} />
+  <TimelineSteps activeStage="announcement" markCurrentAsCompleted={true} selectionSteps={selectionSteps} />
+
 
   {/* Interactive Final Status Search Lookup */}
   <NimSearchBox

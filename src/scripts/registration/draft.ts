@@ -234,8 +234,14 @@ export function initRegistrationDraft(
     updateWordCounters();
   };
 
-  formElement?.addEventListener('input', handleFormInput);
-  formElement?.addEventListener('change', handleFormInput);
+  if (formElement) {
+    if (formElement.getAttribute('data-draft-bound') !== 'true') {
+      formElement.setAttribute('data-draft-bound', 'true');
+      formElement.addEventListener('input', handleFormInput);
+      formElement.addEventListener('change', handleFormInput);
+    }
+  }
+
   restoreDraft();
 
   const openClearDraftModal = () => {
@@ -246,10 +252,22 @@ export function initRegistrationDraft(
     if (clearDraftModal) clearDraftModal.style.display = 'none';
   };
 
-  clearDraftBtn?.addEventListener('click', openClearDraftModal);
-  bannerClearDraftBtn?.addEventListener('click', openClearDraftModal);
-  cancelClearDraftBtn?.addEventListener('click', closeClearDraftModal);
-  confirmClearDraftBtn?.addEventListener('click', clearDraft);
+  if (clearDraftBtn && clearDraftBtn.getAttribute('data-draft-btn-bound') !== 'true') {
+    clearDraftBtn.setAttribute('data-draft-btn-bound', 'true');
+    clearDraftBtn.addEventListener('click', openClearDraftModal);
+  }
+  if (bannerClearDraftBtn && bannerClearDraftBtn.getAttribute('data-draft-btn-bound') !== 'true') {
+    bannerClearDraftBtn.setAttribute('data-draft-btn-bound', 'true');
+    bannerClearDraftBtn.addEventListener('click', openClearDraftModal);
+  }
+  if (cancelClearDraftBtn && cancelClearDraftBtn.getAttribute('data-draft-btn-bound') !== 'true') {
+    cancelClearDraftBtn.setAttribute('data-draft-btn-bound', 'true');
+    cancelClearDraftBtn.addEventListener('click', closeClearDraftModal);
+  }
+  if (confirmClearDraftBtn && confirmClearDraftBtn.getAttribute('data-draft-btn-bound') !== 'true') {
+    confirmClearDraftBtn.setAttribute('data-draft-btn-bound', 'true');
+    confirmClearDraftBtn.addEventListener('click', clearDraft);
+  }
 
   return {
     toggleMedhumPorto,

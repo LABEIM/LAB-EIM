@@ -85,6 +85,10 @@ This file configures the 10-stage recruitment pipeline landing page (`/registrat
 * **`timezoneOffset`** (String, Optional): Specific recruitment timezone offset override (e.g. `"+07:00"` for WIB). Defaults to global site timezone offset if omitted.
 * **Stage Configurations**: `upcomingConfig`, `extendedConfig`, `selectionConfig`, `selectionResultsConfig`, `technicalTestConfig`, `technicalTestResultsConfig`, `interviewConfig`, `announcementConfig`, `closedConfig`, `fallbackConfig`.
   * **`fallbackConfig`**: Configures the maintenance/backup view text and link (`title`, `subtitle`, `message`, `formUrl`, `buttonText`).
+* **`selectionSteps`**: Array of dynamic selection pipeline steps. Each step includes a `templateType` field determining its page view layout:
+  * **`in_progress`** *(In-Progress / Task Details View)*: Shows step instructions, notice messages, schedule details, and test location links via `StageInfoPanel`.
+  * **`results`** *(Results Announcement View)*: Shows an interactive Student ID (NIM) search box (`NimSearchBox`) checking pass/fail qualification against `recruitment_results.json`, along with news post and document download links.
+  * **`info`** *(Informational Notice View)*: Displays a clean status notice without input forms during grading pauses or stage transitions.
 
 ---
 

@@ -15,13 +15,32 @@ export function validatePhone(phone: string): boolean {
   return /^(08|\+?628)\d{7,11}$/.test(cleanPhone);
 }
 
+export function validateEmail(email: string): boolean {
+  if (!email || typeof email !== 'string') return false;
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
+}
+
 export function validateSingleFile(
   fileInput: HTMLInputElement,
   label: string,
   maxMb: number,
   isEn: boolean = false
 ): { valid: boolean; errorMsg?: string; fileSize: number } {
-  if (!fileInput || !fileInput.files || fileInput.files.length === 0) {
+  if (!fileInput) {
+    return { valid: true, fileSize: 0 };
+  }
+
+  const isRequired = fileInput.hasAttribute('required') || fileInput.required;
+  if (!fileInput.files || fileInput.files.length === 0) {
+    if (isRequired) {
+      return {
+        valid: false,
+        errorMsg: isEn
+          ? `File ${label} is required. Please select a document to upload.`
+          : `Berkas ${label} wajib diunggah. Mohon pilih dokumen pendaftaran Anda.`,
+        fileSize: 0
+      };
+    }
     return { valid: true, fileSize: 0 };
   }
 
@@ -53,7 +72,7 @@ export function validateSingleFile(
     .map(ext => ext.trim().toLowerCase().replace(/^\./, ''))
     .filter(Boolean);
 
-  const fileExt = file.name.split('.').pop()?.toLowerCase() || '';
+  const fileExt = file.name.split('.').pop()?.trim().toLowerCase() || '';
   if (itemAllowedExts.length > 0 && !itemAllowedExts.includes(fileExt)) {
     return {
       valid: false,
@@ -89,6 +108,16 @@ export function validateRegistrationForm(
       errorMsg: isEn
         ? 'Please fill in all required form fields correctly!'
         : 'Mohon lengkapi seluruh isian formulir yang wajib diisi dengan benar!'
+    };
+  }
+
+  const emailInput = (document.getElementById('email') as HTMLInputElement | null)?.value || '';
+  if (emailInput && !validateEmail(emailInput)) {
+    return {
+      valid: false,
+      errorMsg: isEn
+        ? 'Please enter a valid email address!'
+        : 'Masukkan alamat email yang valid!'
     };
   }
 
@@ -130,7 +159,8 @@ export function validateRegistrationForm(
   }
 
   const elAlasan2 = document.getElementById('alasan_divisi_2') as HTMLTextAreaElement | null;
-  if (elAlasan2 && elAlasan2.required && alasan_divisi_2) {
+  const isAlasan2Required = elAlasan2 ? elAlasan2.required : Boolean(divisi_2);
+  if ((isAlasan2Required || (alasan_divisi_2 && alasan_divisi_2.trim().length > 0)) && divisi_2) {
     const words2 = countWords(alasan_divisi_2);
     if (words2 < minReasonWords) {
       return {
@@ -183,3 +213,4 @@ export function validateRegistrationForm(
 
   return { valid: true };
 }
+

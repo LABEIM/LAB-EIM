@@ -85,157 +85,156 @@ function getIsEnglish(): boolean {
 export function initRegistrationSearch() {
   const isEn = getIsEnglish();
 
-  // 1. Document Screening Results Lookup
-  const searchScreeningInput = document.getElementById('search-screening-nim-input') as HTMLInputElement | null;
-  const searchScreeningBtn = document.getElementById('search-screening-nim-btn');
-  const searchScreeningResultBox = document.getElementById('search-screening-result-box');
+  // Discover all search buttons (both legacy IDs and dynamic step search IDs)
+  const searchButtons = Array.from(document.querySelectorAll<HTMLButtonElement>('[id$="-nim-btn"]'));
 
-  const executeScreeningSearch = () => {
-    if (!searchScreeningInput || !searchScreeningResultBox) return;
-    const query = searchScreeningInput.value.trim();
-    if (!query) {
-      setResultDisplay(
-        searchScreeningResultBox,
-        'status-error',
-        `<i class="fa-solid fa-circle-exclamation"></i> ${isEn ? 'Please enter a NIM to search.' : 'Masukkan NIM untuk mencari.'}`
-      );
-      return;
-    }
+  // Also include main announcement search if it exists and wasn't matched
+  const mainSearchBtn = document.getElementById('search-nim-btn') as HTMLButtonElement | null;
+  if (mainSearchBtn && !searchButtons.includes(mainSearchBtn)) {
+    searchButtons.push(mainSearchBtn);
+  }
 
-    const match = findCandidate(query);
-    if (match) {
-      const isPassed = match.screeningStatus === 'passed';
-      setResultDisplay(
-        searchScreeningResultBox,
-        isPassed ? 'status-passed' : 'status-muted',
-        `
-          <div class="search-result-title">
-            ${isPassed ? (isEn ? 'PASSED DOCUMENT SCREENING' : 'LOLOS SELEKSI BERKAS') : (isEn ? 'Document Screening Status' : 'Status Seleksi Berkas')}
-          </div>
-          <div class="search-result-nim">NIM: <strong>${escapeHtml(match.nim)}</strong></div>
-          <p class="search-result-desc">
-            ${isPassed
-              ? (isEn ? 'Congratulations! You have qualified for the Technical Test phase. Please check your email for details.' : 'Selamat! Anda dinyatakan lolos seleksi berkas dan berhak mengikuti Tes Teknikal. Cek email Anda untuk informasi lebih lanjut.')
-              : (match.notes ? escapeHtml(match.notes) : (isEn ? 'Thank you for applying. Keep striving for future opportunities.' : 'Terima kasih telah mendaftar. Tetap semangat untuk kesempatan berikutnya.'))}
-          </p>
-        `
-      );
+  searchButtons.forEach((btn) => {
+    const btnId = btn.id;
+    const inputId = btnId.replace(/-btn$/, '-input');
+    const resultBoxId = btnId.replace(/-btn$/, '-result-box');
+
+    const input = document.getElementById(inputId) as HTMLInputElement | null;
+    const resultBox = document.getElementById(resultBoxId);
+
+    if (!input || !resultBox) return;
+
+    // Prevent double listener attachment
+    if (btn.getAttribute('data-search-bound') === 'true') return;
+    btn.setAttribute('data-search-bound', 'true');
+
+    // Extract step key from button ID (e.g. search-selection-nim-btn -> selection, search-nim-btn -> announcement)
+    let stepKey = 'announcement';
+    if (btnId === 'search-nim-btn') {
+      stepKey = 'announcement';
     } else {
-      setResultDisplay(
-        searchScreeningResultBox,
-        'status-muted',
-        isEn
-          ? `No screening result record found for NIM "<strong>${escapeHtml(query)}</strong>".`
-          : `Data hasil seleksi berkas tidak ditemukan untuk NIM "<strong>${escapeHtml(query)}</strong>".`
-      );
-    }
-  };
-
-  searchScreeningBtn?.addEventListener('click', executeScreeningSearch);
-  searchScreeningInput?.addEventListener('keypress', (e) => { if (e.key === 'Enter') executeScreeningSearch(); });
-
-  // 2. Technical Test Results Lookup
-  const searchTechInput = document.getElementById('search-tech-nim-input') as HTMLInputElement | null;
-  const searchTechBtn = document.getElementById('search-tech-nim-btn');
-  const searchTechResultBox = document.getElementById('search-tech-result-box');
-
-  const executeTechSearch = () => {
-    if (!searchTechInput || !searchTechResultBox) return;
-    const query = searchTechInput.value.trim();
-    if (!query) {
-      setResultDisplay(
-        searchTechResultBox,
-        'status-error',
-        `<i class="fa-solid fa-circle-exclamation"></i> ${isEn ? 'Please enter a NIM to search.' : 'Masukkan NIM untuk mencari.'}`
-      );
-      return;
-    }
-
-    const match = findCandidate(query);
-    if (match) {
-      const isPassed = match.technicalTestStatus === 'passed';
-      setResultDisplay(
-        searchTechResultBox,
-        isPassed ? 'status-passed' : 'status-muted',
-        `
-          <div class="search-result-title">
-            ${isPassed ? (isEn ? 'PASSED TECHNICAL TEST' : 'LOLOS TES TEKNIKAL') : (isEn ? 'Technical Test Status' : 'Status Tes Teknikal')}
-          </div>
-          <div class="search-result-nim">NIM: <strong>${escapeHtml(match.nim)}</strong></div>
-          <p class="search-result-desc">
-            ${isPassed
-              ? (isEn ? 'Congratulations! You have qualified for the Interview phase. Please check your email for interview schedule details.' : 'Selamat! Anda dinyatakan lolos Tes Teknikal dan berhak mengikuti tahap Wawancara. Cek email Anda untuk jadwal wawancara.')
-              : (match.notes ? escapeHtml(match.notes) : (isEn ? 'Thank you for participating in the technical test.' : 'Terima kasih telah mengikuti tes teknikal.'))}
-          </p>
-        `
-      );
-    } else {
-      setResultDisplay(
-        searchTechResultBox,
-        'status-muted',
-        isEn
-          ? `No technical test result record found for NIM "<strong>${escapeHtml(query)}</strong>".`
-          : `Data hasil tes teknikal tidak ditemukan untuk NIM "<strong>${escapeHtml(query)}</strong>".`
-      );
-    }
-  };
-
-  searchTechBtn?.addEventListener('click', executeTechSearch);
-  searchTechInput?.addEventListener('keypress', (e) => { if (e.key === 'Enter') executeTechSearch(); });
-
-  // 3. Final Selection Results Lookup
-  const searchInput = document.getElementById('search-nim-input') as HTMLInputElement | null;
-  const searchBtn = document.getElementById('search-nim-btn');
-  const resultBox = document.getElementById('search-result-box');
-
-  const executeNimSearch = () => {
-    if (!searchInput || !resultBox) return;
-    const query = searchInput.value.trim();
-    if (!query) {
-      setResultDisplay(
-        resultBox,
-        'status-error',
-        `<i class="fa-solid fa-circle-exclamation"></i> ${isEn ? 'Please enter a NIM to search.' : 'Masukkan NIM untuk mencari.'}`
-      );
-      return;
-    }
-
-    const match = findCandidate(query);
-    if (match) {
-      const isAccepted = match.finalStatus === 'accepted' || match.status === 'accepted';
-      if (isAccepted) {
-        setResultDisplay(
-          resultBox,
-          'status-passed',
-          `
-            <div class="search-result-title-lg"><i class="fa-solid fa-circle-check"></i> ${isEn ? 'CONGRATULATIONS!' : 'SELAMAT! ANDA DITERIMA'}</div>
-            <div class="search-result-nim">NIM: <strong>${escapeHtml(match.nim)}</strong></div>
-            <div class="search-result-division">${isEn ? 'Division:' : 'Divisi:'} <strong>${escapeHtml(match.division)}</strong></div>
-            <p class="search-result-desc">${match.notes ? escapeHtml(match.notes) : (isEn ? 'You have been accepted as an assistant at EIM Research Lab.' : 'Selamat! Anda diterima menjadi asisten di EIM Research Lab.')}</p>
-          `
-        );
-      } else {
-        setResultDisplay(
-          resultBox,
-          'status-info',
-          `
-            <div class="search-result-title"><i class="fa-solid fa-info-circle"></i> Status: ${escapeHtml((match.finalStatus || match.status || 'evaluated').toUpperCase())}</div>
-            <div class="search-result-nim">NIM: <strong>${escapeHtml(match.nim)}</strong></div>
-            <p class="search-result-desc">${match.notes ? escapeHtml(match.notes) : (isEn ? 'Thank you for participating in this recruitment cycle.' : 'Terima kasih telah berpartisipasi dalam rekrutmen ini.')}</p>
-          `
-        );
+      const matchKey = btnId.match(/^search-(.*?)-nim-btn$/);
+      if (matchKey && matchKey[1]) {
+        stepKey = matchKey[1];
       }
-    } else {
+    }
+
+    const executeSearch = () => {
+      const query = input.value.trim();
+      if (!query) {
+        setResultDisplay(
+          resultBox,
+          'status-error',
+          `<i class="fa-solid fa-circle-exclamation"></i> ${isEn ? 'Please enter a NIM to search.' : 'Masukkan NIM untuk mencari.'}`
+        );
+        return;
+      }
+
+      const match = findCandidate(query);
+      if (!match) {
+        setResultDisplay(
+          resultBox,
+          'status-muted',
+          isEn
+            ? `No result record found for NIM "<strong>${escapeHtml(query)}</strong>".`
+            : `Data hasil seleksi tidak ditemukan untuk NIM "<strong>${escapeHtml(query)}</strong>".`
+        );
+        return;
+      }
+
+      // Final selection announcement view
+      if (stepKey === 'announcement' || stepKey === 'final') {
+        const isAccepted = match.finalStatus === 'accepted' || match.status === 'accepted';
+        if (isAccepted) {
+          setResultDisplay(
+            resultBox,
+            'status-passed',
+            `
+              <div class="search-result-title-lg"><i class="fa-solid fa-circle-check"></i> ${isEn ? 'CONGRATULATIONS!' : 'SELAMAT! ANDA DITERIMA'}</div>
+              <div class="search-result-nim">NIM: <strong>${escapeHtml(match.nim)}</strong></div>
+              <div class="search-result-division">${isEn ? 'Division:' : 'Divisi:'} <strong>${escapeHtml(match.division)}</strong></div>
+              <p class="search-result-desc">${match.notes ? escapeHtml(match.notes) : (isEn ? 'You have been accepted as an assistant at EIM Research Lab.' : 'Selamat! Anda diterima menjadi asisten di EIM Research Lab.')}</p>
+            `
+          );
+        } else {
+          setResultDisplay(
+            resultBox,
+            'status-info',
+            `
+              <div class="search-result-title"><i class="fa-solid fa-info-circle"></i> Status: ${escapeHtml((match.finalStatus || match.status || 'evaluated').toUpperCase())}</div>
+              <div class="search-result-nim">NIM: <strong>${escapeHtml(match.nim)}</strong></div>
+              <p class="search-result-desc">${match.notes ? escapeHtml(match.notes) : (isEn ? 'Thank you for participating in this recruitment cycle.' : 'Terima kasih telah berpartisipasi dalam rekrutmen ini.')}</p>
+            `
+          );
+        }
+        return;
+      }
+
+      // Dynamic step-specific status lookup
+      let stepStatus = 'passed';
+      const screeningVal = (match.screeningStatus || (match as any).selectionStatus || '').toLowerCase();
+      const techVal = (match.technicalTestStatus || (match as any).technicalStatus || '').toLowerCase();
+      const finalVal = (match.finalStatus || match.status || '').toLowerCase();
+
+      const normalizedStepKey = stepKey.replace(/-/g, '_');
+
+      if (normalizedStepKey === 'selection' || normalizedStepKey === 'screening') {
+        stepStatus = screeningVal || 'passed';
+      } else if (normalizedStepKey === 'technical_test' || normalizedStepKey === 'tech' || normalizedStepKey === 'technical') {
+        if (screeningVal === 'failed') {
+          stepStatus = 'failed';
+        } else {
+          stepStatus = techVal || 'passed';
+        }
+      } else if (normalizedStepKey === 'interview') {
+        const interviewVal = ((match as any).interviewStatus || '').toLowerCase();
+        if (screeningVal === 'failed' || techVal === 'failed') {
+          stepStatus = 'failed';
+        } else {
+          stepStatus = interviewVal || (finalVal === 'rejected' ? 'failed' : 'passed');
+        }
+      } else {
+        if (screeningVal === 'failed' || finalVal === 'rejected') {
+          stepStatus = 'failed';
+        } else {
+          const camelStepKey = normalizedStepKey.replace(/_([a-z])/g, (_, letter) => letter.toUpperCase());
+          const customKeyCamel = `${camelStepKey}Status`;
+          const customKeyExact = `${normalizedStepKey}Status`;
+
+          if ((match as any)[customKeyCamel]) {
+            stepStatus = String((match as any)[customKeyCamel]).toLowerCase();
+          } else if ((match as any)[customKeyExact]) {
+            stepStatus = String((match as any)[customKeyExact]).toLowerCase();
+          } else if ((match as any)[stepKey]) {
+            stepStatus = String((match as any)[stepKey]).toLowerCase();
+          } else if ((match as any)[normalizedStepKey]) {
+            stepStatus = String((match as any)[normalizedStepKey]).toLowerCase();
+          }
+        }
+      }
+
+      const isPassed = stepStatus === 'passed';
       setResultDisplay(
         resultBox,
-        'status-muted',
-        isEn
-          ? `No matching candidate record found for NIM "<strong>${escapeHtml(query)}</strong>".`
-          : `Data kandidat tidak ditemukan untuk NIM "<strong>${escapeHtml(query)}</strong>".`
+        isPassed ? 'status-passed' : 'status-muted',
+        `
+          <div class="search-result-title">
+            ${isPassed ? (isEn ? 'PASSED EVALUATION STEP' : 'LOLOS TAHAP SELEKSI') : (isEn ? 'Evaluation Step Status' : 'Status Tahap Seleksi')}
+          </div>
+          <div class="search-result-nim">NIM: <strong>${escapeHtml(match.nim)}</strong></div>
+          ${match.division ? `<div class="search-result-division">${isEn ? 'Division:' : 'Divisi:'} <strong>${escapeHtml(match.division)}</strong></div>` : ''}
+          <p class="search-result-desc">
+            ${isPassed
+              ? (match.notes ? escapeHtml(match.notes) : (isEn ? 'Congratulations! You have passed this selection step. Please check your email or official communication channel for details.' : 'Selamat! Anda dinyatakan lolos pada tahap ini. Cek email atau WhatsApp Group rekrutmen untuk informasi lebih lanjut.'))
+              : (match.notes ? escapeHtml(match.notes) : (isEn ? 'Thank you for participating in this selection phase.' : 'Terima kasih telah mengikuti tahap seleksi ini.'))}
+          </p>
+        `
       );
-    }
-  };
+    };
 
-  searchBtn?.addEventListener('click', executeNimSearch);
-  searchInput?.addEventListener('keypress', (e) => { if (e.key === 'Enter') executeNimSearch(); });
+    btn.addEventListener('click', executeSearch);
+    input.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') executeSearch();
+    });
+  });
 }

@@ -6,7 +6,7 @@ Official website of the Enterprise Infrastructure Management (EIM) Research Lab,
 
 ## Key Technologies
 
-- **Framework**: [Astro v7.1.3](https://astro.build/)
+- **Framework**: [Astro v7.1.6](https://astro.build/)
 - **Styling**: [Tailwind CSS v4.3.3](https://tailwindcss.com/) via `@tailwindcss/vite`
 - **Language**: TypeScript (`v6.0.3`)
 - **Runtime**: Node.js `>=22.12.0`

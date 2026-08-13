@@ -15,11 +15,12 @@ Before writing any code, the agent must complete these steps:
 3. Keep all changes within the selected task scope unless a critical blocker forces a narrow supporting fix.
 4. Do not silently alter verification rules during implementation.
 5. Prefer durable repository artifacts over transient chat summaries.
+6. When making structural updates, dependency version bumps, framework configuration changes, schema updates, or directory layout shifts, the agent must update corresponding repository documentation (`AGENTS.md`, `README.md`, `DEPLOYMENT.md`, `REGISTRATION_SETUP.md`) and TypeScript interfaces (`src/utils/types.ts`) to reflect the new state.
 
 ### 1.3 Required Artifacts
 1. `src/content.config.ts`: Defines Zod schemas and loaders for static content collections (`news`, `events`).
 2. `keystatic.config.ts`: Defines Keystatic CMS schemas, singletons, and content collections.
-3. `astro.config.mjs`: Central Astro configuration including i18n routing, Vercel adapter, integrations, and Vite plugins.
+3. `astro.config.mjs`: Central Astro configuration including i18n routing, Cloudflare adapter, integrations, and Vite plugins.
 4. `src/content/`: Contains Markdown entries representing news articles and laboratory events.
 5. `package.json`: Main repository dependencies, runtime constraints, and script targets.
 
@@ -41,17 +42,17 @@ Before ending a session, the agent must perform these tasks:
 ## Section 2: Tech Stack & Architecture
 
 ### 2.1 Framework & Core Stack
-- **Framework**: Astro v7.1.1 (configured as a static site generator / SSG with `@astrojs/vercel` adapter).
-- **CMS**: Keystatic CMS (`@keystatic/astro` v5.0.0, `@keystatic/core` v0.5.2).
-- **UI Components**: React v19.0.0 (`@astrojs/react` v6.0.0) combined with Astro components.
+- **Framework**: Astro v7.1.6 (configured as a static site generator / SSG with `@astrojs/cloudflare` adapter).
+- **CMS**: Keystatic CMS (`@keystatic/astro` v5.0.0, `@keystatic/core` v0.6.0).
+- **UI Components**: React v19.2.8 (`@astrojs/react` v6.0.0) combined with Astro components.
 - **Styling**: Tailwind CSS v4.3.3 (integrated via `@tailwindcss/vite` plugin) combined with a modular Vanilla CSS architecture (`src/styles/`).
-- **Internationalization (i18n)**: Native Astro i18n (`locales: ['id', 'en']`, `defaultLocale: 'id'`) with helper utilities (`src/utils/i18n.ts`).
+- **Internationalization (i18n)**: Single-locale ('id') translation & UI dictionary utilities (`src/utils/i18n.ts`).
 - **Typography**: `@fontsource/inter`, `@fontsource/montserrat`, `@fontsource/poppins`.
 - **Languages**: TypeScript (v6.0.3), HTML5, Vanilla CSS.
 - **Runtime & Build Tools**: Node.js `>=22.12.0`, npm.
 
 ### 2.2 Directory Layout & Component Roles
-- `astro.config.mjs`: Astro configuration for i18n, Vercel analytics, integrations, and Vite alias (`@/`).
+- `astro.config.mjs`: Astro configuration for Cloudflare adapter, integrations, Vite alias (`@/`), SSR externalized modules (`sharp`, `detect-libc`), and chunk size limits.
 - `keystatic.config.ts`: Keystatic CMS singletons (e.g. recruitment settings) and collections.
 - `src/content.config.ts`: Collection loaders and Zod schemas (`news`, `events`).
 - `src/content/`: Static Markdown and MDX content files (`news/`, `events/`).

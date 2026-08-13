@@ -1,5 +1,21 @@
 /* --- RESPONSIVE STYLES --- */
-@media (max-width: 992px) {
+.hero-visual {
+    max-width: 100%;
+    overflow: visible;
+}
+
+@media (max-width: 1200px) {
+    .visual-orbit {
+        width: 340px;
+        height: 340px;
+    }
+    .visual-core {
+        width: 170px;
+        height: 170px;
+    }
+}
+
+@media (max-width: 1024px) {
     .hero-grid {
         grid-template-columns: 1fr;
         text-align: center;

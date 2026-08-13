@@ -17,6 +17,7 @@ export default defineConfig({
           : 'http://localhost:4321',
   adapter: cloudflare({
     imageService: 'compile',
+    entrypointResolution: 'auto',
   }),
   integrations: [react(), keystatic()],
   build: {
@@ -28,6 +29,12 @@ export default defineConfig({
       alias: {
         '@': '/src',
       },
+    },
+    ssr: {
+      external: ['sharp', 'detect-libc'],
+    },
+    build: {
+      chunkSizeWarningLimit: 1000,
     },
   },
 });

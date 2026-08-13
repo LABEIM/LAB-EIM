@@ -1,0 +1,12 @@
+{
+  "enabled": true,
+  "mode": "auto_recruitment",
+  "alertType": "recruitment",
+  "icon": "fa-solid fa-bullhorn",
+  "badgeText": "REKRUTMEN",
+  "message": "Pendaftaran Asisten EIM Research Lab sedang berlangsung! Daftarkan diri Anda sekarang.",
+  "ctaText": "Daftar Sekarang",
+  "ctaLink": "/registration",
+  "dismissible": true,
+  "id": "announcement-2026-v1"
+}

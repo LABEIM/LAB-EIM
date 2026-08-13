@@ -325,7 +325,7 @@
 }
 
 .structure-page-header {
-    padding-top: 130px;
+    padding-top: calc(var(--site-header-height) + 50px);
     padding-bottom: 24px;
 }
 

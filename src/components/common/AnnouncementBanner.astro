@@ -1,0 +1,218 @@
+---
+import { getLocaleFromUrl, getLocalizedJsonData } from '../../utils/i18n';
+import { getCurrentRecruitmentStage } from '../../utils/recruitment';
+
+const locale = getLocaleFromUrl(Astro.url);
+
+// Load announcement configuration and recruitment settings
+let announcementConfig: any = {};
+let registrationConfig: any = {};
+
+try {
+  announcementConfig = await getLocalizedJsonData<any>('announcement', locale);
+} catch (e) {
+  announcementConfig = {
+    enabled: true,
+    mode: 'auto_recruitment',
+    alertType: 'recruitment',
+    icon: 'fa-solid fa-bullhorn',
+    badgeText: 'REKRUTMEN',
+    message: 'Pendaftaran Asisten EIM Research Lab sedang berlangsung!',
+    ctaText: 'Daftar Sekarang',
+    ctaLink: '/registration',
+    dismissible: true,
+    id: 'announcement-2026-v1',
+  };
+}
+
+try {
+  registrationConfig = await getLocalizedJsonData<any>('registration', locale);
+} catch (e) {
+  registrationConfig = {};
+}
+
+// Determine display values based on mode (auto_recruitment vs manual)
+let {
+  enabled = true,
+  mode = 'auto_recruitment',
+  alertType = 'recruitment',
+  icon = 'fa-solid fa-bullhorn',
+  badgeText = 'REKRUTMEN',
+  message = 'Pendaftaran Asisten EIM Research Lab sedang berlangsung!',
+  ctaText = 'Daftar Sekarang',
+  ctaLink = '/registration',
+  dismissible = true,
+  id = 'announcement-2026-v1',
+} = announcementConfig;
+
+if (!enabled) {
+  // Banner disabled entirely by CMS
+}
+
+// Auto Recruitment Stage Sync logic
+if (enabled && mode === 'auto_recruitment' && registrationConfig) {
+  const stage = getCurrentRecruitmentStage(registrationConfig);
+
+  if (stage === 'open') {
+    alertType = 'recruitment';
+    icon = 'fa-solid fa-user-plus';
+    badgeText = 'REKRUTMEN DIBUKA';
+    message = 'Pendaftaran Asisten EIM Research Lab telah resmi dibuka!';
+    ctaText = 'Daftar Sekarang';
+    ctaLink = '/registration';
+  } else if (stage === 'extended') {
+    alertType = 'recruitment';
+    icon = 'fa-solid fa-clock-rotate-left';
+    badgeText = 'DIPERPANJANG';
+    message = registrationConfig?.extendedConfig?.bannerMessage || 'Pendaftaran Asisten EIM Research Lab diperpanjang!';
+    ctaText = 'Daftar Sekarang';
+    ctaLink = '/registration';
+  } else if (stage === 'upcoming') {
+    alertType = 'recruitment';
+    icon = 'fa-solid fa-calendar-check';
+    badgeText = 'SEGERA DIBUKA';
+    message = registrationConfig?.upcomingConfig?.title || 'Pendaftaran Asisten EIM Research Lab akan segera dibuka!';
+    ctaText = 'Lihat Persyaratan';
+    ctaLink = '/registration';
+  } else if (stage === 'selection_results') {
+    alertType = 'success';
+    icon = 'fa-solid fa-bullhorn';
+    badgeText = 'PENGUMUMAN';
+    message = 'Hasil Seleksi Berkas Pendaftaran Asisten telah diumumkan!';
+    ctaText = 'Cek Status';
+    ctaLink = '/registration';
+  } else if (stage === 'technical_test_results') {
+    alertType = 'success';
+    icon = 'fa-solid fa-bullhorn';
+    badgeText = 'PENGUMUMAN';
+    message = 'Hasil Tes Teknikal Pendaftaran Asisten telah diumumkan!';
+    ctaText = 'Cek Status';
+    ctaLink = '/registration';
+  } else if (stage === 'announcement') {
+    alertType = 'success';
+    icon = 'fa-solid fa-trophy';
+    badgeText = 'HASIL AKHIR';
+    message = 'Pengumuman Akhir Kelulusan Asisten EIM Research Lab!';
+    ctaText = 'Lihat Pengumuman';
+    ctaLink = '/registration';
+  }
+}
+/**
+ * Security helper to sanitize destination links against javascript: or data: XSS payloads
+ */
+function sanitizeCtaLink(url?: string): string {
+  if (!url) return '';
+  const trimmed = url.trim();
+  if (
+    trimmed.startsWith('/') ||
+    trimmed.startsWith('http://') ||
+    trimmed.startsWith('https://') ||
+    trimmed.startsWith('mailto:')
+  ) {
+    return trimmed;
+  }
+  return '#';
+}
+
+const safeCtaLink = sanitizeCtaLink(ctaLink);
+const isExternalCta = safeCtaLink.startsWith('http://') || safeCtaLink.startsWith('https://');
+---
+
+{enabled && (
+  <div
+    id="global-announcement-banner"
+    class={`global-announcement-bar theme-${alertType}`}
+    data-banner-id={id}
+  >
+    <div class="announcement-container">
+      <div class="announcement-content-wrap">
+        <span class="announcement-badge">
+          <i class={icon} aria-hidden="true"></i>
+          <span class="badge-text">{badgeText}</span>
+        </span>
+        <span class="announcement-text">{message}</span>
+      </div>
+
+      <div class="announcement-actions">
+        {ctaText && safeCtaLink && (
+          <a
+            href={safeCtaLink}
+            class="announcement-cta"
+            target={isExternalCta ? '_blank' : undefined}
+            rel={isExternalCta ? 'noopener noreferrer' : undefined}
+          >
+            <span>{ctaText}</span>
+            <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
+          </a>
+        )}
+        {dismissible && (
+          <button
+            type="button"
+            class="announcement-close-btn"
+            data-announcement-close
+            aria-label="Tutup Pengumuman"
+            title="Tutup Pengumuman"
+          >
+            <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+          </button>
+        )}
+      </div>
+    </div>
+  </div>
+)}
+
+<script is:inline>
+  (function() {
+    try {
+      var banner = document.getElementById('global-announcement-banner');
+      if (banner) {
+        var id = banner.getAttribute('data-banner-id');
+        if (localStorage.getItem('eim_announcement_dismissed_' + id) === 'true') {
+          banner.style.display = 'none';
+          document.body.classList.remove('has-announcement-banner');
+        }
+      }
+    } catch(e) {}
+  })();
+</script>
+
+<script>
+  function initAnnouncementBanner() {
+    const banner = document.getElementById('global-announcement-banner');
+    if (!banner) {
+      document.body.classList.remove('has-announcement-banner');
+      return;
+    }
+
+    const bannerId = banner.getAttribute('data-banner-id') || 'default';
+    const storageKey = 'eim_announcement_dismissed_' + bannerId;
+
+    try {
+      if (localStorage.getItem(storageKey) === 'true') {
+        banner.style.display = 'none';
+        document.body.classList.remove('has-announcement-banner');
+        return;
+      }
+    } catch (e) {}
+
+    const closeBtn = banner.querySelector('[data-announcement-close]') as HTMLButtonElement | null;
+    if (closeBtn) {
+      closeBtn.onclick = () => {
+        banner.style.opacity = '0';
+        banner.style.transform = 'translateY(-100%)';
+        document.body.classList.remove('has-announcement-banner');
+        setTimeout(() => {
+          banner.style.display = 'none';
+        }, 250);
+
+        try {
+          localStorage.setItem(storageKey, 'true');
+        } catch (e) {}
+      };
+    }
+  }
+
+  // Initialize on page load and astro page transitions
+  initAnnouncementBanner();
+  document.addEventListener('astro:page-load', initAnnouncementBanner);
+</script>

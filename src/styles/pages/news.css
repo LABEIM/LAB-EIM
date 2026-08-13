@@ -183,7 +183,8 @@
 }
 
 .news-page-header {
-    padding: 130px 0 24px 0;
+    padding-top: calc(var(--site-header-height) + 50px);
+    padding-bottom: 24px;
     text-align: center;
 }
 
@@ -208,7 +209,7 @@
    NEWS DETAIL PAGE STYLES
    ========================================================================== */
 .detail-header-section {
-    padding-top: 130px;
+    padding-top: calc(var(--site-header-height) + 50px);
     padding-bottom: 40px;
     background: var(--bg-dark-secondary);
     border-bottom: 1px solid var(--border-color);

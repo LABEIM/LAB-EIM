@@ -220,7 +220,7 @@ h1, h2, h3, h4, h5, h6 {
 
 /* --- PAGE HEADER (Subpages) --- */
 .page-header {
-    padding-top: 130px;
+    padding-top: calc(var(--site-header-height) + 50px);
     padding-bottom: 24px;
     position: relative;
     overflow: hidden;

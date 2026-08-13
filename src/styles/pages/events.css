@@ -113,7 +113,8 @@
 }
 
 .event-page-header {
-    padding: 130px 0 24px 0;
+    padding-top: calc(var(--site-header-height) + 50px);
+    padding-bottom: 24px;
     text-align: center;
 }
 
@@ -136,7 +137,7 @@
 
 /* Event Detail Page Styles */
 .detail-header-section {
-    padding-top: 120px;
+    padding-top: calc(var(--site-header-height) + 50px);
     padding-bottom: 40px;
     border-bottom: 1px solid var(--border-color);
     background-color: var(--bg-dark-secondary);

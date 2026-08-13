@@ -240,6 +240,30 @@ Lab staff manage candidate recruitment search results directly on the **Keystati
    - **Method B (Individual Entries)**: Under **Candidate List (Individual Entries)**, click **Add** to manage candidate records manually.
 5. Click **Save** in Keystatic to write updates directly into `src/data/recruitment_results.json`. Candidates will immediately be searchable by NIM on the website registration page.
 
+---
+
+## 8. Announcement Banner (`src/data/announcement.json`)
+
+Site administrators can toggle and configure a top global announcement banner that appears across all pages of the site via **Keystatic Admin > Singletons > Announcement Banner**.
+
+### Fields Explanation
+* **`enabled`** (Boolean): Toggle banner ON/OFF across the entire website.
+* **`mode`** (`"auto_recruitment"` | `"manual"`):
+  - `"auto_recruitment"`: Automatically updates banner text, alert style, icon, and CTA link to mirror the active recruitment pipeline status (e.g. Opening Soon, Registration Open, Document Screening Results, Final Results).
+  - `"manual"`: Displays custom manual announcement text and settings configured below.
+* **`alertType`** (`"recruitment"` | `"maintenance"` | `"info"` | `"success"`): Color-coded visual theme for manual announcements:
+  - `"recruitment"`: Purple & Gold accent
+  - `"maintenance"`: Amber & Crimson caution accent
+  - `"info"`: Cyan & Blue accent
+  - `"success"`: Emerald Green accent
+* **`badgeText`** (String): Short uppercase tag displayed on the banner (e.g., `"PENGUMUMAN"`, `"MAINTENANCE"`).
+* **`message`** (String): Main announcement message displayed to visitors.
+* **`ctaText`** (String, Optional): Call-To-Action button text (e.g., `"Daftar Sekarang"`, `"Info Selengkapnya"`).
+* **`ctaLink`** (String, Optional): Destination URL when clicking the button.
+* **`dismissible`** (Boolean): Allows visitors to close/hide the banner.
+* **`id`** (String): Version identifier. Changing this value (e.g. from `announcement-v1` to `announcement-v2`) forces the banner to re-appear for visitors who previously dismissed it.
+
+
 
 
 

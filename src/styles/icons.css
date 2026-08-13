@@ -124,4 +124,9 @@
 .fa-folder-open::before { content: "\f07c"; }
 .fa-graduation-cap::before { content: "\f19d"; }
 .fa-building-columns::before { content: "\f19c"; }
+.fa-xmark::before, .fa-times::before { content: "\f00d"; }
+.fa-bullhorn::before { content: "\f0a1"; }
+.fa-wrench::before { content: "\f0ad"; }
+.fa-trophy::before { content: "\f091"; }
+.fa-triangle-exclamation::before { content: "\f071"; }
 

@@ -508,5 +508,38 @@ export default config({
         mapSectionSubtitle: fields.text({ label: 'Map Section Subtitle', multiline: true }),
       },
     }),
+    announcement: singleton({
+      label: 'Announcement Banner',
+      path: 'src/data/announcement',
+      format: { data: 'json' },
+      schema: {
+        enabled: fields.checkbox({ label: 'Enable Announcement Banner', defaultValue: true }),
+        mode: fields.select({
+          label: 'Announcement Mode',
+          options: [
+            { label: 'Auto Sync with Active Recruitment Pipeline Stage', value: 'auto_recruitment' },
+            { label: 'Manual Custom Announcement', value: 'manual' },
+          ],
+          defaultValue: 'auto_recruitment',
+        }),
+        alertType: fields.select({
+          label: 'Alert Theme / Style (Manual Mode)',
+          options: [
+            { label: 'Recruitment (Purple / Gold Accent)', value: 'recruitment' },
+            { label: 'Maintenance / Warning (Amber / Red Accent)', value: 'maintenance' },
+            { label: 'General Info (Cyan / Blue Accent)', value: 'info' },
+            { label: 'Success / Results (Emerald Green Accent)', value: 'success' },
+          ],
+          defaultValue: 'recruitment',
+        }),
+        icon: fields.text({ label: 'FontAwesome Icon Class (e.g. fa-solid fa-bullhorn)', defaultValue: 'fa-solid fa-bullhorn' }),
+        badgeText: fields.text({ label: 'Badge Tag Text (e.g., PENGUMUMAN, MAINTENANCE)', defaultValue: 'REKRUTMEN' }),
+        message: fields.text({ label: 'Announcement Message Text', multiline: true, defaultValue: 'Pendaftaran Asisten EIM Research Lab sedang berlangsung!' }),
+        ctaText: fields.text({ label: 'Call-To-Action Button Text (Optional)', defaultValue: 'Daftar Sekarang' }),
+        ctaLink: fields.text({ label: 'Call-To-Action Destination URL (Optional)', defaultValue: '/registration' }),
+        dismissible: fields.checkbox({ label: 'Allow Visitors to Close / Dismiss Banner', defaultValue: true }),
+        id: fields.text({ label: 'Announcement Version ID (Change this to reset dismissal state for visitors)', defaultValue: 'announcement-2026-v1' }),
+      },
+    }),
   },
 });

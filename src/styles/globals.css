@@ -27,6 +27,7 @@
 @import "./components/news-card.css";
 @import "./components/contact-person.css";
 @import "./components/event-poster-modal.css";
+@import "./components/announcement.css";
 @import "./pages/hero.css";
 @import "./pages/about.css";
 @import "./pages/organization.css";

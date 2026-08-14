@@ -219,8 +219,9 @@ In GitHub go to **Settings** > **Secrets and variables** > **Actions** and add:
 ### 5.2 Pipeline Stages (`ci-cd.yml`)
 
 1. **`validate` (CI Validation)**: Cleans cache, runs `npx astro check` and `npm run build`, uploading the compiled `dist/` static artifact.
-2. **`deploy-cloudflare` & `deploy-vercel`**: Deploys the static `dist/` artifact to Cloudflare Pages (Primary) and Vercel (Backup) in parallel.
-3. **`lighthouse`**: Audits performance directly against the live deployed URL.
+2. **`deploy-cloudflare` & `deploy-vercel`**: Deploys the static `dist/` artifact to Cloudflare Pages (Primary) and Vercel (Backup) in parallel (generates preview deployments on PRs).
+3. **`comment-pr` (Post PR Preview Comment)**: Posts the live Cloudflare and Vercel preview deployment URLs back to the Pull Request.
+4. **`lighthouse`**: Audits performance directly against the live deployed URL.
 
 ### 5.3 Manual Dispatch Triggers
 

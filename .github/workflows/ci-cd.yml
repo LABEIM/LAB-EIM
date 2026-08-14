@@ -164,21 +164,35 @@ jobs:
   comment-pr:
     name: Post PR Preview Comment
     needs: [deploy-cloudflare, deploy-vercel]
-    if: github.event_name == 'pull_request' && success()
+    if: github.event_name == 'pull_request' && (needs.deploy-cloudflare.result == 'success' || needs.deploy-vercel.result == 'success')
     runs-on: ubuntu-latest
     permissions:
       pull-requests: write
     steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
       - name: Comment PR Preview URLs
         env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
           CF_URL: ${{ needs.deploy-cloudflare.outputs.deploy_url }}
           VERCEL_URL: ${{ needs.deploy-vercel.outputs.deploy_url }}
         run: |
-          gh pr comment ${{ github.event.pull_request.number }} --body "🚀 **Preview Deployments Ready!**
+          COMMENT_BODY="🚀 **Preview Deployments Ready!**"
+          if [ -n "$CF_URL" ]; then
+            COMMENT_BODY="$COMMENT_BODY
 
-          - ☁️ **Cloudflare Pages Preview**: $CF_URL
+          - ☁️ **Cloudflare Pages Preview**: $CF_URL"
+          fi
+          if [ -n "$VERCEL_URL" ]; then
+            COMMENT_BODY="$COMMENT_BODY
+
           - ▲ **Vercel Preview**: $VERCEL_URL"
+          fi
+
+          gh pr comment ${{ github.event.pull_request.number }} --body "$COMMENT_BODY"
 
   lighthouse:
     name: Lighthouse Audit

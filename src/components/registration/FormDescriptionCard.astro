@@ -1,0 +1,43 @@
+---
+interface Props {
+  title?: string;
+  description?: string;
+  items?: string[];
+  className?: string;
+}
+
+const {
+  title = "Requirements:",
+  description = "",
+  items = [],
+  className = "",
+} = Astro.props;
+
+const hasContent = Boolean(title || description || (items && items.length > 0));
+---
+
+{hasContent && (
+  <div class={`form-description-card ${className}`}>
+    {title && (
+      <div class="form-desc-header">
+        <i class="fa-solid fa-clipboard-list form-desc-icon"></i>
+        <h3 class="form-desc-title">{title}</h3>
+      </div>
+    )}
+
+    {description && (
+      <p class="form-desc-paragraph">{description}</p>
+    )}
+
+    {items && items.length > 0 && (
+      <ol class="form-desc-list">
+        {items.map((item: string, index: number) => (
+          <li class="form-desc-item">
+            <span class="form-desc-num">{index + 1}.</span>
+            <span class="form-desc-text">{item}</span>
+          </li>
+        ))}
+      </ol>
+    )}
+  </div>
+)}

@@ -1,5 +1,5 @@
 {
-  "status": "open",
+  "status": "auto",
   "timezoneOffset": "+07:00",
   "upcomingStartDate": "2026-08-01T00:00:00",
   "openDate": "2026-08-14T00:00:00",
@@ -8,6 +8,17 @@
   "announcementDate": "2026-09-09T00:00:00",
   "title": "Formulir Pendaftaran Asisten",
   "subtitle": "Lengkapi formulir di bawah ini dengan informasi yang valid dan benar.",
+  "formDescriptionTitle": "Requirements:",
+  "formDescriptionItems": [
+    "Mahasiswa aktif S1 SI Telkom University angkatan 2024 atau 2025",
+    "Memiliki minat di bidang Jaringan, Cloud Computing, atau Cybersecurity",
+    "Bukan anggota atau bersedia mengundurkan diri dari laboratorium lain di Universitas Telkom",
+    "Kartu Hasil Studi (KHS)",
+    "Curriculum Vitae (CV)",
+    "Pakta Integritas (PI)",
+    "Motivation Letter",
+    "Creative portofolio / Sertifikat (Opsional)"
+  ],
   "heroTag": "Rekrutmen Asisten",
   "heroTitle": "Pendaftaran Asisten Lab",
   "heroDescription": "Bergabunglah bersama kami menjadi bagian dari EIM Research Lab. Kembangkan potensi Anda dalam bidang infrastruktur IT, jaringan, dan riset teknologi.",

@@ -2,6 +2,7 @@
 import BackToHomeButton from './BackToHomeButton.astro';
 import { getLocaleFromUrl, t } from '../../utils/i18n';
 import type { FieldStates } from '../../utils/types';
+import FormDescriptionCard from './FormDescriptionCard.astro';
 
 interface Props {
   initialStage: string;
@@ -22,10 +23,24 @@ interface Props {
   piTemplateUrl?: string;
   fieldStates?: FieldStates;
   allowedFileExtensions?: Record<string, string>;
+  formDescriptionTitle?: string;
+  formDescription?: string;
+  formDescriptionItems?: string[];
 }
 
 const locale = getLocaleFromUrl(Astro.url);
-const { initialStage, upcomingCfg, docLimits, studentYears, piTemplateUrl, fieldStates = {}, allowedFileExtensions = {} } = Astro.props;
+const { 
+  initialStage, 
+  upcomingCfg, 
+  docLimits, 
+  studentYears, 
+  piTemplateUrl, 
+  fieldStates = {}, 
+  allowedFileExtensions = {},
+  formDescriptionTitle,
+  formDescription,
+  formDescriptionItems,
+} = Astro.props;
 
 const formatExtsLabel = (extsStr?: string) => (extsStr || "pdf, png, jpg, jpeg")
   .split(',')
@@ -51,6 +66,12 @@ const isAngkatanEnabled = fieldStates.angkatan !== 'disabled';
     <h2>{upcomingCfg.title}</h2>
     <p class="hero-desc registration-hero-subtitle">{upcomingCfg.subtitle}</p>
   </div>
+
+  <FormDescriptionCard 
+    title={formDescriptionTitle} 
+    description={formDescription} 
+    items={formDescriptionItems} 
+  />
 
   <div class="registration-timer reg-timer-mb" id="upcoming-timer">
     <div class="timer-block">

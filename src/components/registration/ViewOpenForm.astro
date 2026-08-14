@@ -2,6 +2,7 @@
 import type { DivisionConfig } from '../../utils/division-mapper';
 import { getLocaleFromUrl, t } from '../../utils/i18n';
 import type { FieldStates } from '../../utils/types';
+import FormDescriptionCard from './FormDescriptionCard.astro';
 
 interface Props {
   initialStage: string;
@@ -137,6 +138,12 @@ for (let i = 0; i < standardDocs.length; i += 2) {
     <h2>{registrationConfig.title}</h2>
     <p class="registration-hero-subtitle">{registrationConfig.subtitle}</p>
   </div>
+
+  <FormDescriptionCard 
+    title={registrationConfig.formDescriptionTitle} 
+    description={registrationConfig.formDescription} 
+    items={registrationConfig.formDescriptionItems} 
+  />
 
   {/* Draft Restored Banner */}
   <div id="draft-restored-banner" class="draft-restored-banner is-hidden">

@@ -143,6 +143,9 @@ Set the key dates for each phase in ISO format (`YYYY-MM-DDTHH:mm:ss`):
 ```
 
 * **`minReasonWords`**: Minimum number of words required for each "Reason for Choosing Division" textarea (default: `30`).
+* **`formDescriptionTitle`**: Title for the top Form Description header card (e.g. `Requirements:` or `Deskripsi & Informasi Pendaftaran`).
+* **`formDescription`**: Multiline text block for introductory instructions or notices (Optional).
+* **`formDescriptionItems`**: Array of list items or bullet points (e.g., requirement points for applicants).
 * **`selectionSteps`**: Fully dynamic selection pipeline list. Each step can be enabled/disabled (`enabled: true/false`), reordered, or edited directly via Keystatic CMS.
 
 ### Dynamic Selection Step View Templates (`templateType`):

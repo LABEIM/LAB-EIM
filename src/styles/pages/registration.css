@@ -10,6 +10,79 @@
   margin-bottom: 10px;
 }
 
+/* Google Form-Style Form Description & Requirements Card */
+.form-description-card {
+  background: rgba(17, 180, 189, 0.04);
+  border: 1px solid rgba(17, 180, 189, 0.2);
+  border-left: 4px solid var(--brand-cyan, #11B4BD);
+  border-radius: 12px;
+  padding: 22px 26px;
+  margin-bottom: 30px;
+  transition: all 0.2s ease-in-out;
+}
+
+.form-description-card:hover {
+  background: rgba(17, 180, 189, 0.06);
+  border-color: rgba(17, 180, 189, 0.35);
+  box-shadow: 0 4px 16px rgba(17, 180, 189, 0.08);
+}
+
+.form-desc-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.form-desc-icon {
+  color: var(--brand-cyan, #11B4BD);
+  font-size: 1.25rem;
+}
+
+.form-desc-title {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--text-primary, #1e293b);
+  margin: 0;
+}
+
+.form-desc-paragraph {
+  color: var(--text-secondary, #475569);
+  font-size: 0.95rem;
+  line-height: 1.6;
+  margin-bottom: 14px;
+  white-space: pre-line;
+}
+
+.form-desc-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.form-desc-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 0.95rem;
+  color: var(--text-secondary, #334155);
+  line-height: 1.5;
+}
+
+.form-desc-num {
+  font-weight: 700;
+  color: var(--brand-cyan, #11B4BD);
+  min-width: 20px;
+  flex-shrink: 0;
+}
+
+.form-desc-text {
+  flex: 1;
+}
+
 .registration-form-container {
   max-width: 850px;
   margin: 0 auto;

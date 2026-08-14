@@ -2,9 +2,9 @@ name: Unified CI/CD Pipeline (Cloudflare Primary + Vercel Backup)
 
 on:
   push:
-    branches: [ "main", "master", "astro-version" ]
+    branches: [ "main" ]
   pull_request:
-    branches: [ "main", "master", "astro-version" ]
+    branches: [ "main" ]
   workflow_dispatch:
     inputs:
       deploy_target:
@@ -23,6 +23,7 @@ concurrency:
 
 env:
   ASTRO_TELEMETRY_DISABLED: 1
+  NODE_VERSION: 22
   # NOTE: This MUST be a plain env var, NOT a secret.
   # GitHub Actions masks any job output containing a secret substring,
   # which causes deploy URLs containing the project name to be silently
@@ -30,9 +31,13 @@ env:
   CF_PAGES_PROJECT: lab-eim
 
 jobs:
+  # ──────────────────────────────────────────────────────────────────────
+  # Stage 1: CI Validation & Static Build
+  # ──────────────────────────────────────────────────────────────────────
   validate:
     name: CI Validation & Static Build
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
       - name: Checkout repository
         uses: actions/checkout@v7
@@ -40,7 +45,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v7
         with:
-          node-version: 22
+          node-version: ${{ env.NODE_VERSION }}
           cache: npm
 
       - name: Install dependencies
@@ -50,35 +55,68 @@ jobs:
         run: npx astro check
 
       - name: Build static site export
+        id: build
         run: |
+          BUILD_START=$(date +%s)
           rm -rf .astro dist
           npm run build
+          BUILD_END=$(date +%s)
+          BUILD_DURATION=$((BUILD_END - BUILD_START))
+          echo "duration=${BUILD_DURATION}s" >> $GITHUB_OUTPUT
         env:
           PUBLIC_GOOGLE_SHEET_SCRIPT_URL: ${{ secrets.PUBLIC_GOOGLE_SHEET_SCRIPT_URL }}
           PUBLIC_KEYSTATIC_GITHUB_APP_SLUG: ${{ secrets.PUBLIC_KEYSTATIC_GITHUB_APP_SLUG }}
           PUBLIC_RECRUITMENT_SECRET: ${{ secrets.PUBLIC_RECRUITMENT_SECRET }}
+
+      - name: Generate build artifact hash
+        id: hash
+        run: |
+          HASH=$(find dist -type f -exec sha256sum {} \; | sort | sha256sum | cut -d' ' -f1)
+          echo "sha256=${HASH}" >> $GITHUB_OUTPUT
 
       - name: Upload dist build artifact
         uses: actions/upload-artifact@v4
         with:
           name: dist-static-build
           path: dist/
-          retention-days: 1
+          retention-days: 3
 
+      - name: Build summary
+        run: |
+          echo "### Build Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Metric | Value |" >> $GITHUB_STEP_SUMMARY
+          echo "|--------|-------|" >> $GITHUB_STEP_SUMMARY
+          echo "| Build Duration | ${{ steps.build.outputs.duration }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Artifact SHA256 | \`${HASH:0:16}...\` |" >> $GITHUB_STEP_SUMMARY
+          echo "| Artifact Size | $(du -sh dist | cut -f1) |" >> $GITHUB_STEP_SUMMARY
+          echo "| Branch | \`${{ github.ref_name }}\` |" >> $GITHUB_STEP_SUMMARY
+          echo "| Commit | \`${{ github.sha }}\` |" >> $GITHUB_STEP_SUMMARY
+        env:
+          HASH: ${{ steps.hash.outputs.sha256 }}
+
+  # ──────────────────────────────────────────────────────────────────────
+  # Stage 2a: Deploy to Cloudflare Pages (Primary)
+  # ──────────────────────────────────────────────────────────────────────
   deploy-cloudflare:
     name: Deploy to Cloudflare Pages (Primary)
     needs: validate
-    if: github.event_name == 'push' || github.event_name == 'pull_request' || (github.event_name == 'workflow_dispatch' && (inputs.deploy_target == 'primary' || inputs.deploy_target == 'both'))
+    if: >-
+      github.event_name == 'push' ||
+      github.event_name == 'pull_request' ||
+      (github.event_name == 'workflow_dispatch' &&
+       (inputs.deploy_target == 'primary' || inputs.deploy_target == 'both'))
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     permissions:
       contents: read
       deployments: write
+    environment:
+      name: ${{ github.event_name == 'pull_request' && 'cloudflare-preview' || 'cloudflare-production' }}
+      url: ${{ steps.deploy_cloudflare.outputs.deploy_url }}
     outputs:
       deploy_url: ${{ steps.deploy_cloudflare.outputs.deploy_url }}
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v7
-
       - name: Download dist build artifact
         uses: actions/download-artifact@v4
         with:
@@ -88,58 +126,63 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v7
         with:
-          node-version: 22
+          node-version: ${{ env.NODE_VERSION }}
 
-      - name: Deploy to Cloudflare Pages via Wrangler
+      - name: Deploy to Cloudflare Pages via Wrangler (with retry)
         id: deploy_cloudflare
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
         run: |
-          # Use non-secret env var to avoid GitHub masking the output URL
           PROJECT_NAME="${CF_PAGES_PROJECT}"
-          
+
           RAW_HEAD_REF="${{ github.head_ref }}"
           RAW_REF_NAME="${{ github.ref_name }}"
           BRANCH_NAME="${RAW_HEAD_REF:-$RAW_REF_NAME}"
-          
+
           # Auto-create Pages project shell if it does not exist yet
           npx wrangler pages project create "$PROJECT_NAME" --production-branch="main" > /dev/null 2>&1 || true
 
-          # Deploy prebuilt static assets to Cloudflare Pages / Workers
-          npx wrangler pages deploy dist --project-name="$PROJECT_NAME" --branch="$BRANCH_NAME" --commit-dirty=true 2>&1 | tee deploy.log
+          # Deploy with retry logic (3 attempts, exponential backoff)
+          MAX_RETRIES=3
+          RETRY_DELAY=10
+          for ATTEMPT in $(seq 1 $MAX_RETRIES); do
+            echo "::group::Deployment attempt $ATTEMPT/$MAX_RETRIES"
+            if npx wrangler pages deploy dist \
+              --project-name="$PROJECT_NAME" \
+              --branch="$BRANCH_NAME" \
+              --commit-dirty=true 2>&1 | tee deploy.log; then
+              echo "::endgroup::"
+              echo "Deployment succeeded on attempt $ATTEMPT"
+              break
+            fi
+            echo "::endgroup::"
+            if [ "$ATTEMPT" -lt "$MAX_RETRIES" ]; then
+              echo "Attempt $ATTEMPT failed, retrying in ${RETRY_DELAY}s..."
+              sleep $RETRY_DELAY
+              RETRY_DELAY=$((RETRY_DELAY * 2))
+            else
+              echo "All $MAX_RETRIES deployment attempts failed"
+              exit 1
+            fi
+          done
 
-          # Extract live deployment URL (.pages.dev or .workers.dev) safely using Node.js
-          DEPLOY_URL=$(NODE_OPTIONS="--no-warnings" node -e '
-            const fs = require("fs");
-            if (!fs.existsSync("deploy.log")) process.exit(0);
-            const log = fs.readFileSync("deploy.log", "utf8");
-            const cleanLog = log.replace(/\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])/g, "");
-            const matches = cleanLog.match(/https:\/\/[a-zA-Z0-9.-]+\.(pages\.dev|workers\.dev)/gi) || [];
-            const valid = matches.find(u => {
-              const lower = u.toLowerCase();
-              return !lower.includes("dash.cloudflare.com") && !lower.includes("api.cloudflare.com");
-            });
-            if (valid) {
-              const cleanUrl = valid.replace(/[^a-zA-Z0-9.:/_-]/g, "").trim();
-              process.stdout.write(cleanUrl);
-            }
-          ')
+          # Extract deployment URL — strip ANSI codes, find .pages.dev or .workers.dev URL
+          DEPLOY_URL=$(sed 's/\x1B\[[0-9;]*[a-zA-Z]//g' deploy.log \
+            | grep -oP 'https://[a-zA-Z0-9.-]+\.(pages\.dev|workers\.dev)' \
+            | grep -iv 'dash\.cloudflare\|api\.cloudflare' \
+            | head -1 \
+            | tr -cd 'a-zA-Z0-9.:/_-')
 
-          # Sanitize extracted URL
-          DEPLOY_URL=$(echo "$DEPLOY_URL" | tr -cd 'a-zA-Z0-9.:/_-')
-
-          # Fallback to standard Cloudflare Pages branch preview URL pattern if extraction was empty
+          # Fallback to standard Cloudflare Pages branch preview URL pattern
           if [ -z "$DEPLOY_URL" ] || ! echo "$DEPLOY_URL" | grep -q '^https://'; then
-            CLEAN_BRANCH=$(echo "$BRANCH_NAME" | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z0-9]/-/g' | sed 's/^-//;s/-$//')
+            CLEAN_BRANCH=$(echo "$BRANCH_NAME" | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z0-9]/-/g; s/^-//; s/-$//')
             if [ "$CLEAN_BRANCH" = "main" ] || [ "$CLEAN_BRANCH" = "master" ]; then
               DEPLOY_URL="https://${PROJECT_NAME}.pages.dev"
             else
               DEPLOY_URL="https://${CLEAN_BRANCH}.${PROJECT_NAME}.pages.dev"
             fi
           fi
-
-          DEPLOY_URL=$(echo "$DEPLOY_URL" | tr -cd 'a-zA-Z0-9.:/_-')
 
           echo "Captured live deployment URL: $DEPLOY_URL"
           echo "deploy_url=$DEPLOY_URL" >> $GITHUB_OUTPUT
@@ -154,27 +197,42 @@ jobs:
           path: cf_deploy_url.txt
           retention-days: 1
 
+      - name: Deployment summary
+        run: |
+          echo "### Cloudflare Pages Deployment" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Detail | Value |" >> $GITHUB_STEP_SUMMARY
+          echo "|--------|-------|" >> $GITHUB_STEP_SUMMARY
+          echo "| URL | ${{ steps.deploy_cloudflare.outputs.deploy_url }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Branch | \`${{ github.head_ref || github.ref_name }}\` |" >> $GITHUB_STEP_SUMMARY
+          echo "| Status | Deployed |" >> $GITHUB_STEP_SUMMARY
+
+  # ──────────────────────────────────────────────────────────────────────
+  # Stage 2b: Deploy to Vercel (Parallel Backup)
+  # ──────────────────────────────────────────────────────────────────────
   deploy-vercel:
     name: Deploy to Vercel (Parallel Target)
     needs: validate
-    if: github.event_name == 'push' || github.event_name == 'pull_request' || (github.event_name == 'workflow_dispatch' && (inputs.deploy_target == 'backup' || inputs.deploy_target == 'both'))
+    if: >-
+      github.event_name == 'push' ||
+      github.event_name == 'pull_request' ||
+      (github.event_name == 'workflow_dispatch' &&
+       (inputs.deploy_target == 'backup' || inputs.deploy_target == 'both'))
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     permissions:
       contents: read
       pull-requests: write
       deployments: write
     environment:
-      name: ${{ github.event_name == 'pull_request' && 'vercel-preview' || 'backup-production' }}
-      url: ${{ steps.deploy_preview.outputs.deploy_url || steps.deploy_production.outputs.deploy_url }}
+      name: ${{ github.event_name == 'pull_request' && 'vercel-preview' || 'vercel-production' }}
+      url: ${{ steps.deploy.outputs.deploy_url }}
     outputs:
-      deploy_url: ${{ steps.deploy_preview.outputs.deploy_url || steps.deploy_production.outputs.deploy_url }}
+      deploy_url: ${{ steps.deploy.outputs.deploy_url }}
     env:
       VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
       VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v7
-
       - name: Download dist build artifact
         uses: actions/download-artifact@v4
         with:
@@ -184,31 +242,63 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v7
         with:
-          node-version: 22
-          cache: npm
+          node-version: ${{ env.NODE_VERSION }}
 
       - name: Install Vercel CLI
-        run: npm install --global vercel@latest
+        run: npm install --global vercel@39
 
-      - name: Deploy static output to Vercel (Preview)
-        if: github.event_name == 'pull_request'
-        id: deploy_preview
+      - name: Deploy to Vercel (with retry)
+        id: deploy
         run: |
-          DEPLOY_URL=$(vercel deploy --yes --token=${{ secrets.VERCEL_TOKEN }})
+          PROD_FLAG=""
+          if [ "${{ github.event_name }}" != "pull_request" ]; then
+            PROD_FLAG="--prod"
+          fi
+
+          # Deploy with retry logic (3 attempts, exponential backoff)
+          MAX_RETRIES=3
+          RETRY_DELAY=10
+          for ATTEMPT in $(seq 1 $MAX_RETRIES); do
+            echo "::group::Deployment attempt $ATTEMPT/$MAX_RETRIES"
+            DEPLOY_URL=$(vercel deploy $PROD_FLAG --yes --token=${{ secrets.VERCEL_TOKEN }} 2>&1 | tee /dev/stderr | grep -oP 'https://[^\s]+\.vercel\.app' | head -1) && {
+              echo "::endgroup::"
+              echo "Deployment succeeded on attempt $ATTEMPT"
+              break
+            }
+            echo "::endgroup::"
+            if [ "$ATTEMPT" -lt "$MAX_RETRIES" ]; then
+              echo "Attempt $ATTEMPT failed, retrying in ${RETRY_DELAY}s..."
+              sleep $RETRY_DELAY
+              RETRY_DELAY=$((RETRY_DELAY * 2))
+            else
+              echo "All $MAX_RETRIES deployment attempts failed"
+              exit 1
+            fi
+          done
+
           echo "deploy_url=$DEPLOY_URL" >> $GITHUB_OUTPUT
 
-      - name: Deploy static output to Vercel (Production)
-        if: github.event_name != 'pull_request'
-        id: deploy_production
+      - name: Deployment summary
         run: |
-          DEPLOY_URL=$(vercel deploy --prod --yes --token=${{ secrets.VERCEL_TOKEN }})
-          echo "deploy_url=$DEPLOY_URL" >> $GITHUB_OUTPUT
+          echo "### Vercel Deployment" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Detail | Value |" >> $GITHUB_STEP_SUMMARY
+          echo "|--------|-------|" >> $GITHUB_STEP_SUMMARY
+          echo "| URL | ${{ steps.deploy.outputs.deploy_url }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Branch | \`${{ github.head_ref || github.ref_name }}\` |" >> $GITHUB_STEP_SUMMARY
+          echo "| Status | Deployed |" >> $GITHUB_STEP_SUMMARY
 
+  # ──────────────────────────────────────────────────────────────────────
+  # Stage 3: Post PR Preview Comment
+  # ──────────────────────────────────────────────────────────────────────
   comment-pr:
     name: Post PR Preview Comment
     needs: [deploy-cloudflare, deploy-vercel]
-    if: github.event_name == 'pull_request' && (needs.deploy-cloudflare.result == 'success' || needs.deploy-vercel.result == 'success')
+    if: >-
+      github.event_name == 'pull_request' &&
+      (needs.deploy-cloudflare.result == 'success' || needs.deploy-vercel.result == 'success')
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     permissions:
       pull-requests: write
     steps:
@@ -238,16 +328,27 @@ jobs:
           echo "Captured CF_URL: '$CF_CLEAN'"
           echo "Captured VERCEL_URL: '$VERCEL_CLEAN'"
 
-          echo "body<<COMMENT_EOF" >> $GITHUB_OUTPUT
-          echo "🚀 **Preview Deployments Ready!**" >> $GITHUB_OUTPUT
-          echo "" >> $GITHUB_OUTPUT
-          if [ -n "$CF_CLEAN" ]; then
-            echo "- ☁️ **Cloudflare Pages Preview**: $CF_CLEAN" >> $GITHUB_OUTPUT
-          fi
-          if [ -n "$VERCEL_CLEAN" ]; then
-            echo "- ▲ **Vercel Preview**: $VERCEL_CLEAN" >> $GITHUB_OUTPUT
-          fi
-          echo "COMMENT_EOF" >> $GITHUB_OUTPUT
+          {
+            echo "body<<COMMENT_EOF"
+            echo "**Preview Deployments Ready!**"
+            echo ""
+            if [ -n "$CF_CLEAN" ]; then
+              echo "| Platform | Preview URL | Status |"
+              echo "|----------|-------------|--------|"
+              echo "| Cloudflare Pages | $CF_CLEAN | Live |"
+              if [ -n "$VERCEL_CLEAN" ]; then
+                echo "| Vercel | $VERCEL_CLEAN | Live |"
+              fi
+            elif [ -n "$VERCEL_CLEAN" ]; then
+              echo "| Platform | Preview URL | Status |"
+              echo "|----------|-------------|--------|"
+              echo "| Vercel | $VERCEL_CLEAN | Live |"
+            fi
+            echo ""
+            echo "---"
+            echo "*Commit: \`${{ github.event.pull_request.head.sha }}\` · Workflow: [#${{ github.run_number }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})*"
+            echo "COMMENT_EOF"
+          } >> $GITHUB_OUTPUT
 
       - name: Find existing preview comment
         uses: peter-evans/find-comment@v3
@@ -265,40 +366,42 @@ jobs:
           body: ${{ steps.build_body.outputs.body }}
           edit-mode: replace
 
+  # ──────────────────────────────────────────────────────────────────────
+  # Stage 4: Lighthouse Performance Audit
+  # ──────────────────────────────────────────────────────────────────────
   lighthouse:
     name: Lighthouse Audit
     needs: deploy-cloudflare
     if: always() && needs.deploy-cloudflare.result == 'success'
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - name: Checkout repository
         uses: actions/checkout@v7
 
-      - name: Setup Node
-        uses: actions/setup-node@v7
-        with:
-          node-version: 22
-          cache: npm
-
-      - name: Install dependencies
-        run: npm ci --legacy-peer-deps
-
-      - name: Download dist build artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: dist-static-build
-          path: dist/
-
       - name: Run Lighthouse audit (Live Cloudflare URL)
         if: ${{ needs.deploy-cloudflare.outputs.deploy_url }}
+        id: lighthouse_live
         uses: treosh/lighthouse-ci-action@v12
         with:
           configPath: './.lighthouserc.json'
           urls: |
             ${{ needs.deploy-cloudflare.outputs.deploy_url }}
+          uploadArtifacts: true
 
       - name: Run Lighthouse audit (Static Fallback)
         if: ${{ !needs.deploy-cloudflare.outputs.deploy_url }}
+        id: lighthouse_static
         uses: treosh/lighthouse-ci-action@v12
         with:
           configPath: './.lighthouserc.json'
+          uploadArtifacts: true
+
+      - name: Lighthouse summary
+        if: always()
+        run: |
+          echo "### Lighthouse Audit Results" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Audit completed against: \`${{ needs.deploy-cloudflare.outputs.deploy_url || 'static dist/' }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Full reports are uploaded as workflow artifacts." >> $GITHUB_STEP_SUMMARY

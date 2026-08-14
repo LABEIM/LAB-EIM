@@ -2,37 +2,42 @@ name: "CodeQL Analysis"
 
 on:
   push:
-    branches: [ "main", "master", "astro-version" ]
+    branches: [ "main" ]
   pull_request:
-    branches: [ "main", "master", "astro-version" ]
+    branches: [ "main" ]
   schedule:
+    # Run weekly on Monday at 04:30 UTC
     - cron: '30 4 * * 1'
 
 jobs:
   analyze:
-    name: Analyze
+    name: Analyze (${{ matrix.language }})
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     permissions:
       actions: read
       contents: read
       security-events: write
 
     strategy:
+      # Allow other language analyses to continue if one fails
       fail-fast: false
       matrix:
         language: [ 'javascript-typescript' ]
 
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v4
+      uses: actions/checkout@v7
 
     - name: Initialize CodeQL
-      uses: github/codeql-action/init@v4
+      uses: github/codeql-action/init@v3
       with:
         languages: ${{ matrix.language }}
 
     - name: Autobuild
-      uses: github/codeql-action/autobuild@v4
+      uses: github/codeql-action/autobuild@v3
 
     - name: Perform CodeQL Analysis
-      uses: github/codeql-action/analyze@v4
+      uses: github/codeql-action/analyze@v3
+      with:
+        category: "/language:${{ matrix.language }}"

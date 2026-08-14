@@ -266,16 +266,16 @@ const isExternalCta = safeCtaLink.startsWith('http://') || safeCtaLink.startsWit
     const closeBtn = banner.querySelector('[data-announcement-close]') as HTMLButtonElement | null;
     if (closeBtn) {
       closeBtn.onclick = () => {
+        try {
+          localStorage.setItem(storageKey, 'true');
+        } catch (e) {}
+
         banner.style.opacity = '0';
         banner.style.transform = 'translateY(-100%)';
         document.body.classList.remove('has-announcement-banner');
         setTimeout(() => {
           banner.style.display = 'none';
         }, 250);
-
-        try {
-          localStorage.setItem(storageKey, 'true');
-        } catch (e) {}
       };
     }
   }

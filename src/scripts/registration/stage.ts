@@ -267,6 +267,17 @@ export function updateGlobalAnnouncementBanner(stage: string): void {
   const banner = document.getElementById('global-announcement-banner');
   if (!banner) return;
 
+  const bannerId = banner.getAttribute('data-banner-id') || 'default';
+  if (typeof localStorage !== 'undefined') {
+    try {
+      if (localStorage.getItem('eim_announcement_dismissed_' + bannerId) === 'true') {
+        banner.style.display = 'none';
+        document.body.classList.remove('has-announcement-banner');
+        return;
+      }
+    } catch (e) {}
+  }
+
   const badgeIcon = banner.querySelector('.announcement-badge i');
   const badgeText = banner.querySelector('.badge-text');
   const messageText = banner.querySelector('.announcement-text');

@@ -201,13 +201,9 @@ jobs:
     permissions:
       pull-requests: write
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
-
       - name: Comment PR Preview URLs
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GH_REPO: ${{ github.repository }}
           CF_URL: ${{ needs.deploy-cloudflare.outputs.deploy_url }}
           VERCEL_URL: ${{ needs.deploy-vercel.outputs.deploy_url }}
@@ -218,24 +214,38 @@ jobs:
           echo "Captured CF_URL: '$CF_CLEAN'"
           echo "Captured VERCEL_URL: '$VERCEL_CLEAN'"
 
-          COMMENT_BODY="🚀 **Preview Deployments Ready!**"
-          if [ -n "$CF_CLEAN" ]; then
-            COMMENT_BODY="$COMMENT_BODY
+          {
+            echo "🚀 **Preview Deployments Ready!**"
+            if [ -n "$CF_CLEAN" ]; then
+              printf "\n- ☁️ **Cloudflare Pages Preview**: %s\n" "$CF_CLEAN"
+            fi
+            if [ -n "$VERCEL_CLEAN" ]; then
+              printf "\n- ▲ **Vercel Preview**: %s\n" "$VERCEL_CLEAN"
+            fi
+          } > /tmp/pr_comment.md
 
-          - ☁️ **Cloudflare Pages Preview**: $CF_CLEAN"
-          fi
-          if [ -n "$VERCEL_CLEAN" ]; then
-            COMMENT_BODY="$COMMENT_BODY
+          echo "--- Comment body ---"
+          cat /tmp/pr_comment.md
 
-          - ▲ **Vercel Preview**: $VERCEL_CLEAN"
-          fi
+          PR_NUMBER="${{ github.event.pull_request.number }}"
 
-          EXISTING_COMMENT=$(gh api "repos/${GH_REPO}/issues/${{ github.event.pull_request.number }}/comments" --jq '.[] | select((.user.login=="github-actions[bot]" or .user.login=="github-actions") and (.body | contains("Preview Deployments Ready"))) | .id' | tail -n 1)
+          EXISTING_COMMENT=$(gh api \
+            --repo "$GH_REPO" \
+            "repos/${GH_REPO}/issues/${PR_NUMBER}/comments" \
+            --jq '.[] | select(
+              (.user.login=="github-actions[bot]" or .user.login=="github-actions") and
+              (.body | contains("Preview Deployments Ready"))
+            ) | .id' | tail -n 1)
 
           if [ -n "$EXISTING_COMMENT" ]; then
-            gh api -X PATCH "repos/${GH_REPO}/issues/comments/${EXISTING_COMMENT}" -f body="$COMMENT_BODY"
+            gh api -X PATCH \
+              --repo "$GH_REPO" \
+              "repos/${GH_REPO}/issues/comments/${EXISTING_COMMENT}" \
+              -f body="$(cat /tmp/pr_comment.md)"
           else
-            gh pr comment ${{ github.event.pull_request.number }} --body "$COMMENT_BODY"
+            gh pr comment "$PR_NUMBER" \
+              --repo "$GH_REPO" \
+              --body-file /tmp/pr_comment.md
           fi
 
   lighthouse:

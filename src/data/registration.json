@@ -17,7 +17,7 @@
   ],
   "portfolioDivisionTriggerValues": "Medhum",
   "piTemplateUrl": "https://docs.google.com/document/d/1Uv-S_jSEJx77hY_96NA_cXjPjOQViHVz/edit?usp=sharing&ouid=105717872277990358898&rtpof=true&sd=true",
-  "minReasonWords": 30,
+  "minReasonWords": 20,
   "fieldStates": {
     "ksm": "disabled",
     "khs": "required",

@@ -371,7 +371,7 @@ jobs:
   # ──────────────────────────────────────────────────────────────────────
   lighthouse:
     name: Lighthouse Audit
-    needs: deploy-cloudflare
+    needs: [validate, deploy-cloudflare]
     if: always() && needs.deploy-cloudflare.result == 'success'
     runs-on: ubuntu-latest
     timeout-minutes: 10
@@ -379,18 +379,46 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v7
 
+      - name: Download dist build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: dist-static-build
+          path: dist/
+
+      - name: Download CF deploy URL artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: cf-deploy-url
+          path: .
+        continue-on-error: true
+
+      - name: Resolve target URL for Lighthouse
+        id: target_url
+        env:
+          NEEDS_URL: ${{ needs.deploy-cloudflare.outputs.deploy_url }}
+        run: |
+          TARGET=""
+          if [ -n "$NEEDS_URL" ]; then
+            TARGET=$(echo "$NEEDS_URL" | tr -cd 'a-zA-Z0-9.:/_-')
+          fi
+          if [ -z "$TARGET" ] && [ -f cf_deploy_url.txt ]; then
+            TARGET=$(cat cf_deploy_url.txt | tr -cd 'a-zA-Z0-9.:/_-')
+          fi
+          echo "Resolved target URL: '${TARGET:-(static fallback)}'"
+          echo "url=$TARGET" >> $GITHUB_OUTPUT
+
       - name: Run Lighthouse audit (Live Cloudflare URL)
-        if: ${{ needs.deploy-cloudflare.outputs.deploy_url }}
+        if: ${{ steps.target_url.outputs.url != '' }}
         id: lighthouse_live
         uses: treosh/lighthouse-ci-action@v12
         with:
           configPath: './.lighthouserc.json'
           urls: |
-            ${{ needs.deploy-cloudflare.outputs.deploy_url }}
+            ${{ steps.target_url.outputs.url }}
           uploadArtifacts: true
 
       - name: Run Lighthouse audit (Static Fallback)
-        if: ${{ !needs.deploy-cloudflare.outputs.deploy_url }}
+        if: ${{ steps.target_url.outputs.url == '' }}
         id: lighthouse_static
         uses: treosh/lighthouse-ci-action@v12
         with:
@@ -402,6 +430,6 @@ jobs:
         run: |
           echo "### Lighthouse Audit Results" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "Audit completed against: \`${{ needs.deploy-cloudflare.outputs.deploy_url || 'static dist/' }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "Audit completed against: \`${{ steps.target_url.outputs.url || 'static dist/' }}\`" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "Full reports are uploaded as workflow artifacts." >> $GITHUB_STEP_SUMMARY

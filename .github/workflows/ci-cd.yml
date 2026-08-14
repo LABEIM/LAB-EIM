@@ -69,7 +69,7 @@ jobs:
       contents: read
       deployments: write
     environment:
-      name: ${{ github.event_name == 'pull_request' && 'preview' || 'production' }}
+      name: ${{ github.event_name == 'pull_request' && 'cloudflare-preview' || 'production' }}
       url: ${{ steps.deploy_cloudflare.outputs.deploy_url }}
     outputs:
       deploy_url: ${{ steps.deploy_cloudflare.outputs.deploy_url }}
@@ -108,18 +108,27 @@ jobs:
           npx wrangler pages deploy dist --project-name="$PROJECT_NAME" --branch="$BRANCH_NAME" --commit-dirty=true 2>&1 | tee deploy.log
 
           # Extract live deployment URL (.pages.dev or .workers.dev) safely using Node.js
-          DEPLOY_URL=$(node -e "
-            const fs = require('fs');
-            if (!fs.existsSync('deploy.log')) process.exit(0);
-            const log = fs.readFileSync('deploy.log', 'utf8');
-            const cleanLog = log.replace(/\x1B\[[0-9;]*[a-zA-Z]/g, '');
-            const matches = cleanLog.match(/https:\/\/[a-zA-Z0-9.-]+\.(pages\.dev|workers\.dev)/g) || [];
-            const valid = matches.find(u => !u.includes('dash.cloudflare.com') && !u.includes('api.cloudflare.com'));
-            if (valid) console.log(valid.trim());
-          ")
+          DEPLOY_URL=$(NODE_OPTIONS="--no-warnings" node -e '
+            const fs = require("fs");
+            if (!fs.existsSync("deploy.log")) process.exit(0);
+            const log = fs.readFileSync("deploy.log", "utf8");
+            const cleanLog = log.replace(/\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])/g, "");
+            const matches = cleanLog.match(/https:\/\/[a-zA-Z0-9.-]+\.(pages\.dev|workers\.dev)/gi) || [];
+            const valid = matches.find(u => {
+              const lower = u.toLowerCase();
+              return !lower.includes("dash.cloudflare.com") && !lower.includes("api.cloudflare.com");
+            });
+            if (valid) {
+              const cleanUrl = valid.replace(/[^a-zA-Z0-9.:/_-]/g, "").trim();
+              process.stdout.write(cleanUrl);
+            }
+          ')
+
+          # Sanitize extracted URL
+          DEPLOY_URL=$(echo "$DEPLOY_URL" | tr -d '\r\n\t ' | sed 's/[^a-zA-Z0-9.:/_-]//g')
 
           # Fallback to standard Cloudflare Pages branch preview URL pattern if extraction was empty
-          if [ -z "$DEPLOY_URL" ]; then
+          if [ -z "$DEPLOY_URL" ] || ! echo "$DEPLOY_URL" | grep -q '^https://'; then
             CLEAN_BRANCH=$(echo "$BRANCH_NAME" | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z0-9]/-/g' | sed 's/^-//;s/-$//')
             if [ "$CLEAN_BRANCH" = "main" ] || [ "$CLEAN_BRANCH" = "master" ]; then
               DEPLOY_URL="https://${PROJECT_NAME}.pages.dev"
@@ -128,7 +137,7 @@ jobs:
             fi
           fi
 
-          DEPLOY_URL=$(echo "$DEPLOY_URL" | tr -d '\r\n ')
+          DEPLOY_URL=$(echo "$DEPLOY_URL" | tr -d '\r\n\t ' | sed 's/[^a-zA-Z0-9.:/_-]//g')
 
           echo "Captured live deployment URL: $DEPLOY_URL"
           echo "url=$DEPLOY_URL" >> $GITHUB_OUTPUT
@@ -144,7 +153,7 @@ jobs:
       pull-requests: write
       deployments: write
     environment:
-      name: ${{ github.event_name == 'pull_request' && 'preview' || 'backup-production' }}
+      name: ${{ github.event_name == 'pull_request' && 'vercel-preview' || 'backup-production' }}
       url: ${{ steps.deploy_preview.outputs.deploy_url || steps.deploy_production.outputs.deploy_url }}
     outputs:
       deploy_url: ${{ steps.deploy_preview.outputs.deploy_url || steps.deploy_production.outputs.deploy_url }}
@@ -203,22 +212,31 @@ jobs:
           CF_URL: ${{ needs.deploy-cloudflare.outputs.deploy_url }}
           VERCEL_URL: ${{ needs.deploy-vercel.outputs.deploy_url }}
         run: |
-          echo "Captured CF_URL: '$CF_URL'"
-          echo "Captured VERCEL_URL: '$VERCEL_URL'"
+          CF_CLEAN=$(echo "$CF_URL" | tr -d '\r\n\t ' | sed 's/[^a-zA-Z0-9.:/_-]//g')
+          VERCEL_CLEAN=$(echo "$VERCEL_URL" | tr -d '\r\n\t ' | sed 's/[^a-zA-Z0-9.:/_-]//g')
+
+          echo "Captured CF_URL: '$CF_CLEAN'"
+          echo "Captured VERCEL_URL: '$VERCEL_CLEAN'"
 
           COMMENT_BODY="🚀 **Preview Deployments Ready!**"
-          if [ -n "$CF_URL" ]; then
+          if [ -n "$CF_CLEAN" ]; then
             COMMENT_BODY="$COMMENT_BODY
 
-          - ☁️ **Cloudflare Pages Preview**: $CF_URL"
+          - ☁️ **Cloudflare Pages Preview**: $CF_CLEAN"
           fi
-          if [ -n "$VERCEL_URL" ]; then
+          if [ -n "$VERCEL_CLEAN" ]; then
             COMMENT_BODY="$COMMENT_BODY
 
-          - ▲ **Vercel Preview**: $VERCEL_URL"
+          - ▲ **Vercel Preview**: $VERCEL_CLEAN"
           fi
 
-          gh pr comment ${{ github.event.pull_request.number }} --body "$COMMENT_BODY"
+          EXISTING_COMMENT=$(gh api "repos/${GH_REPO}/issues/${{ github.event.pull_request.number }}/comments" --jq '.[] | select(.user.login=="github-actions[bot]" and (.body | contains("Preview Deployments Ready"))) | .id' | tail -n 1)
+
+          if [ -n "$EXISTING_COMMENT" ]; then
+            gh api -X PATCH "repos/${GH_REPO}/issues/comments/${EXISTING_COMMENT}" -f body="$COMMENT_BODY"
+          else
+            gh pr comment ${{ github.event.pull_request.number }} --body "$COMMENT_BODY"
+          fi
 
   lighthouse:
     name: Lighthouse Audit

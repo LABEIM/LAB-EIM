@@ -1,39 +1,5 @@
 {
   "batch": "Rekrutmen Asisten 2026",
   "publishedDate": "2026-08-01",
-  "bulkImportText": "",
-  "candidates": [
-    {
-      "nim": "1202210001",
-      "division": "Software Engineering",
-      "screeningStatus": "passed",
-      "technicalTestStatus": "passed",
-      "finalStatus": "accepted",
-      "notes": "Selamat! Silakan cek email Anda untuk instruksi onboarding."
-    },
-    {
-      "nim": "1202210002",
-      "division": "Network & Infrastructure",
-      "screeningStatus": "passed",
-      "technicalTestStatus": "passed",
-      "finalStatus": "accepted",
-      "notes": "Selamat! Silakan cek email Anda untuk instruksi onboarding."
-    },
-    {
-      "nim": "1202210003",
-      "division": "Media & Humas",
-      "screeningStatus": "passed",
-      "technicalTestStatus": "passed",
-      "finalStatus": "accepted",
-      "notes": "Selamat! Silakan cek email Anda untuk instruksi onboarding."
-    },
-    {
-      "nim": "1202210004",
-      "division": "Cyber Security",
-      "screeningStatus": "passed",
-      "technicalTestStatus": "failed",
-      "finalStatus": "rejected",
-      "notes": "Terima kasih telah mengikuti Tes Teknikal. Tetap semangat untuk kesempatan berikutnya!"
-    }
-  ]
+  "candidates": []
 }

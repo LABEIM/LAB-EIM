@@ -248,12 +248,12 @@ const recruitmentResultsSchema = {
   bulkImportText: fields.text({
     label: 'Bulk Spreadsheet Paste (Copy & paste table rows directly from Google Sheets / Excel)',
     multiline: true,
-    description: 'Supported format: NIM | Division | Screening (passed/failed) | Technical (passed/failed) | Final (accepted/waitlist/rejected) | Notes',
+    description: 'Supported column order: NIM | Division (optional/empty if in-progress) | Screening (passed/failed) | Technical (passed/failed) | Final (accepted/waitlist/rejected) | Notes. Separated by Tabs or Commas. Leave Division column empty if division is not yet determined.',
   }),
   candidates: fields.array(
     fields.object({
       nim: fields.text({ label: 'NIM' }),
-      division: fields.text({ label: 'Division Name' }),
+      division: fields.text({ label: 'Division Name (Optional: Leave blank if still in process or undetermined)' }),
       screeningStatus: fields.select({
         label: 'Document Screening Status',
         options: [

@@ -28,18 +28,28 @@ function parseBulkImportText(text: string): Candidate[] {
     const nim = cols[0] || '';
     if (!nim || nim.length < 3) continue;
 
-    const screeningVal = (cols[2] || 'passed').toLowerCase();
-    const technicalVal = (cols[3] || 'passed').toLowerCase();
-    const finalVal = (cols[4] || 'accepted').toLowerCase();
+    const screeningRaw = (cols[2] || '').toLowerCase();
+    const technicalRaw = (cols[3] || '').toLowerCase();
+    const finalRaw = (cols[4] || '').toLowerCase();
 
-    results.push({
+    const candidate: Candidate = {
       nim: nim,
-      division: cols[1] || 'General',
-      screeningStatus: ['passed', 'failed'].includes(screeningVal) ? screeningVal : 'passed',
-      technicalTestStatus: ['passed', 'failed'].includes(technicalVal) ? technicalVal : 'passed',
-      finalStatus: ['accepted', 'waitlist', 'rejected'].includes(finalVal) ? finalVal : 'accepted',
+      division: cols[1] || '',
+      screeningStatus: ['passed', 'failed'].includes(screeningRaw) ? screeningRaw : 'passed',
       notes: cols[5] || '',
-    });
+    };
+
+    if (technicalRaw) {
+      candidate.technicalTestStatus = ['passed', 'failed'].includes(technicalRaw) ? technicalRaw : 'passed';
+    } else {
+      candidate.technicalTestStatus = 'passed';
+    }
+
+    if (finalRaw) {
+      candidate.finalStatus = ['accepted', 'waitlist', 'rejected'].includes(finalRaw) ? finalRaw : 'accepted';
+    }
+
+    results.push(candidate);
   }
   return results;
 }
@@ -54,7 +64,7 @@ function findCandidate(query: string): Candidate | undefined {
   const allCandidates = [...structured, ...fromBulk];
 
   return allCandidates.find(c => {
-    const nimStr = c.nim != null ? String(c.nim).toLowerCase() : '';
+    const nimStr = c.nim != null ? String(c.nim).trim().toLowerCase() : '';
     return nimStr === q;
   });
 }
@@ -152,7 +162,7 @@ export function initRegistrationSearch() {
             `
               <div class="search-result-title-lg"><i class="fa-solid fa-circle-check"></i> ${isEn ? 'CONGRATULATIONS!' : 'SELAMAT! ANDA DITERIMA'}</div>
               <div class="search-result-nim">NIM: <strong>${escapeHtml(match.nim)}</strong></div>
-              <div class="search-result-division">${isEn ? 'Division:' : 'Divisi:'} <strong>${escapeHtml(match.division)}</strong></div>
+              ${match.division ? `<div class="search-result-division">${isEn ? 'Division:' : 'Divisi:'} <strong>${escapeHtml(match.division)}</strong></div>` : ''}
               <p class="search-result-desc">${match.notes ? escapeHtml(match.notes) : (isEn ? 'You have been accepted as an assistant at EIM Research Lab.' : 'Selamat! Anda diterima menjadi asisten di EIM Research Lab.')}</p>
             `
           );
@@ -163,6 +173,7 @@ export function initRegistrationSearch() {
             `
               <div class="search-result-title"><i class="fa-solid fa-info-circle"></i> Status: ${escapeHtml((match.finalStatus || match.status || 'evaluated').toUpperCase())}</div>
               <div class="search-result-nim">NIM: <strong>${escapeHtml(match.nim)}</strong></div>
+              ${match.division ? `<div class="search-result-division">${isEn ? 'Division:' : 'Divisi:'} <strong>${escapeHtml(match.division)}</strong></div>` : ''}
               <p class="search-result-desc">${match.notes ? escapeHtml(match.notes) : (isEn ? 'Thank you for participating in this recruitment cycle.' : 'Terima kasih telah berpartisipasi dalam rekrutmen ini.')}</p>
             `
           );

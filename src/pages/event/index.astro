@@ -10,7 +10,7 @@ const locale = getLocaleFromUrl(Astro.url);
 const rawEvents = await getCollection('events');
 const events = getCollectionEntriesForLocale(rawEvents, locale);
 
-const categories = Array.from(new Set(events.map(item => item.data.category).filter(Boolean))).sort();
+const categories = Array.from(new Set(events.map((item: any) => item.data.category).filter(Boolean))).sort();
 
 const statuses = [
   { value: 'upcoming', label: t('badge.upcoming', locale) },
@@ -18,7 +18,7 @@ const statuses = [
   { value: 'completed', label: t('badge.completed', locale) },
 ];
 
-const sortedEvents = events.sort((a, b) => {
+const sortedEvents = events.sort((a: any, b: any) => {
   const timeA = new Date(a.data.event_date).getTime();
   const timeB = new Date(b.data.event_date).getTime();
   return isNaN(timeA) || isNaN(timeB) ? 0 : timeB - timeA;

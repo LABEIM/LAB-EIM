@@ -5,7 +5,7 @@ import { getLocaleFromUrl, getCleanSlug, getLocalizedPath, t } from '../../utils
 
 export async function getStaticPaths() {
   const events = await getCollection('events');
-  return events.map((event) => {
+  return events.map((event: any) => {
     const slug = getCleanSlug(event.id);
     return {
       params: { id: slug },
@@ -75,7 +75,7 @@ const statusLabel = isCompleted ? t('badge.completed', locale) : (isOngoing ? t(
                 <i class="fa-solid fa-gift"></i> {t('events.benefits', locale)}
               </h3>
               <ul class="section-list">
-                {benefits.map(b => (
+                {benefits.map((b: string) => (
                   <li>{b}</li>
                 ))}
               </ul>
@@ -89,7 +89,7 @@ const statusLabel = isCompleted ? t('badge.completed', locale) : (isOngoing ? t(
                 <i class="fa-solid fa-circle-check"></i> {t('events.requirements', locale)}
               </h3>
               <ul class="section-list">
-                {requirements.map(r => (
+                {requirements.map((r: string) => (
                   <li>{r}</li>
                 ))}
               </ul>
@@ -103,7 +103,7 @@ const statusLabel = isCompleted ? t('badge.completed', locale) : (isOngoing ? t(
                 <i class="fa-solid fa-image"></i> Dokumentasi
               </h3>
               <div class="doc-images-grid">
-                {images.map((img, idx) => (
+                {images.map((img: string, idx: number) => (
                   <div class="doc-img-wrapper">
                     <img src={img} alt={`Documentation ${idx + 1}`} class="hover-scale doc-img" />
                   </div>

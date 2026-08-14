@@ -8,7 +8,7 @@ import { calculateReadingTime, getRelatedNews } from '../../utils/news-helpers';
 
 export async function getStaticPaths() {
   const news = await getCollection('news');
-  return news.map((item) => {
+  return news.map((item: any) => {
     const slug = getCleanSlug(item.id);
     return {
       params: { id: slug },
@@ -103,7 +103,7 @@ const metaDesc = item.data.excerpt || `${item.data.title} - EIM Research Lab`;
             <div class="article-tags-section">
               <span class="tags-label"><i class="fa-solid fa-tags"></i> Topik:</span>
               <div class="article-tags-list">
-                {tags.map(tag => (
+                {tags.map((tag: string) => (
                   <span class="article-tag-chip">#{tag}</span>
                 ))}
               </div>

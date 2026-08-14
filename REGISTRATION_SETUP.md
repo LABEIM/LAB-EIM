@@ -189,9 +189,14 @@ Each step in `selectionSteps` can use one of three **Step View Templates** depen
 
 When announcements open, applicants look up their status by entering their NIM on `/pendaftaran`. Results are stored in [`src/data/recruitment_results.json`](file:///home/arukast/Projects/website-eim/src/data/recruitment_results.json).
 
-### 1. Updating Candidate Statuses (`src/data/recruitment_results.json`)
+### 1. Updating Candidate Statuses (`src/data/recruitment_results.json` or via Keystatic CMS at `/keystatic`)
 
-Add or update candidates under the `"candidates"` list:
+You can update results either by structured entries or by using **Bulk Spreadsheet Paste** (`bulkImportText`) directly in Keystatic:
+
+* **Bulk Spreadsheet Paste (`bulkImportText`)**: Copy & paste table rows directly from Excel / Google Sheets into the `bulkImportText` field. Supported column order: `NIM | Division | Screening (passed/failed) | Technical (passed/failed) | Final (accepted/waitlist/rejected) | Notes`. Separated by Tabs or Commas.
+  > *Note: `division` can be left empty if candidates are still in early evaluation phases and division assignment is not yet determined.*
+
+* **Structured JSON Entry (`candidates` list)**:
 
 ```json
 {
@@ -201,7 +206,7 @@ Add or update candidates under the `"candidates"` list:
     {
       "nim": "1202210001",
       "name": "Jane Doe",
-      "division": "Research",
+      "division": "Research", // Optional: Can be empty "" if division is not yet determined
       "screeningStatus": "passed",
       "technicalTestStatus": "passed",
       "finalStatus": "accepted",
@@ -220,11 +225,10 @@ Add or update candidates under the `"candidates"` list:
 }
 ```
 
-### Possible Status Values:
-* `screeningStatus`: `"passed"` | `"failed"` (maps to `selection` / screening step)
-* `technicalTestStatus`: `"passed"` | `"failed"` (maps to `technical_test` step)
-* `{step_id}Status`: `"passed"` | `"failed"` (maps dynamically to any custom step with ID `{step_id}`, e.g., `fgdStatus`, `interviewStatus`)
-* `finalStatus`: `"accepted"` | `"waitlist"` | `"rejected"` (maps to final announcement step)
+### Useful Sync & Reset Commands:
+* `npm run sync:results` : Merges `bulkImportText` into existing candidate cards.
+* `npm run sync:results:replace` : Replaces candidate cards with ONLY what is in `bulkImportText` (deletes cards removed from spreadsheet).
+* `npm run clear:results` : Completely clears both `bulkImportText` and all candidate cards in `Candidate List`.
 
 ---
 

@@ -38,7 +38,7 @@ export function getRelatedNews(
         score += 5;
       }
       const itemTags = item.data.tags || [];
-      const sharedTags = itemTags.filter(t => currentTags.includes(t));
+      const sharedTags = itemTags.filter((t: string) => currentTags.includes(t));
       score += sharedTags.length * 2;
 
       return { item, score };

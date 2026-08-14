@@ -208,13 +208,14 @@ In GitHub go to **Settings** > **Secrets and variables** > **Actions** and add:
 
 - `CLOUDFLARE_API_TOKEN`: Created in Section 2.2B.
 - `CLOUDFLARE_ACCOUNT_ID`: Created in Section 2.2A.
-- `CLOUDFLARE_PROJECT_NAME`: `lab-eim`
 - `VERCEL_TOKEN`: Vercel Personal Access Token ([Vercel Account Settings > Tokens](https://vercel.com/account/tokens)).
 - `VERCEL_ORG_ID`: Found in `.vercel/project.json` or Vercel Team Settings.
 - `VERCEL_PROJECT_ID`: Found in `.vercel/project.json` or Vercel Project Settings.
 - `PUBLIC_GOOGLE_SHEET_SCRIPT_URL`: Google Apps Script Web App URL.
 - `PUBLIC_RECRUITMENT_SECRET`: Passphrase for form signature verification.
 - `PUBLIC_KEYSTATIC_GITHUB_APP_SLUG`: `eim-lab-cms`
+
+> **Note:** The Cloudflare Pages project name (`lab-eim`) is set as the `CF_PAGES_PROJECT` **env var** in the workflow file — **not** as a repository secret. This is intentional: GitHub Actions masks any job output containing a secret substring, which would silently strip deployment URLs from PR preview comments. If you need to change the project name, edit the `CF_PAGES_PROJECT` value in `ci-cd.yml` directly.
 
 ### 5.2 Pipeline Stages (`ci-cd.yml`)
 

@@ -125,7 +125,7 @@ jobs:
           ')
 
           # Sanitize extracted URL
-          DEPLOY_URL=$(echo "$DEPLOY_URL" | tr -d '\r\n\t ' | sed 's/[^a-zA-Z0-9.:/_-]//g')
+          DEPLOY_URL=$(echo "$DEPLOY_URL" | tr -cd 'a-zA-Z0-9.:/_-')
 
           # Fallback to standard Cloudflare Pages branch preview URL pattern if extraction was empty
           if [ -z "$DEPLOY_URL" ] || ! echo "$DEPLOY_URL" | grep -q '^https://'; then
@@ -137,7 +137,7 @@ jobs:
             fi
           fi
 
-          DEPLOY_URL=$(echo "$DEPLOY_URL" | tr -d '\r\n\t ' | sed 's/[^a-zA-Z0-9.:/_-]//g')
+          DEPLOY_URL=$(echo "$DEPLOY_URL" | tr -cd 'a-zA-Z0-9.:/_-')
 
           echo "Captured live deployment URL: $DEPLOY_URL"
           echo "url=$DEPLOY_URL" >> $GITHUB_OUTPUT
@@ -212,8 +212,8 @@ jobs:
           CF_URL: ${{ needs.deploy-cloudflare.outputs.deploy_url }}
           VERCEL_URL: ${{ needs.deploy-vercel.outputs.deploy_url }}
         run: |
-          CF_CLEAN=$(echo "$CF_URL" | tr -d '\r\n\t ' | sed 's/[^a-zA-Z0-9.:/_-]//g')
-          VERCEL_CLEAN=$(echo "$VERCEL_URL" | tr -d '\r\n\t ' | sed 's/[^a-zA-Z0-9.:/_-]//g')
+          CF_CLEAN=$(echo "$CF_URL" | tr -cd 'a-zA-Z0-9.:/_-')
+          VERCEL_CLEAN=$(echo "$VERCEL_URL" | tr -cd 'a-zA-Z0-9.:/_-')
 
           echo "Captured CF_URL: '$CF_CLEAN'"
           echo "Captured VERCEL_URL: '$VERCEL_CLEAN'"
@@ -230,7 +230,7 @@ jobs:
           - ▲ **Vercel Preview**: $VERCEL_CLEAN"
           fi
 
-          EXISTING_COMMENT=$(gh api "repos/${GH_REPO}/issues/${{ github.event.pull_request.number }}/comments" --jq '.[] | select(.user.login=="github-actions[bot]" and (.body | contains("Preview Deployments Ready"))) | .id' | tail -n 1)
+          EXISTING_COMMENT=$(gh api "repos/${GH_REPO}/issues/${{ github.event.pull_request.number }}/comments" --jq '.[] | select((.user.login=="github-actions[bot]" or .user.login=="github-actions") and (.body | contains("Preview Deployments Ready"))) | .id' | tail -n 1)
 
           if [ -n "$EXISTING_COMMENT" ]; then
             gh api -X PATCH "repos/${GH_REPO}/issues/comments/${EXISTING_COMMENT}" -f body="$COMMENT_BODY"

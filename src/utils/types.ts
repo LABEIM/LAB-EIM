@@ -157,6 +157,9 @@ export interface RecruitmentConfig {
   interviewStartDate?: string;
   interviewEndDate?: string;
   announcementDate?: string;
+  formDescriptionTitle?: string;
+  formDescription?: string;
+  formDescriptionItems?: string[];
   studentYears?: string[];
   fieldStates?: FieldStates;
   documentLimits?: DocumentLimits;
@@ -210,6 +213,9 @@ export interface SelectionStepConfig {
 }
 
 export interface RegistrationPageConfigs {
+  formDescriptionTitle?: string;
+  formDescription?: string;
+  formDescriptionItems?: string[];
   studentYears: string[];
   fieldStates: FieldStates;
   docLimits: DocumentLimits;

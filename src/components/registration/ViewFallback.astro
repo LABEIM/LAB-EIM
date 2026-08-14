@@ -1,5 +1,6 @@
 ---
 import { getLocaleFromUrl, getLocalizedPath } from '../../utils/i18n';
+import FormDescriptionCard from './FormDescriptionCard.astro';
 
 interface Props {
   initialStage: string;
@@ -11,10 +12,20 @@ interface Props {
     buttonText?: string;
   };
   piTemplateUrl?: string;
+  formDescriptionTitle?: string;
+  formDescription?: string;
+  formDescriptionItems?: string[];
 }
 
 const locale = getLocaleFromUrl(Astro.url);
-const { initialStage, fallbackCfg, piTemplateUrl } = Astro.props;
+const { 
+  initialStage, 
+  fallbackCfg, 
+  piTemplateUrl,
+  formDescriptionTitle,
+  formDescription,
+  formDescriptionItems,
+} = Astro.props;
 ---
 
 <div id="view-fallback" class={initialStage === 'fallback' ? '' : 'is-hidden'}>
@@ -22,6 +33,12 @@ const { initialStage, fallbackCfg, piTemplateUrl } = Astro.props;
     <h2>{fallbackCfg.title}</h2>
     <p class="registration-hero-subtitle">{fallbackCfg.subtitle}</p>
   </div>
+
+  <FormDescriptionCard 
+    title={formDescriptionTitle} 
+    description={formDescription} 
+    items={formDescriptionItems} 
+  />
 
   <div class="info-card-panel">
     <i class="fa-solid fa-triangle-exclamation info-card-icon reg-icon-yellow"></i>

@@ -19,6 +19,12 @@ const registrationSchema = {
 
   title: fields.text({ label: 'Form Section Title', defaultValue: 'Assistant Registration Form' }),
   subtitle: fields.text({ label: 'Form Section Subtitle', defaultValue: 'Complete the form below with valid and correct information.' }),
+  formDescriptionTitle: fields.text({ label: 'Form Description Header Title', defaultValue: 'Requirements:' }),
+  formDescription: fields.text({ label: 'Form Description Introductory Paragraph (Optional)', multiline: true, defaultValue: '' }),
+  formDescriptionItems: fields.array(fields.text({ label: 'Description Item / Requirement Point' }), {
+    label: 'Form Description & Requirements List Items',
+    itemLabel: props => props.value,
+  }),
   heroTag: fields.text({ label: 'Hero Tag', defaultValue: 'Assistant Recruitment' }),
   heroTitle: fields.text({ label: 'Hero Title', defaultValue: 'Assistant Lab Registration' }),
   heroDescription: fields.text({ label: 'Hero Description', defaultValue: 'Join us and become a part of EIM Research Lab. Develop your potential in IT infrastructure, networks, and technology research.' }),

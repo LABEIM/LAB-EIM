@@ -489,7 +489,7 @@ input[type="file"].form-control::file-selector-button:hover {
 }
 
 .medhum-porto-container {
-  display: none;
+  display: block;
   margin-top: 15px;
   background: rgba(163, 7, 186, 0.08);
   padding: 15px;

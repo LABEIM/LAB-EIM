@@ -32,7 +32,11 @@ const registrationSchema = {
     label: 'Eligible Student Years',
     itemLabel: props => props.value,
   }),
-  portfolioDivisionTriggerValues: fields.text({ label: 'Portfolio Division Trigger Values (Comma-separated, e.g. Medhum, Front-End)', defaultValue: 'Medhum' }),
+  portfolioDivisionTriggerValues: fields.text({
+    label: 'Portfolio Division Trigger Values',
+    description: 'Comma-separated division names that require portfolio links (e.g. Medhum, Front-End, Design)',
+    defaultValue: 'Medhum'
+  }),
   piTemplateUrl: fields.text({ label: 'Pakta Integritas (PI) Template Link', defaultValue: 'https://bit.ly/Template-PI-EIM' }),
   minReasonWords: fields.number({ label: 'Minimum Word Count for Reason for Choosing Division', defaultValue: 30 }),
   fieldStates: fields.object({
@@ -127,11 +131,12 @@ const registrationSchema = {
       defaultValue: 'required',
     }),
     portofolio: fields.select({
-      label: 'Tautan Portofolio Divisi',
+      label: 'Tautan Portofolio / Sertifikat',
       options: [
-        { label: 'Required (Wajib bila memilih divisi portofolio)', value: 'required' },
-        { label: 'Optional (Opsional)', value: 'optional' },
-        { label: 'Disabled (Disembunyikan)', value: 'disabled' },
+        { label: 'Required for specific divisions & Optional for others', value: 'required' },
+        { label: 'Required ONLY for specific divisions & Hidden for others', value: 'only_trigger' },
+        { label: 'Optional for all divisions', value: 'optional' },
+        { label: 'Disabled', value: 'disabled' },
       ],
       defaultValue: 'required',
     }),

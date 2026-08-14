@@ -17,7 +17,7 @@
     "Curriculum Vitae (CV)",
     "Pakta Integritas (PI)",
     "Motivation Letter",
-    "Creative portofolio / Sertifikat (Opsional)"
+    "Creative portofolio / Sertifikat (Opsional) (*Divisi Media & Humas wajib mengirimkan portofolio)"
   ],
   "heroTag": "Rekrutmen Asisten",
   "heroTitle": "Pendaftaran Asisten Lab",
@@ -40,7 +40,7 @@
     "divisi_2": "required",
     "alasan_divisi_2": "required",
     "bersedia_dipindah": "required",
-    "portofolio": "optional"
+    "portofolio": "required"
   },
   "allowedFileExtensions": {
     "ksm": "pdf",

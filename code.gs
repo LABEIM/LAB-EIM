@@ -306,7 +306,7 @@ function sendConfirmationEmail(data, isRevision) {
   const safeDivisi2 = escapeHtml(data['Divisi 2']);
   const safeBersedia = escapeHtml(data['Bersedia Dipindah Divisi']);
   const safePorto = data['Portofolio MedHum'] ? escapeHtml(data['Portofolio MedHum']) : '';
-  const showPortfolio = Boolean(safePorto && isPortfolioRequired(data['Divisi 1'], data['Divisi 2']));
+  const showPortfolio = Boolean(safePorto);
 
   const linkKsm = data['Link KSM'] ? escapeHtml(data['Link KSM']) : '';
   const linkKhs = data['Link KHS'] ? escapeHtml(data['Link KHS']) : '';
@@ -618,9 +618,7 @@ function doPost(e) {
       'Alasan Divisi 1': sanitizeSheetValue(rawData['Alasan Divisi 1'] || rawData['alasan_divisi_1'] || rawData['Alasan'] || ''),
       'Divisi 2': sanitizeSheetValue(rawData['Divisi 2'] || rawData['divisi_2'] || ''),
       'Alasan Divisi 2': sanitizeSheetValue(rawData['Alasan Divisi 2'] || rawData['alasan_divisi_2'] || rawData['Alasan'] || ''),
-      'Portofolio MedHum': isPortfolioRequired(rawData['Divisi 1'] || rawData['divisi_1'], rawData['Divisi 2'] || rawData['divisi_2'])
-        ? sanitizeSheetValue(rawData['Portofolio MedHum'] || rawData['portofolio_medhum'] || '')
-        : '',
+      'Portofolio MedHum': sanitizeSheetValue(rawData['Portofolio MedHum'] || rawData['portofolio_medhum'] || ''),
       'Bersedia Dipindah Divisi': sanitizeSheetValue(rawData['Bersedia Dipindah Divisi'] || rawData['bersedia_dipindah'] || ''),
       'Link KSM': '',
       'Link KHS': '',

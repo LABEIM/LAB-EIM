@@ -111,7 +111,9 @@ export function validateRegistrationForm(
     };
   }
 
-  const emailInput = (document.getElementById('email') as HTMLInputElement | null)?.value || '';
+  const emailInput = typeof document !== 'undefined'
+    ? (document.getElementById('email') as HTMLInputElement | null)?.value || ''
+    : '';
   if (emailInput && !validateEmail(emailInput)) {
     return {
       valid: false,
@@ -158,7 +160,9 @@ export function validateRegistrationForm(
     };
   }
 
-  const elAlasan2 = document.getElementById('alasan_divisi_2') as HTMLTextAreaElement | null;
+  const elAlasan2 = typeof document !== 'undefined'
+    ? (document.getElementById('alasan_divisi_2') as HTMLTextAreaElement | null)
+    : null;
   const isAlasan2Required = elAlasan2 ? elAlasan2.required : Boolean(divisi_2);
   if ((isAlasan2Required || (alasan_divisi_2 && alasan_divisi_2.trim().length > 0)) && divisi_2) {
     const words2 = countWords(alasan_divisi_2);
@@ -172,7 +176,14 @@ export function validateRegistrationForm(
     }
   }
 
-  if ((requiresPortfolio(divisi_1) || requiresPortfolio(divisi_2)) && !portofolio_medhum) {
+  const portoContainer = typeof document !== 'undefined'
+    ? document.getElementById('container-medhum-porto')
+    : null;
+  const portoState = portoContainer?.getAttribute('data-porto-state') || 'required';
+  const isTriggerDiv = requiresPortfolio(divisi_1) || requiresPortfolio(divisi_2);
+  const isPortoRequired = (portoState === 'required' || portoState === 'only_trigger') && isTriggerDiv;
+
+  if (isPortoRequired && !portofolio_medhum) {
     return {
       valid: false,
       errorMsg: isEn

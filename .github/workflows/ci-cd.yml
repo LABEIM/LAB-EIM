@@ -375,6 +375,9 @@ jobs:
     if: always() && needs.deploy-cloudflare.result == 'success'
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    permissions:
+      contents: read
+      pull-requests: write
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -425,11 +428,117 @@ jobs:
           configPath: './.lighthouserc.json'
           uploadArtifacts: true
 
-      - name: Lighthouse summary
+      - name: Format and record Lighthouse summary
         if: always()
+        id: parse_lh
+        env:
+          TARGET_URL: ${{ steps.target_url.outputs.url }}
+          LIVE_MANIFEST: ${{ steps.lighthouse_live.outputs.manifest }}
+          STATIC_MANIFEST: ${{ steps.lighthouse_static.outputs.manifest }}
+          LIVE_LINKS: ${{ steps.lighthouse_live.outputs.links }}
+          STATIC_LINKS: ${{ steps.lighthouse_static.outputs.links }}
         run: |
-          echo "### Lighthouse Audit Results" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "Audit completed against: \`${{ steps.target_url.outputs.url || 'static dist/' }}\`" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "Full reports are uploaded as workflow artifacts." >> $GITHUB_STEP_SUMMARY
+          node -e '
+            const fs = require("fs");
+            const targetUrl = process.env.TARGET_URL || "static dist/";
+            const liveManifestStr = process.env.LIVE_MANIFEST || "";
+            const staticManifestStr = process.env.STATIC_MANIFEST || "";
+            const liveLinksStr = process.env.LIVE_LINKS || "";
+            const staticLinksStr = process.env.STATIC_LINKS || "";
+            const summaryFile = process.env.GITHUB_STEP_SUMMARY;
+            const outputFile = process.env.GITHUB_OUTPUT;
+
+            let manifest = null;
+            let links = {};
+
+            try {
+              const rawManifest = liveManifestStr || staticManifestStr;
+              if (rawManifest) manifest = JSON.parse(rawManifest);
+            } catch (e) {}
+
+            if (!manifest && fs.existsSync(".lighthouseci/manifest.json")) {
+              try {
+                manifest = JSON.parse(fs.readFileSync(".lighthouseci/manifest.json", "utf8"));
+              } catch (e) {}
+            }
+
+            try {
+              const rawLinks = liveLinksStr || staticLinksStr;
+              if (rawLinks) links = JSON.parse(rawLinks);
+            } catch (e) {}
+
+            if (Object.keys(links).length === 0 && fs.existsSync(".lighthouseci/links.json")) {
+              try {
+                links = JSON.parse(fs.readFileSync(".lighthouseci/links.json", "utf8"));
+              } catch (e) {}
+            }
+
+            let md = "### ⚡ Lighthouse Audit Results\n\n";
+            md += `**Target URL:** \`${targetUrl}\`\n\n`;
+
+            if (manifest && Array.isArray(manifest) && manifest.length > 0) {
+              const representativeRuns = manifest.filter(r => r.isRepresentativeRun);
+              const runsToDisplay = representativeRuns.length > 0 ? representativeRuns : [manifest[0]];
+
+              runsToDisplay.forEach((run, idx) => {
+                const summary = run.summary || {};
+                const reportUrl = links[run.url] || links[Object.keys(links)[idx]] || null;
+
+                const getStatus = (score) => {
+                  if (score === undefined || score === null) return { pct: "N/A", status: "⚪ N/A" };
+                  const pct = Math.round(score * 100);
+                  if (pct >= 90) return { pct: `${pct}%`, status: "🟢 Pass" };
+                  if (pct >= 50) return { pct: `${pct}%`, status: "🟠 Average" };
+                  return { pct: `${pct}%`, status: "🔴 Fail" };
+                };
+
+                const perf = getStatus(summary.performance);
+                const a11y = getStatus(summary.accessibility);
+                const bp = getStatus(summary["best-practices"]);
+                const seo = getStatus(summary.seo);
+
+                md += "| Category | Score | Status |\n";
+                md += "| :--- | :---: | :--- |\n";
+                md += `| 🚀 Performance | **${perf.pct}** | ${perf.status} |\n`;
+                md += `| ♿ Accessibility | **${a11y.pct}** | ${a11y.status} |\n`;
+                md += `| 🛡️ Best Practices | **${bp.pct}** | ${bp.status} |\n`;
+                md += `| 🔍 SEO | **${seo.pct}** | ${seo.status} |\n\n`;
+
+                if (reportUrl) {
+                  md += `🔗 [View Interactive Lighthouse Report](${reportUrl})\n\n`;
+                }
+              });
+              md += "*Full reports are also saved in workflow artifacts (`lhci-artifacts`).*\n";
+            } else {
+              md += "⚠️ *No Lighthouse audit manifest could be read. Check workflow artifacts or job logs for details.*\n";
+            }
+
+            if (summaryFile) {
+              fs.appendFileSync(summaryFile, md);
+            }
+
+            if (outputFile) {
+              const eof = "EOF_" + Math.random().toString(36).substring(2);
+              fs.appendFileSync(outputFile, `comment_body<<${eof}\n${md}\n${eof}\n`);
+            }
+          '
+
+      - name: Find existing PR comment
+        if: always() && github.event_name == 'pull_request'
+        uses: peter-evans/find-comment@v3
+        id: find_comment
+        with:
+          issue-number: ${{ github.event.pull_request.number }}
+          comment-author: 'github-actions[bot]'
+          body-includes: 'Preview Deployments Ready'
+
+      - name: Append Lighthouse results to PR comment
+        if: always() && github.event_name == 'pull_request' && steps.find_comment.outputs.comment-id != ''
+        uses: peter-evans/create-or-update-comment@v4
+        with:
+          comment-id: ${{ steps.find_comment.outputs.comment-id }}
+          body: |
+            
+            ---
+            ${{ steps.parse_lh.outputs.comment_body }}
+          edit-mode: append

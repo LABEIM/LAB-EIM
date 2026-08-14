@@ -104,9 +104,13 @@ export interface FinalSelectionConfig {
 export interface AnnouncementConfig {
   title: string;
   subtitle: string;
+  acceptedMessage?: string;
+  waitlistMessage?: string;
+  rejectedMessage?: string;
   newsUrl: string;
   documentUrl?: string;
 }
+
 
 export interface ClosedConfig {
   title: string;
@@ -195,9 +199,14 @@ export interface SelectionStepConfig {
   resultsConfig?: {
     title: string;
     subtitle: string;
+    passedMessage?: string;
+    waitlistMessage?: string;
+    failedMessage?: string;
     newsUrl?: string;
     documentUrl?: string;
   };
+
+
 }
 
 export interface RegistrationPageConfigs {
@@ -223,4 +232,21 @@ export interface RegistrationPageConfigs {
   fallbackCfg: FallbackConfig;
   selectionSteps: SelectionStepConfig[];
 }
+
+export interface CandidateStepStatus {
+  stepId: string;
+  status: 'passed' | 'failed' | 'pending' | string;
+  notes?: string;
+}
+
+
+export interface CandidateResult {
+  nim: string;
+  division?: string;
+  stageStatuses?: CandidateStepStatus[];
+  finalStatus?: string;
+  notes?: string;
+  [key: string]: any;
+}
+
 

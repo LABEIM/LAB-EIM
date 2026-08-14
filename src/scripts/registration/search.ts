@@ -1,14 +1,21 @@
 import resultsData from '../../data/recruitment_results.json';
 
+interface CandidateStepStatus {
+  stepId: string;
+  status: string;
+  notes?: string;
+}
+
 interface Candidate {
   nim?: string | number;
-  screeningStatus?: string;
-  technicalTestStatus?: string;
+  stageStatuses?: CandidateStepStatus[];
   finalStatus?: string;
   status?: string;
   division?: string;
   notes?: string;
+  [key: string]: any;
 }
+
 
 function parseBulkImportText(text: string): Candidate[] {
   if (!text || typeof text !== 'string') return [];
@@ -32,18 +39,19 @@ function parseBulkImportText(text: string): Candidate[] {
     const technicalRaw = (cols[3] || '').toLowerCase();
     const finalRaw = (cols[4] || '').toLowerCase();
 
+    const stageStatuses: CandidateStepStatus[] = [
+      { stepId: 'selection', status: ['passed', 'failed'].includes(screeningRaw) ? screeningRaw : 'passed' },
+    ];
+    if (technicalRaw) {
+      stageStatuses.push({ stepId: 'technical_test', status: ['passed', 'failed'].includes(technicalRaw) ? technicalRaw : 'passed' });
+    }
+
     const candidate: Candidate = {
       nim: nim,
       division: cols[1] || '',
-      screeningStatus: ['passed', 'failed'].includes(screeningRaw) ? screeningRaw : 'passed',
+      stageStatuses,
       notes: cols[5] || '',
     };
-
-    if (technicalRaw) {
-      candidate.technicalTestStatus = ['passed', 'failed'].includes(technicalRaw) ? technicalRaw : 'passed';
-    } else {
-      candidate.technicalTestStatus = 'passed';
-    }
 
     if (finalRaw) {
       candidate.finalStatus = ['accepted', 'waitlist', 'rejected'].includes(finalRaw) ? finalRaw : 'accepted';
@@ -53,6 +61,7 @@ function parseBulkImportText(text: string): Candidate[] {
   }
   return results;
 }
+
 
 function findCandidate(query: string): Candidate | undefined {
   const q = query.trim().toLowerCase();
@@ -90,6 +99,19 @@ function getIsEnglish(): boolean {
     return container.getAttribute('data-locale') === 'en';
   }
   return window.location.pathname.startsWith('/en');
+}
+
+function getSelectionStepsConfig(): any[] {
+  const container = document.getElementById('registration-container');
+  if (container) {
+    const raw = container.getAttribute('data-selection-steps');
+    if (raw) {
+      try {
+        return JSON.parse(raw);
+      } catch (e) {}
+    }
+  }
+  return [];
 }
 
 export function initRegistrationSearch() {
@@ -152,9 +174,39 @@ export function initRegistrationSearch() {
         return;
       }
 
+      const normalizedStepKey = stepKey.replace(/-/g, '_');
+      const selectionStepsConfig = getSelectionStepsConfig();
+      const matchedStepCfg = selectionStepsConfig.find((s: any) => s.id === stepKey || s.id === normalizedStepKey);
+
       // Final selection announcement view
-      if (stepKey === 'announcement' || stepKey === 'final') {
-        const isAccepted = match.finalStatus === 'accepted' || match.status === 'accepted';
+      if (normalizedStepKey === 'announcement' || normalizedStepKey === 'final' || normalizedStepKey === 'final_selection') {
+        const finalStatusVal = (match.finalStatus || match.status || '').toLowerCase();
+        const isAccepted = finalStatusVal === 'accepted';
+        const isWaitlist = finalStatusVal === 'waitlist';
+
+        let defaultOutcomeNote = '';
+        if (matchedStepCfg && matchedStepCfg.resultsConfig) {
+          if (isAccepted) {
+            defaultOutcomeNote = matchedStepCfg.resultsConfig.passedMessage || (matchedStepCfg.resultsConfig as any).acceptedMessage || '';
+          } else if (isWaitlist) {
+            defaultOutcomeNote = matchedStepCfg.resultsConfig.waitlistMessage || '';
+          } else {
+            defaultOutcomeNote = matchedStepCfg.resultsConfig.failedMessage || (matchedStepCfg.resultsConfig as any).rejectedMessage || '';
+          }
+        }
+
+        if (!defaultOutcomeNote) {
+          if (isAccepted) {
+            defaultOutcomeNote = isEn ? 'You have been accepted as an assistant at EIM Research Lab.' : 'Selamat! Anda diterima menjadi asisten di EIM Research Lab.';
+          } else if (isWaitlist) {
+            defaultOutcomeNote = isEn ? 'You are on the recruitment waitlist.' : 'Anda masuk dalam daftar cadangan (Waitlist).';
+          } else {
+            defaultOutcomeNote = isEn ? 'Thank you for participating in this recruitment cycle.' : 'Terima kasih telah mengikuti seluruh rangkaian rekrutmen asisten EIM Research Lab.';
+          }
+        }
+
+        const noteContent = match.notes || defaultOutcomeNote;
+
         if (isAccepted) {
           setResultDisplay(
             resultBox,
@@ -163,7 +215,18 @@ export function initRegistrationSearch() {
               <div class="search-result-title-lg"><i class="fa-solid fa-circle-check"></i> ${isEn ? 'CONGRATULATIONS!' : 'SELAMAT! ANDA DITERIMA'}</div>
               <div class="search-result-nim">NIM: <strong>${escapeHtml(match.nim)}</strong></div>
               ${match.division ? `<div class="search-result-division">${isEn ? 'Division:' : 'Divisi:'} <strong>${escapeHtml(match.division)}</strong></div>` : ''}
-              <p class="search-result-desc">${match.notes ? escapeHtml(match.notes) : (isEn ? 'You have been accepted as an assistant at EIM Research Lab.' : 'Selamat! Anda diterima menjadi asisten di EIM Research Lab.')}</p>
+              <p class="search-result-desc">${escapeHtml(noteContent)}</p>
+            `
+          );
+        } else if (isWaitlist) {
+          setResultDisplay(
+            resultBox,
+            'status-info',
+            `
+              <div class="search-result-title"><i class="fa-solid fa-clock"></i> Status: WAITLIST</div>
+              <div class="search-result-nim">NIM: <strong>${escapeHtml(match.nim)}</strong></div>
+              ${match.division ? `<div class="search-result-division">${isEn ? 'Division:' : 'Divisi:'} <strong>${escapeHtml(match.division)}</strong></div>` : ''}
+              <p class="search-result-desc">${escapeHtml(noteContent)}</p>
             `
           );
         } else {
@@ -171,60 +234,67 @@ export function initRegistrationSearch() {
             resultBox,
             'status-info',
             `
-              <div class="search-result-title"><i class="fa-solid fa-info-circle"></i> Status: ${escapeHtml((match.finalStatus || match.status || 'evaluated').toUpperCase())}</div>
+              <div class="search-result-title"><i class="fa-solid fa-info-circle"></i> Status: ${escapeHtml((finalStatusVal || 'evaluated').toUpperCase())}</div>
               <div class="search-result-nim">NIM: <strong>${escapeHtml(match.nim)}</strong></div>
               ${match.division ? `<div class="search-result-division">${isEn ? 'Division:' : 'Divisi:'} <strong>${escapeHtml(match.division)}</strong></div>` : ''}
-              <p class="search-result-desc">${match.notes ? escapeHtml(match.notes) : (isEn ? 'Thank you for participating in this recruitment cycle.' : 'Terima kasih telah berpartisipasi dalam rekrutmen ini.')}</p>
+              <p class="search-result-desc">${escapeHtml(noteContent)}</p>
             `
           );
         }
         return;
       }
 
+
+
       // Dynamic step-specific status lookup
-      let stepStatus = 'passed';
-      const screeningVal = (match.screeningStatus || (match as any).selectionStatus || '').toLowerCase();
-      const techVal = (match.technicalTestStatus || (match as any).technicalStatus || '').toLowerCase();
-      const finalVal = (match.finalStatus || match.status || '').toLowerCase();
+      let stepStatus = '';
+      let stepNote = '';
 
-      const normalizedStepKey = stepKey.replace(/-/g, '_');
-
-      if (normalizedStepKey === 'selection' || normalizedStepKey === 'screening') {
-        stepStatus = screeningVal || 'passed';
-      } else if (normalizedStepKey === 'technical_test' || normalizedStepKey === 'tech' || normalizedStepKey === 'technical') {
-        if (screeningVal === 'failed') {
-          stepStatus = 'failed';
-        } else {
-          stepStatus = techVal || 'passed';
-        }
-      } else if (normalizedStepKey === 'interview') {
-        const interviewVal = ((match as any).interviewStatus || '').toLowerCase();
-        if (screeningVal === 'failed' || techVal === 'failed') {
-          stepStatus = 'failed';
-        } else {
-          stepStatus = interviewVal || (finalVal === 'rejected' ? 'failed' : 'passed');
-        }
-      } else {
-        if (screeningVal === 'failed' || finalVal === 'rejected') {
-          stepStatus = 'failed';
-        } else {
-          const camelStepKey = normalizedStepKey.replace(/_([a-z])/g, (_, letter) => letter.toUpperCase());
-          const customKeyCamel = `${camelStepKey}Status`;
-          const customKeyExact = `${normalizedStepKey}Status`;
-
-          if ((match as any)[customKeyCamel]) {
-            stepStatus = String((match as any)[customKeyCamel]).toLowerCase();
-          } else if ((match as any)[customKeyExact]) {
-            stepStatus = String((match as any)[customKeyExact]).toLowerCase();
-          } else if ((match as any)[stepKey]) {
-            stepStatus = String((match as any)[stepKey]).toLowerCase();
-          } else if ((match as any)[normalizedStepKey]) {
-            stepStatus = String((match as any)[normalizedStepKey]).toLowerCase();
+      // 1. Primary check: match from stageStatuses array if present
+      if (Array.isArray(match.stageStatuses)) {
+        const foundStep = match.stageStatuses.find((s: any) => s.stepId === stepKey || s.stepId === normalizedStepKey);
+        if (foundStep && foundStep.status) {
+          stepStatus = String(foundStep.status).toLowerCase();
+          if (foundStep.notes) {
+            stepNote = foundStep.notes;
           }
         }
       }
 
+      // 2. Secondary check: specific property names on candidate object
+      if (!stepStatus) {
+        const camelStepKey = normalizedStepKey.replace(/_([a-z])/g, (_, letter) => letter.toUpperCase());
+        const customKeyCamel = `${camelStepKey}Status`;
+        const customKeyExact = `${normalizedStepKey}Status`;
+
+        if ((match as any)[customKeyCamel]) {
+          stepStatus = String((match as any)[customKeyCamel]).toLowerCase();
+        } else if ((match as any)[customKeyExact]) {
+          stepStatus = String((match as any)[customKeyExact]).toLowerCase();
+        } else if ((match as any)[stepKey]) {
+          stepStatus = String((match as any)[stepKey]).toLowerCase();
+        } else if ((match as any)[normalizedStepKey]) {
+          stepStatus = String((match as any)[normalizedStepKey]).toLowerCase();
+        }
+      }
+
+      if (!stepStatus) {
+        stepStatus = 'passed';
+      }
+
       const isPassed = stepStatus === 'passed';
+
+      // Resolve step default note from Dynamic Selection Pipeline Steps configuration
+      let stepDefaultNote = '';
+      if (matchedStepCfg && matchedStepCfg.resultsConfig) {
+        stepDefaultNote = isPassed
+          ? (matchedStepCfg.resultsConfig.passedMessage || '')
+          : (matchedStepCfg.resultsConfig.failedMessage || '');
+      }
+
+
+      const noteText = stepNote || match.notes || stepDefaultNote;
+
       setResultDisplay(
         resultBox,
         isPassed ? 'status-passed' : 'status-muted',
@@ -235,13 +305,16 @@ export function initRegistrationSearch() {
           <div class="search-result-nim">NIM: <strong>${escapeHtml(match.nim)}</strong></div>
           ${match.division ? `<div class="search-result-division">${isEn ? 'Division:' : 'Divisi:'} <strong>${escapeHtml(match.division)}</strong></div>` : ''}
           <p class="search-result-desc">
-            ${isPassed
-              ? (match.notes ? escapeHtml(match.notes) : (isEn ? 'Congratulations! You have passed this selection step. Please check your email or official communication channel for details.' : 'Selamat! Anda dinyatakan lolos pada tahap ini. Cek email atau WhatsApp Group rekrutmen untuk informasi lebih lanjut.'))
-              : (match.notes ? escapeHtml(match.notes) : (isEn ? 'Thank you for participating in this selection phase.' : 'Terima kasih telah mengikuti tahap seleksi ini.'))}
+            ${noteText
+              ? escapeHtml(noteText)
+              : (isPassed
+                  ? (isEn ? 'Congratulations! You have passed this selection step. Please check your email or official communication channel for details.' : 'Selamat! Anda dinyatakan lolos pada tahap ini. Cek email atau WhatsApp Group rekrutmen untuk informasi lebih lanjut.')
+                  : (isEn ? 'Thank you for participating in this selection phase.' : 'Terima kasih telah mengikuti tahap seleksi ini.'))}
           </p>
         `
       );
     };
+
 
     btn.addEventListener('click', executeSearch);
     input.addEventListener('keypress', (e) => {

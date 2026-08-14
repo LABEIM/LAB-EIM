@@ -6,15 +6,20 @@ import { getLocaleFromUrl, t } from '../../utils/i18n';
 
 import type { SelectionStepConfig } from '../../utils/types';
 
+interface CandidateStepStatus {
+  stepId: string;
+  status: string;
+}
+
 interface Candidate {
   nim: string | number;
   division?: string;
-  screeningStatus?: string;
-  technicalTestStatus?: string;
+  stageStatuses?: CandidateStepStatus[];
   finalStatus?: string;
   status?: string;
   notes?: string;
 }
+
 
 interface Props {
   initialStage: string;

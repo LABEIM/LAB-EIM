@@ -163,9 +163,13 @@ const registrationSchema = {
   announcementConfig: fields.object({
     title: fields.text({ label: 'Final Announcement Title', defaultValue: 'Final Selection Announcement' }),
     subtitle: fields.text({ label: 'Final Announcement Subtitle', defaultValue: 'Check your final selection status below. Congratulations to all accepted candidates!' }),
+    acceptedMessage: fields.text({ label: 'Default Accepted Candidate Note / Message', defaultValue: 'Selamat! Anda diterima menjadi asisten di EIM Research Lab.' }),
+    waitlistMessage: fields.text({ label: 'Default Waitlist Candidate Note / Message', defaultValue: 'Anda masuk dalam daftar cadangan (Waitlist) asisten EIM Research Lab.' }),
+    rejectedMessage: fields.text({ label: 'Default Rejected Candidate Note / Message', defaultValue: 'Terima kasih telah mengikuti seluruh rangkaian rekrutmen asisten EIM Research Lab.' }),
     newsUrl: fields.text({ label: 'Official News Post URL', defaultValue: '/news/pengumuman-rekrutmen-2026' }),
     documentUrl: fields.text({ label: 'PDF Document Link (Optional)', defaultValue: '' }),
   }),
+
   closedConfig: fields.object({
     title: fields.text({ label: 'Closed Title', defaultValue: 'Recruitment Period Ended' }),
     subtitle: fields.text({ label: 'Closed Subtitle', defaultValue: 'Assistant recruitment for this batch is officially closed.' }),
@@ -208,9 +212,14 @@ const registrationSchema = {
       resultsConfig: fields.object({
         title: fields.text({ label: 'Results Section Title', defaultValue: 'Step Results Announcement' }),
         subtitle: fields.text({ label: 'Results Subtitle', defaultValue: 'Check if you passed this step.' }),
+        passedMessage: fields.text({ label: 'Default Passed / Accepted Candidate Note', defaultValue: 'Selamat! Anda dinyatakan lolos pada tahap ini. Cek WhatsApp Group rekrutmen untuk informasi lebih lanjut.' }),
+        waitlistMessage: fields.text({ label: 'Default Waitlist Candidate Note (Optional)', defaultValue: 'Anda masuk dalam daftar cadangan (Waitlist).' }),
+        failedMessage: fields.text({ label: 'Default Failed / Rejected Candidate Note', defaultValue: 'Terima kasih telah mengikuti tahap seleksi ini.' }),
         newsUrl: fields.text({ label: 'Official News Post URL (Optional)', defaultValue: '' }),
         documentUrl: fields.text({ label: 'PDF Document Link (Optional)', defaultValue: '' }),
       }),
+
+
     }),
     {
       label: 'Dynamic Selection Pipeline Steps',
@@ -248,28 +257,33 @@ const recruitmentResultsSchema = {
   bulkImportText: fields.text({
     label: 'Bulk Spreadsheet Paste (Copy & paste table rows directly from Google Sheets / Excel)',
     multiline: true,
-    description: 'Supported column order: NIM | Division (optional/empty if in-progress) | Screening (passed/failed) | Technical (passed/failed) | Final (accepted/waitlist/rejected) | Notes. Separated by Tabs or Commas. Leave Division column empty if division is not yet determined.',
+    description: 'Supported column order: NIM | Division (optional/empty if in-progress) | [Step 1 Status] | [Step 2 Status] | ... | Final Selection Status (accepted/waitlist/rejected) | Notes (optional). Columns dynamically map to active steps defined under Dynamic Selection Pipeline Steps in Registration Settings. Values: "passed" or "failed". Separated by Tabs or Commas.',
+
   }),
   candidates: fields.array(
     fields.object({
       nim: fields.text({ label: 'NIM' }),
       division: fields.text({ label: 'Division Name (Optional: Leave blank if still in process or undetermined)' }),
-      screeningStatus: fields.select({
-        label: 'Document Screening Status',
-        options: [
-          { label: 'Passed (Lolos Berkas)', value: 'passed' },
-          { label: 'Failed (Tidak Lolos)', value: 'failed' },
-        ],
-        defaultValue: 'passed',
-      }),
-      technicalTestStatus: fields.select({
-        label: 'Technical Test Status',
-        options: [
-          { label: 'Passed (Lolos Tes Teknikal)', value: 'passed' },
-          { label: 'Failed (Tidak Lolos)', value: 'failed' },
-        ],
-        defaultValue: 'passed',
-      }),
+      stageStatuses: fields.array(
+        fields.object({
+          stepId: fields.text({ label: 'Step Identifier Key (e.g. selection, technical_test, fgd, interview)' }),
+          status: fields.select({
+            label: 'Status',
+            options: [
+              { label: 'Passed (Lolos)', value: 'passed' },
+              { label: 'Failed (Tidak Lolos)', value: 'failed' },
+              { label: 'Pending / In Progress', value: 'pending' },
+            ],
+            defaultValue: 'passed',
+          }),
+          notes: fields.text({ label: 'Step Specific Note / Feedback (Optional)' }),
+        }),
+        {
+          label: 'Stage / Step Statuses (Dynamic Selection Pipeline Steps)',
+          itemLabel: props => `${props.fields.stepId.value || 'step'}: ${props.fields.status.value || 'passed'}`,
+        }
+      ),
+
       finalStatus: fields.select({
         label: 'Final Selection Status',
         options: [
@@ -287,6 +301,7 @@ const recruitmentResultsSchema = {
     }
   ),
 };
+
 
 export default config({
   storage: import.meta.env.PROD

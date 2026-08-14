@@ -193,8 +193,9 @@ When announcements open, applicants look up their status by entering their NIM o
 
 You can update results either by structured entries or by using **Bulk Spreadsheet Paste** (`bulkImportText`) directly in Keystatic:
 
-* **Bulk Spreadsheet Paste (`bulkImportText`)**: Copy & paste table rows directly from Excel / Google Sheets into the `bulkImportText` field. Supported column order: `NIM | Division | Screening (passed/failed) | Technical (passed/failed) | Final (accepted/waitlist/rejected) | Notes`. Separated by Tabs or Commas.
-  > *Note: `division` can be left empty if candidates are still in early evaluation phases and division assignment is not yet determined.*
+* **Bulk Spreadsheet Paste (`bulkImportText`)**: Copy & paste table rows directly from Excel / Google Sheets into the `bulkImportText` field. Supported column order: `NIM | Division | [Step 1 Status] | [Step 2 Status] | ... | Final Status (accepted/waitlist/rejected) | Notes (optional)`. Columns dynamically map to active steps defined under **Dynamic Selection Pipeline Steps** in Registration Settings. Values: `"passed"` or `"failed"`. Separated by Tabs or Commas.
+  > *Note: Both `division` and `notes` columns are optional. If `notes` is omitted or left empty, the site automatically uses the step's default pass/fail note configured under Dynamic Selection Pipeline Steps.*
+
 
 * **Structured JSON Entry (`candidates` list)**:
 
@@ -205,30 +206,51 @@ You can update results either by structured entries or by using **Bulk Spreadshe
   "candidates": [
     {
       "nim": "1202210001",
-      "name": "Jane Doe",
-      "division": "Research", // Optional: Can be empty "" if division is not yet determined
-      "screeningStatus": "passed",
-      "technicalTestStatus": "passed",
+      "division": "Research",
+      "stageStatuses": [
+        { "stepId": "selection", "status": "passed" },
+        { "stepId": "technical_test", "status": "passed" }
+      ],
       "finalStatus": "accepted",
       "notes": "Selamat! Anda dinyatakan LULUS sebagai Asisten EIM Lab 2026."
     },
     {
       "nim": "1202210002",
-      "name": "John Smith",
       "division": "Cyber Security",
-      "screeningStatus": "passed",
-      "technicalTestStatus": "failed",
+      "stageStatuses": [
+        { "stepId": "selection", "status": "passed" },
+        { "stepId": "technical_test", "status": "failed" }
+      ],
       "finalStatus": "rejected",
       "notes": "Mohon maaf, Anda belum memenuhi kualifikasi untuk tahap selanjutnya."
     }
+
   ]
 }
 ```
+
+
+### 2. Candidate Result Note Priority Hierarchy
+
+When a candidate searches their Student ID (NIM), the result note message is automatically resolved using this 4-tier priority hierarchy:
+
+1. **1st Priority: Candidate Individual Step Note**
+   * **Where to input**: In Keystatic CMS Admin > **Recruitment Results > Candidate List** > open a candidate card > under **Stage / Step Statuses**, set **`Step Specific Note / Feedback`** for that step.
+   * **Use case**: Specific feedback for one candidate on a single step (e.g. *"Technical test passed with score 95/100"*).
+2. **2nd Priority: Candidate Top-Level Note**
+   * **Where to input**: In Keystatic CMS Admin > **Recruitment Results > Candidate List** > **`Custom Notes / Feedback`** (or pasted into the last column of **`bulkImportText`**).
+   * **Use case**: General note for a candidate across the recruitment cycle.
+3. **3rd Priority: Selection Step Default Pass / Fail Note**
+   * **Where to input**: In Keystatic CMS Admin > **Registration Settings > Dynamic Selection Pipeline Steps** > click a step (e.g. *Seleksi Berkas*) > under **Results Announcement View Settings** (`resultsConfig`), set **`Default Passed Candidate Note / Message`** or **`Default Failed Candidate Note / Message`**.
+   * **Use case**: Standard note applied automatically to all candidates who pass/fail that step if no custom candidate note is set.
+4. **4th Priority: System Default Fallback**
+   * **Where it comes from**: Automatic system default polite pass/fail announcement message.
 
 ### Useful Sync & Reset Commands:
 * `npm run sync:results` : Merges `bulkImportText` into existing candidate cards.
 * `npm run sync:results:replace` : Replaces candidate cards with ONLY what is in `bulkImportText` (deletes cards removed from spreadsheet).
 * `npm run clear:results` : Completely clears both `bulkImportText` and all candidate cards in `Candidate List`.
+
 
 ---
 

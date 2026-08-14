@@ -5,13 +5,39 @@ import path from 'node:path';
 
 declare const process: any;
 
+interface CandidateStepStatus {
+  stepId: string;
+  status: string;
+  notes?: string;
+}
+
+
 interface Candidate {
   nim: string;
   division?: string;
-  screeningStatus?: string;
-  technicalTestStatus?: string;
+  stageStatuses?: CandidateStepStatus[];
   finalStatus?: string;
   notes?: string;
+  [key: string]: any;
+}
+
+
+function getActiveSelectionSteps(): Array<{ id: string; title: string }> {
+  try {
+    const regPath = path.resolve(process.cwd(), 'src/data/registration.json');
+    if (fs.existsSync(regPath)) {
+      const regData = JSON.parse(fs.readFileSync(regPath, 'utf-8'));
+      if (Array.isArray(regData.selectionSteps)) {
+        return regData.selectionSteps.filter((s: any) => s.enabled !== false);
+      }
+    }
+  } catch (e) {}
+  return [
+    { id: 'selection', title: 'Seleksi Berkas' },
+    { id: 'technical_test', title: 'Tes Teknikal' },
+    { id: 'interview', title: 'Tahap Wawancara' },
+    { id: 'final_selection', title: 'Seleksi Akhir' },
+  ];
 }
 
 function parseBulkImportText(text: string): Candidate[] {
@@ -23,33 +49,45 @@ function parseBulkImportText(text: string): Candidate[] {
   if (lines[0].includes('\t')) delimiter = '\t';
   else if (lines[0].includes(';')) delimiter = ';';
 
+  const activeSteps = getActiveSelectionSteps();
   const results: Candidate[] = [];
   const firstLineLower = lines[0].toLowerCase();
-  const startIdx = firstLineLower.includes('nim') ? 1 : 0;
+  const hasHeader = firstLineLower.includes('nim');
+  const startIdx = hasHeader ? 1 : 0;
 
   for (let i = startIdx; i < lines.length; i++) {
     const cols = lines[i].split(delimiter).map(c => c.trim().replace(/^["']|["']$/g, ''));
     const nim = cols[0] || '';
     if (!nim || nim.length < 3) continue;
 
-    const screeningRaw = (cols[2] || '').toLowerCase();
-    const technicalRaw = (cols[3] || '').toLowerCase();
-    const finalRaw = (cols[4] || '').toLowerCase();
-
+    const division = cols[1] || '';
+    const stageStatuses: CandidateStepStatus[] = [];
     const candidate: Candidate = {
-      nim: nim,
-      division: cols[1] || '',
-      screeningStatus: ['passed', 'failed'].includes(screeningRaw) ? screeningRaw : 'passed',
-      notes: cols[5] || '',
+      nim,
+      division,
+      stageStatuses,
     };
 
-    if (technicalRaw) {
-      candidate.technicalTestStatus = ['passed', 'failed'].includes(technicalRaw) ? technicalRaw : 'passed';
+    // Parse step statuses according to active selection steps
+    for (let sIdx = 0; sIdx < activeSteps.length; sIdx++) {
+      const colVal = (cols[2 + sIdx] || '').toLowerCase();
+      const stepId = activeSteps[sIdx].id;
+      const statusVal = ['passed', 'failed'].includes(colVal) ? colVal : 'passed';
+      
+      stageStatuses.push({ stepId, status: statusVal });
+      candidate[`${stepId}Status`] = statusVal;
+      candidate[stepId] = statusVal;
     }
 
+
+    const finalColIdx = 2 + activeSteps.length;
+    const finalRaw = (cols[finalColIdx] || '').toLowerCase();
     if (finalRaw) {
       candidate.finalStatus = ['accepted', 'waitlist', 'rejected'].includes(finalRaw) ? finalRaw : 'accepted';
     }
+
+    const notesColIdx = 3 + activeSteps.length;
+    candidate.notes = cols[notesColIdx] || cols[cols.length - 1] || '';
 
     results.push(candidate);
   }
@@ -120,6 +158,7 @@ export function syncRecruitmentResults(mode: 'merge' | 'replace' | 'clear' = 'me
     const existing = candidateMap.get(nimKey);
     if (existing) {
       if (c.division) existing.division = c.division;
+      if (c.stageStatuses) existing.stageStatuses = c.stageStatuses;
       if (c.screeningStatus) existing.screeningStatus = c.screeningStatus;
       if (c.technicalTestStatus) existing.technicalTestStatus = c.technicalTestStatus;
       if (c.finalStatus) existing.finalStatus = c.finalStatus;
@@ -136,6 +175,7 @@ export function syncRecruitmentResults(mode: 'merge' | 'replace' | 'clear' = 'me
 
   return { totalSynced: data.candidates.length, updatedFile: true };
 }
+
 
 // Run if called directly
 if (import.meta.url === `file://${process.argv[1]}` || process.argv[1]?.endsWith('sync-recruitment-results.ts')) {

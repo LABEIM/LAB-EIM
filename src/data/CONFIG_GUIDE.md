@@ -93,19 +93,26 @@ This file configures the 10-stage recruitment pipeline landing page (`/registrat
 ---
 
 ## 4. Candidate Recruitment Results (`src/data/recruitment_results.json`)
-This file manages candidate evaluation status entries across all announcement checkpoints.
+This file manages candidate evaluation status entries across all selection pipeline stages.
 
 ### Fields Explanation
 * **`batch`** (String): Name of the recruitment batch (e.g. `"Recruitment Assistant 2026"`).
 * **`publishedDate`** (String): Announcement release date.
 * **`candidates`** (Array of Objects): List of candidate status entries:
   * `nim` (String): Student ID (e.g. `"1202210001"`). NIM is strictly used as the unique search identifier for announcement checkups.
-  * `name` (String): Full name of the candidate (kept internally for record keeping).
   * `division` (String): Division name.
-  * `screeningStatus` (String): `"passed"` or `"failed"`.
-  * `technicalTestStatus` (String): `"passed"` or `"failed"`.
+  * `stageStatuses` (Array of Objects): Dynamic stage statuses (`[{ stepId: "selection", status: "passed" }, { stepId: "technical_test", status: "passed" }]`). Automatically maps to active steps in **Dynamic Selection Pipeline Steps**.
   * `finalStatus` (String): `"accepted"`, `"waitlist"`, or `"rejected"`.
+
   * `notes` (String): Custom congratulations or feedback note.
+
+### Result Note Priority Hierarchy
+1. **1st Priority (Candidate Step Note)**: Specified per candidate per step under `stageStatuses[i].notes`.
+2. **2nd Priority (Candidate Top-Level Note)**: Specified in candidate's `notes` property or pasted via spreadsheet (`bulkImportText`).
+3. **3rd Priority (Pipeline Step Default Note)**: Configured under **Dynamic Selection Pipeline Steps > Results Announcement View Settings** (`passedMessage` / `failedMessage`).
+4. **4th Priority (System Fallback)**: Built-in default announcement text.
+
+
 
 
 ## 4. News Articles (`src/content/news/`)

@@ -23,7 +23,7 @@
     "tsx": "^4.19.2"
   },
   "dependencies": {
-    "@astrojs/check": "^0.9.9",
+    "@astrojs/check": "^0.9.10",
     "@astrojs/cloudflare": "^12.3.0",
     "@astrojs/react": "^6.0.0",
     "@astrojs/vercel": "^11.0.3",

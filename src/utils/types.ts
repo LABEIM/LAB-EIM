@@ -128,6 +128,7 @@ export interface FallbackConfig {
 }
 
 export type FieldState = 'required' | 'optional' | 'disabled';
+export type PortfolioFieldState = 'required' | 'only_trigger' | 'optional' | 'disabled';
 
 export interface FieldStates {
   ksm?: FieldState;
@@ -140,7 +141,7 @@ export interface FieldStates {
   divisi_2?: FieldState;
   alasan_divisi_2?: FieldState;
   bersedia_dipindah?: FieldState;
-  portofolio?: FieldState;
+  portofolio?: PortfolioFieldState;
 }
 
 export interface RecruitmentConfig {

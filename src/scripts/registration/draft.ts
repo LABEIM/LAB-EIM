@@ -90,14 +90,69 @@ export function initRegistrationDraft(
   const toggleMedhumPorto = () => {
     const val1 = div1Select?.value || '';
     const val2 = div2Select?.value || '';
-    if (requiresPortfolio(val1) || requiresPortfolio(val2)) {
-      if (medhumPortoContainer) medhumPortoContainer.style.display = 'block';
-      if (medhumPortoInput) medhumPortoInput.required = true;
-    } else {
+    const isTriggerDiv = requiresPortfolio(val1) || requiresPortfolio(val2);
+
+    const portoState = medhumPortoContainer?.getAttribute('data-porto-state') || 'required';
+    const reqIndicator = document.getElementById('porto-required-indicator');
+    const helpText = document.getElementById('porto-help-text');
+
+    if (portoState === 'disabled') {
       if (medhumPortoContainer) medhumPortoContainer.style.display = 'none';
-      if (medhumPortoInput) {
-        medhumPortoInput.required = false;
-        medhumPortoInput.value = '';
+      if (medhumPortoInput) medhumPortoInput.required = false;
+      return;
+    }
+
+    if (portoState === 'only_trigger') {
+      if (isTriggerDiv) {
+        if (medhumPortoContainer) medhumPortoContainer.style.display = 'block';
+        if (medhumPortoInput) medhumPortoInput.required = true;
+        if (reqIndicator) reqIndicator.innerHTML = '<span class="required-asterisk">*</span>';
+        if (helpText) {
+          helpText.textContent = isEn
+            ? 'Because you selected a division that requires a portfolio, please include a link to your public portfolio, best work, or certificates.'
+            : 'Karena Anda memilih divisi yang membutuhkan portofolio, sertakan tautan URL publik portofolio, karya terbaik, atau sertifikat pendukung Anda.';
+        }
+      } else {
+        if (medhumPortoContainer) medhumPortoContainer.style.display = 'none';
+        if (medhumPortoInput) {
+          medhumPortoInput.required = false;
+          medhumPortoInput.value = '';
+        }
+      }
+      return;
+    }
+
+    if (portoState === 'optional') {
+      if (medhumPortoContainer) medhumPortoContainer.style.display = 'block';
+      if (medhumPortoInput) medhumPortoInput.required = false;
+      if (reqIndicator) reqIndicator.innerHTML = ' <span class="reg-file-label-small">(Opsional)</span>';
+      if (helpText) {
+        helpText.textContent = isEn
+          ? 'Include a link to your public portfolio, best work, or certificates.'
+          : 'Sertakan tautan URL publik portofolio, karya terbaik, atau sertifikat pendukung Anda.';
+      }
+      return;
+    }
+
+    // Default 'required': Optional for general divisions, Required for trigger divisions
+    if (medhumPortoContainer) medhumPortoContainer.style.display = 'block';
+    if (medhumPortoInput) medhumPortoInput.required = isTriggerDiv;
+
+    if (reqIndicator) {
+      reqIndicator.innerHTML = isTriggerDiv
+        ? '<span class="required-asterisk">*</span>'
+        : ' <span class="reg-file-label-small">(Opsional)</span>';
+    }
+
+    if (helpText) {
+      if (isTriggerDiv) {
+        helpText.textContent = isEn
+          ? 'Because you selected a division that requires a portfolio, please include a link to your public portfolio, best work, or certificates.'
+          : 'Karena Anda memilih divisi yang membutuhkan portofolio, sertakan tautan URL publik portofolio, karya terbaik, atau sertifikat pendukung Anda.';
+      } else {
+        helpText.textContent = isEn
+          ? 'Include a link to your public portfolio, best work, or certificates.'
+          : 'Sertakan tautan URL publik portofolio, karya terbaik, atau sertifikat pendukung Anda.';
       }
     }
   };
@@ -111,8 +166,8 @@ export function initRegistrationDraft(
     if (!draftToast) return;
     if (draftToastText) draftToastText.innerText = msg;
     if (draftToastIcon) {
-      draftToastIcon.className = isError 
-        ? 'fa-solid fa-circle-exclamation draft-toast-icon' 
+      draftToastIcon.className = isError
+        ? 'fa-solid fa-circle-exclamation draft-toast-icon'
         : 'fa-solid fa-cloud-arrow-up draft-toast-icon';
       draftToastIcon.style.color = isError ? '#ff6b6b' : 'var(--accent-cyan)';
     }
@@ -173,12 +228,12 @@ export function initRegistrationDraft(
     try {
       localStorage.setItem(DRAFT_KEY, JSON.stringify(draft));
       if (clearDraftBtn) clearDraftBtn.style.display = 'inline-flex';
-      
+
       if (saveDraftTimeout) clearTimeout(saveDraftTimeout);
       saveDraftTimeout = setTimeout(() => {
         showDraftToast(isEn ? `Draft auto-saved at ${draft.savedAt}` : `Draf tersimpan otomatis pukul ${draft.savedAt}`);
       }, 400);
-    } catch (e) {}
+    } catch (e) { }
   };
 
   const handleFormInput = () => {
@@ -204,7 +259,7 @@ export function initRegistrationDraft(
         if (draft.alasan_divisi_2 && document.getElementById('alasan_divisi_2')) { (document.getElementById('alasan_divisi_2') as HTMLTextAreaElement).value = draft.alasan_divisi_2; count++; }
         if (draft.portofolio_medhum && medhumPortoInput) { medhumPortoInput.value = draft.portofolio_medhum; count++; }
         if (draft.bersedia_dipindah && document.getElementById('bersedia_dipindah')) { (document.getElementById('bersedia_dipindah') as HTMLSelectElement).value = draft.bersedia_dipindah; count++; }
-        
+
         toggleMedhumPorto();
 
         if (count > 0) {
@@ -215,7 +270,7 @@ export function initRegistrationDraft(
           }
         }
       }
-    } catch (e) {}
+    } catch (e) { }
     updateWordCounters();
   };
 
@@ -230,7 +285,7 @@ export function initRegistrationDraft(
       if (clearDraftBtn) clearDraftBtn.style.display = 'none';
       if (clearDraftModal) clearDraftModal.style.display = 'none';
       showDraftToast(isEn ? 'Draft cleared' : 'Draf berhasil dihapus', false);
-    } catch (e) {}
+    } catch (e) { }
     updateWordCounters();
   };
 

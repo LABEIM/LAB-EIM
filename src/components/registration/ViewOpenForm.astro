@@ -306,14 +306,23 @@ for (let i = 0; i < standardDocs.length; i += 2) {
 
     {/* Dynamic Portfolio Link */}
     {portoState !== 'disabled' && (
-      <div class="form-group medhum-porto-container" id="container-medhum-porto">
-        <label for="portofolio_medhum" class="medhum-porto-label">
+      <div
+        class="form-group medhum-porto-container"
+        id="container-medhum-porto"
+        data-porto-state={portoState}
+        style={portoState === 'only_trigger' ? 'display: none;' : 'display: block;'}
+      >
+        <label for="portofolio_medhum" class="medhum-porto-label" id="label-medhum-porto">
           <i class="fa-solid fa-palette reg-icon-mr"></i> {t('form.portfolioLink', locale)}
-          {portoState === 'required' ? <span class="required-asterisk">*</span> : <span class="reg-file-label-small">(Opsional)</span>}
+          <span id="porto-required-indicator">
+            <span class="reg-file-label-small">(Opsional)</span>
+          </span>
         </label>
-        <input type="url" class="form-control" id="portofolio_medhum" placeholder={t('form.portfolioPlaceholder', locale)} required={portoState === 'required'} />
-        <small class="reg-small-desc">
-          Karena Anda memilih divisi yang membutuhkan portofolio, sertakan tautan URL publik portofolio desain/karya Anda.
+        <input type="url" class="form-control" id="portofolio_medhum" placeholder={t('form.portfolioPlaceholder', locale)} required={false} />
+        <small class="reg-small-desc" id="porto-help-text">
+          {locale === 'en'
+            ? 'Include a link to your public portfolio, best work, or certificates.'
+            : 'Sertakan tautan URL publik portofolio, karya terbaik, atau sertifikat pendukung Anda.'}
         </small>
       </div>
     )}

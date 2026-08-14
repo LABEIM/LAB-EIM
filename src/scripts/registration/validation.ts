@@ -172,7 +172,12 @@ export function validateRegistrationForm(
     }
   }
 
-  if ((requiresPortfolio(divisi_1) || requiresPortfolio(divisi_2)) && !portofolio_medhum) {
+  const portoContainer = document.getElementById('container-medhum-porto');
+  const portoState = portoContainer?.getAttribute('data-porto-state') || 'required';
+  const isTriggerDiv = requiresPortfolio(divisi_1) || requiresPortfolio(divisi_2);
+  const isPortoRequired = (portoState === 'required' || portoState === 'only_trigger') && isTriggerDiv;
+
+  if (isPortoRequired && !portofolio_medhum) {
     return {
       valid: false,
       errorMsg: isEn

@@ -43,7 +43,7 @@ This document is a step-by-step guide for setting up, configuring, and operating
    * **`FOLDER_ID`**: *(Optional)* The ID of a Google Drive folder where uploaded applicant PDFs will be saved. If left blank, the script automatically creates a folder named `"EIM Recruitment Uploads"` and caches its ID.
    * **`MAX_FILE_SIZE_MB`**: `10` *(Optional. Maximum file size in MB per uploaded document, defaults to `10`)*
    * **`MAKE_FILES_PUBLIC`**: `true` *(Optional. Set to `true` if uploaded Drive links should be viewable via link by candidates. Defaults to `false`)*
-   * **`PORTFOLIO_DIVISIONS`**: `Medhum` *(Optional. Comma-separated division values requiring portfolio links, e.g. `Medhum, Riset, Design`. Defaults to `Medhum`)*
+   * **`PORTFOLIO_DIVISIONS`**: `Medhum` *(Optional. Comma-separated division values requiring portfolio links, e.g. `Medhum, Riset, Design`. Defaults to `Medhum`. Controlled via Keystatic CMS with four configurable modes: `required` [wajib divisi tertentu & opsional divisi lain], `only_trigger` [wajib hanya divisi tertentu & disembunyikan divisi lain], `optional` [opsional untuk semua divisi], and `disabled` [disembunyikan untuk semua divisi])*
    * **`WA_GROUP_URL`**: `https://chat.whatsapp.com/YOUR_GROUP_INVITE_CODE` *(Optional. Official WhatsApp group invite URL for applicants. Must start with `https://chat.whatsapp.com/` or `https://wa.me/` for security)*
 
 ### 3. Google Drive Folder & Security Permissions Guide
@@ -67,7 +67,7 @@ If you need to customize email text, sheet tab names, or folder fallback logic:
   * Automatically rejects any form submissions sent before `OPEN_DATE` or after `DEADLINE` to prevent local clock manipulation attacks.
 * **Confirmation Email & Document Verification Links** (`code.gs` Lines 224–315):
   * Recipient Email validation & Daily Quota check.
-  * Dynamically includes portfolio links under **Link Portofolio** only if the candidate chose a portfolio-requiring division.
+  * Dynamically includes candidate portfolio links under **Link Portofolio** whenever provided.
   * Includes direct verification links for all uploaded candidate documents (KSM, KHS, ML, CV, PI).
 
 

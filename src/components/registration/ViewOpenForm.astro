@@ -320,7 +320,7 @@ for (let i = 0; i < standardDocs.length; i += 2) {
         </label>
         <input type="url" class="form-control" id="portofolio_medhum" placeholder={t('form.portfolioPlaceholder', locale)} required={false} />
         <small class="reg-small-desc" id="porto-help-text">
-          {locale === 'en'
+          {(locale as string) === 'en'
             ? 'Include a link to your public portfolio, best work, or certificates.'
             : 'Sertakan tautan URL publik portofolio, karya terbaik, atau sertifikat pendukung Anda.'}
         </small>

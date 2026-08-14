@@ -72,7 +72,7 @@ jobs:
       name: ${{ github.event_name == 'pull_request' && 'preview' || 'production' }}
       url: ${{ steps.deploy_cloudflare.outputs.url }}
     outputs:
-      deploy_url: ${{ steps.deploy_cloudflare.outputs.url }}
+      deploy_url: ${{ steps.deploy_cloudflare.outputs.deploy_url || steps.deploy_cloudflare.outputs.url }}
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
@@ -94,8 +94,12 @@ jobs:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
         run: |
-          PROJECT_NAME="${{ secrets.CLOUDFLARE_PROJECT_NAME || 'lab-eim' }}"
-          BRANCH_NAME="${{ github.head_ref || github.ref_name }}"
+          RAW_PROJECT_NAME="${{ secrets.CLOUDFLARE_PROJECT_NAME }}"
+          PROJECT_NAME="${RAW_PROJECT_NAME:-lab-eim}"
+          
+          RAW_HEAD_REF="${{ github.head_ref }}"
+          RAW_REF_NAME="${{ github.ref_name }}"
+          BRANCH_NAME="${RAW_HEAD_REF:-$RAW_REF_NAME}"
           
           # Auto-create Pages project shell if it does not exist yet
           npx wrangler pages project create "$PROJECT_NAME" --production-branch="main" > /dev/null 2>&1 || true
@@ -103,13 +107,18 @@ jobs:
           # Deploy prebuilt static assets to Cloudflare Pages / Workers
           npx wrangler pages deploy dist --project-name="$PROJECT_NAME" --branch="$BRANCH_NAME" --commit-dirty=true 2>&1 | tee deploy.log
 
-          # Extract live deployment URL (.pages.dev or .workers.dev)
-          DEPLOY_URL=$(grep -oE 'https://[a-zA-Z0-9.-]+\.(pages\.dev|workers\.dev)' deploy.log | grep -v 'dash.cloudflare.com' | grep -v 'api.cloudflare.com' | head -n 1)
+          # Extract live deployment URL (.pages.dev or .workers.dev) safely using Node.js
+          DEPLOY_URL=$(node -e "
+            const fs = require('fs');
+            if (!fs.existsSync('deploy.log')) process.exit(0);
+            const log = fs.readFileSync('deploy.log', 'utf8');
+            const cleanLog = log.replace(/\x1B\[[0-9;]*[a-zA-Z]/g, '');
+            const matches = cleanLog.match(/https:\/\/[a-zA-Z0-9.-]+\.(pages\.dev|workers\.dev)/g) || [];
+            const valid = matches.find(u => !u.includes('dash.cloudflare.com') && !u.includes('api.cloudflare.com'));
+            if (valid) console.log(valid.trim());
+          ")
 
-          # Clean up any ANSI escape codes or carriage returns
-          DEPLOY_URL=$(echo "$DEPLOY_URL" | sed 's/\x1b\[[0-9;]*m//g' | tr -d '\r\n')
-
-          # Fallback to standard Cloudflare Pages branch preview URL pattern if grep returned empty
+          # Fallback to standard Cloudflare Pages branch preview URL pattern if extraction was empty
           if [ -z "$DEPLOY_URL" ]; then
             CLEAN_BRANCH=$(echo "$BRANCH_NAME" | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z0-9]/-/g' | sed 's/^-//;s/-$//')
             if [ "$CLEAN_BRANCH" = "main" ] || [ "$CLEAN_BRANCH" = "master" ]; then
@@ -118,8 +127,12 @@ jobs:
               DEPLOY_URL="https://${CLEAN_BRANCH}.${PROJECT_NAME}.pages.dev"
             fi
           fi
+
+          DEPLOY_URL=$(echo "$DEPLOY_URL" | tr -d '\r\n ')
+
           echo "Captured live deployment URL: $DEPLOY_URL"
           echo "url=$DEPLOY_URL" >> $GITHUB_OUTPUT
+          echo "deploy_url=$DEPLOY_URL" >> $GITHUB_OUTPUT
 
   deploy-vercel:
     name: Deploy to Vercel (Parallel Target)
@@ -190,6 +203,9 @@ jobs:
           CF_URL: ${{ needs.deploy-cloudflare.outputs.deploy_url }}
           VERCEL_URL: ${{ needs.deploy-vercel.outputs.deploy_url }}
         run: |
+          echo "Captured CF_URL: '$CF_URL'"
+          echo "Captured VERCEL_URL: '$VERCEL_URL'"
+
           COMMENT_BODY="🚀 **Preview Deployments Ready!**"
           if [ -n "$CF_URL" ]; then
             COMMENT_BODY="$COMMENT_BODY

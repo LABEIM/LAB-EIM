@@ -23,6 +23,11 @@ concurrency:
 
 env:
   ASTRO_TELEMETRY_DISABLED: 1
+  # NOTE: This MUST be a plain env var, NOT a secret.
+  # GitHub Actions masks any job output containing a secret substring,
+  # which causes deploy URLs containing the project name to be silently
+  # dropped (the "Skip output ... since it may contain secret" warning).
+  CF_PAGES_PROJECT: lab-eim
 
 jobs:
   validate:
@@ -91,8 +96,8 @@ jobs:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
         run: |
-          RAW_PROJECT_NAME="${{ secrets.CLOUDFLARE_PROJECT_NAME }}"
-          PROJECT_NAME="${RAW_PROJECT_NAME:-lab-eim}"
+          # Use non-secret env var to avoid GitHub masking the output URL
+          PROJECT_NAME="${CF_PAGES_PROJECT}"
           
           RAW_HEAD_REF="${{ github.head_ref }}"
           RAW_REF_NAME="${{ github.ref_name }}"
@@ -137,8 +142,17 @@ jobs:
           DEPLOY_URL=$(echo "$DEPLOY_URL" | tr -cd 'a-zA-Z0-9.:/_-')
 
           echo "Captured live deployment URL: $DEPLOY_URL"
-          echo "url=$DEPLOY_URL" >> $GITHUB_OUTPUT
           echo "deploy_url=$DEPLOY_URL" >> $GITHUB_OUTPUT
+
+          # Also write to file as artifact fallback (immune to secret masking)
+          echo "$DEPLOY_URL" > cf_deploy_url.txt
+
+      - name: Upload CF deploy URL artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: cf-deploy-url
+          path: cf_deploy_url.txt
+          retention-days: 1
 
   deploy-vercel:
     name: Deploy to Vercel (Parallel Target)
@@ -198,6 +212,13 @@ jobs:
     permissions:
       pull-requests: write
     steps:
+      - name: Download CF deploy URL artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: cf-deploy-url
+          path: .
+        continue-on-error: true
+
       - name: Build comment body
         id: build_body
         env:
@@ -205,6 +226,13 @@ jobs:
           VERCEL_URL: ${{ needs.deploy-vercel.outputs.deploy_url }}
         run: |
           CF_CLEAN=$(echo "$CF_URL" | tr -cd 'a-zA-Z0-9.:/_-')
+
+          # Fallback: read CF URL from artifact if job output was masked
+          if [ -z "$CF_CLEAN" ] && [ -f cf_deploy_url.txt ]; then
+            CF_CLEAN=$(cat cf_deploy_url.txt | tr -cd 'a-zA-Z0-9.:/_-')
+            echo "Recovered CF URL from artifact fallback"
+          fi
+
           VERCEL_CLEAN=$(echo "$VERCEL_URL" | tr -cd 'a-zA-Z0-9.:/_-')
 
           echo "Captured CF_URL: '$CF_CLEAN'"

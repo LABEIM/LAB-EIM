@@ -21,7 +21,7 @@
     "@astrojs/check": "^0.9.9",
     "@astrojs/cloudflare": "^12.3.0",
     "@astrojs/react": "^6.0.0",
-    "@astrojs/vercel": "^11.0.3",
+    "@astrojs/vercel": "^11.0.5",
     "@fontsource/inter": "^5.1.0",
     "@fontsource/montserrat": "^5.1.0",
     "@fontsource/poppins": "^5.1.0",

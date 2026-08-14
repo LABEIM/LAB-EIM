@@ -260,11 +260,11 @@ jobs:
           RETRY_DELAY=10
           for ATTEMPT in $(seq 1 $MAX_RETRIES); do
             echo "::group::Deployment attempt $ATTEMPT/$MAX_RETRIES"
-            DEPLOY_URL=$(vercel deploy $PROD_FLAG --yes --token=${{ secrets.VERCEL_TOKEN }} 2>&1 | tee /dev/stderr | grep -oP 'https://[^\s]+\.vercel\.app' | head -1) && {
+            if vercel deploy $PROD_FLAG --yes --token=${{ secrets.VERCEL_TOKEN }} 2>&1 | tee deploy.log; then
               echo "::endgroup::"
               echo "Deployment succeeded on attempt $ATTEMPT"
               break
-            }
+            fi
             echo "::endgroup::"
             if [ "$ATTEMPT" -lt "$MAX_RETRIES" ]; then
               echo "Attempt $ATTEMPT failed, retrying in ${RETRY_DELAY}s..."
@@ -276,7 +276,25 @@ jobs:
             fi
           done
 
+          # Extract deployment URL — strip ANSI codes, find .vercel.app URL
+          DEPLOY_URL=$(sed 's/\x1B\[[0-9;]*[a-zA-Z]//g' deploy.log \
+            | grep -oP 'https://[a-zA-Z0-9.-]+\.vercel\.app' \
+            | grep -iv 'vercel\.com' \
+            | head -1 \
+            | tr -cd 'a-zA-Z0-9.:/_-')
+
+          echo "Captured live Vercel deployment URL: $DEPLOY_URL"
           echo "deploy_url=$DEPLOY_URL" >> $GITHUB_OUTPUT
+
+          # Also write to file as artifact fallback (immune to secret masking)
+          echo "$DEPLOY_URL" > vercel_deploy_url.txt
+
+      - name: Upload Vercel deploy URL artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: vercel-deploy-url
+          path: vercel_deploy_url.txt
+          retention-days: 1
 
       - name: Deployment summary
         run: |
@@ -309,6 +327,13 @@ jobs:
           path: .
         continue-on-error: true
 
+      - name: Download Vercel deploy URL artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: vercel-deploy-url
+          path: .
+        continue-on-error: true
+
       - name: Build comment body
         id: build_body
         env:
@@ -324,6 +349,12 @@ jobs:
           fi
 
           VERCEL_CLEAN=$(echo "$VERCEL_URL" | tr -cd 'a-zA-Z0-9.:/_-')
+
+          # Fallback: read Vercel URL from artifact if job output was masked
+          if [ -z "$VERCEL_CLEAN" ] && [ -f vercel_deploy_url.txt ]; then
+            VERCEL_CLEAN=$(cat vercel_deploy_url.txt | tr -cd 'a-zA-Z0-9.:/_-')
+            echo "Recovered Vercel URL from artifact fallback"
+          fi
 
           echo "Captured CF_URL: '$CF_CLEAN'"
           echo "Captured VERCEL_URL: '$VERCEL_CLEAN'"

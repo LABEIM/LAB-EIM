@@ -166,6 +166,7 @@ Each step in `selectionSteps` can use one of three **Step View Templates** depen
 
 ### Automatic vs Manual Stage Overrides:
 * **`"status": "auto"`** *(Recommended)*: System automatically computes the current active stage based on system time vs the global and dynamic step dates.
+* **Site-Wide Dynamic Client-Side Sync** ([`src/scripts/global-stage-sync.ts`](file:///home/arukast/Projects/website-eim/src/scripts/global-stage-sync.ts)): Even on static SSG deployments, the site dynamically evaluates current time on client load across all pages. The Navbar CTA button (`Kontak` vs `Join Us`), Global Announcement Banner, and Homepage Hero Action Button (`#hero-recruitment-btn`) automatically update in real time when recruitment dates pass, with inline script execution to eliminate layout shift (FOUC).
 * **Manual Override**: You can force any stage by entering its key in **Recruitment Stage Status Override**:
 
 | Desired Live Stage | Key to Enter in Status Override |

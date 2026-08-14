@@ -1,4 +1,7 @@
+import { initGlobalStageSync } from '../global-stage-sync';
+
 export function initNavbar(): void {
+  initGlobalStageSync();
   const navbar = document.getElementById('navbar');
   const handleScroll = () => {
     if (window.scrollY > 50) {

@@ -254,6 +254,11 @@ export function syncRegistrationStage(container: HTMLElement): RecruitmentStage 
   }
 
   updateGlobalAnnouncementBanner(activeStage);
+  if (typeof window !== 'undefined') {
+    try {
+      window.dispatchEvent(new CustomEvent('eim:stage-changed', { detail: { stage: activeStage } }));
+    } catch (e) {}
+  }
 
   return activeStage;
 }

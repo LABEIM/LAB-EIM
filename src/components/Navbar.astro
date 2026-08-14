@@ -46,7 +46,22 @@ const isActive = (rawHref: string) => {
 };
 ---
 
-<nav class="navbar" id="navbar">
+<nav
+  class="navbar"
+  id="navbar"
+  data-status={registrationData?.status || 'auto'}
+  data-timezone-offset={registrationData?.timezoneOffset || '+07:00'}
+  data-upcoming-start-date={registrationData?.upcomingStartDate || ''}
+  data-open-date={registrationData?.openDate || ''}
+  data-deadline={registrationData?.deadline || ''}
+  data-extended-deadline={registrationData?.extendedDeadline || ''}
+  data-announcement-date={registrationData?.announcementDate || ''}
+  data-selection-steps={JSON.stringify(registrationData?.selectionSteps || [])}
+  data-join-label={t('nav.joinUs', locale)}
+  data-contact-label={t('nav.contact', locale)}
+  data-join-href={getLocalizedPath('/registration', locale)}
+  data-contact-href={getLocalizedPath('/contact', locale)}
+>
   <div class="container">
     <a href={getLocalizedPath('/', locale)} class="logo-container">
       <div class="logo-icon">
@@ -81,6 +96,67 @@ const isActive = (rawHref: string) => {
     </div>
   </div>
 </nav>
+
+<script is:inline>
+  (function() {
+    try {
+      var nav = document.getElementById('navbar');
+      if (!nav) return;
+      var cta = nav.querySelector('.nav-cta');
+      if (!cta) return;
+
+      var status = nav.getAttribute('data-status') || 'auto';
+      var openStr = nav.getAttribute('data-open-date');
+      var deadlineStr = nav.getAttribute('data-deadline');
+      var extStr = nav.getAttribute('data-extended-deadline');
+      var offset = nav.getAttribute('data-timezone-offset') || '+07:00';
+
+      function parseDate(s) {
+        if (!s) return 0;
+        var t = s.trim();
+        if (/^\d{4}-\d{2}-\d{2}[T ]\d{2}:\d{2}:\d{2}$/.test(t)) {
+          t += offset;
+        }
+        var ms = new Date(t).getTime();
+        return isNaN(ms) ? 0 : ms;
+      }
+
+      var now = Date.now();
+      var openMs = parseDate(openStr);
+      var deadlineMs = parseDate(deadlineStr);
+      var extMs = parseDate(extStr);
+
+      var isActive = false;
+      if (status === 'open' || status === 'extended') {
+        isActive = true;
+      } else if (status === 'auto') {
+        if (openMs > 0 && now >= openMs && deadlineMs > 0 && now < deadlineMs) {
+          isActive = true;
+        } else if (extMs > 0 && now >= deadlineMs && now < extMs) {
+          isActive = true;
+        }
+      }
+
+      var joinLabel = nav.getAttribute('data-join-label') || 'Join Us';
+      var contactLabel = nav.getAttribute('data-contact-label') || 'Kontak';
+      var joinHref = nav.getAttribute('data-join-href') || '/registration';
+      var contactHref = nav.getAttribute('data-contact-href') || '/contact';
+
+      var span = cta.querySelector('span');
+      if (isActive) {
+        cta.setAttribute('href', joinHref);
+        if (span) span.textContent = joinLabel;
+        cta.classList.add('nav-cta-join');
+        cta.classList.remove('nav-cta-contact');
+      } else {
+        cta.setAttribute('href', contactHref);
+        if (span) span.textContent = contactLabel;
+        cta.classList.add('nav-cta-contact');
+        cta.classList.remove('nav-cta-join');
+      }
+    } catch(e) {}
+  })();
+</script>
 
 <script>
   import { initNavbar } from '../scripts/components/navbar';

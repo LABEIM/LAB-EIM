@@ -69,8 +69,13 @@ if (!actionBtn) {
           <div class="hero-actions">
             {currentStage !== 'closed' && actionBtn ? (
               <>
-                <a href={getLocalizedPath('/registration', locale)} class="btn btn-primary hero-action-primary">
-                  {actionBtn.label} <i class={`fa-solid ${actionBtn.icon}`}></i>
+                <a
+                  href={getLocalizedPath('/registration', locale)}
+                  class="btn btn-primary hero-action-primary"
+                  id="hero-recruitment-btn"
+                  data-join-href={getLocalizedPath('/registration', locale)}
+                >
+                  <span class="hero-btn-text">{actionBtn.label}</span> <i class={`fa-solid ${actionBtn.icon}`}></i>
                 </a>
                 <a href={getLocalizedPath('/about', locale)} class="btn btn-secondary">
                   {t('nav.about', locale)} <i class="fa-solid fa-circle-info"></i>
@@ -87,6 +92,41 @@ if (!actionBtn) {
               </>
             )}
           </div>
+          <script is:inline>
+            (function() {
+              try {
+                var btn = document.getElementById('hero-recruitment-btn');
+                var nav = document.getElementById('navbar') || document.getElementById('global-announcement-banner');
+                if (!btn || !nav) return;
+
+                var status = nav.getAttribute('data-status') || 'auto';
+                var openStr = nav.getAttribute('data-open-date');
+                var deadlineStr = nav.getAttribute('data-deadline');
+                var offset = nav.getAttribute('data-timezone-offset') || '+07:00';
+
+                function parseDate(s) {
+                  if (!s) return 0;
+                  var t = s.trim();
+                  if (/^\d{4}-\d{2}-\d{2}[T ]\d{2}:\d{2}:\d{2}$/.test(t)) {
+                    t += offset;
+                  }
+                  var ms = new Date(t).getTime();
+                  return isNaN(ms) ? 0 : ms;
+                }
+
+                var now = Date.now();
+                var openMs = parseDate(openStr);
+                var deadlineMs = parseDate(deadlineStr);
+
+                if (status === 'open' || (status === 'auto' && openMs > 0 && now >= openMs && deadlineMs > 0 && now < deadlineMs)) {
+                  var span = btn.querySelector('.hero-btn-text') || btn.querySelector('span');
+                  var icon = btn.querySelector('i');
+                  if (span) span.textContent = 'Register as Assistant Now';
+                  if (icon) icon.className = 'fa-solid fa-user-plus';
+                }
+              } catch(e) {}
+            })();
+          </script>
         </div>
         <div class="hero-visual">
           <div class="visual-orbit">

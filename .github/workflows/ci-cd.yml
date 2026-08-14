@@ -70,9 +70,9 @@ jobs:
       deployments: write
     environment:
       name: ${{ github.event_name == 'pull_request' && 'preview' || 'production' }}
-      url: ${{ steps.deploy_cloudflare.outputs.url }}
+      url: ${{ steps.deploy_cloudflare.outputs.deploy_url }}
     outputs:
-      deploy_url: ${{ steps.deploy_cloudflare.outputs.deploy_url || steps.deploy_cloudflare.outputs.url }}
+      deploy_url: ${{ steps.deploy_cloudflare.outputs.deploy_url }}
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4

@@ -101,12 +101,22 @@ jobs:
           npx wrangler pages project create "$PROJECT_NAME" --production-branch="main" > /dev/null 2>&1 || true
 
           # Deploy prebuilt static assets to Cloudflare Pages / Workers
-          npx wrangler pages deploy dist --project-name="$PROJECT_NAME" --branch="$BRANCH_NAME" --commit-dirty=true | tee deploy.log
+          npx wrangler pages deploy dist --project-name="$PROJECT_NAME" --branch="$BRANCH_NAME" --commit-dirty=true 2>&1 | tee deploy.log
 
-          # Extract live deployment URL (.workers.dev or .pages.dev)
-          DEPLOY_URL=$(grep -oE 'https://[a-zA-Z0-9.-]+\.(workers\.dev|pages\.dev)' deploy.log | head -n 1)
+          # Extract live deployment URL (.pages.dev or .workers.dev)
+          DEPLOY_URL=$(grep -oE 'https://[a-zA-Z0-9.-]+\.(pages\.dev|workers\.dev)' deploy.log | grep -v 'dash.cloudflare.com' | grep -v 'api.cloudflare.com' | head -n 1)
+
+          # Clean up any ANSI escape codes or carriage returns
+          DEPLOY_URL=$(echo "$DEPLOY_URL" | sed 's/\x1b\[[0-9;]*m//g' | tr -d '\r\n')
+
+          # Fallback to standard Cloudflare Pages branch preview URL pattern if grep returned empty
           if [ -z "$DEPLOY_URL" ]; then
-            DEPLOY_URL="https://${PROJECT_NAME}.laboratoriumeim.workers.dev"
+            CLEAN_BRANCH=$(echo "$BRANCH_NAME" | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z0-9]/-/g' | sed 's/^-//;s/-$//')
+            if [ "$CLEAN_BRANCH" = "main" ] || [ "$CLEAN_BRANCH" = "master" ]; then
+              DEPLOY_URL="https://${PROJECT_NAME}.pages.dev"
+            else
+              DEPLOY_URL="https://${CLEAN_BRANCH}.${PROJECT_NAME}.pages.dev"
+            fi
           fi
           echo "Captured live deployment URL: $DEPLOY_URL"
           echo "url=$DEPLOY_URL" >> $GITHUB_OUTPUT

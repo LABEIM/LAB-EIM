@@ -67,13 +67,10 @@ const hasConditional = Object.keys(conditionalAttrs).length > 0;
     <div class="field-label-line">
       <label for={field.id} class="field-title-label">
         {field.label}
-        {field.type === 'file' && (
-          <span class="reg-file-label-small"> ({formatExtsLabel(field.acceptExtensions)} • Max {field.maxMb || 2}MB)</span>
-        )}
         {isRequired ? <span class="required-asterisk">*</span> : isOptional ? <span class="reg-file-label-small"> (Opsional)</span> : null}
       </label>
 
-      {field.templateUrl && (
+      {field.templateUrl && field.type !== 'file' && (
         <a 
           href={field.templateUrl} 
           target="_blank" 
@@ -87,9 +84,29 @@ const hasConditional = Object.keys(conditionalAttrs).length > 0;
       )}
     </div>
 
-    {field.description && (
+    {field.type === 'file' ? (
+      <p class="field-hint-desc">
+        Format: {formatExtsLabel(field.acceptExtensions)} • Max {field.maxMb || 2}MB
+        {field.templateUrl && (
+          <span class="reg-template-inline-wrap">
+            {" • "}
+            <a 
+              href={field.templateUrl} 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              class="reg-pi-link-inline"
+              title="Buka atau unduh berkas template"
+            >
+              <i class="fa-solid fa-file-arrow-down"></i>
+              <span>{field.templateLabel || 'Unduh Template'}</span>
+            </a>
+          </span>
+        )}
+        {field.description ? ` — ${field.description}` : ''}
+      </p>
+    ) : field.description ? (
       <p class="field-hint-desc">{field.description}</p>
-    )}
+    ) : null}
   </div>
 
   {field.type === 'text' && (
@@ -128,7 +145,7 @@ const hasConditional = Object.keys(conditionalAttrs).length > 0;
   )}
 
   {field.type === 'textarea' && (
-    <div>
+    <div class="textarea-control-block">
       <textarea 
         id={field.id} 
         name={field.id} 
@@ -222,6 +239,10 @@ const hasConditional = Object.keys(conditionalAttrs).length > 0;
 </div>
 
 <style>
+  .textarea-control-block {
+    width: 100%;
+  }
+
   .field-header-block {
     margin-bottom: 6px;
   }
@@ -328,5 +349,32 @@ const hasConditional = Object.keys(conditionalAttrs).length > 0;
   .file-name-display.has-file {
     color: var(--brand-dark-azure, #0E555F);
     font-weight: 600;
+  }
+
+  .dropzone-template-btn {
+    position: relative;
+    z-index: 6;
+    pointer-events: auto;
+    background: rgba(17, 180, 189, 0.08);
+    color: var(--brand-cyan, #11B4BD);
+    border: 1px solid rgba(17, 180, 189, 0.3);
+    font-size: 0.775rem;
+    font-weight: 600;
+    padding: 4px 10px;
+    border-radius: 6px;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+    white-space: nowrap;
+  }
+
+  .dropzone-template-btn:hover {
+    background: var(--brand-cyan, #11B4BD);
+    color: #ffffff;
+    border-color: var(--brand-cyan, #11B4BD);
+    box-shadow: 0 2px 8px rgba(17, 180, 189, 0.3);
   }
 </style>

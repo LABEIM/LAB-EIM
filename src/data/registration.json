@@ -54,7 +54,11 @@
       "placeholder": "Contoh: Ahmad Dahlan",
       "description": "Masukkan nama lengkap sesuai identitas mahasiswa.",
       "sectionId": "section_personal",
-      "validationState": "required"
+      "validationState": "required",
+      "options": [],
+      "conditionalTrigger": {
+        "operator": "includes"
+      }
     },
     {
       "id": "nim",
@@ -63,7 +67,11 @@
       "placeholder": "Contoh: 1202210001",
       "description": "Masukkan NIM aktif Anda.",
       "sectionId": "section_personal",
-      "validationState": "required"
+      "validationState": "required",
+      "options": [],
+      "conditionalTrigger": {
+        "operator": "includes"
+      }
     },
     {
       "id": "angkatan",
@@ -72,7 +80,12 @@
       "placeholder": "-- Pilih Angkatan Mahasiswa --",
       "sectionId": "section_personal",
       "validationState": "required",
-      "options": ["{{STUDENT_YEARS}}"]
+      "options": [
+        "{{STUDENT_YEARS}}"
+      ],
+      "conditionalTrigger": {
+        "operator": "includes"
+      }
     },
     {
       "id": "email",
@@ -81,7 +94,11 @@
       "placeholder": "Contoh: ahmad@student.telkomuniversity.ac.id",
       "description": "Email aktif untuk konfirmasi & pengumuman seleksi.",
       "sectionId": "section_personal",
-      "validationState": "required"
+      "validationState": "required",
+      "options": [],
+      "conditionalTrigger": {
+        "operator": "includes"
+      }
     },
     {
       "id": "nomor_telp",
@@ -90,7 +107,11 @@
       "placeholder": "Contoh: 081234567890",
       "description": "Nomor WhatsApp aktif untuk koordinasi seleksi.",
       "sectionId": "section_personal",
-      "validationState": "required"
+      "validationState": "required",
+      "options": [],
+      "conditionalTrigger": {
+        "operator": "includes"
+      }
     },
     {
       "id": "divisi_1",
@@ -99,7 +120,12 @@
       "placeholder": "-- Pilih Divisi Utama --",
       "sectionId": "section_division",
       "validationState": "required",
-      "options": ["{{DIVISIONS}}"]
+      "options": [
+        "{{DIVISIONS}}"
+      ],
+      "conditionalTrigger": {
+        "operator": "includes"
+      }
     },
     {
       "id": "divisi_2",
@@ -108,7 +134,12 @@
       "placeholder": "-- Pilih Divisi Cadangan --",
       "sectionId": "section_division",
       "validationState": "required",
-      "options": ["{{DIVISIONS}}"]
+      "options": [
+        "{{DIVISIONS}}"
+      ],
+      "conditionalTrigger": {
+        "operator": "includes"
+      }
     },
     {
       "id": "alasan_divisi_1",
@@ -117,7 +148,11 @@
       "placeholder": "Jelaskan alasan dan motivasi Anda memilih divisi utama (minimal 20 kata)...",
       "sectionId": "section_division",
       "validationState": "required",
-      "minWords": 20
+      "options": [],
+      "minWords": 20,
+      "conditionalTrigger": {
+        "operator": "includes"
+      }
     },
     {
       "id": "alasan_divisi_2",
@@ -126,7 +161,11 @@
       "placeholder": "Jelaskan alasan memilih divisi kedua (minimal 20 kata)...",
       "sectionId": "section_division",
       "validationState": "required",
-      "minWords": 20
+      "options": [],
+      "minWords": 20,
+      "conditionalTrigger": {
+        "operator": "includes"
+      }
     },
     {
       "id": "bersedia_dipindah",
@@ -135,7 +174,13 @@
       "placeholder": "-- Pilih Kesediaan --",
       "sectionId": "section_division",
       "validationState": "required",
-      "options": ["Bersedia", "Tidak Bersedia"]
+      "options": [
+        "Bersedia",
+        "Tidak Bersedia"
+      ],
+      "conditionalTrigger": {
+        "operator": "includes"
+      }
     },
     {
       "id": "portofolio_link",
@@ -145,6 +190,7 @@
       "description": "Wajib diisi jika Anda memilih divisi Media & Humor / Design.",
       "sectionId": "section_division",
       "validationState": "required",
+      "options": [],
       "conditionalTrigger": {
         "fieldId": "divisi_1",
         "operator": "includes",
@@ -157,8 +203,12 @@
       "type": "file",
       "sectionId": "section_documents",
       "validationState": "disabled",
+      "options": [],
       "acceptExtensions": "pdf, png, jpg, jpeg",
-      "maxMb": 3
+      "maxMb": 3,
+      "conditionalTrigger": {
+        "operator": "includes"
+      }
     },
     {
       "id": "file_khs",
@@ -166,8 +216,12 @@
       "type": "file",
       "sectionId": "section_documents",
       "validationState": "required",
+      "options": [],
       "acceptExtensions": "pdf, png, jpg, jpeg",
-      "maxMb": 3
+      "maxMb": 3,
+      "conditionalTrigger": {
+        "operator": "includes"
+      }
     },
     {
       "id": "file_ml",
@@ -175,8 +229,12 @@
       "type": "file",
       "sectionId": "section_documents",
       "validationState": "required",
+      "options": [],
       "acceptExtensions": "pdf, png, jpg, jpeg",
-      "maxMb": 3
+      "maxMb": 3,
+      "conditionalTrigger": {
+        "operator": "includes"
+      }
     },
     {
       "id": "file_cv",
@@ -184,8 +242,12 @@
       "type": "file",
       "sectionId": "section_documents",
       "validationState": "required",
+      "options": [],
       "acceptExtensions": "pdf, png, jpg, jpeg",
-      "maxMb": 5
+      "maxMb": 5,
+      "conditionalTrigger": {
+        "operator": "includes"
+      }
     },
     {
       "id": "file_pi",
@@ -193,10 +255,14 @@
       "type": "file",
       "sectionId": "section_documents",
       "validationState": "required",
+      "options": [],
       "acceptExtensions": "pdf, png, jpg, jpeg",
       "maxMb": 3,
       "templateUrl": "https://docs.google.com/document/d/1Uv-S_jSEJx77hY_96NA_cXjPjOQViHVz/edit?usp=sharing&ouid=105717872277990358898&rtpof=true&sd=true",
-      "templateLabel": "Unduh Template Pakta Integritas"
+      "templateLabel": "Unduh Template Pakta Integritas",
+      "conditionalTrigger": {
+        "operator": "includes"
+      }
     }
   ],
   "fieldStates": {

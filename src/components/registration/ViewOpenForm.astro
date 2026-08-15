@@ -63,19 +63,25 @@ interface FieldRow {
   fields: DynamicFormFieldConfig[];
 }
 
+function isFieldFullWidth(f: DynamicFormFieldConfig): boolean {
+  if (f.type === 'textarea' || f.type === 'radio' || f.type === 'checkbox') return true;
+  if (f.conditionalTrigger && f.conditionalTrigger.fieldId && f.conditionalTrigger.value) return true;
+  return false;
+}
+
 function chunkFieldsIntoRows(fields: DynamicFormFieldConfig[]): FieldRow[] {
   const rows: FieldRow[] = [];
   let i = 0;
   while (i < fields.length) {
     const f1 = fields[i];
-    const isFullWidth1 = f1.type === 'textarea' || f1.type === 'radio' || f1.type === 'checkbox' || Boolean(f1.conditionalTrigger);
+    const isFullWidth1 = isFieldFullWidth(f1);
 
     if (isFullWidth1 || i === fields.length - 1) {
       rows.push({ isRow: false, fields: [f1] });
       i++;
     } else {
       const f2 = fields[i + 1];
-      const isFullWidth2 = f2.type === 'textarea' || f2.type === 'radio' || f2.type === 'checkbox' || Boolean(f2.conditionalTrigger);
+      const isFullWidth2 = isFieldFullWidth(f2);
 
       if (isFullWidth2) {
         rows.push({ isRow: false, fields: [f1] });
@@ -163,7 +169,7 @@ function chunkFieldsIntoRows(fields: DynamicFormFieldConfig[]): FieldRow[] {
           <div class="form-section-heading">
             <i class={secIdx === 0 ? "fa-solid fa-user reg-icon-mr-sm" : secIdx === 1 ? "fa-solid fa-layer-group reg-icon-mr-sm" : "fa-solid fa-folder-open reg-icon-mr-sm"}></i> {secIdx + 1}. {sec.title}
           </div>
-          {sec.description && <p class="reg-small-desc" style="margin-top: -12px; margin-bottom: 18px;">{sec.description}</p>}
+          {sec.description && <p class="reg-small-desc" style="margin-top: -12px; margin-bottom: 8px;">{sec.description}</p>}
           
           {rows.map((row, rIdx) => (
             row.isRow ? (

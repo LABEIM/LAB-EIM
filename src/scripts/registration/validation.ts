@@ -91,13 +91,7 @@ export function validateRegistrationForm(
   nim: string,
   nomor_telp: string,
   divisi_1: string,
-  divisi_2: string,
-  _alasan_divisi_1?: string,
-  _alasan_divisi_2?: string,
-  _minReasonWords?: number,
-  _portofolio_medhum?: string,
-  _requiresPortfolio?: (val: string) => boolean,
-  _docChecks?: DocCheckItem[]
+  divisi_2: string
 ): { valid: boolean; errorMsg?: string } {
   const isEn = formElement?.getAttribute('data-locale') === 'en';
 

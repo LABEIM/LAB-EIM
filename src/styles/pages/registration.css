@@ -397,10 +397,18 @@
 }
 
 .form-group {
-  margin-bottom: 18px;
+  margin-bottom: 20px;
   display: flex;
   flex-direction: column;
   width: 100%;
+  height: 100%;
+}
+
+.field-header-block {
+  margin-top: auto;
+  margin-bottom: 6px;
+  display: flex;
+  flex-direction: column;
 }
 
 .form-group label {
@@ -415,9 +423,10 @@
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 20px;
+  margin-bottom: 20px;
 }
 
-@media (max-width: 640px) {
+@media (max-width: 520px) {
   .form-row {
     grid-template-columns: 1fr;
     gap: 15px;
@@ -1138,7 +1147,7 @@ input[type="file"].form-control::file-selector-button:hover {
 }
 
 .reg-form-row-mt {
-  margin-top: 15px;
+  margin-top: 0;
 }
 
 .reg-small-desc {

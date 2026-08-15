@@ -264,35 +264,51 @@ jobs:
         run: npm install --global vercel@latest
 
       - name: Pull Vercel project settings
-        # Creates .vercel/project.json which the CLI uses to target the right
-        # project.  Must run BEFORE vercel deploy so the project is linked.
-        run: vercel pull --yes --environment=preview --token=${{ secrets.VERCEL_TOKEN }}
+        # vercel pull creates .vercel/project.json (links this working directory
+        # to the Vercel project) and downloads env vars.  Must run before
+        # vercel deploy --prebuilt so the project metadata is in place.
+        run: |
+          ENV_ARG="preview"
+          if [ "${{ github.event_name }}" != "pull_request" ]; then
+            ENV_ARG="production"
+          fi
+          vercel pull --yes --environment="$ENV_ARG" --token=${{ secrets.VERCEL_TOKEN }}
+
+      - name: Build Vercel Output API structure
+        # Vercel's Build Output API (v3) format lets us deploy a pre-built
+        # static site with --prebuilt and completely bypass the server-side
+        # "vercel build" step (which would try to run "astro build" and fail
+        # because the source files are not present on the runner).
+        #
+        # Required structure:
+        #   .vercel/output/
+        #     config.json   — {"version": 3}
+        #     static/       — all static files to serve
+        run: |
+          mkdir -p .vercel/output/static
+          cp -r dist/. .vercel/output/static/
+          printf '{"version":3}\n' > .vercel/output/config.json
+          echo "Vercel Output API structure ready:"
+          ls -la .vercel/output/
 
       - name: Deploy to Vercel (with retry)
         id: deploy
         run: |
           PROD_FLAG=""
-          ENV_FLAG="--environment=preview"
           if [ "${{ github.event_name }}" != "pull_request" ]; then
             PROD_FLAG="--prod"
-            ENV_FLAG="--environment=production"
           fi
 
-          # Re-pull with the correct environment now that we know it.
-          vercel pull --yes $ENV_FLAG --token=${{ secrets.VERCEL_TOKEN }}
-
-          # Deploy with retry logic (3 attempts, exponential backoff).
-          # vercel.json sets buildCommand:null + outputDirectory:dist so the
-          # CLI deploys the pre-built dist/ without triggering a source rebuild.
-          # NOTE: We do NOT parse stdout for the URL — GitHub Actions masks
-          # secrets in all process output and the preview URL often contains a
-          # substring of VERCEL_PROJECT_ID causing silent redaction.
+          # --prebuilt tells the CLI to upload .vercel/output/ directly
+          # and skip ALL server-side building.  The URL is still generated and
+          # printed to stdout, but we retrieve it via API (next step) to avoid
+          # GitHub's secret-masking redacting the hostname.
           MAX_RETRIES=3
           RETRY_DELAY=10
           DEPLOY_EXIT=1
           for ATTEMPT in $(seq 1 $MAX_RETRIES); do
             echo "::group::Deployment attempt $ATTEMPT/$MAX_RETRIES"
-            vercel deploy $PROD_FLAG --yes --token=${{ secrets.VERCEL_TOKEN }} 2>&1
+            vercel deploy --prebuilt $PROD_FLAG --yes --token=${{ secrets.VERCEL_TOKEN }} 2>&1
             DEPLOY_EXIT=$?
             echo "::endgroup::"
             if [ "$DEPLOY_EXIT" -eq 0 ]; then

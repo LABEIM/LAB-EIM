@@ -35,7 +35,8 @@
         "categories:seo": [
           "error",
           { "minScore": 0.9 }
-        ]
+        ],
+        "is-crawlable": "off"
       }
     },
     "upload": {

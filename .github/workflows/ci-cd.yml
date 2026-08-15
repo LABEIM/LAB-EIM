@@ -167,16 +167,36 @@ jobs:
             fi
           done
 
-          # Extract deployment URL — strip ANSI codes, find .pages.dev or .workers.dev URL
-          DEPLOY_URL=$(sed 's/\x1B\[[0-9;]*[a-zA-Z]//g' deploy.log \
-            | grep -oP 'https://[a-zA-Z0-9.-]+\.(pages\.dev|workers\.dev)' \
-            | grep -iv 'dash\.cloudflare\|api\.cloudflare' \
-            | head -1 \
-            | tr -cd 'a-zA-Z0-9.:/_-')
+          CLEAN_BRANCH=$(echo "$BRANCH_NAME" | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z0-9]/-/g; s/^-//; s/-$//')
 
-          # Fallback to standard Cloudflare Pages branch preview URL pattern
+          # Parse wrangler deploy output for canonical Production URL or Branch Preview URL
+          PROD_URL=$(grep -i "Production URL:" deploy.log | grep -oP 'https://[a-zA-Z0-9.-]+\.pages\.dev' | head -1 | tr -cd 'a-zA-Z0-9.:/_-' || true)
+          BRANCH_PREVIEW_URL=$(grep -i "Branch Preview URL:" deploy.log | grep -oP 'https://[a-zA-Z0-9.-]+\.pages\.dev' | head -1 | tr -cd 'a-zA-Z0-9.:/_-' || true)
+
+          DEPLOY_URL=""
+          if [ "$CLEAN_BRANCH" = "main" ] || [ "$CLEAN_BRANCH" = "master" ]; then
+            if [ -n "$PROD_URL" ]; then
+              DEPLOY_URL="$PROD_URL"
+            else
+              DEPLOY_URL="https://${PROJECT_NAME}.pages.dev"
+            fi
+          else
+            if [ -n "$BRANCH_PREVIEW_URL" ]; then
+              DEPLOY_URL="$BRANCH_PREVIEW_URL"
+            fi
+          fi
+
+          # Fallback: if no specific URL captured, look for general pages.dev/workers.dev URL
+          if [ -z "$DEPLOY_URL" ]; then
+            DEPLOY_URL=$(sed 's/\x1B\[[0-9;]*[a-zA-Z]//g' deploy.log \
+              | grep -oP 'https://[a-zA-Z0-9.-]+\.(pages\.dev|workers\.dev)' \
+              | grep -iv 'dash\.cloudflare\|api\.cloudflare' \
+              | head -1 \
+              | tr -cd 'a-zA-Z0-9.:/_-' || true)
+          fi
+
+          # Final fallback: construct standard Cloudflare Pages URL pattern
           if [ -z "$DEPLOY_URL" ] || ! echo "$DEPLOY_URL" | grep -q '^https://'; then
-            CLEAN_BRANCH=$(echo "$BRANCH_NAME" | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z0-9]/-/g; s/^-//; s/-$//')
             if [ "$CLEAN_BRANCH" = "main" ] || [ "$CLEAN_BRANCH" = "master" ]; then
               DEPLOY_URL="https://${PROJECT_NAME}.pages.dev"
             else

@@ -90,11 +90,28 @@ Before ending a session, the agent must perform these tasks:
 
 ## Section 4: Development, Testing & Operations
 
-### 4.1 Coding Standards & Formatting
-1. Indentation: 2 spaces for HTML, CSS, JS, TS, Astro, JSON, and YAML configurations.
-2. Formatting: Enforced using standard Astro framework standards and strict TypeScript compiler settings.
-3. Modular CSS: Component-specific styles must be placed in `src/styles/components/` (e.g. `src/styles/components/navbar.css`) and imported cleanly into the respective component or layout.
-4. Commit conventions: All commits must follow the Conventional Commits specification.
+### 4.1 Best Coding Practices & Standards
+1. **TypeScript & Type Safety**:
+   - Strict typing: Avoid `any` types; use explicit TypeScript interfaces, strict type annotations, and proper Zod schemas.
+   - Data contracts: Reuse existing interfaces in `src/utils/types.ts` rather than redefining data structures locally.
+2. **Clean Code & Maintainability**:
+   - DRY & Single Responsibility: Keep Astro/React components and helper functions modular, readable, and focused on a single responsibility.
+   - Clear naming: Use descriptive, self-documenting names for variables, functions, and components.
+   - Defensive coding & error handling: Handle edge cases and missing dynamic data gracefully. Never swallow exceptions or use silent fallbacks without logging or fallback UI.
+3. **Performance & Resource Optimization**:
+   - Asset optimization: Lazy-load heavy non-critical assets and leverage Astro build optimization.
+   - Island architecture: Keep client JavaScript minimal. Prefer static Astro components unless client-side interactivity (React islands) is explicitly required.
+4. **Accessibility (a11y) & SEO**:
+   - Semantic HTML: Enforce HTML5 semantic tags (`<main>`, `<header>`, `<footer>`, `<nav>`, `<article>`, `<section>`).
+   - Accessible UI: Ensure all interactive elements have accessible label attributes, proper keyboard navigation, and meaningful `alt` text for images.
+   - Heading hierarchy: Maintain a single `<h1>` per page and structured heading levels (`<h2>` -> `<h3>`).
+5. **Modular CSS & Styling**:
+   - Component styles: Place styles in `src/styles/components/` (e.g. `src/styles/components/navbar.css`) and import cleanly into the respective component or layout.
+   - Design system tokens: Use CSS variables from `src/styles/variables.css` instead of hardcoding raw color hex codes or magic values. Avoid inline styles unless dynamically calculated.
+6. **Formatting & Commit Conventions**:
+   - Indentation: 2 spaces for HTML, CSS, JS, TS, Astro, JSON, and YAML configurations.
+   - Formatting: Enforced using standard Astro framework standards and strict TypeScript compiler settings.
+   - Commit conventions: All commits must follow the Conventional Commits specification.
 
 ### 4.2 Testing & Portability
 1. Verification: 

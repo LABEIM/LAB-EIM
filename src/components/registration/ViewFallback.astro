@@ -40,6 +40,26 @@ const {
     items={formDescriptionItems} 
   />
 
+  {/* Countdown Timer */}
+  <div class="registration-timer reg-timer-mb" id="fallback-registration-timer">
+    <div class="timer-block">
+      <div id="f-timer-days" class="reg-timer-val">0</div>
+      <div class="reg-timer-label">Hari</div>
+    </div>
+    <div class="timer-block">
+      <div id="f-timer-hours" class="reg-timer-val">0</div>
+      <div class="reg-timer-label">Jam</div>
+    </div>
+    <div class="timer-block">
+      <div id="f-timer-minutes" class="reg-timer-val">0</div>
+      <div class="reg-timer-label">Menit</div>
+    </div>
+    <div class="timer-block">
+      <div id="f-timer-seconds" class="reg-timer-val-red">0</div>
+      <div class="reg-timer-label">Detik</div>
+    </div>
+  </div>
+
   <div class="info-card-panel">
     <i class="fa-solid fa-triangle-exclamation info-card-icon reg-icon-yellow"></i>
     <p class="reg-msg-p">{fallbackCfg.message}</p>

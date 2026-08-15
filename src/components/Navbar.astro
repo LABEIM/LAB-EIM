@@ -9,7 +9,7 @@ const siteData = await getLocalizedJsonData<any>('site', locale);
 const registrationData = await getLocalizedJsonData<any>('registration', locale);
 
 const recruitmentStage = getCurrentRecruitmentStage(registrationData || {});
-const isRecruitmentActive = recruitmentStage === 'open' || recruitmentStage === 'extended';
+const isRecruitmentActive = recruitmentStage === 'open' || recruitmentStage === 'extended' || recruitmentStage === 'fallback';
 
 const ctaConfig = isRecruitmentActive
   ? { href: getLocalizedPath('/registration', locale), rawHref: '/registration', label: t('nav.joinUs', locale), isJoinUs: true }
@@ -127,7 +127,7 @@ const isActive = (rawHref: string) => {
       var extMs = parseDate(extStr);
 
       var isActive = false;
-      if (status === 'open' || status === 'extended') {
+      if (status === 'open' || status === 'extended' || status === 'fallback') {
         isActive = true;
       } else if (status === 'auto') {
         if (openMs > 0 && now >= openMs && deadlineMs > 0 && now < deadlineMs) {

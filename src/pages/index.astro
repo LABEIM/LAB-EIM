@@ -120,7 +120,7 @@ if (!actionBtn) {
                 var openMs = parseDate(openStr);
                 var deadlineMs = parseDate(deadlineStr);
 
-                if (status === 'open' || (status === 'auto' && openMs > 0 && now >= openMs && deadlineMs > 0 && now < deadlineMs)) {
+                if (status === 'open' || status === 'extended' || status === 'fallback' || (status === 'auto' && openMs > 0 && now >= openMs && deadlineMs > 0 && now < deadlineMs)) {
                   var span = btn.querySelector('.hero-btn-text') || btn.querySelector('span');
                   var icon = btn.querySelector('i');
                   if (span) span.textContent = 'Register as Assistant Now';

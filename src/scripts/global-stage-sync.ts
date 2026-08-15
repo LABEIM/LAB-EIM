@@ -16,7 +16,7 @@ export function syncNavbarCTA(activeStage: string): void {
   const joinHref = navbar.getAttribute('data-join-href') || '/registration';
   const contactHref = navbar.getAttribute('data-contact-href') || '/contact';
 
-  const isRecruitmentActive = activeStage === 'open' || activeStage === 'extended';
+  const isRecruitmentActive = activeStage === 'open' || activeStage === 'extended' || activeStage === 'fallback';
 
   const targetHref = isRecruitmentActive ? joinHref : contactHref;
   const targetLabel = isRecruitmentActive ? joinLabel : contactLabel;

@@ -42,7 +42,7 @@ if (enabledCustomSteps.length > 0) {
 // Compute active step index if activeStage string is provided instead of numeric index
 let computedIndex = activeStepIndex || 1;
 if (activeStage) {
-  if (activeStage === 'upcoming' || activeStage === 'open' || activeStage === 'extended') {
+  if (activeStage === 'upcoming' || activeStage === 'open' || activeStage === 'extended' || activeStage === 'fallback') {
     computedIndex = 1;
   } else if (activeStage === 'announcement') {
     computedIndex = steps.length;

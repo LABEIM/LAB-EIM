@@ -38,28 +38,18 @@ export function initRegistrationTimers(container: HTMLElement): () => void {
     syncRegistrationStage(container);
   });
 
-  // Dynamic Countdown Timers
-  const daysEl = document.getElementById('timer-days');
-  const hoursEl = document.getElementById('timer-hours');
-  const minutesEl = document.getElementById('timer-minutes');
-  const secondsEl = document.getElementById('timer-seconds');
-
-  const uDaysEl = document.getElementById('u-timer-days');
-  const uHoursEl = document.getElementById('u-timer-hours');
-  const uMinutesEl = document.getElementById('u-timer-minutes');
-  const uSecondsEl = document.getElementById('u-timer-seconds');
-
+  // Dynamic Countdown Timers helper
   const applyTimeDisplay = (
     time: TimeRemaining,
-    dEl: HTMLElement | null,
-    hEl: HTMLElement | null,
-    mEl: HTMLElement | null,
-    sEl: HTMLElement | null
+    daysQuery: string,
+    hoursQuery: string,
+    minutesQuery: string,
+    secondsQuery: string
   ) => {
-    if (dEl) dEl.innerText = time.days;
-    if (hEl) hEl.innerText = time.hours;
-    if (mEl) mEl.innerText = time.minutes;
-    if (sEl) sEl.innerText = time.seconds;
+    document.querySelectorAll<HTMLElement>(daysQuery).forEach((el) => (el.innerText = time.days));
+    document.querySelectorAll<HTMLElement>(hoursQuery).forEach((el) => (el.innerText = time.hours));
+    document.querySelectorAll<HTMLElement>(minutesQuery).forEach((el) => (el.innerText = time.minutes));
+    document.querySelectorAll<HTMLElement>(secondsQuery).forEach((el) => (el.innerText = time.seconds));
   };
 
   const updateTimers = () => {
@@ -81,13 +71,21 @@ export function initRegistrationTimers(container: HTMLElement): () => void {
       ? extendedTime 
       : deadlineTime;
 
-    if (uDaysEl) {
-      applyTimeDisplay(formatTimeRemaining(openTime, currentMs), uDaysEl, uHoursEl, uMinutesEl, uSecondsEl);
-    }
+    applyTimeDisplay(
+      formatTimeRemaining(openTime, currentMs),
+      '#u-timer-days',
+      '#u-timer-hours',
+      '#u-timer-minutes',
+      '#u-timer-seconds'
+    );
 
-    if (daysEl) {
-      applyTimeDisplay(formatTimeRemaining(activeDeadline, currentMs), daysEl, hoursEl, minutesEl, secondsEl);
-    }
+    applyTimeDisplay(
+      formatTimeRemaining(activeDeadline, currentMs),
+      '#timer-days, #f-timer-days',
+      '#timer-hours, #f-timer-hours',
+      '#timer-minutes, #f-timer-minutes',
+      '#timer-seconds, #f-timer-seconds'
+    );
   };
 
   updateTimers();

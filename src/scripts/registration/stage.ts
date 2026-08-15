@@ -302,6 +302,12 @@ export function updateGlobalAnnouncementBanner(stage: string): void {
     bText = 'DIPERPANJANG';
     msg = 'Pendaftaran Asisten EIM Research Lab diperpanjang!';
     cta = 'Daftar Sekarang';
+  } else if (stage === 'fallback') {
+    alertType = 'recruitment';
+    iconClass = 'fa-solid fa-user-plus';
+    bText = 'FORM CADANGAN';
+    msg = 'Pendaftaran Asisten EIM Research Lab sedang berlangsung via Formulir Cadangan!';
+    cta = 'Daftar Sekarang';
   } else if (stage === 'upcoming') {
     alertType = 'recruitment';
     iconClass = 'fa-solid fa-calendar-check';

@@ -8,6 +8,7 @@ export type RecruitmentStage =
   | 'open'
   | 'extended'
   | 'announcement'
+  | 'fallback'
   | (string & {});
 
 export interface StageActionConfig {

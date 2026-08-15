@@ -36,6 +36,7 @@ export const STAGE_ACTION_CONFIG: Record<RecruitmentStage, StageActionConfig> = 
   upcoming: { label: 'Recruitment Opening Soon', icon: 'fa-clock' },
   open: { label: 'Register as Assistant Now', icon: 'fa-user-plus' },
   extended: { label: 'Register as Assistant Now', icon: 'fa-user-plus' },
+  fallback: { label: 'Register as Assistant Now', icon: 'fa-user-plus' },
   selection: { label: 'Check Screening Status', icon: 'fa-spinner' },
   selection_results: { label: 'Check Screening Results', icon: 'fa-square-poll-vertical' },
   technical_test: { label: 'Check Technical Test Info', icon: 'fa-laptop-code' },

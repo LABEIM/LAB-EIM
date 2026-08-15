@@ -1,0 +1,145 @@
+---
+import { getCollection } from 'astro:content';
+import Layout from '../../layouts/Layout.astro';
+import { getLocaleFromUrl, getLocalizedJsonData, getCleanSlug } from '../../utils/i18n';
+import { getRegistrationPageConfigs } from '../../utils/registration-config';
+import { parseDivisions } from '../../utils/division-mapper';
+import ViewOpenForm from '../../components/registration/ViewOpenForm.astro';
+import ViewClosed from '../../components/registration/ViewClosed.astro';
+import ViewFallback from '../../components/registration/ViewFallback.astro';
+import ViewUpcoming from '../../components/registration/ViewUpcoming.astro';
+import ContactPersonBox from '../../components/registration/ContactPersonBox.astro';
+import { parseGlobalDateStr } from '../../utils/date';
+
+export async function getStaticPaths() {
+  const events = await getCollection('events');
+  return events.map((event: any) => {
+    const slug = getCleanSlug(event.id);
+    return {
+      params: { slug },
+      props: { event },
+    };
+  });
+}
+
+const locale = getLocaleFromUrl(Astro.url);
+const { event } = Astro.props;
+const rawRegistrationConfig = await getLocalizedJsonData<any>('registration', locale);
+const divisionsData = await getLocalizedJsonData<any>('divisions', locale);
+
+const divisions = parseDivisions(divisionsData);
+
+const eventData = event.data;
+const eventCustomFields = eventData.form_fields || eventData.formFields;
+const eventCustomSections = eventData.form_sections || eventData.formSections;
+
+const registrationConfig = {
+  ...rawRegistrationConfig,
+  heroTitle: eventData.title,
+  title: eventData.title,
+  heroDescription: typeof eventData.description === 'string' ? eventData.description : '',
+  formType: 'event' as const,
+  ...(eventData.open_date || eventData.openDate ? { openDate: eventData.open_date || eventData.openDate } : {}),
+  ...(eventData.deadline ? { deadline: eventData.deadline } : {}),
+  ...(eventData.success_message || eventData.successMessage ? { successMessage: eventData.success_message || eventData.successMessage } : {}),
+  ...(eventCustomSections && eventCustomSections.length > 0 ? { formSections: eventCustomSections } : {}),
+  ...(eventCustomFields && eventCustomFields.length > 0 ? { formFields: eventCustomFields } : {}),
+};
+
+const {
+  formType,
+  formDescriptionTitle,
+  formDescription,
+  formDescriptionItems,
+  successMessage,
+  studentYears,
+  formSections,
+  formFields,
+  docLimits,
+  piTemplateUrl,
+  minReasonWords,
+  openDateStr,
+  deadlineStr,
+  contactPersons,
+  upcomingCfg,
+  extendedCfg,
+  closedCfg,
+  fallbackCfg,
+} = getRegistrationPageConfigs(registrationConfig);
+
+const now = Date.now();
+const openMs = openDateStr ? parseGlobalDateStr(openDateStr) : 0;
+const deadlineMs = deadlineStr ? parseGlobalDateStr(deadlineStr) : (eventData.event_date ? parseGlobalDateStr(eventData.event_date) : 0);
+
+let initialStage = 'open';
+if (eventData.status === 'completed') {
+  initialStage = 'closed';
+} else if (eventData.status === 'upcoming' || (openMs > 0 && now < openMs)) {
+  initialStage = 'upcoming';
+} else if (deadlineMs > 0 && now > deadlineMs) {
+  initialStage = 'closed';
+}
+---
+
+<Layout title={`${eventData.title} - EIM Research Lab`}>
+  <section class="page-header registration-page-header">
+    <div class="container">
+      <div class="page-header-content">
+        <h1>{eventData.title}</h1>
+        <p class="hero-desc">{typeof eventData.description === 'string' ? eventData.description : 'Pendaftaran Kegiatan EIM Research Lab'}</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section-padding" id="registration">
+    <div class="container">
+      <div 
+        class="registration-form-container glass-panel" 
+        id="registration-container" 
+        data-form-type={formType}
+        data-event-id={event.id}
+        data-success-message={successMessage || ''}
+        data-stage={initialStage}
+        data-status="auto"
+        data-timezone-offset="+07:00"
+        data-open-date={openDateStr}
+        data-deadline={deadlineStr} 
+        data-script-url={import.meta.env.PUBLIC_GOOGLE_SHEET_SCRIPT_URL}
+        data-secret-token={import.meta.env.PUBLIC_RECRUITMENT_SECRET}
+      >
+        <script is:inline>
+          (function() {
+            try {
+              var c = document.getElementById('registration-container');
+              if (!c) return;
+              var st = c.getAttribute('data-stage') || 'open';
+              var allViews = document.querySelectorAll('[id^="view-"]');
+              var activeId = 'view-' + st;
+              for (var i = 0; i < allViews.length; i++) {
+                if (allViews[i].id === activeId) {
+                  allViews[i].classList.remove('is-hidden');
+                } else {
+                  allViews[i].classList.add('is-hidden');
+                }
+              }
+            } catch(e) {}
+          })();
+        </script>
+        
+        <ViewUpcoming initialStage={initialStage} upcomingCfg={upcomingCfg} studentYears={studentYears} piTemplateUrl={piTemplateUrl} formDescriptionTitle={formDescriptionTitle} formDescription={formDescription} formDescriptionItems={formDescriptionItems} formFields={formFields} />
+        <ViewOpenForm initialStage={initialStage} registrationConfig={registrationConfig} extendedCfg={extendedCfg} studentYears={studentYears} docLimits={docLimits} divisions={divisions} piTemplateUrl={piTemplateUrl} minReasonWords={minReasonWords} formSections={formSections} formFields={formFields} />
+        <ViewClosed initialStage={initialStage} closedCfg={closedCfg} />
+        <ViewFallback initialStage={initialStage} fallbackCfg={fallbackCfg} piTemplateUrl={piTemplateUrl} formDescriptionTitle={formDescriptionTitle} formDescription={formDescription} formDescriptionItems={formDescriptionItems} />
+        
+        {initialStage !== 'closed' && contactPersons.length > 0 && (
+          <ContactPersonBox contactPersons={contactPersons} />
+        )}
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<script>
+  import { initRegistrationScript } from '../../scripts/registration';
+  initRegistrationScript();
+</script>

@@ -32,7 +32,17 @@ The registration system functions as a dynamic multi-purpose form engine (Google
 
 ### Multi-Form Concurrency & Event-Specific Custom Schemas
 - **Form-Scoped Draft Isolation**: Each form dynamically scopes its local draft storage key to `eim_registration_draft_<eventId_or_formType>`. Multiple forms can be open concurrently in the same browser session without draft interference.
-- **Event-Specific Custom Fields & Dates**: Individual events in Keystatic CMS (`src/content/events/`) can define their own custom `formFields`, `formSections`, `openDate`, `deadline`, and `successMessage`. When visitors open `/registration?event=slug`, the form dynamically renders that specific event's custom questions and deadlines.
+- **Event-Specific Custom Fields & Dates**: Individual events in Keystatic CMS (`src/content/events/`) can define their own custom `formFields`, `formSections`, `openDate`, `deadline`, and `successMessage`. When visitors open `/forms/slug` or `/registration?event=slug`, the form dynamically renders that specific event's custom questions and deadlines.
+
+### Official URL Structure & Printed Poster Redirects
+* **`/forms`**: Public Forms Directory Portal. Displays all **Open**, **Upcoming**, and **Recently Closed (≤ 30 Days)** forms. Automatically hides closed forms older than 30 days.
+* **`/forms/[slug]`**: Direct signup URL for specific events, workshops, or generic forms (e.g. `/forms/cloud-webinar-2026`).
+* **`/open-recruitment`**: Dedicated clean route for Assistant Staff Recruitment pipeline.
+* **`/registration` (Printed Poster Backwards Compatibility)**:
+  > **OPERATIONAL REMINDER FOR STAFF**:
+  > The route `/registration` automatically redirects visitors scanning physical printed posters or using old bookmarks to `/open-recruitment`.
+  > **When the current recruitment batch closes or posters are updated for future cycles**: You can deactivate or edit the redirect block in [`src/pages/registration.astro`](file:src/pages/registration.astro) if you want `/registration` to stop redirecting.
+
 
 
 ---

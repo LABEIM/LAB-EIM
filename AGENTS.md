@@ -62,7 +62,7 @@ Before ending a session, the agent must perform these tasks:
   - `src/styles/pages/`: Page-specific stylesheets.
 - `src/layouts/Layout.astro`: Base wrapper page layout.
 - `src/components/`: Reusable Astro and React UI components (Navbar, Footer, etc.).
-- `src/pages/`: File-system routing directories, including localized routes and Keystatic admin (`/keystatic`).
+- `src/pages/`: File-system routing directories, including forms portal (`/forms`, `/forms/[slug]`), dedicated recruitment (`/open-recruitment`), poster redirect handler (`/registration`), and Keystatic admin (`/keystatic`).
 - `src/utils/`: Business logic, i18n helpers, content filtering, registration logic, and TypeScript interfaces (`i18n.ts`, `content-helpers.ts`, `registration-config.ts`, `recruitment.ts`, `division-mapper.ts`, `types.ts`, `constants.ts`).
 
 ### 2.3 Role-Based Access Control & Scoping (If Applicable)

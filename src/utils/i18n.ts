@@ -33,9 +33,21 @@ export const uiTranslations: Record<Locale, Record<string, string>> = {
     'nav.structure': 'Struktur',
     'nav.event': 'Kegiatan',
     'nav.news': 'Berita',
+    'nav.forms': 'Formulir',
+    'nav.openRecruitment': 'Rekrutmen Asisten',
     'nav.register': 'Pendaftaran',
     'nav.contact': 'Kontak',
     'nav.joinUs': 'Join Us',
+
+    // Forms Portal
+    'forms.portalTitle': 'Formulir & Pendaftaran',
+    'forms.portalSubTitle': 'Akses seluruh formulir pendaftaran kegiatan, workshop, webinar, dan rekrutmen asisten EIM Research Lab.',
+    'forms.openTitle': 'Formulir Pendaftaran Aktif (Open)',
+    'forms.upcomingTitle': 'Formulir Mendatang (Opening Soon)',
+    'forms.closedTitle': 'Formulir Terakhir (Tutup ≤ 30 Hari)',
+    'forms.noOpen': 'Saat ini tidak ada formulir pendaftaran yang sedang dibuka.',
+    'forms.noUpcoming': 'Belum ada formulir pendaftaran mendatang saat ini.',
+    'forms.noClosed': 'Tidak ada formulir yang ditutup dalam 30 hari terakhir.',
 
     // Common Buttons & Badges
     'btn.learnMore': 'Pelajari Selengkapnya',

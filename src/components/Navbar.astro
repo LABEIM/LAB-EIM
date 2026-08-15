@@ -12,7 +12,7 @@ const recruitmentStage = getCurrentRecruitmentStage(registrationData || {});
 const isRecruitmentActive = recruitmentStage === 'open' || recruitmentStage === 'extended' || recruitmentStage === 'fallback';
 
 const ctaConfig = isRecruitmentActive
-  ? { href: getLocalizedPath('/registration', locale), rawHref: '/registration', label: t('nav.joinUs', locale), isJoinUs: true }
+  ? { href: getLocalizedPath('/open-recruitment', locale), rawHref: '/open-recruitment', label: t('nav.joinUs', locale), isJoinUs: true }
   : { href: getLocalizedPath('/contact', locale), rawHref: '/contact', label: t('nav.contact', locale), isJoinUs: false };
 
 const pathname = Astro.url.pathname;
@@ -29,6 +29,7 @@ const rawLinks = [
   { href: '/about', key: 'nav.about' },
   { href: '/structure', key: 'nav.structure' },
   { href: '/event', key: 'nav.event' },
+  { href: '/forms', key: 'nav.forms' },
   { href: '/news', key: 'nav.news' },
 ];
 
@@ -59,7 +60,7 @@ const isActive = (rawHref: string) => {
   data-selection-steps={JSON.stringify(registrationData?.selectionSteps || [])}
   data-join-label={t('nav.joinUs', locale)}
   data-contact-label={t('nav.contact', locale)}
-  data-join-href={getLocalizedPath('/registration', locale)}
+  data-join-href={getLocalizedPath('/open-recruitment', locale)}
   data-contact-href={getLocalizedPath('/contact', locale)}
 >
   <div class="container">

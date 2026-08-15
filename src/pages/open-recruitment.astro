@@ -1,0 +1,276 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { getCurrentRecruitmentStage } from '../utils/recruitment';
+import { parseDivisions } from '../utils/division-mapper';
+import { getRegistrationPageConfigs } from '../utils/registration-config';
+import { getLocaleFromUrl, getLocalizedJsonData, t } from '../utils/i18n';
+import { DEFAULT_RECRUITMENT_DATES } from '../utils/constants';
+
+import ViewUpcoming from '../components/registration/ViewUpcoming.astro';
+import ViewOpenForm from '../components/registration/ViewOpenForm.astro';
+import ViewAnnouncement from '../components/registration/ViewAnnouncement.astro';
+import ViewClosed from '../components/registration/ViewClosed.astro';
+import ViewFallback from '../components/registration/ViewFallback.astro';
+import DynamicStepView from '../components/registration/DynamicStepView.astro';
+import ContactPersonBox from '../components/registration/ContactPersonBox.astro';
+import SimulationToolbar from '../components/registration/SimulationToolbar.astro';
+import { applySimulationToConfig } from '../utils/simulation';
+
+const locale = getLocaleFromUrl(Astro.url);
+const rawRegistrationConfig = await getLocalizedJsonData<any>('registration', locale);
+const resultsConfig = await getLocalizedJsonData<any>('recruitment_results', locale);
+const divisionsData = await getLocalizedJsonData<any>('divisions', locale);
+
+const divisions = parseDivisions(divisionsData);
+
+const simQueryParam = Astro.url.searchParams.get('sim');
+const stageQueryParam = Astro.url.searchParams.get('stage') || Astro.url.searchParams.get('sim_stage');
+
+const baseRegistrationConfig = (simQueryParam || stageQueryParam)
+  ? applySimulationToConfig(rawRegistrationConfig, simQueryParam ? parseInt(simQueryParam, 10) || 30 : 30, Date.now(), stageQueryParam)
+  : rawRegistrationConfig;
+
+const registrationConfig = {
+  ...baseRegistrationConfig,
+  formType: 'recruitment' as const
+};
+
+const {
+  formType,
+  formDescriptionTitle,
+  formDescription,
+  formDescriptionItems,
+  successMessage,
+  studentYears,
+  formSections,
+  formFields,
+  docLimits,
+  piTemplateUrl,
+  minReasonWords,
+  openDateStr,
+  deadlineStr,
+  extendedDeadlineStr,
+  contactPersons,
+  upcomingCfg,
+  extendedCfg,
+  announcementCfg,
+  closedCfg,
+  fallbackCfg,
+  selectionSteps,
+} = getRegistrationPageConfigs(registrationConfig);
+
+const initialStage = getCurrentRecruitmentStage(registrationConfig);
+
+const candidatesList = resultsConfig.candidates || [];
+const acceptedCandidates = candidatesList.filter((c: any) => c.finalStatus === 'accepted' || c.status === 'accepted');
+
+const candidatesByDivision: Record<string, typeof candidatesList> = {};
+acceptedCandidates.forEach((candidate: any) => {
+  const divisionKey = candidate.division || 'General';
+  if (!candidatesByDivision[divisionKey]) {
+    candidatesByDivision[divisionKey] = [];
+  }
+  candidatesByDivision[divisionKey].push(candidate);
+});
+---
+
+<Layout title={`${registrationConfig.heroTitle || t('reg.title', locale)} - EIM Research Lab`}>
+  <section class="page-header registration-page-header">
+    <div class="container">
+      <div class="page-header-content">
+        <h1 id="page-hero-title">{registrationConfig.heroTitle || t('reg.title', locale)}</h1>
+        <p class="hero-desc" id="page-hero-desc">{registrationConfig.heroDescription || 'Join us and become a part of EIM Research Lab.'}</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section-padding" id="registration">
+    <div class="container">
+      <div 
+        class="registration-form-container glass-panel" 
+        id="registration-container" 
+        data-form-type={formType}
+        data-event-id=""
+        data-success-message={successMessage || ''}
+        data-stage={initialStage}
+        data-status={registrationConfig.status || 'auto'}
+        data-timezone-offset={registrationConfig.timezoneOffset || '+07:00'}
+        data-upcoming-start-date={registrationConfig.upcomingStartDate || DEFAULT_RECRUITMENT_DATES.upcomingStartDate}
+        data-open-date={openDateStr}
+        data-deadline={deadlineStr} 
+        data-extended-deadline={extendedDeadlineStr}
+        data-announcement-date={registrationConfig.announcementDate || DEFAULT_RECRUITMENT_DATES.announcementDate}
+        data-selection-results-date={registrationConfig.selectionResultsDate || DEFAULT_RECRUITMENT_DATES.selectionResultsDate}
+        data-technical-test-start-date={registrationConfig.technicalTestStartDate || DEFAULT_RECRUITMENT_DATES.technicalTestStartDate}
+        data-technical-test-end-date={registrationConfig.technicalTestEndDate || DEFAULT_RECRUITMENT_DATES.technicalTestEndDate}
+        data-interview-start-date={registrationConfig.interviewStartDate || DEFAULT_RECRUITMENT_DATES.interviewStartDate}
+        data-interview-end-date={registrationConfig.interviewEndDate || DEFAULT_RECRUITMENT_DATES.interviewEndDate}
+        data-portfolio-trigger-vals={registrationConfig.portfolioDivisionTriggerValues || "Medhum"}
+        data-min-reason-words={minReasonWords}
+        data-selection-steps={JSON.stringify(selectionSteps)}
+        data-script-url={import.meta.env.PUBLIC_GOOGLE_SHEET_SCRIPT_URL}
+        data-secret-token={import.meta.env.PUBLIC_RECRUITMENT_SECRET}
+      >
+        <script is:inline>
+          (function() {
+            try {
+              var c = document.getElementById('registration-container');
+              if (!c) return;
+              var st = c.getAttribute('data-status') || 'auto';
+              var tzOffset = c.getAttribute('data-timezone-offset') || '+07:00';
+              var now = Date.now();
+              var parseDate = function(str) {
+                if (!str) return 0;
+                var val = str.trim();
+                if (/^\d{4}-\d{2}-\d{2}[T ]\d{2}:\d{2}:\d{2}$/.test(val)) {
+                  val += tzOffset;
+                }
+                return new Date(val).getTime();
+              };
+
+              var rawStepsStr = c.getAttribute('data-selection-steps');
+              var stepsArr = [];
+              try { stepsArr = JSON.parse(rawStepsStr || '[]'); } catch(e) {}
+
+              var stage = st;
+              if (st !== 'auto') {
+                var matched = null;
+                for (var k = 0; k < stepsArr.length; k++) {
+                  if (st === stepsArr[k].id || st === (stepsArr[k].id + '_results')) {
+                    matched = stepsArr[k];
+                    break;
+                  }
+                }
+                if (matched && matched.enabled === false) {
+                  var matchIdx = stepsArr.indexOf(matched);
+                  var fallback = '';
+                  for (var m = matchIdx - 1; m >= 0; m--) {
+                    if (stepsArr[m].enabled !== false) {
+                      fallback = stepsArr[m].resultsDate ? (stepsArr[m].id + '_results') : stepsArr[m].id;
+                      break;
+                    }
+                  }
+                  stage = fallback || 'auto';
+                }
+              }
+
+              if (stage === 'auto') {
+                var uTime = parseDate(c.getAttribute('data-upcoming-start-date'));
+                var oTime = parseDate(c.getAttribute('data-open-date'));
+                var dTime = parseDate(c.getAttribute('data-deadline'));
+                var eTime = parseDate(c.getAttribute('data-extended-deadline'));
+                var aTime = parseDate(c.getAttribute('data-announcement-date'));
+
+                if (uTime > 0 && now < uTime) stage = 'closed';
+                else if (oTime > 0 && now < oTime) stage = 'upcoming';
+                else if (dTime > 0 && now < dTime) stage = 'open';
+                else if (eTime > 0 && now < eTime) stage = 'extended';
+                else {
+                  var enabledSteps = stepsArr.filter(function(s) { return s.enabled !== false; });
+                  var foundStage = '';
+                  for (var i = 0; i < enabledSteps.length; i++) {
+                    var stp = enabledSteps[i];
+                    var sStart = parseDate(stp.startDate);
+                    var sEnd = parseDate(stp.endDate);
+                    var sRes = parseDate(stp.resultsDate);
+                    if (sEnd > 0 && now <= sEnd) {
+                      if (sStart > 0 && now < sStart && i > 0) {
+                        var prevStp = enabledSteps[i - 1];
+                        foundStage = prevStp.resultsDate ? (prevStp.id + '_results') : prevStp.id;
+                        break;
+                      }
+                      foundStage = stp.id;
+                      break;
+                    }
+                    if (sRes > 0 && now < sRes) {
+                      foundStage = stp.id + '_results';
+                      break;
+                    }
+                    var nxt = enabledSteps[i + 1];
+                    if (nxt && nxt.startDate) {
+                      if (now < parseDate(nxt.startDate)) {
+                        foundStage = stp.id + '_results';
+                        break;
+                      }
+                    }
+                  }
+                  if (foundStage) {
+                    stage = foundStage;
+                  } else if (aTime > 0 && now < aTime) {
+                    stage = 'final_selection';
+                  } else {
+                    stage = 'announcement';
+                  }
+                }
+              }
+
+              c.setAttribute('data-stage', stage);
+
+              var activeView = 'view-closed';
+              if (stage === 'upcoming') activeView = 'view-upcoming';
+              else if (stage === 'open' || stage === 'extended') activeView = 'view-open';
+              else if (stage === 'announcement') activeView = 'view-announcement';
+              else if (stage === 'closed') activeView = 'view-closed';
+              else if (stage === 'fallback') activeView = 'view-fallback';
+              else {
+                var dynTarget = 'view-' + stage.replace('_results', '-results');
+                var hypTarget = dynTarget.replace(/_/g, '-');
+                var undTarget = dynTarget.replace(/-/g, '_');
+                var el = document.getElementById(dynTarget) || document.getElementById(hypTarget) || document.getElementById(undTarget);
+                if (el) {
+                  activeView = el.id;
+                } else if (stage === 'selection') activeView = 'view-selection';
+                else if (stage === 'selection_results') activeView = 'view-selection-results';
+                else if (stage === 'technical_test') activeView = 'view-technical-test';
+                else if (stage === 'technical_test_results') activeView = 'view-technical-test-results';
+                else if (stage === 'interview') activeView = 'view-interview';
+              }
+
+              var allViews = document.querySelectorAll('[id^="view-"]');
+              for (var i = 0; i < allViews.length; i++) {
+                if (allViews[i].id === activeView) {
+                  allViews[i].classList.remove('is-hidden');
+                } else {
+                  allViews[i].classList.add('is-hidden');
+                }
+              }
+
+              var eb = document.getElementById('extended-banner');
+              if (eb) {
+                if (stage === 'extended') { eb.classList.remove('is-hidden'); eb.style.display = 'block'; }
+                else { eb.classList.add('is-hidden'); eb.style.display = 'none'; }
+              }
+            } catch(e) {}
+          })();
+        </script>
+        <ViewUpcoming initialStage={initialStage} upcomingCfg={upcomingCfg} studentYears={studentYears} piTemplateUrl={piTemplateUrl} formDescriptionTitle={formDescriptionTitle} formDescription={formDescription} formDescriptionItems={formDescriptionItems} formFields={formFields} />
+        <ViewOpenForm initialStage={initialStage} registrationConfig={registrationConfig} extendedCfg={extendedCfg} studentYears={studentYears} docLimits={docLimits} divisions={divisions} piTemplateUrl={piTemplateUrl} minReasonWords={minReasonWords} formSections={formSections} formFields={formFields} />
+        
+        {/* Dynamic Selection Steps View Rendering */}
+        {selectionSteps.map((step: any, idx: number) => (
+          <>
+            <DynamicStepView step={step} stepIndex={idx + 2} initialStage={initialStage} isResultsView={false} selectionSteps={selectionSteps} />
+            <DynamicStepView step={step} stepIndex={idx + 2} initialStage={initialStage} isResultsView={true} selectionSteps={selectionSteps} />
+          </>
+        ))}
+
+        <ViewAnnouncement initialStage={initialStage} announcementCfg={announcementCfg} acceptedCandidates={acceptedCandidates} candidatesByDivision={candidatesByDivision} selectionSteps={selectionSteps} />
+        <ViewClosed initialStage={initialStage} closedCfg={closedCfg} />
+        <ViewFallback initialStage={initialStage} fallbackCfg={fallbackCfg} piTemplateUrl={piTemplateUrl} formDescriptionTitle={formDescriptionTitle} formDescription={formDescription} formDescriptionItems={formDescriptionItems} />
+        {initialStage !== 'closed' && (
+          <ContactPersonBox contactPersons={contactPersons} />
+        )}
+      </div>
+    </div>
+
+  </section>
+
+  {(import.meta.env.DEV || simQueryParam || stageQueryParam) && (
+    <SimulationToolbar />
+  )}
+</Layout>
+
+<script>
+  import { initRegistrationScript } from '../scripts/registration';
+  initRegistrationScript();
+</script>

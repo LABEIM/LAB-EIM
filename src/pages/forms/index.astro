@@ -1,0 +1,446 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { getCollection } from 'astro:content';
+import { getLocaleFromUrl, getLocalizedJsonData, getLocalizedPath, getCleanSlug, t } from '../../utils/i18n';
+import { getCurrentRecruitmentStage } from '../../utils/recruitment';
+import { parseGlobalDateStr } from '../../utils/date';
+
+const locale = getLocaleFromUrl(Astro.url);
+const rawRegistrationData = await getLocalizedJsonData<any>('registration', locale);
+const allEvents = await getCollection('events');
+
+const now = Date.now();
+const THIRTY_DAYS_MS = 30 * 24 * 60 * 60 * 1000;
+
+interface FormCardItem {
+  id: string;
+  title: string;
+  description: string;
+  category: string;
+  type: 'recruitment' | 'event' | 'generic';
+  status: 'open' | 'upcoming' | 'closed';
+  openDateStr?: string;
+  deadlineStr?: string;
+  icon?: string;
+  targetUrl: string;
+  closedDateMs?: number;
+}
+
+const formItems: FormCardItem[] = [];
+
+// 1. Process Recruitment Staff Form
+if (rawRegistrationData) {
+  const stage = getCurrentRecruitmentStage(rawRegistrationData);
+  const isOpen = stage === 'open' || stage === 'extended' || stage === 'fallback';
+  const isUpcoming = stage === 'upcoming';
+  const isClosed = stage === 'closed' || stage === 'announcement';
+
+  let status: 'open' | 'upcoming' | 'closed' = 'closed';
+  if (isOpen) status = 'open';
+  else if (isUpcoming) status = 'upcoming';
+
+  const deadlineMs = parseGlobalDateStr(rawRegistrationData.extendedDeadline || rawRegistrationData.deadline);
+  const isWithin30DaysClosed = isClosed ? (deadlineMs > 0 ? (now - deadlineMs <= THIRTY_DAYS_MS) : true) : true;
+
+  if (isOpen || isUpcoming || isWithin30DaysClosed) {
+    formItems.push({
+      id: 'open-recruitment',
+      title: rawRegistrationData.heroTitle || 'Assistant Lab Registration',
+      description: rawRegistrationData.heroDescription || 'Join us and become a part of EIM Research Lab staff team.',
+      category: 'Recruitment Staff',
+      type: 'recruitment',
+      status,
+      openDateStr: rawRegistrationData.openDate,
+      deadlineStr: rawRegistrationData.extendedDeadline || rawRegistrationData.deadline,
+      icon: 'fa-solid fa-user-gear',
+      targetUrl: getLocalizedPath('/open-recruitment', locale),
+      closedDateMs: deadlineMs
+    });
+  }
+}
+
+// 2. Process Event / Custom Forms
+allEvents.forEach((ev: any) => {
+  const evData = ev.data;
+  if (!evData.show_register && evData.status === 'completed') return;
+
+  const slug = getCleanSlug(ev.id);
+  const openMs = evData.open_date ? parseGlobalDateStr(evData.open_date) : 0;
+  const deadlineMs = evData.deadline ? parseGlobalDateStr(evData.deadline) : (evData.event_date ? parseGlobalDateStr(evData.event_date) : 0);
+
+  let status: 'open' | 'upcoming' | 'closed' = 'open';
+  if (evData.status === 'completed') {
+    status = 'closed';
+  } else if (evData.status === 'upcoming' || (openMs > 0 && now < openMs)) {
+    status = 'upcoming';
+  } else if (deadlineMs > 0 && now > deadlineMs) {
+    status = 'closed';
+  }
+
+  const isWithin30DaysClosed = status === 'closed' ? (deadlineMs > 0 ? (now - deadlineMs <= THIRTY_DAYS_MS) : false) : true;
+
+  if (status === 'open' || status === 'upcoming' || isWithin30DaysClosed) {
+    const targetLink = evData.link ? evData.link : getLocalizedPath(`/forms/${slug}`, locale);
+    formItems.push({
+      id: slug,
+      title: evData.title,
+      description: typeof evData.description === 'string' ? evData.description : '',
+      category: evData.category || 'Event',
+      type: 'event',
+      status,
+      openDateStr: evData.open_date,
+      deadlineStr: evData.deadline || evData.event_date,
+      icon: evData.icon || 'fa-solid fa-calendar-check',
+      targetUrl: targetLink,
+      closedDateMs: deadlineMs
+    });
+  }
+});
+
+const openForms = formItems.filter(f => f.status === 'open');
+const upcomingForms = formItems.filter(f => f.status === 'upcoming');
+const closedForms = formItems.filter(f => f.status === 'closed');
+---
+
+<Layout title={`${t('forms.portalTitle', locale)} - EIM Research Lab`}>
+  <section class="page-header registration-page-header">
+    <div class="container">
+      <div class="page-header-content">
+        <h1>{t('forms.portalTitle', locale)}</h1>
+        <p class="hero-desc">{t('forms.portalSubTitle', locale)}</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section-padding">
+    <div class="container">
+      
+      {/* 1. Open Forms Section */}
+      <div class="forms-portal-section">
+        <div class="portal-section-header">
+          <h2 class="portal-section-title text-cyan">
+            <i class="fa-solid fa-folder-open"></i> {t('forms.openTitle', locale)}
+          </h2>
+          <span class="badge badge-open">{openForms.length} Formulir Aktif</span>
+        </div>
+
+        {openForms.length === 0 ? (
+          <div class="glass-panel portal-empty-card">
+            <i class="fa-solid fa-inbox portal-empty-icon"></i>
+            <p>{t('forms.noOpen', locale)}</p>
+          </div>
+        ) : (
+          <div class="portal-grid">
+            {openForms.map(item => (
+              <div class="glass-panel form-card hover-scale">
+                <div class="form-card-header">
+                  <span class="form-card-badge badge-active">
+                    <i class="fa-solid fa-circle-play"></i> Pendaftaran Aktif
+                  </span>
+                  <span class="form-card-category">{item.category}</span>
+                </div>
+
+                <div class="form-card-body">
+                  <div class="form-card-icon">
+                    <i class={item.icon || 'fa-solid fa-file-pen'}></i>
+                  </div>
+                  <h3 class="form-card-title">{item.title}</h3>
+                  <p class="form-card-desc">{item.description}</p>
+                </div>
+
+                <div class="form-card-footer">
+                  <a href={item.targetUrl} class="btn btn-primary form-card-btn">
+                    Isi Formulir <i class="fa-solid fa-arrow-right"></i>
+                  </a>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* 2. Upcoming Forms Section */}
+      {upcomingForms.length > 0 && (
+        <div class="forms-portal-section section-mt">
+          <div class="portal-section-header">
+            <h2 class="portal-section-title text-amber">
+              <i class="fa-solid fa-clock"></i> {t('forms.upcomingTitle', locale)}
+            </h2>
+            <span class="badge badge-upcoming">{upcomingForms.length} Formulir</span>
+          </div>
+
+          <div class="portal-grid">
+            {upcomingForms.map(item => (
+              <div class="glass-panel form-card">
+                <div class="form-card-header">
+                  <span class="form-card-badge badge-upcoming-tag">
+                    <i class="fa-solid fa-hourglass-half"></i> Opening Soon
+                  </span>
+                  <span class="form-card-category">{item.category}</span>
+                </div>
+
+                <div class="form-card-body">
+                  <div class="form-card-icon icon-amber">
+                    <i class={item.icon || 'fa-solid fa-calendar-days'}></i>
+                  </div>
+                  <h3 class="form-card-title">{item.title}</h3>
+                  <p class="form-card-desc">{item.description}</p>
+                </div>
+
+                <div class="form-card-footer">
+                  <a href={item.targetUrl} class="btn btn-secondary form-card-btn">
+                    Lihat Informasi <i class="fa-solid fa-circle-info"></i>
+                  </a>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* 3. Recently Closed Forms Section (<= 30 Days) */}
+      {closedForms.length > 0 && (
+        <div class="forms-portal-section section-mt">
+          <div class="portal-section-header">
+            <h2 class="portal-section-title text-muted">
+              <i class="fa-solid fa-box-archive"></i> {t('forms.closedTitle', locale)}
+            </h2>
+            <span class="badge badge-closed">{closedForms.length} Selesai</span>
+          </div>
+
+          <div class="portal-grid">
+            {closedForms.map(item => (
+              <div class="glass-panel form-card card-muted">
+                <div class="form-card-header">
+                  <span class="form-card-badge badge-closed-tag">
+                    <i class="fa-solid fa-lock"></i> Ditutup (≤ 30 Hari)
+                  </span>
+                  <span class="form-card-category">{item.category}</span>
+                </div>
+
+                <div class="form-card-body">
+                  <div class="form-card-icon icon-muted">
+                    <i class={item.icon || 'fa-solid fa-file-excel'}></i>
+                  </div>
+                  <h3 class="form-card-title">{item.title}</h3>
+                  <p class="form-card-desc">{item.description}</p>
+                </div>
+
+                <div class="form-card-footer">
+                  <a href={item.targetUrl} class="btn btn-disabled form-card-btn">
+                    Pendaftaran Ditutup
+                  </a>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .forms-portal-section {
+    width: 100%;
+  }
+
+  .section-mt {
+    margin-top: 48px;
+  }
+
+  .portal-section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 24px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    padding-bottom: 12px;
+  }
+
+  .portal-section-title {
+    font-size: 1.35rem;
+    font-weight: 700;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .text-cyan {
+    color: var(--brand-cyan, #11B4BD);
+  }
+
+  .text-amber {
+    color: #f59e0b;
+  }
+
+  .text-muted {
+    color: #94a3b8;
+  }
+
+  .badge {
+    font-size: 0.8rem;
+    font-weight: 600;
+    padding: 4px 12px;
+    border-radius: 20px;
+  }
+
+  .badge-open {
+    background: rgba(17, 180, 189, 0.15);
+    color: var(--brand-cyan, #11B4BD);
+    border: 1px solid rgba(17, 180, 189, 0.3);
+  }
+
+  .badge-upcoming {
+    background: rgba(245, 158, 11, 0.15);
+    color: #f59e0b;
+    border: 1px solid rgba(245, 158, 11, 0.3);
+  }
+
+  .badge-closed {
+    background: rgba(148, 163, 184, 0.15);
+    color: #94a3b8;
+    border: 1px solid rgba(148, 163, 184, 0.3);
+  }
+
+  .portal-empty-card {
+    text-align: center;
+    padding: 40px 20px;
+    color: #94a3b8;
+    border-radius: 16px;
+  }
+
+  .portal-empty-icon {
+    font-size: 2.5rem;
+    margin-bottom: 12px;
+    opacity: 0.5;
+  }
+
+  .portal-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 24px;
+  }
+
+  .form-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    border-radius: 16px;
+    padding: 24px;
+    background: var(--glass-bg, rgba(15, 23, 42, 0.6));
+    border: 1px solid var(--glass-border, rgba(255, 255, 255, 0.1));
+    transition: all 0.25s ease;
+  }
+
+  .form-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+  }
+
+  .form-card-badge {
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 12px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .badge-active {
+    background: rgba(16, 185, 129, 0.15);
+    color: #10b981;
+    border: 1px solid rgba(16, 185, 129, 0.3);
+  }
+
+  .badge-upcoming-tag {
+    background: rgba(245, 158, 11, 0.15);
+    color: #f59e0b;
+    border: 1px solid rgba(245, 158, 11, 0.3);
+  }
+
+  .badge-closed-tag {
+    background: rgba(148, 163, 184, 0.15);
+    color: #94a3b8;
+    border: 1px solid rgba(148, 163, 184, 0.3);
+  }
+
+  .form-card-category {
+    font-size: 0.775rem;
+    color: #64748b;
+    font-weight: 500;
+  }
+
+  .form-card-body {
+    flex: 1;
+    margin-bottom: 20px;
+  }
+
+  .form-card-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    background: rgba(17, 180, 189, 0.1);
+    color: var(--brand-cyan, #11B4BD);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+    margin-bottom: 14px;
+  }
+
+  .icon-amber {
+    background: rgba(245, 158, 11, 0.1);
+    color: #f59e0b;
+  }
+
+  .icon-muted {
+    background: rgba(148, 163, 184, 0.1);
+    color: #94a3b8;
+  }
+
+  .form-card-title {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: #f8fafc;
+    margin: 0 0 8px 0;
+    line-height: 1.35;
+  }
+
+  .form-card-desc {
+    font-size: 0.875rem;
+    color: #94a3b8;
+    line-height: 1.45;
+    margin: 0;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .form-card-btn {
+    width: 100%;
+    justify-content: center;
+    gap: 8px;
+    font-size: 0.9rem;
+    padding: 10px 16px;
+    border-radius: 10px;
+  }
+
+  .card-muted {
+    opacity: 0.75;
+  }
+
+  .btn-disabled {
+    background: rgba(148, 163, 184, 0.1);
+    color: #64748b;
+    border: 1px solid rgba(148, 163, 184, 0.2);
+    pointer-events: none;
+  }
+</style>

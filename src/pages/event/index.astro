@@ -5,10 +5,11 @@ import EventCard from '../../components/cards/EventCard.astro';
 import FilterControlBar from '../../components/common/FilterControlBar.astro';
 import Pagination from '../../components/common/Pagination.astro';
 import { getLocaleFromUrl, getCollectionEntriesForLocale, t } from '../../utils/i18n';
+import { filterAuditContent } from '../../utils/content-helpers';
 
 const locale = getLocaleFromUrl(Astro.url);
 const rawEvents = await getCollection('events');
-const events = getCollectionEntriesForLocale(rawEvents, locale).filter((item: any) => !item.data.audit);
+const events = filterAuditContent(getCollectionEntriesForLocale(rawEvents, locale));
 
 const categories = Array.from(new Set(events.map((item: any) => item.data.category).filter(Boolean))).sort();
 

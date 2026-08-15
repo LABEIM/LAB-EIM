@@ -5,6 +5,7 @@ import Layout from '../../layouts/Layout.astro';
 import NewsCard from '../../components/cards/NewsCard.astro';
 import { getLocaleFromUrl, getCleanSlug, getLocalizedPath, getCollectionEntriesForLocale, t } from '../../utils/i18n';
 import { calculateReadingTime, getRelatedNews } from '../../utils/news-helpers';
+import { filterAuditContent } from '../../utils/content-helpers';
 
 export async function getStaticPaths() {
   const news = await getCollection('news');
@@ -24,7 +25,7 @@ const tags = item.data.tags || [];
 const { Content } = await render(item);
 
 const rawAllNews = await getCollection('news');
-const allNews = getCollectionEntriesForLocale(rawAllNews, locale).filter((item: any) => !item.data.audit);
+const allNews = filterAuditContent(getCollectionEntriesForLocale(rawAllNews, locale));
 const relatedNews = getRelatedNews(item.id, allNews, 3);
 
 const formattedDate = new Date(item.data.news_date).toLocaleDateString('id-ID', {

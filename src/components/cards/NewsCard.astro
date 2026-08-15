@@ -39,6 +39,7 @@ const searchText = `${news.data.title} ${news.data.category} ${news.data.author 
   data-date={news.data.news_date}
   data-author={news.data.author}
   data-search-text={searchText}
+  data-audit={news.data.audit ? 'true' : undefined}
 >
   <div class="news-img">
     <img src={coverImg} alt={`Cover ${news.data.title}`} />

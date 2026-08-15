@@ -86,6 +86,19 @@ npm run build
 ```
 The compiled static HTML/CSS/JS files will be exported to the `dist/` directory.
 
+### 1.6 Audit Benchmark Content & Developer URL Testing Toggles
+
+Content entries marked with `audit: true` (e.g. `src/content/news/audit-benchmark-news.md` and `src/content/events/audit-benchmark-event.md`) serve as fixed benchmark content for CI/CD performance testing and as sample cards in local development.
+
+- **Environment Behavior**:
+  - **Production Builds**: `audit: true` content is automatically filtered out from news, events, and homepage listings.
+  - **Local Development & Preview Deployments**: `audit: true` content is retained as example cards when browsing.
+
+- **URL Query Parameters for Developer Testing**:
+  When testing locally or in preview environments, the following URL query parameters can be appended to `/news/` or `/event/`:
+  - `?audit=false` (or `?audit=0`): Hides ONLY `audit: true` benchmark cards. Regular non-audit cards remain visible.
+  - `?empty=true` (or `?mock_empty=true`): **Force-hides ALL content cards** (both regular and audit) to test empty state page layouts ("Belum Ada Berita" / "Belum Ada Kegiatan") even when items exist in the CMS.
+
 ---
 
 ## 2. Primary Deployment: Cloudflare Pages

@@ -181,15 +181,197 @@ export function getRegistrationPageConfigs(
   ];
 
 
+  const defaultFormSections = [
+    {
+      id: 'section_personal',
+      title: 'Informasi Data Diri',
+      description: 'Isi data diri Anda secara lengkap dan akurat.',
+    },
+    {
+      id: 'section_division',
+      title: 'Pilihan Divisi & Alasan',
+      description: 'Pilih divisi yang diminati serta sertakan alasan yang relevan.',
+    },
+    {
+      id: 'section_documents',
+      title: 'Unggah Berkas Persyaratan',
+      description: 'Unggah dokumen pendukung sesuai format dan batas ukuran file yang ditentukan.',
+    },
+  ];
+
+  const defaultFormFields = [
+    {
+      id: 'nama_lengkap',
+      label: 'Nama Lengkap',
+      type: 'text' as const,
+      placeholder: 'Contoh: Ahmad Dahlan',
+      description: 'Masukkan nama lengkap sesuai identitas mahasiswa.',
+      sectionId: 'section_personal',
+      validationState: 'required' as const,
+    },
+    {
+      id: 'nim',
+      label: 'Nomor Induk Mahasiswa (NIM)',
+      type: 'text' as const,
+      placeholder: 'Contoh: 1202210001',
+      description: 'Masukkan NIM aktif Anda.',
+      sectionId: 'section_personal',
+      validationState: 'required' as const,
+    },
+    {
+      id: 'angkatan',
+      label: 'Angkatan Mahasiswa',
+      type: 'select' as const,
+      placeholder: '-- Pilih Angkatan Mahasiswa --',
+      sectionId: 'section_personal',
+      validationState: 'required' as const,
+      options: ['{{STUDENT_YEARS}}'],
+    },
+    {
+      id: 'email',
+      label: 'Alamat Email Active',
+      type: 'text' as const,
+      placeholder: 'Contoh: ahmad@student.telkomuniversity.ac.id',
+      description: 'Email aktif untuk konfirmasi & pengumuman seleksi.',
+      sectionId: 'section_personal',
+      validationState: 'required' as const,
+    },
+    {
+      id: 'nomor_telp',
+      label: 'Nomor Telepon / WhatsApp',
+      type: 'text' as const,
+      placeholder: 'Contoh: 081234567890',
+      description: 'Nomor WhatsApp aktif untuk koordinasi seleksi.',
+      sectionId: 'section_personal',
+      validationState: 'required' as const,
+    },
+    {
+      id: 'divisi_1',
+      label: 'Pilihan Divisi Utama (Pilihan 1)',
+      type: 'select' as const,
+      placeholder: '-- Pilih Divisi Utama --',
+      sectionId: 'section_division',
+      validationState: 'required' as const,
+      options: ['{{DIVISIONS}}'],
+    },
+    {
+      id: 'divisi_2',
+      label: 'Pilihan Divisi Cadangan (Pilihan 2)',
+      type: 'select' as const,
+      placeholder: '-- Pilih Divisi Cadangan --',
+      sectionId: 'section_division',
+      validationState: 'required' as const,
+      options: ['{{DIVISIONS}}'],
+    },
+    {
+      id: 'alasan_divisi_1',
+      label: 'Alasan Memilih Divisi 1',
+      type: 'textarea' as const,
+      placeholder: 'Jelaskan alasan dan motivasi Anda memilih divisi utama (minimal 30 kata)...',
+      sectionId: 'section_division',
+      validationState: 'required' as const,
+      minWords: minReasonWords,
+    },
+    {
+      id: 'alasan_divisi_2',
+      label: 'Alasan Memilih Divisi 2',
+      type: 'textarea' as const,
+      placeholder: 'Jelaskan alasan memilih divisi kedua (minimal 30 kata)...',
+      sectionId: 'section_division',
+      validationState: 'required' as const,
+      minWords: minReasonWords,
+    },
+    {
+      id: 'bersedia_dipindah',
+      label: 'Bersedia Dipindahkan Divisi',
+      type: 'select' as const,
+      placeholder: '-- Pilih Kesediaan --',
+      sectionId: 'section_division',
+      validationState: 'required' as const,
+      options: ['Bersedia', 'Tidak Bersedia'],
+    },
+    {
+      id: 'portofolio_link',
+      label: 'Tautan Portofolio / Karya (Khusus Divisi Terkait)',
+      type: 'text' as const,
+      placeholder: 'https://drive.google.com/... atau https://behance.net/...',
+      description: 'Wajib diisi jika Anda memilih divisi Media & Humor / Design.',
+      sectionId: 'section_division',
+      validationState: 'required' as const,
+      conditionalTrigger: {
+        fieldId: 'divisi_1',
+        operator: 'includes' as const,
+        value: config.portfolioDivisionTriggerValues || 'Medhum',
+      },
+    },
+    {
+      id: 'file_ksm',
+      label: 'Kartu Studi Mahasiswa (KSM)',
+      type: 'file' as const,
+      sectionId: 'section_documents',
+      validationState: 'disabled' as const,
+      acceptExtensions: 'pdf, png, jpg, jpeg',
+      maxMb: docLimits.ksmMb,
+    },
+    {
+      id: 'file_khs',
+      label: 'Kartu Hasil Studi (KHS)',
+      type: 'file' as const,
+      sectionId: 'section_documents',
+      validationState: 'required' as const,
+      acceptExtensions: 'pdf, png, jpg, jpeg',
+      maxMb: docLimits.khsMb,
+    },
+    {
+      id: 'file_ml',
+      label: 'Motivation Letter (ML)',
+      type: 'file' as const,
+      sectionId: 'section_documents',
+      validationState: 'required' as const,
+      acceptExtensions: 'pdf, png, jpg, jpeg',
+      maxMb: docLimits.mlMb,
+    },
+    {
+      id: 'file_cv',
+      label: 'Curriculum Vitae (CV)',
+      type: 'file' as const,
+      sectionId: 'section_documents',
+      validationState: 'required' as const,
+      acceptExtensions: 'pdf, png, jpg, jpeg',
+      maxMb: docLimits.cvMb,
+    },
+    {
+      id: 'file_pi',
+      label: 'Pakta Integritas (PI)',
+      type: 'file' as const,
+      sectionId: 'section_documents',
+      validationState: 'required' as const,
+      acceptExtensions: 'pdf, png, jpg, jpeg',
+      maxMb: docLimits.piMb,
+      templateUrl: piTemplateUrl || 'https://bit.ly/Template-PI-EIM',
+      templateLabel: 'Unduh Template Pakta Integritas',
+    },
+  ];
+
   const selectionSteps = (config.selectionSteps && config.selectionSteps.length > 0)
     ? config.selectionSteps
     : defaultSelectionSteps;
+
+  const formSections = (config.formSections && config.formSections.length > 0)
+    ? config.formSections
+    : defaultFormSections;
+
+  const formFields = (config.formFields && config.formFields.length > 0)
+    ? config.formFields
+    : defaultFormFields;
 
   return {
     formDescriptionTitle,
     formDescription,
     formDescriptionItems,
     studentYears,
+    formSections,
+    formFields,
     fieldStates,
     docLimits,
     piTemplateUrl,

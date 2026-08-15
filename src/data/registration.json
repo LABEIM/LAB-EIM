@@ -29,6 +29,176 @@
   "portfolioDivisionTriggerValues": "Medhum",
   "piTemplateUrl": "https://docs.google.com/document/d/1Uv-S_jSEJx77hY_96NA_cXjPjOQViHVz/edit?usp=sharing&ouid=105717872277990358898&rtpof=true&sd=true",
   "minReasonWords": 20,
+  "formSections": [
+    {
+      "id": "section_personal",
+      "title": "Informasi Data Diri",
+      "description": "Isi data diri Anda secara lengkap dan akurat."
+    },
+    {
+      "id": "section_division",
+      "title": "Pilihan Divisi & Alasan",
+      "description": "Pilih divisi yang diminati serta sertakan alasan yang relevan."
+    },
+    {
+      "id": "section_documents",
+      "title": "Unggah Berkas Persyaratan",
+      "description": "Unggah dokumen pendukung sesuai format dan batas ukuran file yang ditentukan."
+    }
+  ],
+  "formFields": [
+    {
+      "id": "nama_lengkap",
+      "label": "Nama Lengkap",
+      "type": "text",
+      "placeholder": "Contoh: Ahmad Dahlan",
+      "description": "Masukkan nama lengkap sesuai identitas mahasiswa.",
+      "sectionId": "section_personal",
+      "validationState": "required"
+    },
+    {
+      "id": "nim",
+      "label": "Nomor Induk Mahasiswa (NIM)",
+      "type": "text",
+      "placeholder": "Contoh: 1202210001",
+      "description": "Masukkan NIM aktif Anda.",
+      "sectionId": "section_personal",
+      "validationState": "required"
+    },
+    {
+      "id": "angkatan",
+      "label": "Angkatan Mahasiswa",
+      "type": "select",
+      "placeholder": "-- Pilih Angkatan Mahasiswa --",
+      "sectionId": "section_personal",
+      "validationState": "required",
+      "options": ["{{STUDENT_YEARS}}"]
+    },
+    {
+      "id": "email",
+      "label": "Alamat Email Active",
+      "type": "text",
+      "placeholder": "Contoh: ahmad@student.telkomuniversity.ac.id",
+      "description": "Email aktif untuk konfirmasi & pengumuman seleksi.",
+      "sectionId": "section_personal",
+      "validationState": "required"
+    },
+    {
+      "id": "nomor_telp",
+      "label": "Nomor Telepon / WhatsApp",
+      "type": "text",
+      "placeholder": "Contoh: 081234567890",
+      "description": "Nomor WhatsApp aktif untuk koordinasi seleksi.",
+      "sectionId": "section_personal",
+      "validationState": "required"
+    },
+    {
+      "id": "divisi_1",
+      "label": "Pilihan Divisi Utama (Pilihan 1)",
+      "type": "select",
+      "placeholder": "-- Pilih Divisi Utama --",
+      "sectionId": "section_division",
+      "validationState": "required",
+      "options": ["{{DIVISIONS}}"]
+    },
+    {
+      "id": "divisi_2",
+      "label": "Pilihan Divisi Cadangan (Pilihan 2)",
+      "type": "select",
+      "placeholder": "-- Pilih Divisi Cadangan --",
+      "sectionId": "section_division",
+      "validationState": "required",
+      "options": ["{{DIVISIONS}}"]
+    },
+    {
+      "id": "alasan_divisi_1",
+      "label": "Alasan Memilih Divisi 1",
+      "type": "textarea",
+      "placeholder": "Jelaskan alasan dan motivasi Anda memilih divisi utama (minimal 20 kata)...",
+      "sectionId": "section_division",
+      "validationState": "required",
+      "minWords": 20
+    },
+    {
+      "id": "alasan_divisi_2",
+      "label": "Alasan Memilih Divisi 2",
+      "type": "textarea",
+      "placeholder": "Jelaskan alasan memilih divisi kedua (minimal 20 kata)...",
+      "sectionId": "section_division",
+      "validationState": "required",
+      "minWords": 20
+    },
+    {
+      "id": "bersedia_dipindah",
+      "label": "Bersedia Dipindahkan Divisi",
+      "type": "select",
+      "placeholder": "-- Pilih Kesediaan --",
+      "sectionId": "section_division",
+      "validationState": "required",
+      "options": ["Bersedia", "Tidak Bersedia"]
+    },
+    {
+      "id": "portofolio_link",
+      "label": "Tautan Portofolio / Karya (Khusus Divisi Terkait)",
+      "type": "text",
+      "placeholder": "https://drive.google.com/... atau https://behance.net/...",
+      "description": "Wajib diisi jika Anda memilih divisi Media & Humor / Design.",
+      "sectionId": "section_division",
+      "validationState": "required",
+      "conditionalTrigger": {
+        "fieldId": "divisi_1",
+        "operator": "includes",
+        "value": "Medhum"
+      }
+    },
+    {
+      "id": "file_ksm",
+      "label": "Kartu Studi Mahasiswa (KSM)",
+      "type": "file",
+      "sectionId": "section_documents",
+      "validationState": "disabled",
+      "acceptExtensions": "pdf, png, jpg, jpeg",
+      "maxMb": 3
+    },
+    {
+      "id": "file_khs",
+      "label": "Kartu Hasil Studi (KHS)",
+      "type": "file",
+      "sectionId": "section_documents",
+      "validationState": "required",
+      "acceptExtensions": "pdf, png, jpg, jpeg",
+      "maxMb": 3
+    },
+    {
+      "id": "file_ml",
+      "label": "Motivation Letter (ML)",
+      "type": "file",
+      "sectionId": "section_documents",
+      "validationState": "required",
+      "acceptExtensions": "pdf, png, jpg, jpeg",
+      "maxMb": 3
+    },
+    {
+      "id": "file_cv",
+      "label": "Curriculum Vitae (CV)",
+      "type": "file",
+      "sectionId": "section_documents",
+      "validationState": "required",
+      "acceptExtensions": "pdf, png, jpg, jpeg",
+      "maxMb": 5
+    },
+    {
+      "id": "file_pi",
+      "label": "Pakta Integritas (PI)",
+      "type": "file",
+      "sectionId": "section_documents",
+      "validationState": "required",
+      "acceptExtensions": "pdf, png, jpg, jpeg",
+      "maxMb": 3,
+      "templateUrl": "https://docs.google.com/document/d/1Uv-S_jSEJx77hY_96NA_cXjPjOQViHVz/edit?usp=sharing&ouid=105717872277990358898&rtpof=true&sd=true",
+      "templateLabel": "Unduh Template Pakta Integritas"
+    }
+  ],
   "fieldStates": {
     "ksm": "disabled",
     "khs": "required",

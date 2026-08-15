@@ -1,0 +1,332 @@
+---
+import type { DivisionConfig, DynamicFormFieldConfig } from '../../utils/types';
+
+interface Props {
+  field: DynamicFormFieldConfig;
+  divisions?: DivisionConfig[];
+  studentYears?: string[];
+}
+
+const { field, divisions = [], studentYears = [] } = Astro.props;
+
+if (field.validationState === 'disabled') {
+  return null;
+}
+
+const isRequired = field.validationState === 'required';
+const isOptional = field.validationState === 'optional';
+
+// Format extension helpers for file uploads
+const formatAccept = (extsStr?: string) => (extsStr || "pdf, png, jpg, jpeg")
+  .split(',')
+  .map((ext: string) => '.' + ext.trim().replace(/^\./, ''))
+  .join(',');
+
+const formatExtsLabel = (extsStr?: string) => (extsStr || "pdf, png, jpg, jpeg")
+  .split(',')
+  .map((e: string) => e.trim().toUpperCase().replace(/^\./, ''))
+  .join(', ');
+
+// Resolve dynamic options (e.g. {{DIVISIONS}}, {{STUDENT_YEARS}})
+let resolvedOptions: Array<{ label: string; value: string }> = [];
+
+if (field.options && field.options.length > 0) {
+  field.options.forEach((opt: string) => {
+    if (opt === '{{DIVISIONS}}') {
+      divisions.forEach(div => {
+        const val = div.registrationValue || div.id || div.name;
+        resolvedOptions.push({ label: div.registrationLabel || div.displayName || div.name, value: val });
+      });
+    } else if (opt === '{{STUDENT_YEARS}}') {
+      studentYears.forEach(year => {
+        resolvedOptions.push({ label: year, value: year });
+      });
+    } else {
+      resolvedOptions.push({ label: opt, value: opt });
+    }
+  });
+}
+
+// Build conditional data attributes if field is conditionally toggled
+const conditionalAttrs: Record<string, string> = {};
+if (field.conditionalTrigger && field.conditionalTrigger.fieldId && field.conditionalTrigger.value) {
+  conditionalAttrs['data-conditional-target-id'] = field.conditionalTrigger.fieldId;
+  conditionalAttrs['data-conditional-operator'] = field.conditionalTrigger.operator || 'includes';
+  conditionalAttrs['data-conditional-value'] = field.conditionalTrigger.value;
+}
+
+const hasConditional = Object.keys(conditionalAttrs).length > 0;
+---
+
+<div 
+  class={`form-group ${hasConditional ? 'is-conditional is-hidden' : ''}`}
+  id={`group_${field.id}`}
+  {...conditionalAttrs}
+>
+  <div class="field-header-block">
+    <div class="field-label-line">
+      <label for={field.id} class="field-title-label">
+        {field.label}
+        {field.type === 'file' && (
+          <span class="reg-file-label-small"> ({formatExtsLabel(field.acceptExtensions)} • Max {field.maxMb || 2}MB)</span>
+        )}
+        {isRequired ? <span class="required-asterisk">*</span> : isOptional ? <span class="reg-file-label-small"> (Opsional)</span> : null}
+      </label>
+
+      {field.templateUrl && (
+        <a 
+          href={field.templateUrl} 
+          target="_blank" 
+          rel="noopener noreferrer" 
+          class="reg-pi-link-inline"
+          title="Buka atau unduh berkas template"
+        >
+          <i class="fa-solid fa-file-arrow-down"></i>
+          <span>{field.templateLabel || 'Unduh Template'}</span>
+        </a>
+      )}
+    </div>
+
+    {field.description && (
+      <p class="field-hint-desc">{field.description}</p>
+    )}
+  </div>
+
+  {field.type === 'text' && (
+    <input 
+      type="text" 
+      id={field.id} 
+      name={field.id} 
+      class="form-control" 
+      placeholder={field.placeholder || ''} 
+      required={isRequired}
+      data-field-type="text"
+    />
+  )}
+
+  {field.type === 'number' && (
+    <input 
+      type="number" 
+      id={field.id} 
+      name={field.id} 
+      class="form-control" 
+      placeholder={field.placeholder || ''} 
+      required={isRequired}
+      data-field-type="number"
+    />
+  )}
+
+  {field.type === 'date' && (
+    <input 
+      type="date" 
+      id={field.id} 
+      name={field.id} 
+      class="form-control" 
+      required={isRequired}
+      data-field-type="date"
+    />
+  )}
+
+  {field.type === 'textarea' && (
+    <div>
+      <textarea 
+        id={field.id} 
+        name={field.id} 
+        class="form-control" 
+        rows="3" 
+        placeholder={field.placeholder || ''} 
+        required={isRequired}
+        data-min-words={field.minWords || 0}
+        data-field-type="textarea"
+      ></textarea>
+      {(field.minWords || 0) > 0 && (
+        <small class="reg-small-desc word-count-info" id={`counter_${field.id}`} style="margin-top: 5px; display: block;">
+          Jumlah kata: <span class="word-count-val" id={`${field.id}_count`}>0</span> / {field.minWords} kata minimal
+        </small>
+      )}
+    </div>
+  )}
+
+  {field.type === 'select' && (
+    <select 
+      id={field.id} 
+      name={field.id} 
+      class="form-control" 
+      required={isRequired}
+      data-field-type="select"
+    >
+      <option value="" disabled selected>{field.placeholder || `-- Pilih ${field.label} --`}</option>
+      {resolvedOptions.map(opt => (
+        <option value={opt.value}>{opt.label}</option>
+      ))}
+    </select>
+  )}
+
+  {field.type === 'radio' && (
+    <div style="display: flex; gap: 16px; flex-wrap: wrap; margin-top: 4px;">
+      {resolvedOptions.map((opt, idx) => (
+        <label style="display: flex; align-items: center; gap: 8px; font-size: 0.95rem; cursor: pointer;">
+          <input 
+            type="radio" 
+            name={field.id} 
+            value={opt.value} 
+            required={isRequired && idx === 0}
+            data-field-type="radio"
+          />
+          <span>{opt.label}</span>
+        </label>
+      ))}
+    </div>
+  )}
+
+  {field.type === 'checkbox' && (
+    <div style="display: flex; gap: 16px; flex-wrap: wrap; margin-top: 4px;">
+      {resolvedOptions.map((opt) => (
+        <label style="display: flex; align-items: center; gap: 8px; font-size: 0.95rem; cursor: pointer;">
+          <input 
+            type="checkbox" 
+            name={field.id} 
+            value={opt.value}
+            data-field-type="checkbox"
+          />
+          <span>{opt.label}</span>
+        </label>
+      ))}
+    </div>
+  )}
+
+  {field.type === 'file' && (
+    <div class="custom-file-dropzone" id={`dropzone_${field.id}`}>
+      <input 
+        type="file" 
+        id={field.id} 
+        name={field.id} 
+        class="custom-file-input" 
+        accept={formatAccept(field.acceptExtensions)} 
+        data-allowed-exts={field.acceptExtensions || "pdf, png, jpg, jpeg"}
+        data-max-mb={field.maxMb || 2}
+        required={isRequired}
+        data-field-type="file"
+      />
+      <div class="dropzone-content">
+        <div class="dropzone-btn">
+          <i class="fa-solid fa-cloud-arrow-up"></i>
+          <span>Pilih Berkas</span>
+        </div>
+        <div class="dropzone-info">
+          <span class="file-name-display" id={`filename_${field.id}`}>Belum ada berkas dipilih</span>
+        </div>
+      </div>
+    </div>
+  )}
+</div>
+
+<style>
+  .field-header-block {
+    margin-bottom: 6px;
+  }
+
+  .field-label-line {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .field-title-label {
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: var(--brand-dark-azure, #0E555F);
+    margin: 0;
+    padding: 0;
+    line-height: 1.3;
+  }
+
+  .field-hint-desc {
+    font-size: 0.825rem;
+    color: #64748b;
+    margin: 2px 0 0 0;
+    padding: 0;
+    line-height: 1.35;
+    font-weight: 400;
+  }
+
+  .custom-file-dropzone {
+    position: relative;
+    background-color: #f8fafc;
+    border: 1.5px dashed rgba(14, 85, 95, 0.25);
+    border-radius: var(--border-radius-sm, 8px);
+    padding: 8px 14px;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    min-height: 46px;
+    cursor: pointer;
+  }
+
+  .custom-file-dropzone:hover,
+  .custom-file-dropzone.has-file {
+    border-color: var(--brand-cyan, #11B4BD);
+    background-color: rgba(17, 180, 189, 0.04);
+    box-shadow: 0 0 0 3px rgba(17, 180, 189, 0.1);
+  }
+
+  .custom-file-input {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: pointer;
+    z-index: 5;
+  }
+
+  .dropzone-content {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    pointer-events: none;
+  }
+
+  .dropzone-btn {
+    background: rgba(14, 85, 95, 0.08);
+    color: var(--brand-dark-azure, #0E555F);
+    border: 1px solid rgba(14, 85, 95, 0.2);
+    font-weight: 600;
+    font-size: 0.85rem;
+    padding: 5px 13px;
+    border-radius: 6px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+    transition: all 0.2s ease;
+  }
+
+  .custom-file-dropzone:hover .dropzone-btn {
+    background: rgba(17, 180, 189, 0.15);
+    border-color: var(--brand-cyan, #11B4BD);
+  }
+
+  .dropzone-info {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .file-name-display {
+    font-size: 0.875rem;
+    color: #64748b;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: block;
+  }
+
+  .file-name-display.has-file {
+    color: var(--brand-dark-azure, #0E555F);
+    font-weight: 600;
+  }
+</style>

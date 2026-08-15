@@ -92,12 +92,12 @@ export function validateRegistrationForm(
   nomor_telp: string,
   divisi_1: string,
   divisi_2: string,
-  alasan_divisi_1: string,
-  alasan_divisi_2: string,
-  minReasonWords: number,
-  portofolio_medhum: string,
-  requiresPortfolio: (val: string) => boolean,
-  docChecks: DocCheckItem[]
+  _alasan_divisi_1?: string,
+  _alasan_divisi_2?: string,
+  _minReasonWords?: number,
+  _portofolio_medhum?: string,
+  _requiresPortfolio?: (val: string) => boolean,
+  _docChecks?: DocCheckItem[]
 ): { valid: boolean; errorMsg?: string } {
   const isEn = formElement?.getAttribute('data-locale') === 'en';
 
@@ -123,7 +123,7 @@ export function validateRegistrationForm(
     };
   }
 
-  if (!validateNim(nim)) {
+  if (nim && !validateNim(nim)) {
     return {
       valid: false,
       errorMsg: isEn
@@ -150,59 +150,41 @@ export function validateRegistrationForm(
     };
   }
 
-  const words1 = countWords(alasan_divisi_1);
-  if (words1 < minReasonWords) {
-    return {
-      valid: false,
-      errorMsg: isEn
-        ? `Reason for Choosing Division 1 must contain at least ${minReasonWords} words (currently ${words1} words).`
-        : `Alasan Memilih Divisi 1 minimal ${minReasonWords} kata (saat ini ${words1} kata).`
-    };
-  }
-
-  const elAlasan2 = typeof document !== 'undefined'
-    ? (document.getElementById('alasan_divisi_2') as HTMLTextAreaElement | null)
-    : null;
-  const isAlasan2Required = elAlasan2 ? elAlasan2.required : Boolean(divisi_2);
-  if ((isAlasan2Required || (alasan_divisi_2 && alasan_divisi_2.trim().length > 0)) && divisi_2) {
-    const words2 = countWords(alasan_divisi_2);
-    if (words2 < minReasonWords) {
-      return {
-        valid: false,
-        errorMsg: isEn
-          ? `Reason for Choosing Division 2 must contain at least ${minReasonWords} words (currently ${words2} words).`
-          : `Alasan Memilih Divisi 2 minimal ${minReasonWords} kata (saat ini ${words2} kata).`
-      };
+  // Validate all dynamic textareas with minWords requirement
+  if (formElement) {
+    const textareas = formElement.querySelectorAll<HTMLTextAreaElement>('textarea[data-min-words]');
+    for (let i = 0; i < textareas.length; i++) {
+      const ta = textareas[i];
+      // Skip hidden/conditional textareas
+      if (ta.closest('.is-hidden')) continue;
+      const minW = parseInt(ta.getAttribute('data-min-words') || '0', 10);
+      if (minW > 0 && (ta.required || ta.value.trim().length > 0)) {
+        const words = countWords(ta.value);
+        if (words < minW) {
+          const fieldLabel = ta.closest('.form-group')?.querySelector('.form-label')?.textContent?.replace('*', '').trim() || ta.name || ta.id;
+          return {
+            valid: false,
+            errorMsg: isEn
+              ? `${fieldLabel} must contain at least ${minW} words (currently ${words} words).`
+              : `${fieldLabel} minimal ${minW} kata (saat ini ${words} kata).`
+          };
+        }
+      }
     }
   }
 
-  const portoContainer = typeof document !== 'undefined'
-    ? document.getElementById('container-medhum-porto')
-    : null;
-  const portoState = portoContainer?.getAttribute('data-porto-state') || 'required';
-  const isTriggerDiv = requiresPortfolio(divisi_1) || requiresPortfolio(divisi_2);
-  const isPortoRequired = (portoState === 'required' || portoState === 'only_trigger') && isTriggerDiv;
-
-  if (isPortoRequired && !portofolio_medhum) {
-    return {
-      valid: false,
-      errorMsg: isEn
-        ? 'Please provide your portfolio URL link!'
-        : 'Mohon sertakan tautan URL portofolio Anda!'
-    };
-  }
-
   let totalBytes = 0;
-  const getFileInputMaxMb = (fileInput: HTMLInputElement | null, defaultMax: number): number => {
-    if (!fileInput) return defaultMax;
-    const attr = fileInput.getAttribute('data-max-mb');
-    return attr ? parseFloat(attr) : defaultMax;
-  };
 
-  for (const item of docChecks) {
-    if (item.input) {
-      const maxMb = getFileInputMaxMb(item.input, item.defaultMax);
-      const res = validateSingleFile(item.input, item.label, maxMb, isEn);
+  // Validate dynamic file inputs in form
+  if (formElement) {
+    const fileInputs = formElement.querySelectorAll<HTMLInputElement>('input[type="file"]');
+    for (let i = 0; i < fileInputs.length; i++) {
+      const fileInput = fileInputs[i];
+      if (fileInput.closest('.is-hidden')) continue;
+      const maxMbAttr = fileInput.getAttribute('data-max-mb');
+      const maxMb = maxMbAttr ? parseFloat(maxMbAttr) : 2.0;
+      const label = fileInput.closest('.form-group')?.querySelector('.form-label')?.textContent?.replace('*', '').trim() || fileInput.id;
+      const res = validateSingleFile(fileInput, label, maxMb, isEn);
       if (!res.valid) {
         return { valid: false, errorMsg: res.errorMsg };
       }

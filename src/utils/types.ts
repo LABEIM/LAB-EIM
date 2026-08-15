@@ -128,6 +128,45 @@ export interface FallbackConfig {
   buttonText: string;
 }
 
+export type DynamicFormFieldType =
+  | 'text'
+  | 'textarea'
+  | 'number'
+  | 'date'
+  | 'select'
+  | 'radio'
+  | 'checkbox'
+  | 'file';
+
+export type DynamicFieldValidationState = 'required' | 'optional' | 'disabled';
+
+export interface DynamicFormFieldConfig {
+  id: string;
+  label: string;
+  type: DynamicFormFieldType;
+  placeholder?: string;
+  description?: string;
+  sectionId?: string;
+  validationState: DynamicFieldValidationState;
+  options?: string[];
+  acceptExtensions?: string;
+  maxMb?: number;
+  minWords?: number;
+  templateUrl?: string;
+  templateLabel?: string;
+  conditionalTrigger?: {
+    fieldId: string;
+    operator: 'equals' | 'includes' | 'not_equals';
+    value: string;
+  };
+}
+
+export interface DynamicFormSectionConfig {
+  id: string;
+  title: string;
+  description?: string;
+}
+
 export type FieldState = 'required' | 'optional' | 'disabled';
 export type PortfolioFieldState = 'required' | 'only_trigger' | 'optional' | 'disabled';
 
@@ -163,6 +202,9 @@ export interface RecruitmentConfig {
   formDescription?: string;
   formDescriptionItems?: string[];
   studentYears?: string[];
+  portfolioDivisionTriggerValues?: string;
+  formSections?: DynamicFormSectionConfig[];
+  formFields?: DynamicFormFieldConfig[];
   fieldStates?: FieldStates;
   documentLimits?: DocumentLimits;
   piTemplateUrl?: string;
@@ -219,6 +261,8 @@ export interface RegistrationPageConfigs {
   formDescription?: string;
   formDescriptionItems?: string[];
   studentYears: string[];
+  formSections: DynamicFormSectionConfig[];
+  formFields: DynamicFormFieldConfig[];
   fieldStates: FieldStates;
   docLimits: DocumentLimits;
   piTemplateUrl: string;

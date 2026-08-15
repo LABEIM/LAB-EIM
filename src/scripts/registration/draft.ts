@@ -3,37 +3,117 @@ import type { RegistrationContext } from './types';
 
 export const DRAFT_KEY = 'eim_registration_draft';
 
+export function evaluateConditionalFields(formElement: HTMLFormElement | null) {
+  if (!formElement) return;
+  const conditionalGroups = formElement.querySelectorAll<HTMLElement>('.is-conditional');
+  conditionalGroups.forEach((group) => {
+    const targetId = group.getAttribute('data-conditional-target-id');
+    const operator = group.getAttribute('data-conditional-operator') || 'includes';
+    const expectedValue = (group.getAttribute('data-conditional-value') || '').toLowerCase().trim();
+
+    if (!targetId) return;
+
+    const targetEl = formElement.querySelector<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>(`#${targetId}, [name="${targetId}"]`);
+    if (!targetEl) return;
+
+    let currentVal = '';
+    if (targetEl.type === 'checkbox' || targetEl.type === 'radio') {
+      const checkedInputs = formElement.querySelectorAll<HTMLInputElement>(`[name="${targetId}"]:checked`);
+      currentVal = Array.from(checkedInputs).map(i => i.value).join(', ').toLowerCase();
+    } else {
+      currentVal = targetEl.value.toLowerCase().trim();
+    }
+
+    let isMatch = false;
+    if (operator === 'equals') {
+      isMatch = currentVal === expectedValue;
+    } else if (operator === 'not_equals') {
+      isMatch = currentVal !== expectedValue;
+    } else {
+      isMatch = currentVal.includes(expectedValue);
+    }
+
+    if (isMatch) {
+      group.classList.remove('is-hidden');
+      group.style.display = 'block';
+    } else {
+      group.classList.add('is-hidden');
+      group.style.display = 'none';
+    }
+  });
+}
+
+export function updateDynamicWordCounters(formElement: HTMLFormElement | null) {
+  if (!formElement) return;
+  const textareas = formElement.querySelectorAll<HTMLTextAreaElement>('textarea[data-min-words]');
+  textareas.forEach((textarea) => {
+    const minWords = parseInt(textarea.getAttribute('data-min-words') || '0', 10);
+    if (minWords <= 0) return;
+
+    const fieldId = textarea.id || textarea.name;
+    const counterEl = document.getElementById(`counter_${fieldId}`);
+    const countValEl = document.getElementById(`${fieldId}_count`);
+    const wordCount = countWords(textarea.value);
+
+    if (countValEl) {
+      countValEl.innerText = wordCount.toString();
+    } else if (counterEl) {
+      const isEn = formElement.getAttribute('data-locale') === 'en';
+      counterEl.innerText = `${wordCount} / ${minWords} ${isEn ? 'words' : 'kata'}`;
+    }
+
+    if (counterEl) {
+      if (wordCount >= minWords) {
+        counterEl.classList.remove('word-count-invalid');
+        counterEl.classList.add('word-count-valid');
+      } else {
+        counterEl.classList.remove('word-count-valid');
+        counterEl.classList.add('word-count-invalid');
+      }
+    }
+  });
+}
+
+export function initFileInputListeners(formElement: HTMLFormElement | null) {
+  if (!formElement) return;
+  const fileInputs = formElement.querySelectorAll<HTMLInputElement>('input[type="file"]');
+  fileInputs.forEach((fileInput) => {
+    if (fileInput.getAttribute('data-file-bound') === 'true') return;
+    fileInput.setAttribute('data-file-bound', 'true');
+    fileInput.addEventListener('change', () => {
+      const fieldId = fileInput.id || fileInput.name;
+      const fileNameSpan = document.getElementById(`filename_${fieldId}`);
+      if (fileNameSpan) {
+        if (fileInput.files && fileInput.files.length > 0) {
+          fileNameSpan.innerText = fileInput.files[0].name;
+          fileNameSpan.classList.add('has-file');
+        } else {
+          const isEn = formElement.getAttribute('data-locale') === 'en';
+          fileNameSpan.innerText = isEn ? 'No file chosen' : 'Belum ada berkas dipilih';
+          fileNameSpan.classList.remove('has-file');
+        }
+      }
+    });
+  });
+}
+
 export function initRegistrationDraft(
   ctxOrForm: RegistrationContext | HTMLFormElement | null,
-  div1SelectParam?: HTMLSelectElement | null,
-  div2SelectParam?: HTMLSelectElement | null,
-  medhumPortoContainerParam?: HTMLElement | null,
-  medhumPortoInputParam?: HTMLInputElement | null,
+  _div1SelectParam?: HTMLSelectElement | null,
+  _div2SelectParam?: HTMLSelectElement | null,
+  _medhumPortoContainerParam?: HTMLElement | null,
+  _medhumPortoInputParam?: HTMLInputElement | null,
   portfolioTriggerListParam?: string[]
 ) {
   let formElement: HTMLFormElement | null = null;
-  let div1Select: HTMLSelectElement | null = null;
-  let div2Select: HTMLSelectElement | null = null;
-  let medhumPortoContainer: HTMLElement | null = null;
-  let medhumPortoInput: HTMLInputElement | null = null;
   let portfolioTriggerList: string[] = ['medhum', 'media', 'prc'];
-  let minReasonWords = 30;
 
   if (ctxOrForm && 'container' in ctxOrForm) {
     const ctx = ctxOrForm as RegistrationContext;
     formElement = ctx.formElement;
-    div1Select = ctx.div1Select;
-    div2Select = ctx.div2Select;
-    medhumPortoContainer = ctx.medhumPortoContainer;
-    medhumPortoInput = ctx.medhumPortoInput;
     portfolioTriggerList = ctx.portfolioTriggerList;
-    minReasonWords = ctx.minReasonWords;
   } else {
     formElement = ctxOrForm as HTMLFormElement | null;
-    div1Select = div1SelectParam || null;
-    div2Select = div2SelectParam || null;
-    medhumPortoContainer = medhumPortoContainerParam || null;
-    medhumPortoInput = medhumPortoInputParam || null;
     portfolioTriggerList = portfolioTriggerListParam || portfolioTriggerList;
   }
 
@@ -50,126 +130,17 @@ export function initRegistrationDraft(
   const cancelClearDraftBtn = document.getElementById('cancel-clear-draft-btn');
   const confirmClearDraftBtn = document.getElementById('confirm-clear-draft-btn');
 
-  const updateWordCounters = () => {
-    const alasan1Input = document.getElementById('alasan_divisi_1') as HTMLTextAreaElement | null;
-    const alasan2Input = document.getElementById('alasan_divisi_2') as HTMLTextAreaElement | null;
+  let toastTimeout: any = null;
+  let saveDraftTimeout: any = null;
 
-    const counter1El = document.getElementById('alasan_divisi_1_counter');
-    const count1Val = document.getElementById('alasan_divisi_1_count');
-
-    const counter2El = document.getElementById('alasan_divisi_2_counter');
-    const count2Val = document.getElementById('alasan_divisi_2_count');
-
-    if (alasan1Input && counter1El && count1Val) {
-      const w1 = countWords(alasan1Input.value);
-      count1Val.innerText = w1.toString();
-      if (w1 >= minReasonWords) {
-        counter1El.classList.remove('word-count-invalid');
-        counter1El.classList.add('word-count-valid');
-      } else {
-        counter1El.classList.remove('word-count-valid');
-        counter1El.classList.add('word-count-invalid');
-      }
-    }
-
-    if (alasan2Input && counter2El && count2Val) {
-      const w2 = countWords(alasan2Input.value);
-      count2Val.innerText = w2.toString();
-      if (w2 >= minReasonWords) {
-        counter2El.classList.remove('word-count-invalid');
-        counter2El.classList.add('word-count-valid');
-      } else {
-        counter2El.classList.remove('word-count-valid');
-        counter2El.classList.add('word-count-invalid');
-      }
-    }
-  };
-
-  const requiresPortfolio = (val: string) => portfolioTriggerList.includes(val.trim().toLowerCase());
-
-  const toggleMedhumPorto = () => {
-    const val1 = div1Select?.value || '';
-    const val2 = div2Select?.value || '';
-    const isTriggerDiv = requiresPortfolio(val1) || requiresPortfolio(val2);
-
-    const portoState = medhumPortoContainer?.getAttribute('data-porto-state') || 'required';
-    const reqIndicator = document.getElementById('porto-required-indicator');
-    const helpText = document.getElementById('porto-help-text');
-
-    if (portoState === 'disabled') {
-      if (medhumPortoContainer) medhumPortoContainer.style.display = 'none';
-      if (medhumPortoInput) medhumPortoInput.required = false;
-      return;
-    }
-
-    if (portoState === 'only_trigger') {
-      if (isTriggerDiv) {
-        if (medhumPortoContainer) medhumPortoContainer.style.display = 'block';
-        if (medhumPortoInput) medhumPortoInput.required = true;
-        if (reqIndicator) reqIndicator.innerHTML = '<span class="required-asterisk">*</span>';
-        if (helpText) {
-          helpText.textContent = isEn
-            ? 'Because you selected a division that requires a portfolio, please include a link to your public portfolio, best work, or certificates.'
-            : 'Karena Anda memilih divisi yang membutuhkan portofolio, sertakan tautan URL publik portofolio, karya terbaik, atau sertifikat pendukung Anda.';
-        }
-      } else {
-        if (medhumPortoContainer) medhumPortoContainer.style.display = 'none';
-        if (medhumPortoInput) {
-          medhumPortoInput.required = false;
-          medhumPortoInput.value = '';
-        }
-      }
-      return;
-    }
-
-    if (portoState === 'optional') {
-      if (medhumPortoContainer) medhumPortoContainer.style.display = 'block';
-      if (medhumPortoInput) medhumPortoInput.required = false;
-      if (reqIndicator) reqIndicator.innerHTML = ' <span class="reg-file-label-small">(Opsional)</span>';
-      if (helpText) {
-        helpText.textContent = isEn
-          ? 'Include a link to your public portfolio, best work, or certificates.'
-          : 'Sertakan tautan URL publik portofolio, karya terbaik, atau sertifikat pendukung Anda.';
-      }
-      return;
-    }
-
-    // Default 'required': Optional for general divisions, Required for trigger divisions
-    if (medhumPortoContainer) medhumPortoContainer.style.display = 'block';
-    if (medhumPortoInput) medhumPortoInput.required = isTriggerDiv;
-
-    if (reqIndicator) {
-      reqIndicator.innerHTML = isTriggerDiv
-        ? '<span class="required-asterisk">*</span>'
-        : ' <span class="reg-file-label-small">(Opsional)</span>';
-    }
-
-    if (helpText) {
-      if (isTriggerDiv) {
-        helpText.textContent = isEn
-          ? 'Because you selected a division that requires a portfolio, please include a link to your public portfolio, best work, or certificates.'
-          : 'Karena Anda memilih divisi yang membutuhkan portofolio, sertakan tautan URL publik portofolio, karya terbaik, atau sertifikat pendukung Anda.';
-      } else {
-        helpText.textContent = isEn
-          ? 'Include a link to your public portfolio, best work, or certificates.'
-          : 'Sertakan tautan URL publik portofolio, karya terbaik, atau sertifikat pendukung Anda.';
-      }
-    }
-  };
-
-  div1Select?.addEventListener('change', toggleMedhumPorto);
-  div2Select?.addEventListener('change', toggleMedhumPorto);
-
-  let toastTimeout: ReturnType<typeof setTimeout> | null = null;
-
-  const showDraftToast = (msg: string, isError: boolean = false) => {
+  const showDraftToast = (msg: string, isSuccess: boolean = true) => {
     if (!draftToast) return;
     if (draftToastText) draftToastText.innerText = msg;
     if (draftToastIcon) {
-      draftToastIcon.className = isError
-        ? 'fa-solid fa-circle-exclamation draft-toast-icon'
-        : 'fa-solid fa-cloud-arrow-up draft-toast-icon';
-      draftToastIcon.style.color = isError ? '#ff6b6b' : 'var(--accent-cyan)';
+      draftToastIcon.className = isSuccess
+        ? 'fa-solid fa-cloud-arrow-up draft-toast-icon'
+        : 'fa-solid fa-circle-exclamation draft-toast-icon';
+      draftToastIcon.style.color = isSuccess ? 'var(--accent-cyan)' : '#ff6b6b';
     }
     draftToast.style.display = 'flex';
     draftToast.classList.remove('toast-hidden');
@@ -184,83 +155,92 @@ export function initRegistrationDraft(
           draftToast.style.display = 'none';
         }
       }, 300);
-    }, 2500);
+    }, 3000);
   };
-
-  let saveDraftTimeout: ReturnType<typeof setTimeout> | null = null;
 
   const saveDraft = () => {
     if (!formElement) return;
-    const nama = (document.getElementById('nama_lengkap') as HTMLInputElement)?.value || '';
-    const nim = (document.getElementById('nim') as HTMLInputElement)?.value || '';
-    const angkatan = (document.getElementById('angkatan') as HTMLSelectElement)?.value || '';
-    const email = (document.getElementById('email') as HTMLInputElement)?.value || '';
-    const telp = (document.getElementById('nomor_telp') as HTMLInputElement)?.value || '';
-    const div1 = div1Select?.value || '';
-    const alasan1 = (document.getElementById('alasan_divisi_1') as HTMLTextAreaElement)?.value || '';
-    const div2 = div2Select?.value || '';
-    const alasan2 = (document.getElementById('alasan_divisi_2') as HTMLTextAreaElement)?.value || '';
-    const porto = medhumPortoInput?.value || '';
-    const pindah = (document.getElementById('bersedia_dipindah') as HTMLSelectElement)?.value || '';
+    const draftData: Record<string, string> = {};
+    const inputs = formElement.querySelectorAll<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>(
+      'input:not([type="file"]):not([type="submit"]):not(.reg-honeypot-input), textarea, select'
+    );
 
-    const hasContent = !!(nama || nim || angkatan || email || telp || div1 || alasan1 || div2 || alasan2 || porto || pindah);
+    let hasValue = false;
+    inputs.forEach((input) => {
+      const key = input.id || input.name;
+      if (!key) return;
 
-    if (!hasContent) {
+      if (input.type === 'checkbox') {
+        const cb = input as HTMLInputElement;
+        if (cb.checked) {
+          draftData[key] = (draftData[key] ? draftData[key] + ',' : '') + cb.value;
+          hasValue = true;
+        }
+      } else if (input.type === 'radio') {
+        const rb = input as HTMLInputElement;
+        if (rb.checked) {
+          draftData[key] = rb.value;
+          hasValue = true;
+        }
+      } else if (input.value && input.value.trim().length > 0) {
+        draftData[key] = input.value;
+        hasValue = true;
+      }
+    });
+
+    if (!hasValue) {
       if (clearDraftBtn) clearDraftBtn.style.display = 'none';
       return;
     }
 
-    const draft = {
-      nama_lengkap: nama,
-      nim,
-      angkatan,
-      email,
-      nomor_telp: telp,
-      divisi_1: div1,
-      alasan_divisi_1: alasan1,
-      divisi_2: div2,
-      alasan_divisi_2: alasan2,
-      portofolio_medhum: porto,
-      bersedia_dipindah: pindah,
-      savedAt: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-    };
+    draftData['savedAt'] = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
     try {
-      localStorage.setItem(DRAFT_KEY, JSON.stringify(draft));
+      localStorage.setItem(DRAFT_KEY, JSON.stringify(draftData));
       if (clearDraftBtn) clearDraftBtn.style.display = 'inline-flex';
 
       if (saveDraftTimeout) clearTimeout(saveDraftTimeout);
       saveDraftTimeout = setTimeout(() => {
-        showDraftToast(isEn ? `Draft auto-saved at ${draft.savedAt}` : `Draf tersimpan otomatis pukul ${draft.savedAt}`);
+        showDraftToast(isEn ? `Draft auto-saved at ${draftData.savedAt}` : `Draf tersimpan otomatis pukul ${draftData.savedAt}`);
       }, 400);
     } catch (e) { }
   };
 
   const handleFormInput = () => {
     saveDraft();
-    updateWordCounters();
+    updateDynamicWordCounters(formElement);
+    evaluateConditionalFields(formElement);
   };
 
   const restoreDraft = () => {
     try {
       const saved = localStorage.getItem(DRAFT_KEY);
-      if (saved) {
+      if (saved && formElement) {
         const draft = JSON.parse(saved);
-
         let count = 0;
-        if (draft.nama_lengkap && document.getElementById('nama_lengkap')) { (document.getElementById('nama_lengkap') as HTMLInputElement).value = draft.nama_lengkap; count++; }
-        if (draft.nim && document.getElementById('nim')) { (document.getElementById('nim') as HTMLInputElement).value = draft.nim; count++; }
-        if (draft.angkatan && document.getElementById('angkatan')) { (document.getElementById('angkatan') as HTMLSelectElement).value = draft.angkatan; count++; }
-        if (draft.email && document.getElementById('email')) { (document.getElementById('email') as HTMLInputElement).value = draft.email; count++; }
-        if (draft.nomor_telp && document.getElementById('nomor_telp')) { (document.getElementById('nomor_telp') as HTMLInputElement).value = draft.nomor_telp; count++; }
-        if (draft.divisi_1 && div1Select) { div1Select.value = draft.divisi_1; count++; }
-        if (draft.alasan_divisi_1 && document.getElementById('alasan_divisi_1')) { (document.getElementById('alasan_divisi_1') as HTMLTextAreaElement).value = draft.alasan_divisi_1; count++; }
-        if (draft.divisi_2 && div2Select) { div2Select.value = draft.divisi_2; count++; }
-        if (draft.alasan_divisi_2 && document.getElementById('alasan_divisi_2')) { (document.getElementById('alasan_divisi_2') as HTMLTextAreaElement).value = draft.alasan_divisi_2; count++; }
-        if (draft.portofolio_medhum && medhumPortoInput) { medhumPortoInput.value = draft.portofolio_medhum; count++; }
-        if (draft.bersedia_dipindah && document.getElementById('bersedia_dipindah')) { (document.getElementById('bersedia_dipindah') as HTMLSelectElement).value = draft.bersedia_dipindah; count++; }
 
-        toggleMedhumPorto();
+        Object.keys(draft).forEach((key) => {
+          if (key === 'savedAt') return;
+          const val = draft[key];
+          const el = formElement!.querySelector<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>(`#${key}, [name="${key}"]`);
+          if (el) {
+            if (el.type === 'checkbox' || el.type === 'radio') {
+              const group = formElement!.querySelectorAll<HTMLInputElement>(`[name="${key}"]`);
+              const vals = val.split(',');
+              group.forEach(item => {
+                if (vals.includes(item.value)) {
+                  item.checked = true;
+                  count++;
+                }
+              });
+            } else {
+              el.value = val;
+              count++;
+            }
+          }
+        });
+
+        evaluateConditionalFields(formElement);
 
         if (count > 0) {
           if (clearDraftBtn) clearDraftBtn.style.display = 'inline-flex';
@@ -271,7 +251,7 @@ export function initRegistrationDraft(
         }
       }
     } catch (e) { }
-    updateWordCounters();
+    updateDynamicWordCounters(formElement);
   };
 
   const clearDraft = () => {
@@ -279,14 +259,14 @@ export function initRegistrationDraft(
       localStorage.removeItem(DRAFT_KEY);
       if (formElement) {
         formElement.reset();
-        toggleMedhumPorto();
+        evaluateConditionalFields(formElement);
       }
       if (draftRestoredBanner) draftRestoredBanner.style.display = 'none';
       if (clearDraftBtn) clearDraftBtn.style.display = 'none';
       if (clearDraftModal) clearDraftModal.style.display = 'none';
       showDraftToast(isEn ? 'Draft cleared' : 'Draf berhasil dihapus', false);
     } catch (e) { }
-    updateWordCounters();
+    updateDynamicWordCounters(formElement);
   };
 
   if (formElement) {
@@ -295,6 +275,8 @@ export function initRegistrationDraft(
       formElement.addEventListener('input', handleFormInput);
       formElement.addEventListener('change', handleFormInput);
     }
+    initFileInputListeners(formElement);
+    evaluateConditionalFields(formElement);
   }
 
   restoreDraft();
@@ -325,9 +307,9 @@ export function initRegistrationDraft(
   }
 
   return {
-    toggleMedhumPorto,
+    toggleMedhumPorto: () => evaluateConditionalFields(formElement),
     clearDraft,
-    requiresPortfolio,
-    updateWordCounters
+    requiresPortfolio: (val: string) => portfolioTriggerList.includes(val.trim().toLowerCase()),
+    updateWordCounters: () => updateDynamicWordCounters(formElement)
   };
 }

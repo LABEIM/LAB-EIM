@@ -257,7 +257,34 @@ When a candidate searches their Student ID (NIM), the result note message is aut
 
 ---
 
-## Phase 5: Verification & Testing Checklist
+## Phase 3: Keystatic CMS Dynamic Form Builder Setup
+
+The EIM Research Lab registration form is **100% Dynamic**. Administrators can add, edit, reorder, or remove form sections and input fields dynamically without modifying code.
+
+### 1. Managing Dynamic Form Fields in Keystatic CMS
+1. Access Keystatic CMS admin panel at `/keystatic` (or locally at `http://localhost:4321/keystatic`).
+2. Select **Singletons > Registration Config**.
+3. Under **Dynamic Form Visual Sections**, add or edit form card groupings:
+   * **`id`**: Unique section key (e.g. `section_personal`, `section_division`, `section_documents`).
+   * **`title`**: Display header for the section card (e.g. `Informasi Data Diri`).
+   * **`description`**: Optional subtitle or instructions for the applicant.
+4. Under **Dynamic Form Fields List**, add or edit form input fields:
+   * **`id`**: Unique field identifier (e.g. `nama_lengkap`, `nim`, `file_khs`, `custom_field`).
+   * **`label`**: Display label for the field.
+   * **`type`**: Input control type (`Short Text`, `Paragraph / Long Text`, `Number`, `Date`, `Dropdown Select`, `Radio Choice`, `Checkboxes`, `File Upload`).
+   * **`placeholder`**: Optional input placeholder hint.
+   * **`description`**: Optional hint text rendered under the field label.
+   * **`templateUrl`**: Direct clickable download link for document templates (e.g. Pakta Integritas or CV template).
+   * **`templateLabel`**: Button text for template link (defaults to `Unduh Template`).
+   * **`options`**: List of choices for Select, Radio, or Checkboxes. Use `{{DIVISIONS}}` for auto-expanding division choices or `{{STUDENT_YEARS}}` for auto-expanding eligible student years.
+   * **`acceptExtensions`**: File upload extension whitelist (e.g. `pdf, png, jpg, jpeg`).
+   * **`maxMb`**: Maximum file size limit in MB for file upload inputs.
+   * **`minWords`**: Minimum word count for Text / Textarea inputs.
+   * **`conditionalTrigger`**: Conditional visibility rules (e.g. show field only when `fieldId` `divisi_1` `includes` `Medhum`).
+
+---
+
+## Phase 4: Operational Tasks & Deployment Checklist
 
 Before going live, execute these commands to ensure everything is valid:
 

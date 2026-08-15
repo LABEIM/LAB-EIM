@@ -1,8 +1,9 @@
 ---
-import type { DivisionConfig } from '../../utils/division-mapper';
+import type { DivisionConfig, DynamicFormFieldConfig, DynamicFormSectionConfig } from '../../utils/types';
 import { getLocaleFromUrl, t } from '../../utils/i18n';
 import type { FieldStates } from '../../utils/types';
 import FormDescriptionCard from './FormDescriptionCard.astro';
+import DynamicFormField from './DynamicFormField.astro';
 
 interface Props {
   initialStage: string;
@@ -24,100 +25,68 @@ interface Props {
   piTemplateUrl?: string;
   minReasonWords?: number;
   fieldStates?: FieldStates;
+  formSections?: DynamicFormSectionConfig[];
+  formFields?: DynamicFormFieldConfig[];
 }
 
 const locale = getLocaleFromUrl(Astro.url);
-const { initialStage, registrationConfig, extendedCfg, studentYears, docLimits, divisions, piTemplateUrl, minReasonWords = 30, fieldStates = {} } = Astro.props;
+const {
+  initialStage,
+  registrationConfig,
+  extendedCfg,
+  studentYears = [],
+  docLimits,
+  divisions = [],
+  minReasonWords = 30,
+  formSections = [],
+  formFields = []
+} = Astro.props;
 
-const allowedExtsCfg = (registrationConfig as any).allowedFileExtensions || {};
-const formatAccept = (extsStr?: string) => (extsStr || "pdf, png, jpg, jpeg")
-  .split(',')
-  .map((ext: string) => '.' + ext.trim().replace(/^\./, ''))
-  .join(',');
+// Group fields by sectionId
+const sectionFieldsMap: Record<string, DynamicFormFieldConfig[]> = {};
+const unassignedFields: DynamicFormFieldConfig[] = [];
 
-const formatExtsLabel = (extsStr?: string) => (extsStr || "pdf, png, jpg, jpeg")
-  .split(',')
-  .map((e: string) => e.trim().toUpperCase().replace(/^\./, ''))
-  .join(', ');
-
-const ksmExts = allowedExtsCfg.ksm || "pdf, png, jpg, jpeg";
-const khsExts = allowedExtsCfg.khs || "pdf, png, jpg, jpeg";
-const mlExts = allowedExtsCfg.ml || "pdf, png, jpg, jpeg";
-const cvExts = allowedExtsCfg.cv || "pdf, png, jpg, jpeg";
-const piExts = allowedExtsCfg.pi || "pdf, png, jpg, jpeg";
-
-const ksmExtsDisplay = formatExtsLabel(ksmExts);
-const khsExtsDisplay = formatExtsLabel(khsExts);
-const mlExtsDisplay = formatExtsLabel(mlExts);
-const cvExtsDisplay = formatExtsLabel(cvExts);
-const piExtsDisplay = formatExtsLabel(piExts);
-
-const ksmAccept = formatAccept(ksmExts);
-const khsAccept = formatAccept(khsExts);
-const mlAccept = formatAccept(mlExts);
-const cvAccept = formatAccept(cvExts);
-const piAccept = formatAccept(piExts);
-
-const ksmState = fieldStates.ksm || 'disabled';
-const khsState = fieldStates.khs || 'required';
-const mlState = fieldStates.ml || 'required';
-const cvState = fieldStates.cv || 'required';
-const piState = fieldStates.pi || 'required';
-
-const telpState = fieldStates.nomor_telp || 'required';
-const angkatanState = fieldStates.angkatan || 'required';
-const div2State = fieldStates.divisi_2 || 'required';
-const alasan2State = fieldStates.alasan_divisi_2 || 'required';
-const bersediaState = fieldStates.bersedia_dipindah || 'required';
-const portoState = fieldStates.portofolio || 'required';
-
-const hasSection3Files = ksmState !== 'disabled' || khsState !== 'disabled' || mlState !== 'disabled' || cvState !== 'disabled' || piState !== 'disabled';
-
-const rawDocs = [
-  ksmState !== 'disabled' && {
-    id: 'file_ksm',
-    label: t('form.ksm', locale),
-    maxMb: docLimits.ksmMb,
-    accept: ksmAccept,
-    exts: ksmExts,
-    extsDisplay: ksmExtsDisplay,
-    state: ksmState
-  },
-  khsState !== 'disabled' && {
-    id: 'file_khs',
-    label: t('form.khs', locale),
-    maxMb: docLimits.khsMb,
-    accept: khsAccept,
-    exts: khsExts,
-    extsDisplay: khsExtsDisplay,
-    state: khsState
-  },
-  mlState !== 'disabled' && {
-    id: 'file_ml',
-    label: t('form.motivationLetter', locale),
-    maxMb: docLimits.mlMb,
-    accept: mlAccept,
-    exts: mlExts,
-    extsDisplay: mlExtsDisplay,
-    state: mlState
-  },
-  cvState !== 'disabled' && {
-    id: 'file_cv',
-    label: t('form.cv', locale),
-    maxMb: docLimits.cvMb,
-    accept: cvAccept,
-    exts: cvExts,
-    extsDisplay: cvExtsDisplay,
-    state: cvState
+formFields.forEach(field => {
+  if (field.validationState === 'disabled') return;
+  if (field.sectionId && formSections.some(s => s.id === field.sectionId)) {
+    if (!sectionFieldsMap[field.sectionId]) {
+      sectionFieldsMap[field.sectionId] = [];
+    }
+    sectionFieldsMap[field.sectionId].push(field);
+  } else {
+    unassignedFields.push(field);
   }
-];
+});
 
-type DocItem = Exclude<typeof rawDocs[number], false>;
-const standardDocs = rawDocs.filter((d): d is DocItem => d !== false);
+interface FieldRow {
+  isRow: boolean;
+  fields: DynamicFormFieldConfig[];
+}
 
-const docRows: DocItem[][] = [];
-for (let i = 0; i < standardDocs.length; i += 2) {
-  docRows.push(standardDocs.slice(i, i + 2));
+function chunkFieldsIntoRows(fields: DynamicFormFieldConfig[]): FieldRow[] {
+  const rows: FieldRow[] = [];
+  let i = 0;
+  while (i < fields.length) {
+    const f1 = fields[i];
+    const isFullWidth1 = f1.type === 'textarea' || f1.type === 'radio' || f1.type === 'checkbox' || Boolean(f1.conditionalTrigger);
+
+    if (isFullWidth1 || i === fields.length - 1) {
+      rows.push({ isRow: false, fields: [f1] });
+      i++;
+    } else {
+      const f2 = fields[i + 1];
+      const isFullWidth2 = f2.type === 'textarea' || f2.type === 'radio' || f2.type === 'checkbox' || Boolean(f2.conditionalTrigger);
+
+      if (isFullWidth2) {
+        rows.push({ isRow: false, fields: [f1] });
+        i++;
+      } else {
+        rows.push({ isRow: true, fields: [f1, f2] });
+        i += 2;
+      }
+    }
+  }
+  return rows;
 }
 ---
 
@@ -185,203 +154,49 @@ for (let i = 0; i < standardDocs.length; i += 2) {
     {/* Anti-bot Honeypot Field */}
     <input type="text" id="website_hp" name="website_hp" class="reg-honeypot-input" tabindex="-1" autocomplete="off" aria-hidden="true" />
 
-    {/* Section 1: Data Diri */}
-    <div class="form-section-heading">
-      <i class="fa-solid fa-user reg-icon-mr-sm"></i> 1. Data Diri & Akademik
-    </div>
-
-    <div class="form-group">
-      <label for="nama_lengkap">{t('form.fullName', locale)} <span class="required-asterisk">*</span></label>
-      <input type="text" class="form-control" id="nama_lengkap" placeholder={t('form.fullNamePlaceholder', locale)} required />
-    </div>
-
-    {angkatanState !== 'disabled' ? (
-      <div class="form-row reg-form-row-mt">
-        <div class="form-group">
-          <label for="nim">{t('form.nim', locale)} <span class="required-asterisk">*</span></label>
-          <input type="text" class="form-control" id="nim" placeholder={t('form.nimPlaceholder', locale)} pattern="[0-9]+" required />
-        </div>
-        <div class="form-group">
-          <label for="angkatan">
-            {t('form.classYear', locale)}
-            {angkatanState === 'required' ? <span class="required-asterisk">*</span> : <span class="reg-file-label-small">(Opsional)</span>}
-          </label>
-          <select class="form-control" id="angkatan" required={angkatanState === 'required'}>
-            <option value="" disabled selected>{t('form.selectClassYear', locale)}</option>
-            {studentYears.map(yr => (
-              <option value={yr}>{yr}</option>
-            ))}
-          </select>
-        </div>
-      </div>
-    ) : (
-      <div class="form-group reg-form-row-mt">
-        <label for="nim">{t('form.nim', locale)} <span class="required-asterisk">*</span></label>
-        <input type="text" class="form-control" id="nim" placeholder={t('form.nimPlaceholder', locale)} pattern="[0-9]+" required />
-      </div>
-    )}
-
-    {telpState !== 'disabled' ? (
-      <div class="form-row reg-form-row-mt">
-        <div class="form-group">
-          <label for="email">{t('form.email', locale)} <span class="required-asterisk">*</span></label>
-          <input type="email" class="form-control" id="email" placeholder={t('form.emailPlaceholder', locale)} required />
-        </div>
-        <div class="form-group">
-          <label for="nomor_telp">
-            {t('form.phone', locale)}
-            {telpState === 'required' ? <span class="required-asterisk">*</span> : <span class="reg-file-label-small">(Opsional)</span>}
-          </label>
-          <input type="tel" class="form-control" id="nomor_telp" placeholder={t('form.phonePlaceholder', locale)} pattern="[0-9]+" required={telpState === 'required'} />
-        </div>
-      </div>
-    ) : (
-      <div class="form-group reg-form-row-mt">
-        <label for="email">{t('form.email', locale)} <span class="required-asterisk">*</span></label>
-        <input type="email" class="form-control" id="email" placeholder={t('form.emailPlaceholder', locale)} required />
-      </div>
-    )}
-
-    {/* Section 2: Pemilihan Divisi */}
-    <div class="form-section-heading">
-      <i class="fa-solid fa-layer-group reg-icon-mr-sm"></i> 2. Pemilihan Divisi & Alasan
-    </div>
-
-    {div2State !== 'disabled' ? (
-      <div class="form-row">
-        <div class="form-group">
-          <label for="divisi_1">{t('form.div1', locale)} <span class="required-asterisk">*</span></label>
-          <select class="form-control" id="divisi_1" required>
-            <option value="" disabled selected>{t('form.selectDiv1', locale)}</option>
-            {divisions.map(div => (
-              <option value={div.registrationValue || div.id}>{div.registrationLabel || div.name}</option>
-            ))}
-          </select>
-        </div>
-        <div class="form-group">
-          <label for="divisi_2">
-            {t('form.div2', locale)}
-            {div2State === 'required' ? <span class="required-asterisk">*</span> : <span class="reg-file-label-small">(Opsional)</span>}
-          </label>
-          <select class="form-control" id="divisi_2" required={div2State === 'required'}>
-            <option value="" disabled selected>{t('form.selectDiv2', locale)}</option>
-            {divisions.map(div => (
-              <option value={div.registrationValue || div.id}>{div.registrationLabel || div.name}</option>
-            ))}
-          </select>
-        </div>
-      </div>
-    ) : (
-      <div class="form-group">
-        <label for="divisi_1">{t('form.div1', locale)} <span class="required-asterisk">*</span></label>
-        <select class="form-control" id="divisi_1" required>
-          <option value="" disabled selected>{t('form.selectDiv1', locale)}</option>
-          {divisions.map(div => (
-            <option value={div.registrationValue || div.id}>{div.registrationLabel || div.name}</option>
-          ))}
-        </select>
-      </div>
-    )}
-
-    <div class="form-group reg-form-row-mt">
-      <label for="alasan_divisi_1">Alasan Memilih Divisi 1 <span class="required-asterisk">*</span></label>
-      <textarea class="form-control" id="alasan_divisi_1" rows="3" placeholder={t('form.reasonPlaceholder', locale)} required></textarea>
-      <small class="reg-small-desc word-count-info" id="alasan_divisi_1_counter" data-min-words={minReasonWords}>
-        Jumlah kata: <span class="word-count-val" id="alasan_divisi_1_count">0</span> / {minReasonWords} kata minimal
-      </small>
-    </div>
-
-    {alasan2State !== 'disabled' && (
-      <div class="form-group reg-form-row-mt">
-        <label for="alasan_divisi_2">
-          Alasan Memilih Divisi 2
-          {alasan2State === 'required' ? <span class="required-asterisk">*</span> : <span class="reg-file-label-small">(Opsional)</span>}
-        </label>
-        <textarea class="form-control" id="alasan_divisi_2" rows="3" placeholder={t('form.reasonPlaceholder', locale)} required={alasan2State === 'required'}></textarea>
-        <small class="reg-small-desc word-count-info" id="alasan_divisi_2_counter" data-min-words={minReasonWords}>
-          Jumlah kata: <span class="word-count-val" id="alasan_divisi_2_count">0</span> / {minReasonWords} kata minimal
-        </small>
-      </div>
-    )}
-
-    {/* Dynamic Portfolio Link */}
-    {portoState !== 'disabled' && (
-      <div
-        class="form-group medhum-porto-container"
-        id="container-medhum-porto"
-        data-porto-state={portoState}
-        style={portoState === 'only_trigger' ? 'display: none;' : 'display: block;'}
-      >
-        <label for="portofolio_medhum" class="medhum-porto-label" id="label-medhum-porto">
-          <i class="fa-solid fa-palette reg-icon-mr"></i> {t('form.portfolioLink', locale)}
-          <span id="porto-required-indicator">
-            <span class="reg-file-label-small">(Opsional)</span>
-          </span>
-        </label>
-        <input type="url" class="form-control" id="portofolio_medhum" placeholder={t('form.portfolioPlaceholder', locale)} required={false} />
-        <small class="reg-small-desc" id="porto-help-text">
-          {(locale as string) === 'en'
-            ? 'Include a link to your public portfolio, best work, or certificates.'
-            : 'Sertakan tautan URL publik portofolio, karya terbaik, atau sertifikat pendukung Anda.'}
-        </small>
-      </div>
-    )}
-
-    {bersediaState !== 'disabled' && (
-      <div class="form-group reg-form-row-mt">
-        <label for="bersedia_dipindah">
-          Bersedia dipindahkan ke divisi lain jika diperlukan?
-          {bersediaState === 'required' ? <span class="required-asterisk">*</span> : <span class="reg-file-label-small">(Opsional)</span>}
-        </label>
-        <select class="form-control" id="bersedia_dipindah" required={bersediaState === 'required'}>
-          <option value="" disabled selected>-- Pilih Jawaban --</option>
-          <option value="Ya">Ya</option>
-          <option value="Tidak">Tidak</option>
-        </select>
-      </div>
-    )}
-
-    {/* Section 3: Berkas Pendaftaran */}
-    {hasSection3Files && (
-      <div class="form-section-heading">
-        <i class="fa-solid fa-folder-open reg-icon-mr-sm"></i> 3. Unggah Berkas Pendaftaran
-      </div>
-    )}
-
-    {docRows.map((row, rIdx) => (
-      <div class={`form-row ${rIdx > 0 ? 'reg-form-row-mt' : ''}`}>
-        {row.map((doc) => (
-          <div class="form-group" style={row.length === 1 ? 'grid-column: 1 / -1;' : ''}>
-            <label for={doc.id}>
-              {doc.label} <span class="reg-file-label-small">({doc.extsDisplay} • Max {doc.maxMb}MB)</span>
-              {doc.state === 'required' ? <span class="required-asterisk">*</span> : <span class="reg-file-label-small">(Opsional)</span>}
-            </label>
-            <input type="file" class="form-control" id={doc.id} accept={doc.accept} data-allowed-exts={doc.exts} data-max-mb={doc.maxMb} required={doc.state === 'required'} />
+    {formSections.map((sec, secIdx) => {
+      const fields = sectionFieldsMap[sec.id] || [];
+      if (fields.length === 0) return null;
+      const rows = chunkFieldsIntoRows(fields);
+      return (
+        <div id={`section_${sec.id}`}>
+          <div class="form-section-heading">
+            <i class={secIdx === 0 ? "fa-solid fa-user reg-icon-mr-sm" : secIdx === 1 ? "fa-solid fa-layer-group reg-icon-mr-sm" : "fa-solid fa-folder-open reg-icon-mr-sm"}></i> {secIdx + 1}. {sec.title}
           </div>
-        ))}
-      </div>
-    ))}
-
-    {piState !== 'disabled' && (
-      <div class="form-group reg-form-row-mt">
-        <div class="reg-pi-label-row">
-          <label for="file_pi" class="reg-mb-0">
-            {t('form.pi', locale)} <span class="reg-file-label-small">({piExtsDisplay} • Max {docLimits.piMb}MB)</span>
-            {piState === 'required' ? <span class="required-asterisk">*</span> : <span class="reg-file-label-small">(Opsional)</span>}
-          </label>
-          {piTemplateUrl && (
-            <a href={piTemplateUrl} target="_blank" rel="noopener noreferrer" class="reg-pi-link-inline">
-              <i class="fa-solid fa-file-arrow-down"></i>
-              <span>{t('form.downloadPiTemplate', locale)}</span>
-            </a>
-          )}
+          {sec.description && <p class="reg-small-desc" style="margin-top: -12px; margin-bottom: 18px;">{sec.description}</p>}
+          
+          {rows.map((row, rIdx) => (
+            row.isRow ? (
+              <div class={`form-row ${rIdx > 0 ? 'reg-form-row-mt' : ''}`}>
+                {row.fields.map(f => (
+                  <DynamicFormField field={f} divisions={divisions} studentYears={studentYears} />
+                ))}
+              </div>
+            ) : (
+              <div class={rIdx > 0 ? 'reg-form-row-mt' : ''}>
+                <DynamicFormField field={row.fields[0]} divisions={divisions} studentYears={studentYears} />
+              </div>
+            )
+          ))}
         </div>
-        <input type="file" class="form-control" id="file_pi" accept={piAccept} data-allowed-exts={piExts} data-max-mb={docLimits.piMb} required={piState === 'required'} />
-        {piTemplateUrl && (
-          <small class="reg-small-desc">
-            <span>Belum punya template? <a href={piTemplateUrl} target="_blank" rel="noopener noreferrer" class="reg-pi-sublink">{t('form.downloadPiTemplate', locale)}</a>.</span>
-          </small>
-        )}
+      );
+    })}
+
+    {unassignedFields.length > 0 && (
+      <div>
+        {chunkFieldsIntoRows(unassignedFields).map((row, rIdx) => (
+          row.isRow ? (
+            <div class={`form-row ${rIdx > 0 ? 'reg-form-row-mt' : ''}`}>
+              {row.fields.map(f => (
+                <DynamicFormField field={f} divisions={divisions} studentYears={studentYears} />
+              ))}
+            </div>
+          ) : (
+            <div class={rIdx > 0 ? 'reg-form-row-mt' : ''}>
+              <DynamicFormField field={row.fields[0]} divisions={divisions} studentYears={studentYears} />
+            </div>
+          )
+        ))}
       </div>
     )}
 

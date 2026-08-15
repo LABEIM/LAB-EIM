@@ -36,6 +36,8 @@ const {
   formDescription,
   formDescriptionItems,
   studentYears,
+  formSections,
+  formFields,
   fieldStates,
   docLimits,
   piTemplateUrl,
@@ -238,7 +240,7 @@ acceptedCandidates.forEach((candidate: any) => {
           })();
         </script>
         <ViewUpcoming initialStage={initialStage} upcomingCfg={upcomingCfg} docLimits={docLimits} studentYears={studentYears} piTemplateUrl={piTemplateUrl} fieldStates={fieldStates} allowedFileExtensions={registrationConfig.allowedFileExtensions} formDescriptionTitle={formDescriptionTitle} formDescription={formDescription} formDescriptionItems={formDescriptionItems} />
-        <ViewOpenForm initialStage={initialStage} registrationConfig={registrationConfig} extendedCfg={extendedCfg} studentYears={studentYears} docLimits={docLimits} divisions={divisions} piTemplateUrl={piTemplateUrl} minReasonWords={minReasonWords} fieldStates={fieldStates} />
+        <ViewOpenForm initialStage={initialStage} registrationConfig={registrationConfig} extendedCfg={extendedCfg} studentYears={studentYears} docLimits={docLimits} divisions={divisions} piTemplateUrl={piTemplateUrl} minReasonWords={minReasonWords} fieldStates={fieldStates} formSections={formSections} formFields={formFields} />
         
         {/* Dynamic Selection Steps View Rendering */}
         {selectionSteps.map((step: any, idx: number) => (

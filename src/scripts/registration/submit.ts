@@ -1,6 +1,5 @@
-import type { DocCheckItem, RegistrationContext } from './types';
+import type { RegistrationContext } from './types';
 import { validateRegistrationForm } from './validation';
-import { DRAFT_KEY } from './draft';
 
 export function initRegistrationSubmit(
   ctxOrForm: RegistrationContext | HTMLFormElement | null,
@@ -99,54 +98,45 @@ export function initRegistrationSubmit(
     }
   };
 
-  const showModalError = (errorMsg: string, failedStage: number = 1) => {
-    if (alertError) {
-      alertError.innerText = errorMsg;
-      alertError.style.display = 'block';
-    }
+  const showModalError = (errorMessage: string, activeStage: number = 1) => {
     if (!progressModal) return;
-    progressModal.classList.remove('is-hidden');
-    progressModal.style.display = 'flex';
-    if (modalIcon) modalIcon.innerHTML = `<i class="fa-solid fa-triangle-exclamation" style="color: #ff6b6b;"></i>`;
-    if (modalTitle) modalTitle.innerText = isEn ? 'Submission Failed' : 'Pengiriman Gagal';
-    if (modalSubtitle) modalSubtitle.innerText = isEn ? 'An error occurred while submitting your registration.' : 'Terjadi kendala saat mengirimkan pendaftaran Anda.';
-    if (progressDetail) progressDetail.innerText = errorMsg;
+    updateModalStage(activeStage, activeStage === 1 ? 5 : activeStage === 2 ? 25 : activeStage === 3 ? 60 : 85, isEn ? 'Validation / Submission Error' : 'Gagal memproses pendaftaran');
 
-    const item = document.getElementById(`stage-item-${failedStage}`);
-    const icon = document.getElementById(`stage-${failedStage}-icon`);
-    if (item) item.className = 'progress-stage-item stage-failed';
-    if (icon) icon.innerHTML = `<i class="fa-solid fa-circle-xmark"></i>`;
+    const failedItem = document.getElementById(`stage-item-${activeStage}`);
+    const failedIcon = document.getElementById(`stage-${iIcon(activeStage)}`);
+    if (failedItem) failedItem.className = 'progress-stage-item stage-failed';
+    if (failedIcon) failedIcon.innerHTML = `<i class="fa-solid fa-circle-xmark"></i>`;
+
+    if (modalIcon) modalIcon.innerHTML = `<i class="fa-solid fa-circle-exclamation" style="color: #ff6b6b;"></i>`;
+    if (modalTitle) modalTitle.innerText = isEn ? 'Submission Failed' : 'Pendaftaran Gagal';
+    if (modalSubtitle) modalSubtitle.innerText = errorMessage;
 
     if (modalActions) {
       modalActions.classList.remove('is-hidden');
       modalActions.style.display = 'block';
     }
-    if (modalCloseBtn) modalCloseBtn.innerText = isEn ? 'Close & Edit Form' : 'Tutup & Periksa Form';
+    if (modalCloseBtn) modalCloseBtn.innerText = isEn ? 'Close & Fix Issues' : 'Tutup & Perbaiki Isian';
   };
 
-  const showModalSuccess = (isRevision: boolean) => {
-    const successMessage = isRevision 
-      ? (isEn ? 'Your revised registration details [REVISI] have been recorded, and a confirmation email has been sent.' : 'Data revisi pendaftaran Anda [REVISI] telah tercatat. Email konfirmasi telah dikirimkan.')
-      : (isEn ? 'Thank you! Your registration details have been recorded, and a confirmation email has been sent.' : 'Terima kasih! Data pendaftaran Anda telah tercatat. Email konfirmasi telah dikirimkan.');
+  const iIcon = (stg: number) => stg;
 
-    if (alertSuccess) {
-      alertSuccess.innerText = successMessage;
-      alertSuccess.style.display = 'block';
+  const showModalSuccess = (isRevision: boolean = false) => {
+    if (!progressModal) return;
+    updateModalStage(4, 100, isEn ? 'Registration successfully submitted & confirmed!' : 'Pendaftaran berhasil dikirim & terkonfirmasi!');
+
+    for (let i = 1; i <= 4; i++) {
+      const item = document.getElementById(`stage-item-${i}`);
+      const icon = document.getElementById(`stage-${i}-icon`);
+      if (item) item.className = 'progress-stage-item stage-completed';
+      if (icon) icon.innerHTML = `<i class="fa-solid fa-circle-check"></i>`;
     }
 
-    if (!progressModal) return;
-    progressModal.classList.remove('is-hidden');
-    progressModal.style.display = 'flex';
+    if (modalIcon) modalIcon.innerHTML = `<i class="fa-solid fa-circle-check" style="color: var(--accent-cyan);"></i>`;
 
-    const draftRestoredBanner = document.getElementById('draft-restored-banner');
-    const clearDraftBtn = document.getElementById('clear-draft-btn');
-    try {
-      localStorage.removeItem(DRAFT_KEY);
-      if (draftRestoredBanner) draftRestoredBanner.style.display = 'none';
-      if (clearDraftBtn) clearDraftBtn.style.display = 'none';
-    } catch (e) {}
-    updateModalStage(5, 100, isRevision ? (isEn ? 'Revision completed successfully!' : 'Revisi berhasil dikirim!') : (isEn ? 'Registration completed successfully!' : 'Pendaftaran berhasil dikirim!'));
-    if (modalIcon) modalIcon.innerHTML = `<i class="fa-solid fa-circle-check" style="color: #20c997; font-size: 3rem;"></i>`;
+    const successMessage = isRevision
+      ? (isEn ? 'Your updated registration data & files have been recorded.' : 'Data perbaikan & berkas terbaru Anda telah berhasil kami catat.')
+      : (isEn ? 'Thank you! Your registration has been submitted. Check your email for confirmation.' : 'Terima kasih! Pendaftaran Anda telah diterima. Cek email Anda untuk konfirmasi.');
+
     if (modalTitle) modalTitle.innerText = isRevision ? (isEn ? 'Revision Submitted!' : 'Revisi Berhasil Dikirim!') : (isEn ? 'Registration Successful!' : 'Pendaftaran Berhasil!');
     if (modalSubtitle) modalSubtitle.innerText = successMessage;
 
@@ -168,7 +158,7 @@ export function initRegistrationSubmit(
     }
   };
 
-    if (formElement) {
+  if (formElement) {
     if (formElement.getAttribute('data-submit-bound') === 'true') return;
     formElement.setAttribute('data-submit-bound', 'true');
   }
@@ -237,31 +227,13 @@ export function initRegistrationSubmit(
 
     try {
       const containerEl = document.getElementById('registration-container');
-      const nama_lengkap = (document.getElementById('nama_lengkap') as HTMLInputElement | null)?.value.trim() || '';
       const nim = (document.getElementById('nim') as HTMLInputElement | null)?.value.trim() || '';
-      const angkatan = (document.getElementById('angkatan') as HTMLSelectElement | null)?.value.trim() || '';
-      const email = (document.getElementById('email') as HTMLInputElement | null)?.value.trim() || '';
       const nomor_telp = (document.getElementById('nomor_telp') as HTMLInputElement | null)?.value.trim() || '';
       const divisi_1 = div1Select ? div1Select.value : ((document.getElementById('divisi_1') as HTMLSelectElement | null)?.value || '');
       const divisi_2 = div2Select ? div2Select.value : ((document.getElementById('divisi_2') as HTMLSelectElement | null)?.value || '');
       const alasan_divisi_1 = (document.getElementById('alasan_divisi_1') as HTMLTextAreaElement | null)?.value.trim() || '';
       const alasan_divisi_2 = (document.getElementById('alasan_divisi_2') as HTMLTextAreaElement | null)?.value.trim() || '';
       const portofolio_medhum = medhumPortoInput?.value.trim() || (document.getElementById('portofolio_medhum') as HTMLInputElement | null)?.value.trim() || '';
-      const bersedia_dipindah = (document.getElementById('bersedia_dipindah') as HTMLSelectElement | null)?.value || '';
-
-      const fileKsmInput = document.getElementById('file_ksm') as HTMLInputElement | null;
-      const fileKhsInput = document.getElementById('file_khs') as HTMLInputElement | null;
-      const fileMlInput = document.getElementById('file_ml') as HTMLInputElement | null;
-      const fileCvInput = document.getElementById('file_cv') as HTMLInputElement | null;
-      const filePiInput = document.getElementById('file_pi') as HTMLInputElement | null;
-
-      const docChecks: DocCheckItem[] = [
-        { input: fileKsmInput, label: 'KSM', defaultMax: 3.0 },
-        { input: fileKhsInput, label: 'KHS', defaultMax: 3.0 },
-        { input: fileMlInput, label: 'Motivation Letter (ML)', defaultMax: 3.0 },
-        { input: fileCvInput, label: 'Curriculum Vitae (CV)', defaultMax: 5.0 },
-        { input: filePiInput, label: 'Pakta Integritas (PI)', defaultMax: 3.0 }
-      ];
 
       const minWordsAttr = formElement?.getAttribute('data-min-words') || containerEl?.getAttribute('data-min-reason-words');
       const minReasonWords = minWordsAttr ? parseInt(minWordsAttr, 10) : 30;
@@ -277,7 +249,7 @@ export function initRegistrationSubmit(
         minReasonWords,
         portofolio_medhum,
         requiresPortfolio,
-        docChecks
+        []
       );
 
       if (!validationResult.valid) {
@@ -289,13 +261,59 @@ export function initRegistrationSubmit(
 
       updateModalStage(2, 25, isEn ? 'Encoding documents to Base64...' : 'Mengodekan dokumen ke Base64...');
 
-      const [fileKsm, fileKhs, fileMl, fileCv, filePi] = await Promise.all([
-        fileKsmInput?.files?.[0] ? readFileAsBase64(fileKsmInput.files[0]) : Promise.resolve(null),
-        fileKhsInput?.files?.[0] ? readFileAsBase64(fileKhsInput.files[0]) : Promise.resolve(null),
-        fileMlInput?.files?.[0] ? readFileAsBase64(fileMlInput.files[0]) : Promise.resolve(null),
-        fileCvInput?.files?.[0] ? readFileAsBase64(fileCvInput.files[0]) : Promise.resolve(null),
-        filePiInput?.files?.[0] ? readFileAsBase64(filePiInput.files[0]) : Promise.resolve(null)
-      ]);
+      // Dynamic payload building for non-file fields
+      const payload: Record<string, any> = {
+        website_hp,
+        timestamp: new Date().toISOString()
+      };
+
+      if (formElement) {
+        const nonFileInputs = formElement.querySelectorAll<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>(
+          'input:not([type="file"]):not([type="submit"]):not(.reg-honeypot-input), textarea, select'
+        );
+        nonFileInputs.forEach((input) => {
+          const key = input.id || input.name;
+          if (!key) return;
+
+          if (input.type === 'checkbox') {
+            const cb = input as HTMLInputElement;
+            if (cb.checked) {
+              payload[key] = (payload[key] ? payload[key] + ', ' : '') + cb.value;
+            }
+          } else if (input.type === 'radio') {
+            const rb = input as HTMLInputElement;
+            if (rb.checked) {
+              payload[key] = rb.value;
+            }
+          } else {
+            payload[key] = input.value;
+          }
+        });
+
+        // Dynamic Base64 encoding for file upload fields
+        const fileInputs = formElement.querySelectorAll<HTMLInputElement>('input[type="file"]');
+        for (let i = 0; i < fileInputs.length; i++) {
+          const fileInput = fileInputs[i];
+          if (fileInput.closest('.is-hidden')) continue;
+          const key = fileInput.id || fileInput.name;
+          if (!key) continue;
+
+          if (fileInput.files && fileInput.files.length > 0) {
+            const encodedFile = await readFileAsBase64(fileInput.files[0]);
+            payload[key] = {
+              base64: encodedFile.base64,
+              fileName: encodedFile.name,
+              mimeType: encodedFile.type
+            };
+            payload[`${key}_name`] = encodedFile.name;
+            payload[`${key}_type`] = encodedFile.type;
+          } else {
+            payload[key] = '';
+            payload[`${key}_name`] = '';
+            payload[`${key}_type`] = '';
+          }
+        }
+      }
 
       updateModalStage(3, 60, isEn ? 'Transmitting payload to server...' : 'Mengirimkan berkas pendaftaran ke server...');
 
@@ -311,37 +329,7 @@ export function initRegistrationSubmit(
         || (import.meta as any).env?.PUBLIC_RECRUITMENT_SECRET
         || '';
 
-      const payload = {
-        nama_lengkap,
-        nim,
-        angkatan,
-        email,
-        nomor_telp,
-        divisi_1,
-        divisi_2,
-        alasan_divisi_1,
-        alasan_divisi_2,
-        portofolio_medhum,
-        bersedia_dipindah,
-        website_hp,
-        secret_token,
-        timestamp: new Date().toISOString(),
-        file_ksm: fileKsm ? { base64: fileKsm.base64, fileName: fileKsm.name, mimeType: fileKsm.type } : '',
-        file_ksm_name: fileKsm ? fileKsm.name : '',
-        file_ksm_type: fileKsm ? fileKsm.type : '',
-        file_khs: fileKhs ? { base64: fileKhs.base64, fileName: fileKhs.name, mimeType: fileKhs.type } : '',
-        file_khs_name: fileKhs ? fileKhs.name : '',
-        file_khs_type: fileKhs ? fileKhs.type : '',
-        file_ml: fileMl ? { base64: fileMl.base64, fileName: fileMl.name, mimeType: fileMl.type } : '',
-        file_ml_name: fileMl ? fileMl.name : '',
-        file_ml_type: fileMl ? fileMl.type : '',
-        file_cv: fileCv ? { base64: fileCv.base64, fileName: fileCv.name, mimeType: fileCv.type } : '',
-        file_cv_name: fileCv ? fileCv.name : '',
-        file_cv_type: fileCv ? fileCv.type : '',
-        file_pi: filePi ? { base64: filePi.base64, fileName: filePi.name, mimeType: filePi.type } : '',
-        file_pi_name: filePi ? filePi.name : '',
-        file_pi_type: filePi ? filePi.type : ''
-      };
+      payload['secret_token'] = secret_token;
 
       updateModalStage(4, 85, isEn ? 'Processing on server & sending email...' : 'Memproses pendaftaran & mengirim email konfirmasi...');
 
@@ -371,10 +359,12 @@ export function initRegistrationSubmit(
       showModalSuccess(isRevision);
 
       // Cleanly clear form fields, files, draft local storage, and word counters
-      if (formElement) formElement.reset();
-      [fileKsmInput, fileKhsInput, fileMlInput, fileCvInput, filePiInput].forEach(inp => {
-        if (inp) inp.value = '';
-      });
+      if (formElement) {
+        formElement.reset();
+        formElement.querySelectorAll<HTMLInputElement>('input[type="file"]').forEach(inp => {
+          inp.value = '';
+        });
+      }
       clearDraft();
       toggleMedhumPorto();
       resetState();

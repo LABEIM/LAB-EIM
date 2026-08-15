@@ -397,7 +397,7 @@
 }
 
 .form-group {
-  margin-bottom: 20px;
+  margin-bottom: 18px;
   display: flex;
   flex-direction: column;
   width: 100%;
@@ -408,7 +408,7 @@
   font-weight: 600;
   font-size: 0.9rem;
   color: var(--brand-dark-azure, #0E555F);
-  margin-bottom: 8px;
+  margin-bottom: 2px;
 }
 
 .form-row {

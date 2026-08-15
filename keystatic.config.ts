@@ -39,6 +39,75 @@ const registrationSchema = {
   }),
   piTemplateUrl: fields.text({ label: 'Pakta Integritas (PI) Template Link', defaultValue: 'https://bit.ly/Template-PI-EIM' }),
   minReasonWords: fields.number({ label: 'Minimum Word Count for Reason for Choosing Division', defaultValue: 30 }),
+  formSections: fields.array(
+    fields.object({
+      id: fields.text({ label: 'Section Identifier (e.g. section_1, section_2)', defaultValue: 'section_1' }),
+      title: fields.text({ label: 'Section Card Title', defaultValue: 'Informasi Data Diri' }),
+      description: fields.text({ label: 'Section Description (Optional)', multiline: true }),
+    }),
+    {
+      label: 'Dynamic Form Visual Sections',
+      itemLabel: props => props.fields.title.value || props.fields.id.value,
+    }
+  ),
+  formFields: fields.array(
+    fields.object({
+      id: fields.text({ label: 'Field Key / ID (e.g. nama_lengkap, nim, file_khs)', defaultValue: 'field_key' }),
+      label: fields.text({ label: 'Field Display Label', defaultValue: 'Nama Lengkap' }),
+      type: fields.select({
+        label: 'Field Input Type',
+        options: [
+          { label: 'Short Text (Input)', value: 'text' },
+          { label: 'Paragraph / Long Text (Textarea)', value: 'textarea' },
+          { label: 'Number', value: 'number' },
+          { label: 'Date', value: 'date' },
+          { label: 'Dropdown Select', value: 'select' },
+          { label: 'Radio Choice', value: 'radio' },
+          { label: 'Checkboxes', value: 'checkbox' },
+          { label: 'File Upload', value: 'file' },
+        ],
+        defaultValue: 'text',
+      }),
+      placeholder: fields.text({ label: 'Placeholder Text (Optional)' }),
+      description: fields.text({ label: 'Hint / Description Text (Optional)', multiline: true }),
+      sectionId: fields.text({ label: 'Section ID placement (e.g. section_1)', defaultValue: 'section_1' }),
+      validationState: fields.select({
+        label: 'Validation Status',
+        options: [
+          { label: 'Required (Wajib)', value: 'required' },
+          { label: 'Optional (Opsional)', value: 'optional' },
+          { label: 'Disabled (Disembunyikan)', value: 'disabled' },
+        ],
+        defaultValue: 'required',
+      }),
+      options: fields.array(fields.text({ label: 'Option Label / Value' }), {
+        label: 'Options List (For Select, Radio, Checkbox, or Dynamic Sources e.g. {{DIVISIONS}}, {{STUDENT_YEARS}})',
+        itemLabel: props => props.value,
+      }),
+      acceptExtensions: fields.text({ label: 'Allowed Extensions (for file upload)', description: 'e.g. pdf, png, jpg, jpeg', defaultValue: 'pdf, png, jpg, jpeg' }),
+      maxMb: fields.number({ label: 'Max File Size in MB (for file upload)', defaultValue: 2 }),
+      minWords: fields.number({ label: 'Minimum Word Count (for text / textarea)', defaultValue: 0 }),
+      templateUrl: fields.text({ label: 'Template Download URL (Optional)', description: 'Direct clickable link for document template (e.g. Pakta Integritas)' }),
+      templateLabel: fields.text({ label: 'Template Button Label (Optional)', description: 'e.g. Unduh Template Pakta Integritas', defaultValue: 'Unduh Template' }),
+      conditionalTrigger: fields.object({
+        fieldId: fields.text({ label: 'Trigger Target Field ID (e.g. divisi_1)', defaultValue: '' }),
+        operator: fields.select({
+          label: 'Comparison Operator',
+          options: [
+            { label: 'Equals (=)', value: 'equals' },
+            { label: 'Includes (Contains)', value: 'includes' },
+            { label: 'Not Equals (!=)', value: 'not_equals' },
+          ],
+          defaultValue: 'includes',
+        }),
+        value: fields.text({ label: 'Trigger Value (e.g. Medhum)', defaultValue: '' }),
+      }),
+    }),
+    {
+      label: 'Dynamic Form Fields List',
+      itemLabel: props => `${props.fields.label.value} (${props.fields.id.value}) [${props.fields.type.value}]`,
+    }
+  ),
   fieldStates: fields.object({
     ksm: fields.select({
       label: 'Kartu Studi Mahasiswa (KSM)',

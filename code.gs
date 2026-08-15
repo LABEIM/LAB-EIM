@@ -654,11 +654,12 @@ function doPost(e) {
       dataData['Nama Lengkap'] = dataData['Nama Lengkap'] + ' [REVISI]';
     }
 
-    // PROSES UPLOAD BERKAS KE GOOGLE DRIVE DI MEMORI DULU (Single Batch Operation)
+    // PROSES UPLOAD BERKAS KE GOOGLE DRIVE & MAP KUSTOM BIDANG DINAMIS
     try {
       const targetFolder = getOrCreateTargetFolder();
       const nimStr = dataData['NIM'] || 'pendaftar';
 
+      // Standard file upload fallback support
       if (rawData.ksm || rawData.file_ksm) {
         dataData['Link KSM'] = saveFileToDrive(rawData.ksm || rawData.file_ksm, targetFolder, 'KSM', nimStr);
       } else if (rawData['Link KSM']) {
@@ -688,8 +689,40 @@ function doPost(e) {
       } else if (rawData['Link PI (Pakta Integritas)']) {
         dataData['Link PI (Pakta Integritas)'] = sanitizeSheetValue(rawData['Link PI (Pakta Integritas)']);
       }
+
+      // Dynamic scanning for custom dynamic fields & file uploads
+      let headersUpdated = false;
+      for (const k in rawData) {
+        if (!rawData[k] || k === 'secret_token' || k === 'website_hp' || k.endsWith('_name') || k.endsWith('_type')) continue;
+        const val = rawData[k];
+
+        if (typeof val === 'object' && val !== null && val.base64) {
+          const fieldLabel = k.replace(/^file_/, '').toUpperCase();
+          const fileHeaderName = 'Link ' + fieldLabel;
+          const driveUrl = saveFileToDrive(val, targetFolder, fieldLabel, nimStr);
+          dataData[fileHeaderName] = driveUrl;
+          dataData[k] = driveUrl;
+
+          if (!isExpectedHeaderCovered(fileHeaderName, headers)) {
+            headers.push(fileHeaderName);
+            headersUpdated = true;
+          }
+        } else if (typeof val === 'string') {
+          if (dataData[k] === undefined && k !== 'timestamp') {
+            dataData[k] = sanitizeSheetValue(val);
+            if (!isExpectedHeaderCovered(k, headers)) {
+              headers.push(k);
+              headersUpdated = true;
+            }
+          }
+        }
+      }
+
+      if (headersUpdated) {
+        sheet.getRange(headerRow, 1, 1, headers.length).setValues([headers]);
+      }
     } catch (fileErr) {
-      Logger.log('Error processing drive files: ' + fileErr.toString());
+      Logger.log('Error processing drive files or dynamic fields: ' + fileErr.toString());
     }
 
     // TULIS 1X SECARA ATOMIK KE GOOGLE SHEET (Optimal Performance - Hemat API & Latensi)
@@ -701,6 +734,8 @@ function doPost(e) {
         finalRow[i] = dataData['Timestamp'];
       } else if (dataData[dataKey] !== undefined) {
         finalRow[i] = dataData[dataKey];
+      } else if (dataData[header] !== undefined) {
+        finalRow[i] = dataData[header];
       }
     }
 

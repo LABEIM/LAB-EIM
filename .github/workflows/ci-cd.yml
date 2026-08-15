@@ -261,7 +261,7 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
 
       - name: Install Vercel CLI
-        run: npm install --global vercel@39
+        run: npm install --global vercel@latest
 
       - name: Pull Vercel project settings
         # Creates .vercel/project.json which the CLI uses to target the right

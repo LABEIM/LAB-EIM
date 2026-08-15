@@ -529,20 +529,21 @@ jobs:
           BASE_URL: ${{ steps.target_url.outputs.url }}
         run: |
           BASE=$(echo "$BASE_URL" | sed 's|/$||')
-          cat > lh-urls.txt << EOF
-          ${BASE}/
-          ${BASE}/about/
-          ${BASE}/contact/
-          ${BASE}/structure/
-          ${BASE}/registration/
-          ${BASE}/event/
-          ${BASE}/news/
-          ${BASE}/event/audit-benchmark-event/
-          ${BASE}/news/audit-benchmark-news/
-          EOF
-          sed -i 's/^[[:space:]]*//' lh-urls.txt
-          echo "URLs to audit:"
-          cat lh-urls.txt
+          {
+            echo "urls<<EOF_URLS"
+            echo "${BASE}/"
+            echo "${BASE}/about/"
+            echo "${BASE}/contact/"
+            echo "${BASE}/structure/"
+            echo "${BASE}/registration/"
+            echo "${BASE}/event/"
+            echo "${BASE}/news/"
+            echo "${BASE}/event/audit-benchmark-event/"
+            echo "${BASE}/news/audit-benchmark-news/"
+            echo "EOF_URLS"
+          } >> "$GITHUB_OUTPUT"
+          echo "Lighthouse will audit these URLs:"
+          grep -A 20 "^urls<<" "$GITHUB_OUTPUT" | grep -v "<<\|EOF_URLS" | tail -9
 
       - name: Run Lighthouse audit (Live Cloudflare URL)
         if: ${{ steps.target_url.outputs.url != '' }}
@@ -550,8 +551,9 @@ jobs:
         uses: treosh/lighthouse-ci-action@v12
         with:
           configPath: './.lighthouserc.json'
-          urlsFile: 'lh-urls.txt'
+          urls: ${{ steps.build_url_list.outputs.urls }}
           uploadArtifacts: true
+
 
       - name: Run Lighthouse audit (Static Fallback)
         if: ${{ steps.target_url.outputs.url == '' }}

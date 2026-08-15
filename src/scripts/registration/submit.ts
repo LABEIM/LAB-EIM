@@ -119,9 +119,14 @@ export function initRegistrationSubmit(
 
     if (modalIcon) modalIcon.innerHTML = `<i class="fa-solid fa-circle-check" style="color: var(--accent-cyan);"></i>`;
 
+    const customSuccessMessage = formElement?.getAttribute('data-success-message') 
+      || document.getElementById('registration-container')?.getAttribute('data-success-message');
+
     const successMessage = isRevision
       ? (isEn ? 'Your updated registration data & files have been recorded.' : 'Data perbaikan & berkas terbaru Anda telah berhasil kami catat.')
-      : (isEn ? 'Thank you! Your registration has been submitted. Check your email for confirmation.' : 'Terima kasih! Pendaftaran Anda telah diterima. Cek email Anda untuk konfirmasi.');
+      : (customSuccessMessage && customSuccessMessage.trim() !== ''
+          ? customSuccessMessage.trim()
+          : (isEn ? 'Thank you! Your registration has been submitted. Check your email for confirmation.' : 'Terima kasih! Pendaftaran Anda telah diterima. Cek email Anda untuk konfirmasi.'));
 
     if (modalTitle) modalTitle.innerText = isRevision ? (isEn ? 'Revision Submitted!' : 'Revisi Berhasil Dikirim!') : (isEn ? 'Registration Successful!' : 'Pendaftaran Berhasil!');
     if (modalSubtitle) modalSubtitle.innerText = successMessage;
@@ -188,7 +193,7 @@ export function initRegistrationSubmit(
       modalActions.style.display = 'none';
     }
 
-    updateModalStage(1, 5, isEn ? 'Validating candidate details & document inputs...' : 'Memvalidasi data calon asisten & masukan berkas...');
+    updateModalStage(1, 5, isEn ? 'Validating registration details & file inputs...' : 'Memvalidasi data pendaftaran & masukan berkas...');
 
     const resetState = () => {
       isSubmitting = false;
@@ -235,10 +240,13 @@ export function initRegistrationSubmit(
 
       updateModalStage(2, 25, isEn ? 'Encoding documents to Base64...' : 'Mengodekan dokumen ke Base64...');
 
+      const eventId = containerEl?.getAttribute('data-event-id') || '';
+
       // Dynamic payload building for non-file fields
       const payload: Record<string, any> = {
         website_hp,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
+        ...(eventId ? { event_id: eventId } : {})
       };
 
       if (formElement) {

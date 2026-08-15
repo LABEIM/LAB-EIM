@@ -1,7 +1,15 @@
 import { countWords } from './validation';
 import type { RegistrationContext } from './types';
 
-export const DRAFT_KEY = 'eim_registration_draft';
+export const DRAFT_KEY_PREFIX = 'eim_registration_draft_';
+
+export function getFormDraftKey(formElement: HTMLFormElement | null): string {
+  const containerEl = formElement?.closest('#registration-container') || document.getElementById('registration-container');
+  const eventId = containerEl?.getAttribute('data-event-id');
+  const formType = containerEl?.getAttribute('data-form-type') || 'recruitment';
+  const formId = eventId && eventId.trim() !== '' ? `event_${eventId.trim()}` : formType;
+  return `${DRAFT_KEY_PREFIX}${formId}`;
+}
 
 export function evaluateConditionalFields(formElement: HTMLFormElement | null) {
   if (!formElement) return;
@@ -192,7 +200,8 @@ export function initRegistrationDraft(
     draftData['savedAt'] = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
     try {
-      localStorage.setItem(DRAFT_KEY, JSON.stringify(draftData));
+      const activeDraftKey = getFormDraftKey(formElement);
+      localStorage.setItem(activeDraftKey, JSON.stringify(draftData));
       if (clearDraftBtn) clearDraftBtn.style.display = 'inline-flex';
 
       if (saveDraftTimeout) clearTimeout(saveDraftTimeout);
@@ -210,7 +219,8 @@ export function initRegistrationDraft(
 
   const restoreDraft = () => {
     try {
-      const saved = localStorage.getItem(DRAFT_KEY);
+      const activeDraftKey = getFormDraftKey(formElement);
+      const saved = localStorage.getItem(activeDraftKey);
       if (saved && formElement) {
         const draft = JSON.parse(saved);
         let count = 0;
@@ -252,7 +262,8 @@ export function initRegistrationDraft(
 
   const clearDraft = () => {
     try {
-      localStorage.removeItem(DRAFT_KEY);
+      const activeDraftKey = getFormDraftKey(formElement);
+      localStorage.removeItem(activeDraftKey);
       if (formElement) {
         formElement.reset();
         evaluateConditionalFields(formElement);

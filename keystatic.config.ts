@@ -1,14 +1,22 @@
 import { config, fields, collection, singleton } from '@keystatic/core';
 
 const registrationSchema = {
+  formType: fields.select({
+    label: 'Form Engine Purpose / Mode',
+    description: 'Select the operational mode for this dynamic form engine.',
+    options: [
+      { label: 'Recruitment Staff Form (With Multi-Stage Pipeline & Results Lookup)', value: 'recruitment' },
+      { label: 'Event / Webinar Registration Form (Single Event Direct Signup)', value: 'event' },
+      { label: 'Generic Form / Survey (Google Forms / Microsoft Forms experience)', value: 'generic' },
+    ],
+    defaultValue: 'recruitment',
+  }),
+
   status: fields.text({
     label: 'Recruitment Stage Status Override',
     description: 'Set to "auto" for automatic date-based calculation. Default lifecycle phases: "upcoming", "open", "extended", "final_selection", "announcement", "closed", "fallback". You can also override to any selection phase defined under Dynamic Selection Pipeline Steps by using its Step Identifier Key (e.g., "selection", "technical_test", "fgd", "interview"). To trigger a step\'s results announcement phase, append "_results" to its Step Identifier Key (e.g., "selection_results", "technical_test_results", "interview_results").',
     defaultValue: 'auto',
   }),
-
-
-
 
   timezoneOffset: fields.text({ label: 'Timezone Offset (e.g., +07:00 for WIB, +08:00 for WITA, +09:00 for WIT)', defaultValue: '+07:00' }),
   upcomingStartDate: fields.text({ label: 'Upcoming / Opening Soon Start Date (ISO format: YYYY-MM-DDTHH:mm:ss)', defaultValue: '2026-08-01T00:00:00' }),
@@ -25,6 +33,7 @@ const registrationSchema = {
     label: 'Form Description & Requirements List Items',
     itemLabel: props => props.value,
   }),
+  successMessage: fields.text({ label: 'Custom Success / Thank-You Message', description: 'Custom message displayed in success modal after form submission (e.g. WhatsApp group link or instructions)', multiline: true }),
   heroTag: fields.text({ label: 'Hero Tag', defaultValue: 'Assistant Recruitment' }),
   heroTitle: fields.text({ label: 'Hero Title', defaultValue: 'Assistant Lab Registration' }),
   heroDescription: fields.text({ label: 'Hero Description', defaultValue: 'Join us and become a part of EIM Research Lab. Develop your potential in IT infrastructure, networks, and technology research.' }),
@@ -44,6 +53,7 @@ const registrationSchema = {
       id: fields.text({ label: 'Section Identifier (e.g. section_1, section_2)', defaultValue: 'section_1' }),
       title: fields.text({ label: 'Section Card Title', defaultValue: 'Informasi Data Diri' }),
       description: fields.text({ label: 'Section Description (Optional)', multiline: true }),
+      icon: fields.text({ label: 'Section Icon (FontAwesome class, e.g. fa-solid fa-user)', defaultValue: 'fa-solid fa-list-check' }),
     }),
     {
       label: 'Dynamic Form Visual Sections',
@@ -61,6 +71,10 @@ const registrationSchema = {
           { label: 'Paragraph / Long Text (Textarea)', value: 'textarea' },
           { label: 'Number', value: 'number' },
           { label: 'Date', value: 'date' },
+          { label: 'Time', value: 'time' },
+          { label: 'Email Address', value: 'email' },
+          { label: 'Phone / Telephone', value: 'tel' },
+          { label: 'URL Link', value: 'url' },
           { label: 'Dropdown Select', value: 'select' },
           { label: 'Radio Choice', value: 'radio' },
           { label: 'Checkboxes', value: 'checkbox' },
@@ -80,6 +94,7 @@ const registrationSchema = {
         ],
         defaultValue: 'required',
       }),
+      fullWidth: fields.checkbox({ label: 'Force Full Width Layout', defaultValue: false }),
       options: fields.array(fields.text({ label: 'Option Label / Value' }), {
         label: 'Options List (For Select, Radio, Checkbox, or Dynamic Sources e.g. {{DIVISIONS}}, {{STUDENT_YEARS}})',
         itemLabel: props => props.value,
@@ -342,6 +357,11 @@ export default config({
           itemLabel: props => props.value,
         }),
         show_register: fields.checkbox({ label: 'Show Register Button', defaultValue: true }),
+        open_date: fields.text({ label: 'Registration Opening Date (Optional ISO format: YYYY-MM-DDTHH:mm:ss)' }),
+        deadline: fields.text({ label: 'Registration Deadline Date (Optional ISO format: YYYY-MM-DDTHH:mm:ss)' }),
+        success_message: fields.text({ label: 'Custom Registration Success Message (Optional)', multiline: true }),
+        formSections: registrationSchema.formSections,
+        formFields: registrationSchema.formFields,
       },
     }),
   },

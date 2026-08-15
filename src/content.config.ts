@@ -24,6 +24,8 @@ const eventsCollection = defineCollection({
     category: z.string(),
     status: z.enum(['upcoming', 'ongoing', 'completed']),
     event_date: z.string(),
+    open_date: z.string().optional(),
+    deadline: z.string().optional(),
     description: z.string(),
     link: z.string().optional(),
     poster: z.string().optional(),
@@ -34,6 +36,9 @@ const eventsCollection = defineCollection({
     requirements: z.array(z.string()).optional(),
     show_register: z.boolean().optional().default(true),
     audit: z.boolean().optional().default(false),
+    success_message: z.string().optional(),
+    form_sections: z.array(z.any()).optional(),
+    form_fields: z.array(z.any()).optional(),
   }),
 });
 

@@ -94,6 +94,8 @@ export function validateRegistrationForm(
   divisi_2: string
 ): { valid: boolean; errorMsg?: string } {
   const isEn = formElement?.getAttribute('data-locale') === 'en';
+  const container = formElement?.closest('#registration-container');
+  const formType = container?.getAttribute('data-form-type') || 'recruitment';
 
   if (formElement && !formElement.checkValidity()) {
     formElement.reportValidity();
@@ -105,19 +107,24 @@ export function validateRegistrationForm(
     };
   }
 
-  const emailInput = typeof document !== 'undefined'
-    ? (document.getElementById('email') as HTMLInputElement | null)?.value || ''
-    : '';
-  if (emailInput && !validateEmail(emailInput)) {
-    return {
-      valid: false,
-      errorMsg: isEn
-        ? 'Please enter a valid email address!'
-        : 'Masukkan alamat email yang valid!'
-    };
+  // Dynamic email inputs validation
+  if (formElement) {
+    const emailInputs = formElement.querySelectorAll<HTMLInputElement>('input[type="email"], #email');
+    for (let i = 0; i < emailInputs.length; i++) {
+      const emailVal = emailInputs[i].value.trim();
+      if (emailVal && !validateEmail(emailVal)) {
+        return {
+          valid: false,
+          errorMsg: isEn
+            ? 'Please enter a valid email address!'
+            : 'Masukkan alamat email yang valid!'
+        };
+      }
+    }
   }
 
-  if (nim && !validateNim(nim)) {
+  // Validate NIM only if in recruitment mode or if explicit numeric NIM validation is required
+  if (nim && formType === 'recruitment' && !validateNim(nim)) {
     return {
       valid: false,
       errorMsg: isEn
@@ -126,7 +133,8 @@ export function validateRegistrationForm(
     };
   }
 
-  if (nomor_telp && !validatePhone(nomor_telp)) {
+  // Validate phone number
+  if (nomor_telp && formType === 'recruitment' && !validatePhone(nomor_telp)) {
     return {
       valid: false,
       errorMsg: isEn
@@ -135,7 +143,8 @@ export function validateRegistrationForm(
     };
   }
 
-  if (divisi_2 && divisi_1 === divisi_2) {
+  // Validate division choices uniqueness only if both division 1 & 2 are present and selected
+  if (divisi_1 && divisi_2 && divisi_1 === divisi_2) {
     return {
       valid: false,
       errorMsg: isEn

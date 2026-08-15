@@ -10,9 +10,11 @@ export type { RegistrationPageConfigs };
 export function getRegistrationPageConfigs(
   config: Partial<RecruitmentConfig> | Record<string, any>
 ): RegistrationPageConfigs {
+  const formType = config.formType || "recruitment";
   const formDescriptionTitle = config.formDescriptionTitle || "Requirements:";
   const formDescription = config.formDescription || "";
   const formDescriptionItems = config.formDescriptionItems || [];
+  const successMessage = config.successMessage || "";
   const studentYears = config.studentYears || ["2022", "2023", "2024", "2025"];
 
   const docLimits = config.documentLimits || {
@@ -169,16 +171,19 @@ export function getRegistrationPageConfigs(
       id: 'section_personal',
       title: 'Informasi Data Diri',
       description: 'Isi data diri Anda secara lengkap dan akurat.',
+      icon: 'fa-solid fa-user',
     },
     {
       id: 'section_division',
       title: 'Pilihan Divisi & Alasan',
       description: 'Pilih divisi yang diminati serta sertakan alasan yang relevan.',
+      icon: 'fa-solid fa-layer-group',
     },
     {
       id: 'section_documents',
       title: 'Unggah Berkas Persyaratan',
       description: 'Unggah dokumen pendukung sesuai format dan batas ukuran file yang ditentukan.',
+      icon: 'fa-solid fa-folder-open',
     },
   ];
 
@@ -349,9 +354,11 @@ export function getRegistrationPageConfigs(
     : defaultFormFields;
 
   return {
+    formType,
     formDescriptionTitle,
     formDescription,
     formDescriptionItems,
+    successMessage,
     studentYears,
     formSections,
     formFields,

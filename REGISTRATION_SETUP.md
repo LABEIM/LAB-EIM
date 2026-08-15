@@ -16,10 +16,24 @@ This document is a step-by-step guide for setting up, configuring, and operating
              │ Read Config                          └─────────────────────────────────┘
              ▼
 ┌───────────────────────────┐
-│  src/data/registration.json│
+│  src/data/registration.json│  (formType: recruitment | event | generic)
 │   recruitment_results.json │
 └───────────────────────────┘
 ```
+
+---
+
+## Form Engine Modes (`formType`) & Multi-Form Concurrency
+
+The registration system functions as a dynamic multi-purpose form engine (Google Forms / Microsoft Forms style):
+1. **`recruitment`** *(Default)*: Full assistant recruitment lifecycle (multi-week selection pipeline steps, candidate NIM search, division choices).
+2. **`event`**: Direct single-event / webinar registration without selection pipeline stages or candidate NIM lookup.
+3. **`generic`**: Multi-purpose dynamic form / survey engine with customizable input types (`text`, `textarea`, `number`, `date`, `time`, `email`, `tel`, `url`, `select`, `radio`, `checkbox`, `file`).
+
+### Multi-Form Concurrency & Event-Specific Custom Schemas
+- **Form-Scoped Draft Isolation**: Each form dynamically scopes its local draft storage key to `eim_registration_draft_<eventId_or_formType>`. Multiple forms can be open concurrently in the same browser session without draft interference.
+- **Event-Specific Custom Fields & Dates**: Individual events in Keystatic CMS (`src/content/events/`) can define their own custom `formFields`, `formSections`, `openDate`, `deadline`, and `successMessage`. When visitors open `/registration?event=slug`, the form dynamically renders that specific event's custom questions and deadlines.
+
 
 ---
 
@@ -28,7 +42,7 @@ This document is a step-by-step guide for setting up, configuring, and operating
 ### 1. Create Spreadsheet & Apps Script
 1. Go to [Google Sheets](https://sheets.new) and create a new spreadsheet named **`EIM Assistant Registration 2026`**.
 2. Click **Extensions > Apps Script** from the top menu.
-3. In the Apps Script editor, open `Code.gs` and replace all default code with the contents of [`code.gs`](file:///home/arukast/Projects/website-eim/code.gs).
+3. In the Apps Script editor, open `Code.gs` and replace all default code with the contents of [`code.gs`](file:code.gs).
 
 ### 2. Configure Script Properties & Initial Setup
 1. In the Apps Script editor toolbar, select the function `initialSetup` from the dropdown and click **Run**.
@@ -105,7 +119,7 @@ If deploying to **Cloudflare Pages**, **Vercel**, or using **GitHub Actions**:
 
 ## Phase 3: Registration Pipeline & Schedule Setup
 
-All stage timelines are managed in [`src/data/registration.json`](file:///home/arukast/Projects/website-eim/src/data/registration.json).
+All stage timelines are managed in [`src/data/registration.json`](file:src/data/registration.json).
 
 ### 1. Pipeline Stages Timeline (`src/data/registration.json`)
 Set the key dates for each phase in ISO format (`YYYY-MM-DDTHH:mm:ss`):
@@ -153,13 +167,13 @@ Set the key dates for each phase in ISO format (`YYYY-MM-DDTHH:mm:ss`):
 Each step in `selectionSteps` can use one of three **Step View Templates** depending on the active phase requirements:
 
 1. **`in_progress` (In-Progress / Task Details View)**:
-   * **Visual Layout**: Renders an informative instruction panel ([`StageInfoPanel.astro`](file:///home/arukast/Projects/website-eim/src/components/registration/StageInfoPanel.astro)).
+   * **Visual Layout**: Renders an informative instruction panel ([`StageInfoPanel.astro`](file:src/components/registration/StageInfoPanel.astro)).
    * **Key Components**: Active timeline step highlight, announcement notice message (`inProgressConfig.message`), schedule timeline info (`inProgressConfig.scheduleInfo`), and platform/location instructions (`inProgressConfig.locationInfo`).
    * **Best For**: Ongoing assessment phases such as Document Screening in progress, Technical Test working window, or Interview schedule sessions.
 
 2. **`results` (Results Announcement View)**:
-   * **Visual Layout**: Renders a candidate lookup portal ([`NimSearchBox.astro`](file:///home/arukast/Projects/website-eim/src/components/registration/NimSearchBox.astro)).
-   * **Key Components**: Completed step timeline indicator, Student ID (NIM) search input with instant pass/fail status lookup against [`src/data/recruitment_results.json`](file:///home/arukast/Projects/website-eim/src/data/recruitment_results.json), and optional action buttons for official news posts (`newsUrl`) or downloaded PDF attachments (`documentUrl`).
+   * **Visual Layout**: Renders a candidate lookup portal ([`NimSearchBox.astro`](file:src/components/registration/NimSearchBox.astro)).
+   * **Key Components**: Completed step timeline indicator, Student ID (NIM) search input with instant pass/fail status lookup against [`src/data/recruitment_results.json`](file:src/data/recruitment_results.json), and optional action buttons for official news posts (`newsUrl`) or downloaded PDF attachments (`documentUrl`).
    * **Best For**: Step qualification releases such as Document Screening Results (`selection_results`), Technical Test Results (`technical_test_results`), or Interview Phase Results.
 
 3. **`info` (Informational Notice View)**:
@@ -169,7 +183,7 @@ Each step in `selectionSteps` can use one of three **Step View Templates** depen
 
 ### Automatic vs Manual Stage Overrides:
 * **`"status": "auto"`** *(Recommended)*: System automatically computes the current active stage based on system time vs the global and dynamic step dates.
-* **Site-Wide Dynamic Client-Side Sync** ([`src/scripts/global-stage-sync.ts`](file:///home/arukast/Projects/website-eim/src/scripts/global-stage-sync.ts)): Even on static SSG deployments, the site dynamically evaluates current time on client load across all pages. The Navbar CTA button (`Kontak` vs `Join Us`), Global Announcement Banner, and Homepage Hero Action Button (`#hero-recruitment-btn`) automatically update in real time when recruitment dates pass, with inline script execution to eliminate layout shift (FOUC).
+* **Site-Wide Dynamic Client-Side Sync** ([`src/scripts/global-stage-sync.ts`](file:src/scripts/global-stage-sync.ts)): Even on static SSG deployments, the site dynamically evaluates current time on client load across all pages. The Navbar CTA button (`Kontak` vs `Join Us`), Global Announcement Banner, and Homepage Hero Action Button (`#hero-recruitment-btn`) automatically update in real time when recruitment dates pass, with inline script execution to eliminate layout shift (FOUC).
 * **Manual Override**: You can force any stage by entering its key in **Recruitment Stage Status Override**:
 
 | Desired Live Stage | Key to Enter in Status Override |
@@ -190,7 +204,7 @@ Each step in `selectionSteps` can use one of three **Step View Templates** depen
 
 ## Phase 4: Candidate Announcement & Results Management
 
-When announcements open, applicants look up their status by entering their NIM on `/pendaftaran`. Results are stored in [`src/data/recruitment_results.json`](file:///home/arukast/Projects/website-eim/src/data/recruitment_results.json).
+When announcements open, applicants look up their status by entering their NIM on `/pendaftaran`. Results are stored in [`src/data/recruitment_results.json`](file:src/data/recruitment_results.json).
 
 ### 1. Updating Candidate Statuses (`src/data/recruitment_results.json` or via Keystatic CMS at `/keystatic`)
 

@@ -69,6 +69,11 @@ export function getCurrentRecruitmentStage(
     return 'extended';
   }
 
+  // Non-recruitment forms (event / generic) close after deadline
+  if (pageConfigs.formType !== 'recruitment') {
+    return 'closed';
+  }
+
   // Dynamic Selection Steps Evaluation
   const enabledSteps = rawSteps.filter((s: any) => s.enabled !== false);
 

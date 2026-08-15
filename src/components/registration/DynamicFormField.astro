@@ -144,6 +144,53 @@ const hasConditional = Object.keys(conditionalAttrs).length > 0;
     />
   )}
 
+  {field.type === 'time' && (
+    <input 
+      type="time" 
+      id={field.id} 
+      name={field.id} 
+      class="form-control" 
+      required={isRequired}
+      data-field-type="time"
+    />
+  )}
+
+  {field.type === 'email' && (
+    <input 
+      type="email" 
+      id={field.id} 
+      name={field.id} 
+      class="form-control" 
+      placeholder={field.placeholder || 'contoh@email.com'} 
+      required={isRequired}
+      data-field-type="email"
+    />
+  )}
+
+  {field.type === 'tel' && (
+    <input 
+      type="tel" 
+      id={field.id} 
+      name={field.id} 
+      class="form-control" 
+      placeholder={field.placeholder || '081234567890'} 
+      required={isRequired}
+      data-field-type="tel"
+    />
+  )}
+
+  {field.type === 'url' && (
+    <input 
+      type="url" 
+      id={field.id} 
+      name={field.id} 
+      class="form-control" 
+      placeholder={field.placeholder || 'https://...'} 
+      required={isRequired}
+      data-field-type="url"
+    />
+  )}
+
   {field.type === 'textarea' && (
     <div class="textarea-control-block">
       <textarea 

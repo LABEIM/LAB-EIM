@@ -69,7 +69,7 @@ Before ending a session, the agent must perform these tasks:
 - **Not Applicable**: The EIM Research Lab website is a fully public-facing static application. Keystatic CMS operates locally or via GitHub integration without a database backend or authentication schemas.
 
 ### 2.4 Service & Business Logic Layer
-- **Pendaftaran Form**: Posts payload client-side to Google Apps Script (`code.gs`).
+- **Pendaftaran Form**: Multi-purpose dynamic form engine (Google Forms / Microsoft Forms experience) posting payload client-side to Google Apps Script (`code.gs`). Supports three form types via `formType`: `recruitment` (staff selection pipeline), `event` (single event registration), and `generic` (multi-purpose survey/form). Supports multi-form concurrency with form-scoped draft isolation (`eim_registration_draft_<formId>`) and event-specific custom question schemas (`formFields`, `formSections`, `openDate`, `deadline`, `successMessage`).
 - **Recruitment Pipeline**: Configured dynamically via Keystatic CMS singletons (`keystatic.config.ts`) and loaded through `src/utils/registration-config.ts`.
 
 ---

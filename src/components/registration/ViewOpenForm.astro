@@ -57,6 +57,7 @@ interface FieldRow {
 }
 
 function isFieldFullWidth(f: DynamicFormFieldConfig): boolean {
+  if (f.fullWidth) return true;
   if (f.type === 'textarea' || f.type === 'radio' || f.type === 'checkbox') return true;
   if (f.conditionalTrigger && f.conditionalTrigger.fieldId && f.conditionalTrigger.value) return true;
   return false;
@@ -149,7 +150,7 @@ function chunkFieldsIntoRows(fields: DynamicFormFieldConfig[]): FieldRow[] {
   </div>
 
   {/* Registration Form */}
-  <form id="pendaftaran-form" data-max-total-mb={docLimits.totalMb || 15} data-min-words={minReasonWords} data-locale={locale} data-script-url={import.meta.env.PUBLIC_GOOGLE_SHEET_SCRIPT_URL} data-secret-token={import.meta.env.PUBLIC_RECRUITMENT_SECRET}>
+  <form id="pendaftaran-form" data-max-total-mb={docLimits.totalMb || 15} data-min-words={minReasonWords} data-locale={locale} data-success-message={registrationConfig.successMessage || ''} data-script-url={import.meta.env.PUBLIC_GOOGLE_SHEET_SCRIPT_URL} data-secret-token={import.meta.env.PUBLIC_RECRUITMENT_SECRET}>
     {/* Anti-bot Honeypot Field */}
     <input type="text" id="website_hp" name="website_hp" class="reg-honeypot-input" tabindex="-1" autocomplete="off" aria-hidden="true" />
 
@@ -157,10 +158,11 @@ function chunkFieldsIntoRows(fields: DynamicFormFieldConfig[]): FieldRow[] {
       const fields = sectionFieldsMap[sec.id] || [];
       if (fields.length === 0) return null;
       const rows = chunkFieldsIntoRows(fields);
+      const sectionIcon = sec.icon || (secIdx === 0 ? "fa-solid fa-user" : secIdx === 1 ? "fa-solid fa-layer-group" : "fa-solid fa-folder-open");
       return (
         <div id={`section_${sec.id}`}>
           <div class="form-section-heading">
-            <i class={secIdx === 0 ? "fa-solid fa-user reg-icon-mr-sm" : secIdx === 1 ? "fa-solid fa-layer-group reg-icon-mr-sm" : "fa-solid fa-folder-open reg-icon-mr-sm"}></i> {secIdx + 1}. {sec.title}
+            <i class={`${sectionIcon} reg-icon-mr-sm`}></i> {secIdx + 1}. {sec.title}
           </div>
           {sec.description && <p class="reg-small-desc" style="margin-top: -12px; margin-bottom: 8px;">{sec.description}</p>}
           

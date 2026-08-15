@@ -64,8 +64,28 @@ This file contains the list of all active laboratory assistants.
 
 ---
 
-## 3. Registration Settings (`src/data/registration.json`)
-This file configures the 10-stage recruitment pipeline landing page (`/registration`).
+## 3. Dynamic Registration Form & Engine Settings (`src/data/registration.json`)
+This file configures the dynamic registration form engine (`/registration`), supporting **Recruitment Staff Registration**, **Event Signups**, and **Generic Surveys**.
+
+### Operational Modes (`formType`)
+* **`formType`** (String): Defines the operational mode of the form engine:
+  * `"recruitment"` *(Default)*: Full assistant recruitment lifecycle with selection timeline stages, NIM search results lookup, division choices, and requirement lists.
+  * `"event"`: Event/Webinar registration mode (single-event signup without multi-week selection pipelines or NIM search tables).
+  * `"generic"`: Multi-purpose dynamic form engine (Google Forms / Microsoft Forms experience with custom form fields, sections, and automated submission handling).
+
+### Supported Field Input Types (`type`)
+* `text`: Short text input
+* `textarea`: Paragraph / multi-line text area (supports `minWords` word counter)
+* `number`: Numeric value input
+* `date`: Calendar date selector
+* `time`: Time picker input
+* `email`: Email address input with format validation
+* `tel`: Telephone / mobile phone number input
+* `url`: Web link / URL input
+* `select`: Dropdown choice selector (supports static lists or dynamic tokens `{{DIVISIONS}}`, `{{STUDENT_YEARS}}`)
+* `radio`: Single-choice radio buttons
+* `checkbox`: Multi-choice checkboxes
+* `file`: File upload field (supports `acceptExtensions`, `maxMb`, and template download links)
 
 ### Fields Explanation
 * **`status`** (String): Active recruitment stage override. Supported values:

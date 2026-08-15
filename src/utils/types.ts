@@ -128,6 +128,10 @@ export type DynamicFormFieldType =
   | 'textarea'
   | 'number'
   | 'date'
+  | 'time'
+  | 'email'
+  | 'tel'
+  | 'url'
   | 'select'
   | 'radio'
   | 'checkbox'
@@ -143,6 +147,7 @@ export interface DynamicFormFieldConfig {
   description?: string;
   sectionId?: string;
   validationState: DynamicFieldValidationState;
+  fullWidth?: boolean;
   options?: string[];
   acceptExtensions?: string;
   maxMb?: number;
@@ -160,9 +165,11 @@ export interface DynamicFormSectionConfig {
   id: string;
   title: string;
   description?: string;
+  icon?: string;
 }
 
 export interface RecruitmentConfig {
+  formType?: 'recruitment' | 'event' | 'generic';
   status?: string;
   timezone?: string;
   timezoneOffset?: string;
@@ -179,6 +186,7 @@ export interface RecruitmentConfig {
   formDescriptionTitle?: string;
   formDescription?: string;
   formDescriptionItems?: string[];
+  successMessage?: string;
   studentYears?: string[];
   portfolioDivisionTriggerValues?: string;
   formSections?: DynamicFormSectionConfig[];
@@ -234,9 +242,11 @@ export interface SelectionStepConfig {
 }
 
 export interface RegistrationPageConfigs {
+  formType: 'recruitment' | 'event' | 'generic';
   formDescriptionTitle?: string;
   formDescription?: string;
   formDescriptionItems?: string[];
+  successMessage?: string;
   studentYears: string[];
   formSections: DynamicFormSectionConfig[];
   formFields: DynamicFormFieldConfig[];
@@ -276,5 +286,28 @@ export interface CandidateResult {
   notes?: string;
   [key: string]: any;
 }
+
+export interface EventData {
+  title: string;
+  category?: string;
+  status?: 'upcoming' | 'ongoing' | 'completed';
+  event_date?: string;
+  open_date?: string;
+  deadline?: string;
+  description?: string;
+  link?: string;
+  poster?: string;
+  image?: string[];
+  icon?: string;
+  organizer?: string;
+  benefits?: string[];
+  requirements?: string[];
+  show_register?: boolean;
+  audit?: boolean;
+  success_message?: string;
+  formSections?: DynamicFormSectionConfig[];
+  formFields?: DynamicFormFieldConfig[];
+}
+
 
 

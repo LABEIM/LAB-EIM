@@ -1,5 +1,6 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import { getCollection } from 'astro:content';
 import { getCurrentRecruitmentStage } from '../utils/recruitment';
 import { parseDivisions } from '../utils/division-mapper';
 import { getRegistrationPageConfigs } from '../utils/registration-config';
@@ -23,18 +24,53 @@ const divisionsData = await getLocalizedJsonData<any>('divisions', locale);
 
 const divisions = parseDivisions(divisionsData);
 
-// Support SSR Query Parameters for testing: e.g. ?sim=30 or ?stage=interview
+// Support SSR Query Parameters for testing or dynamic event registrations: e.g. ?event=cloud-webinar&title=Pendaftaran+Webinar&formType=event
 const simQueryParam = Astro.url.searchParams.get('sim');
 const stageQueryParam = Astro.url.searchParams.get('stage') || Astro.url.searchParams.get('sim_stage');
+const urlEventId = Astro.url.searchParams.get('event');
+const urlFormType = Astro.url.searchParams.get('formType') as 'recruitment' | 'event' | 'generic' | null;
+const urlTitle = Astro.url.searchParams.get('title');
+const urlDesc = Astro.url.searchParams.get('desc');
 
-const registrationConfig = (simQueryParam || stageQueryParam)
+let eventEntry: any = null;
+if (urlEventId) {
+  try {
+    const allEvents = await getCollection('events');
+    eventEntry = allEvents.find((e: any) => {
+      const cleanId = e.id.replace(/^.*[\\/]/, '').replace(/\.[^/.]+$/, '');
+      return e.id === urlEventId || cleanId === urlEventId;
+    });
+  } catch (err) {}
+}
+
+const eventData = eventEntry?.data;
+const eventCustomFields = eventData?.form_fields || eventData?.formFields;
+const eventCustomSections = eventData?.form_sections || eventData?.formSections;
+
+const baseRegistrationConfig = (simQueryParam || stageQueryParam)
   ? applySimulationToConfig(rawRegistrationConfig, simQueryParam ? parseInt(simQueryParam, 10) || 30 : 30, Date.now(), stageQueryParam)
   : rawRegistrationConfig;
 
+const registrationConfig = {
+  ...baseRegistrationConfig,
+  ...(eventData?.title ? { heroTitle: eventData.title, title: eventData.title } : {}),
+  ...(eventData?.description && typeof eventData.description === 'string' ? { heroDescription: eventData.description } : {}),
+  ...(urlTitle ? { heroTitle: urlTitle, title: urlTitle } : {}),
+  ...(urlDesc ? { heroDescription: urlDesc } : {}),
+  ...(urlFormType ? { formType: urlFormType } : (urlEventId ? { formType: 'event' as const } : {})),
+  ...(eventData?.open_date || eventData?.openDate ? { openDate: eventData.open_date || eventData.openDate } : {}),
+  ...(eventData?.deadline ? { deadline: eventData.deadline } : {}),
+  ...(eventData?.success_message || eventData?.successMessage ? { successMessage: eventData.success_message || eventData.successMessage } : {}),
+  ...(eventCustomSections && eventCustomSections.length > 0 ? { formSections: eventCustomSections } : {}),
+  ...(eventCustomFields && eventCustomFields.length > 0 ? { formFields: eventCustomFields } : {}),
+};
+
 const {
+  formType,
   formDescriptionTitle,
   formDescription,
   formDescriptionItems,
+  successMessage,
   studentYears,
   formSections,
   formFields,
@@ -86,6 +122,9 @@ acceptedCandidates.forEach((candidate: any) => {
       <div 
         class="registration-form-container glass-panel" 
         id="registration-container" 
+        data-form-type={formType}
+        data-event-id={urlEventId || ''}
+        data-success-message={successMessage || ''}
         data-stage={initialStage}
         data-status={registrationConfig.status || 'auto'}
         data-timezone-offset={registrationConfig.timezoneOffset || '+07:00'}
@@ -149,13 +188,21 @@ acceptedCandidates.forEach((candidate: any) => {
               }
 
               if (stage === 'auto') {
+                var fType = c.getAttribute('data-form-type') || 'recruitment';
                 var uTime = parseDate(c.getAttribute('data-upcoming-start-date'));
                 var oTime = parseDate(c.getAttribute('data-open-date'));
                 var dTime = parseDate(c.getAttribute('data-deadline'));
                 var eTime = parseDate(c.getAttribute('data-extended-deadline'));
                 var aTime = parseDate(c.getAttribute('data-announcement-date'));
 
-                if (uTime > 0 && now < uTime) stage = 'closed';
+                if (fType !== 'recruitment') {
+                  if (uTime > 0 && now < uTime) stage = 'closed';
+                  else if (oTime > 0 && now < oTime) stage = 'upcoming';
+                  else if (dTime > 0 && now < dTime) stage = 'open';
+                  else if (eTime > 0 && now < eTime) stage = 'extended';
+                  else if (dTime > 0 || eTime > 0) stage = 'closed';
+                  else stage = 'open';
+                } else if (uTime > 0 && now < uTime) stage = 'closed';
                 else if (oTime > 0 && now < oTime) stage = 'upcoming';
                 else if (dTime > 0 && now < dTime) stage = 'open';
                 else if (eTime > 0 && now < eTime) stage = 'extended';
@@ -240,15 +287,17 @@ acceptedCandidates.forEach((candidate: any) => {
         <ViewUpcoming initialStage={initialStage} upcomingCfg={upcomingCfg} studentYears={studentYears} piTemplateUrl={piTemplateUrl} formDescriptionTitle={formDescriptionTitle} formDescription={formDescription} formDescriptionItems={formDescriptionItems} formFields={formFields} />
         <ViewOpenForm initialStage={initialStage} registrationConfig={registrationConfig} extendedCfg={extendedCfg} studentYears={studentYears} docLimits={docLimits} divisions={divisions} piTemplateUrl={piTemplateUrl} minReasonWords={minReasonWords} formSections={formSections} formFields={formFields} />
         
-        {/* Dynamic Selection Steps View Rendering */}
-        {selectionSteps.map((step: any, idx: number) => (
+        {/* Dynamic Selection Steps View Rendering (Recruitment Mode Only) */}
+        {formType === 'recruitment' && selectionSteps.map((step: any, idx: number) => (
           <>
             <DynamicStepView step={step} stepIndex={idx + 2} initialStage={initialStage} isResultsView={false} selectionSteps={selectionSteps} />
             <DynamicStepView step={step} stepIndex={idx + 2} initialStage={initialStage} isResultsView={true} selectionSteps={selectionSteps} />
           </>
         ))}
 
-        <ViewAnnouncement initialStage={initialStage} announcementCfg={announcementCfg} acceptedCandidates={acceptedCandidates} candidatesByDivision={candidatesByDivision} selectionSteps={selectionSteps} />
+        {formType === 'recruitment' && (
+          <ViewAnnouncement initialStage={initialStage} announcementCfg={announcementCfg} acceptedCandidates={acceptedCandidates} candidatesByDivision={candidatesByDivision} selectionSteps={selectionSteps} />
+        )}
         <ViewClosed initialStage={initialStage} closedCfg={closedCfg} />
         <ViewFallback initialStage={initialStage} fallbackCfg={fallbackCfg} piTemplateUrl={piTemplateUrl} formDescriptionTitle={formDescriptionTitle} formDescription={formDescription} formDescriptionItems={formDescriptionItems} />
         {initialStage !== 'closed' && (

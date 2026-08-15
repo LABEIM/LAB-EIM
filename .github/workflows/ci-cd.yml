@@ -118,7 +118,7 @@ jobs:
       deploy_url: ${{ steps.deploy_cloudflare.outputs.deploy_url }}
     steps:
       - name: Download dist build artifact
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: dist-static-build
           path: dist/
@@ -250,7 +250,7 @@ jobs:
           sparse-checkout-cone-mode: false
 
       - name: Download dist build artifact
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: dist-static-build
           path: dist/
@@ -402,14 +402,14 @@ jobs:
       pull-requests: write
     steps:
       - name: Download CF deploy URL artifact
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: cf-deploy-url
           path: .
         continue-on-error: true
 
       - name: Download Vercel deploy URL artifact
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: vercel-deploy-url
           path: .
@@ -495,13 +495,13 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Download dist build artifact
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: dist-static-build
           path: dist/
 
       - name: Download CF deploy URL artifact
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: cf-deploy-url
           path: .

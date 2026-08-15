@@ -6,7 +6,17 @@
         "preset": "desktop",
         "chromeFlags": "--no-sandbox --headless"
       },
-      "staticDistDir": "./dist"
+      "urls": [
+        "http://localhost:4321/",
+        "http://localhost:4321/about/",
+        "http://localhost:4321/contact/",
+        "http://localhost:4321/structure/",
+        "http://localhost:4321/registration/",
+        "http://localhost:4321/event/",
+        "http://localhost:4321/news/",
+        "http://localhost:4321/event/audit-benchmark-event/",
+        "http://localhost:4321/news/audit-benchmark-news/"
+      ]
     },
     "assert": {
       "assertions": {

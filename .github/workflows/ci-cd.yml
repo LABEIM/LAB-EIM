@@ -522,14 +522,35 @@ jobs:
           echo "Resolved target URL: '${TARGET:-(static fallback)}'"
           echo "url=$TARGET" >> $GITHUB_OUTPUT
 
+      - name: Build Lighthouse URL list (Live Cloudflare URL)
+        if: ${{ steps.target_url.outputs.url != '' }}
+        id: build_url_list
+        env:
+          BASE_URL: ${{ steps.target_url.outputs.url }}
+        run: |
+          BASE=$(echo "$BASE_URL" | sed 's|/$||')
+          cat > lh-urls.txt << EOF
+          ${BASE}/
+          ${BASE}/about/
+          ${BASE}/contact/
+          ${BASE}/structure/
+          ${BASE}/registration/
+          ${BASE}/event/
+          ${BASE}/news/
+          ${BASE}/event/audit-benchmark-event/
+          ${BASE}/news/audit-benchmark-news/
+          EOF
+          sed -i 's/^[[:space:]]*//' lh-urls.txt
+          echo "URLs to audit:"
+          cat lh-urls.txt
+
       - name: Run Lighthouse audit (Live Cloudflare URL)
         if: ${{ steps.target_url.outputs.url != '' }}
         id: lighthouse_live
         uses: treosh/lighthouse-ci-action@v12
         with:
           configPath: './.lighthouserc.json'
-          urls: |
-            ${{ steps.target_url.outputs.url }}
+          urlsFile: 'lh-urls.txt'
           uploadArtifacts: true
 
       - name: Run Lighthouse audit (Static Fallback)

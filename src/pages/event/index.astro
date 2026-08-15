@@ -8,7 +8,7 @@ import { getLocaleFromUrl, getCollectionEntriesForLocale, t } from '../../utils/
 
 const locale = getLocaleFromUrl(Astro.url);
 const rawEvents = await getCollection('events');
-const events = getCollectionEntriesForLocale(rawEvents, locale);
+const events = getCollectionEntriesForLocale(rawEvents, locale).filter((item: any) => !item.data.audit);
 
 const categories = Array.from(new Set(events.map((item: any) => item.data.category).filter(Boolean))).sort();
 

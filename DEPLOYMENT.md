@@ -320,3 +320,22 @@ Runs automated static application security testing (SAST) for JavaScript/TypeScr
 
 Scans pull requests for newly introduced vulnerable dependencies or invalid licenses before code is merged into `main`. Fails on vulnerabilities with `high` or `critical` severity.
 
+> **Requirement**: Requires **Dependency graph** enabled in GitHub repository settings (**Settings** > **Advanced Security** / **Code security and analysis**).
+
+### 6.6 Recommended GitHub Repository Security Settings Guide
+
+To maximize security and ensure all CI/CD security workflows operate smoothly, enable the following settings in your repository on GitHub (**Settings** > **Advanced Security** or **Code security and analysis**):
+
+| Feature | Recommended Action | Purpose |
+| :--- | :--- | :--- |
+| **Dependency graph** | **Enable** (Required) | Required by `.github/workflows/dependency-review.yml` to parse `package-lock.json` and block vulnerable dependencies on PRs. |
+| **Dependabot alerts** | **Enable** | Sends maintainer notifications when an installed npm package has a known CVE vulnerability. |
+| **Dependabot security updates** | **Enable** | Automatically creates security fix PRs when patches become available for vulnerable dependencies. |
+| **Secret Protection** | **Enable** | Scans commits to prevent accidental pushes of secret API keys, tokens, or credentials. |
+| **Private vulnerability reporting** | **Enable** | Allows security researchers to privately disclose security vulnerabilities to repository maintainers. |
+
+*Note: For public organization repositories, all of these features are 100% free.*
+
+
+
+

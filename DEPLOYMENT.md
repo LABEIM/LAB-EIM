@@ -253,8 +253,12 @@ In GitHub go to **Settings** > **Secrets and variables** > **Actions** and add:
    - Best Practices: ≥ 90% (error — blocks PR merge)
    - SEO: ≥ 90% (error — blocks PR merge; `is-crawlable` check turned off so platform `X-Robots-Tag: noindex` headers on preview builds do not skew score calculations)
 
-### 5.3 Pipeline Reliability Features
+### 5.3 Pipeline Security & Reliability Features
 
+- **Action SHA Pinning**: All GitHub Actions are pinned to full 40-character commit SHAs for supply chain security (protecting against tag mutation attacks). Dependabot automatically monitors and opens PRs for SHA version updates.
+- **Principle of Least Privilege**: Top-level `permissions: {}` block restricts default `GITHUB_TOKEN` access. Each job explicitly declares minimum required permissions.
+- **Path Filtering (`paths-ignore`)**: Push events to `main` ignore root documentation updates (`README.md`, `DEPLOYMENT.md`, etc.), saving CI runner minutes while preserving full verification for content (`src/content/`) and source code. PR events always run full verification.
+- **Centralized `.npmrc`**: Configures `legacy-peer-deps=true` at repository level for consistent dependency installation across CI and local environments.
 - **Job Timeouts**: All jobs have explicit timeouts (5–15 minutes) to prevent hung pipelines.
 - **Deployment Retry**: Both Cloudflare and Vercel deployments retry up to 3 times with exponential backoff (10s → 20s → 40s) to handle transient API failures.
 - **Concurrency Control**: Duplicate runs on the same branch are automatically cancelled.
@@ -297,6 +301,7 @@ All PRs are labeled (`dependencies`, `automated`) and use Conventional Commits p
 
 ### 6.2 Dependabot Auto-Merge ([`.github/workflows/dependabot-auto-merge.yml`](file:///.github/workflows/dependabot-auto-merge.yml))
 
+Triggered via `pull_request_target` (runs in base branch context with secret access while skipping execution for non-Dependabot PRs):
 - **Minor & patch** updates: Auto-approved and auto-merged after CI passes.
 - **Major** updates: Labeled `major-update` + `needs-review` for manual review.
 
@@ -309,4 +314,9 @@ Automatically marks and closes inactive issues and PRs:
 
 ### 6.4 CodeQL Security Analysis ([`.github/workflows/codeql.yml`](file:///.github/workflows/codeql.yml))
 
-Runs automated security scanning for JavaScript/TypeScript on every push to `main`, on PRs, and weekly (Monday 04:30 UTC).
+Runs automated static application security testing (SAST) for JavaScript/TypeScript on every push to `main`, on PRs, and weekly (Monday 04:30 UTC).
+
+### 6.5 Dependency Review ([`.github/workflows/dependency-review.yml`](file:///.github/workflows/dependency-review.yml))
+
+Scans pull requests for newly introduced vulnerable dependencies or invalid licenses before code is merged into `main`. Fails on vulnerabilities with `high` or `critical` severity.
+

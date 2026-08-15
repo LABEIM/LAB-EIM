@@ -99,10 +99,6 @@ export function initFileInputListeners(formElement: HTMLFormElement | null) {
 
 export function initRegistrationDraft(
   ctxOrForm: RegistrationContext | HTMLFormElement | null,
-  _div1SelectParam?: HTMLSelectElement | null,
-  _div2SelectParam?: HTMLSelectElement | null,
-  _medhumPortoContainerParam?: HTMLElement | null,
-  _medhumPortoInputParam?: HTMLInputElement | null,
   portfolioTriggerListParam?: string[]
 ) {
   let formElement: HTMLFormElement | null = null;

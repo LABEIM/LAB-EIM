@@ -29,11 +29,6 @@ export interface DivisionConfig {
 }
 
 export interface DocumentLimits {
-  ksmMb: number;
-  khsMb: number;
-  mlMb: number;
-  cvMb: number;
-  piMb: number;
   totalMb: number;
 }
 
@@ -167,23 +162,6 @@ export interface DynamicFormSectionConfig {
   description?: string;
 }
 
-export type FieldState = 'required' | 'optional' | 'disabled';
-export type PortfolioFieldState = 'required' | 'only_trigger' | 'optional' | 'disabled';
-
-export interface FieldStates {
-  ksm?: FieldState;
-  khs?: FieldState;
-  ml?: FieldState;
-  cv?: FieldState;
-  pi?: FieldState;
-  nomor_telp?: FieldState;
-  angkatan?: FieldState;
-  divisi_2?: FieldState;
-  alasan_divisi_2?: FieldState;
-  bersedia_dipindah?: FieldState;
-  portofolio?: PortfolioFieldState;
-}
-
 export interface RecruitmentConfig {
   status?: string;
   timezone?: string;
@@ -205,7 +183,6 @@ export interface RecruitmentConfig {
   portfolioDivisionTriggerValues?: string;
   formSections?: DynamicFormSectionConfig[];
   formFields?: DynamicFormFieldConfig[];
-  fieldStates?: FieldStates;
   documentLimits?: DocumentLimits;
   piTemplateUrl?: string;
   minReasonWords?: number;
@@ -263,7 +240,6 @@ export interface RegistrationPageConfigs {
   studentYears: string[];
   formSections: DynamicFormSectionConfig[];
   formFields: DynamicFormFieldConfig[];
-  fieldStates: FieldStates;
   docLimits: DocumentLimits;
   piTemplateUrl: string;
   minReasonWords: number;

@@ -3,14 +3,6 @@ import { validateRegistrationForm } from './validation';
 
 export function initRegistrationSubmit(
   ctxOrForm: RegistrationContext | HTMLFormElement | null,
-  submitBtnParam?: HTMLButtonElement | null,
-  btnTextParam?: HTMLElement | null,
-  alertErrorParam?: HTMLElement | null,
-  alertSuccessParam?: HTMLElement | null,
-  div1SelectParam?: HTMLSelectElement | null,
-  div2SelectParam?: HTMLSelectElement | null,
-  medhumPortoInputParam?: HTMLInputElement | null,
-  requiresPortfolioParam?: (val: string) => boolean,
   clearDraftParam?: () => void,
   toggleMedhumPortoParam?: () => void
 ) {
@@ -21,8 +13,6 @@ export function initRegistrationSubmit(
   let alertSuccess: HTMLElement | null = null;
   let div1Select: HTMLSelectElement | null = null;
   let div2Select: HTMLSelectElement | null = null;
-  let medhumPortoInput: HTMLInputElement | null = null;
-  let requiresPortfolio = (val: string) => Boolean(val && val.trim());
   let clearDraft = () => {};
   let toggleMedhumPorto = () => {};
   let ctxScriptUrl: string | undefined = undefined;
@@ -37,22 +27,18 @@ export function initRegistrationSubmit(
     alertSuccess = ctx.alertSuccess;
     div1Select = ctx.div1Select;
     div2Select = ctx.div2Select;
-    medhumPortoInput = ctx.medhumPortoInput;
-    requiresPortfolio = (val: string) => ctx.portfolioTriggerList.includes(val.trim().toLowerCase());
     ctxScriptUrl = ctx.scriptUrl;
     ctxSecretToken = ctx.secretToken;
     if (clearDraftParam) clearDraft = clearDraftParam;
     if (toggleMedhumPortoParam) toggleMedhumPorto = toggleMedhumPortoParam;
   } else {
     formElement = ctxOrForm as HTMLFormElement | null;
-    submitBtn = submitBtnParam || null;
-    btnText = btnTextParam || null;
-    alertError = alertErrorParam || null;
-    alertSuccess = alertSuccessParam || null;
-    div1Select = div1SelectParam || null;
-    div2Select = div2SelectParam || null;
-    medhumPortoInput = medhumPortoInputParam || null;
-    if (requiresPortfolioParam) requiresPortfolio = requiresPortfolioParam;
+    submitBtn = (document.getElementById('submit-btn') as HTMLButtonElement | null) || null;
+    btnText = document.getElementById('btn-text');
+    alertError = document.getElementById('status-alert-error');
+    alertSuccess = document.getElementById('status-alert-success');
+    div1Select = (document.getElementById('divisi_1') as HTMLSelectElement | null) || null;
+    div2Select = (document.getElementById('divisi_2') as HTMLSelectElement | null) || null;
     if (clearDraftParam) clearDraft = clearDraftParam;
     if (toggleMedhumPortoParam) toggleMedhumPorto = toggleMedhumPortoParam;
   }
@@ -231,25 +217,13 @@ export function initRegistrationSubmit(
       const nomor_telp = (document.getElementById('nomor_telp') as HTMLInputElement | null)?.value.trim() || '';
       const divisi_1 = div1Select ? div1Select.value : ((document.getElementById('divisi_1') as HTMLSelectElement | null)?.value || '');
       const divisi_2 = div2Select ? div2Select.value : ((document.getElementById('divisi_2') as HTMLSelectElement | null)?.value || '');
-      const alasan_divisi_1 = (document.getElementById('alasan_divisi_1') as HTMLTextAreaElement | null)?.value.trim() || '';
-      const alasan_divisi_2 = (document.getElementById('alasan_divisi_2') as HTMLTextAreaElement | null)?.value.trim() || '';
-      const portofolio_medhum = medhumPortoInput?.value.trim() || (document.getElementById('portofolio_medhum') as HTMLInputElement | null)?.value.trim() || '';
-
-      const minWordsAttr = formElement?.getAttribute('data-min-words') || containerEl?.getAttribute('data-min-reason-words');
-      const minReasonWords = minWordsAttr ? parseInt(minWordsAttr, 10) : 30;
 
       const validationResult = validateRegistrationForm(
         formElement,
         nim,
         nomor_telp,
         divisi_1,
-        divisi_2,
-        alasan_divisi_1,
-        alasan_divisi_2,
-        minReasonWords,
-        portofolio_medhum,
-        requiresPortfolio,
-        []
+        divisi_2
       );
 
       if (!validationResult.valid) {

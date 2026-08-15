@@ -56,19 +56,7 @@ export function initRegistrationScript() {
   initRegistrationTimers(container);
   initRegistrationSearch();
 
-  const { toggleMedhumPorto, clearDraft, requiresPortfolio } = initRegistrationDraft(ctx);
+  const { toggleMedhumPorto, clearDraft } = initRegistrationDraft(ctx);
 
-  initRegistrationSubmit(
-    ctx,
-    undefined,
-    undefined,
-    undefined,
-    undefined,
-    undefined,
-    undefined,
-    undefined,
-    requiresPortfolio,
-    clearDraft,
-    toggleMedhumPorto
-  );
+  initRegistrationSubmit(ctx, clearDraft, toggleMedhumPorto);
 }

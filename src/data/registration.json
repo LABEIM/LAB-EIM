@@ -265,34 +265,7 @@
       }
     }
   ],
-  "fieldStates": {
-    "ksm": "disabled",
-    "khs": "required",
-    "ml": "required",
-    "cv": "required",
-    "pi": "required",
-    "nomor_telp": "required",
-    "angkatan": "required",
-    "divisi_2": "required",
-    "alasan_divisi_2": "required",
-    "bersedia_dipindah": "required",
-    "portofolio": "required"
-  },
-  "allowedFileExtensions": {
-    "ksm": "pdf",
-    "khs": "pdf",
-    "ml": "pdf",
-    "cv": "pdf",
-    "pi": "pdf"
-  },
-  "documentLimits": {
-    "ksmMb": 3,
-    "khsMb": 3,
-    "mlMb": 3,
-    "cvMb": 5,
-    "piMb": 3,
-    "totalMb": 15
-  },
+  "totalMaxMb": 15,
   "upcomingConfig": {
     "title": "Pendaftaran Segera Dibuka!",
     "subtitle": "Persiapkan berkas Anda. Pendaftaran akan resmi dibuka dalam waktu dekat.",

@@ -1,7 +1,7 @@
 ---
 import BackToHomeButton from './BackToHomeButton.astro';
 import { getLocaleFromUrl, t } from '../../utils/i18n';
-import type { FieldStates } from '../../utils/types';
+import type { DynamicFormFieldConfig } from '../../utils/types';
 import FormDescriptionCard from './FormDescriptionCard.astro';
 
 interface Props {
@@ -11,35 +11,23 @@ interface Props {
     subtitle: string;
     prepNotice: string;
   };
-  docLimits: {
-    ksmMb: number;
-    khsMb: number;
-    mlMb: number;
-    cvMb: number;
-    piMb: number;
-    totalMb?: number;
-  };
-  studentYears: string[];
+  studentYears?: string[];
   piTemplateUrl?: string;
-  fieldStates?: FieldStates;
-  allowedFileExtensions?: Record<string, string>;
   formDescriptionTitle?: string;
   formDescription?: string;
   formDescriptionItems?: string[];
+  formFields?: DynamicFormFieldConfig[];
 }
 
 const locale = getLocaleFromUrl(Astro.url);
 const { 
   initialStage, 
   upcomingCfg, 
-  docLimits, 
-  studentYears, 
-  piTemplateUrl, 
-  fieldStates = {}, 
-  allowedFileExtensions = {},
+  studentYears = [], 
   formDescriptionTitle,
   formDescription,
   formDescriptionItems,
+  formFields = []
 } = Astro.props;
 
 const formatExtsLabel = (extsStr?: string) => (extsStr || "pdf, png, jpg, jpeg")
@@ -47,18 +35,7 @@ const formatExtsLabel = (extsStr?: string) => (extsStr || "pdf, png, jpg, jpeg")
   .map((e: string) => e.trim().toUpperCase().replace(/^\./, ''))
   .join(', ');
 
-const ksmExtsDisplay = formatExtsLabel(allowedFileExtensions.ksm);
-const khsExtsDisplay = formatExtsLabel(allowedFileExtensions.khs);
-const mlExtsDisplay = formatExtsLabel(allowedFileExtensions.ml);
-const cvExtsDisplay = formatExtsLabel(allowedFileExtensions.cv);
-const piExtsDisplay = formatExtsLabel(allowedFileExtensions.pi);
-
-const isKsmEnabled = fieldStates.ksm !== 'disabled';
-const isKhsEnabled = fieldStates.khs !== 'disabled';
-const isMlEnabled = fieldStates.ml !== 'disabled';
-const isCvEnabled = fieldStates.cv !== 'disabled';
-const isPiEnabled = fieldStates.pi !== 'disabled';
-const isAngkatanEnabled = fieldStates.angkatan !== 'disabled';
+const fileFields = formFields.filter(f => f.type === 'file' && f.validationState !== 'disabled');
 ---
 
 <div id="view-upcoming" class={initialStage === 'upcoming' ? '' : 'is-hidden'}>
@@ -98,46 +75,25 @@ const isAngkatanEnabled = fieldStates.angkatan !== 'disabled';
     </h3>
     <p class="reg-checklist-notice">{upcomingCfg.prepNotice}</p>
     <ul class="checklist-list">
-      {isKsmEnabled && (
+      {fileFields.map(f => (
         <li>
           <i class="fa-solid fa-check reg-checklist-icon"></i>
-          <span><strong>{t('form.ksm', locale)}</strong> ({ksmExtsDisplay}) {fieldStates.ksm === 'optional' ? '(Opsional)' : ''} - Max {docLimits.ksmMb}MB</span>
-        </li>
-      )}
-      {isKhsEnabled && (
-        <li>
-          <i class="fa-solid fa-check reg-checklist-icon"></i>
-          <span><strong>{t('form.khs', locale)}</strong> ({khsExtsDisplay}) {fieldStates.khs === 'optional' ? '(Opsional)' : ''} - Max {docLimits.khsMb}MB</span>
-        </li>
-      )}
-      {isMlEnabled && (
-        <li>
-          <i class="fa-solid fa-check reg-checklist-icon"></i>
-          <span><strong>{t('form.motivationLetter', locale)}</strong> ({mlExtsDisplay}) {fieldStates.ml === 'optional' ? '(Opsional)' : ''} - Max {docLimits.mlMb}MB</span>
-        </li>
-      )}
-      {isCvEnabled && (
-        <li>
-          <i class="fa-solid fa-check reg-checklist-icon"></i>
-          <span><strong>{t('form.cv', locale)}</strong> ({cvExtsDisplay}) {fieldStates.cv === 'optional' ? '(Opsional)' : ''} - Max {docLimits.cvMb}MB</span>
-        </li>
-      )}
-      {isPiEnabled && (
-        <li>
-          <i class="fa-solid fa-check reg-checklist-icon"></i>
-          <span><strong>{t('form.pi', locale)}</strong> ({piExtsDisplay}) {fieldStates.pi === 'optional' ? '(Opsional)' : ''} - Max {docLimits.piMb}MB</span>
-          {piTemplateUrl && (
-            <a href={piTemplateUrl} target="_blank" rel="noopener noreferrer" class="checklist-download-btn">
+          <span>
+            <strong>{f.label}</strong> ({formatExtsLabel(f.acceptExtensions)}) {f.validationState === 'optional' ? '(Opsional)' : ''} - Max {f.maxMb || 2}MB
+          </span>
+          {f.templateUrl && (
+            <a href={f.templateUrl} target="_blank" rel="noopener noreferrer" class="checklist-download-btn">
               <i class="fa-solid fa-file-arrow-down"></i>
-              <span>{t('form.downloadPiTemplate', locale)}</span>
+              <span>{f.templateLabel || t('form.downloadPiTemplate', locale)}</span>
             </a>
           )}
         </li>
-      )}
-      {isAngkatanEnabled && (
+      ))}
+
+      {studentYears.length > 0 && (
         <li>
           <i class="fa-solid fa-user-graduate reg-checklist-icon"></i>
-          <span><strong>Angkatan Mahasiswa:</strong> {studentYears.join(", ")} {fieldStates.angkatan === 'optional' ? '(Opsional)' : ''}</span>
+          <span><strong>Angkatan Mahasiswa:</strong> {studentYears.join(", ")}</span>
         </li>
       )}
     </ul>

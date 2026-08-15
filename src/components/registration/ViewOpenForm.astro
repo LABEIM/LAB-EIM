@@ -1,7 +1,6 @@
 ---
 import type { DivisionConfig, DynamicFormFieldConfig, DynamicFormSectionConfig } from '../../utils/types';
 import { getLocaleFromUrl, t } from '../../utils/i18n';
-import type { FieldStates } from '../../utils/types';
 import FormDescriptionCard from './FormDescriptionCard.astro';
 import DynamicFormField from './DynamicFormField.astro';
 
@@ -14,17 +13,11 @@ interface Props {
   };
   studentYears: string[];
   docLimits: {
-    ksmMb: number;
-    khsMb: number;
-    mlMb: number;
-    cvMb: number;
-    piMb: number;
     totalMb?: number;
   };
   divisions: DivisionConfig[];
   piTemplateUrl?: string;
   minReasonWords?: number;
-  fieldStates?: FieldStates;
   formSections?: DynamicFormSectionConfig[];
   formFields?: DynamicFormFieldConfig[];
 }

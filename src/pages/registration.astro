@@ -38,7 +38,6 @@ const {
   studentYears,
   formSections,
   formFields,
-  fieldStates,
   docLimits,
   piTemplateUrl,
   minReasonWords,
@@ -102,7 +101,6 @@ acceptedCandidates.forEach((candidate: any) => {
         data-interview-end-date={registrationConfig.interviewEndDate || DEFAULT_RECRUITMENT_DATES.interviewEndDate}
         data-portfolio-trigger-vals={registrationConfig.portfolioDivisionTriggerValues || "Medhum"}
         data-min-reason-words={minReasonWords}
-        data-field-states={JSON.stringify(fieldStates)}
         data-selection-steps={JSON.stringify(selectionSteps)}
         data-script-url={import.meta.env.PUBLIC_GOOGLE_SHEET_SCRIPT_URL}
         data-secret-token={import.meta.env.PUBLIC_RECRUITMENT_SECRET}
@@ -239,8 +237,8 @@ acceptedCandidates.forEach((candidate: any) => {
             } catch(e) {}
           })();
         </script>
-        <ViewUpcoming initialStage={initialStage} upcomingCfg={upcomingCfg} docLimits={docLimits} studentYears={studentYears} piTemplateUrl={piTemplateUrl} fieldStates={fieldStates} allowedFileExtensions={registrationConfig.allowedFileExtensions} formDescriptionTitle={formDescriptionTitle} formDescription={formDescription} formDescriptionItems={formDescriptionItems} />
-        <ViewOpenForm initialStage={initialStage} registrationConfig={registrationConfig} extendedCfg={extendedCfg} studentYears={studentYears} docLimits={docLimits} divisions={divisions} piTemplateUrl={piTemplateUrl} minReasonWords={minReasonWords} fieldStates={fieldStates} formSections={formSections} formFields={formFields} />
+        <ViewUpcoming initialStage={initialStage} upcomingCfg={upcomingCfg} studentYears={studentYears} piTemplateUrl={piTemplateUrl} formDescriptionTitle={formDescriptionTitle} formDescription={formDescription} formDescriptionItems={formDescriptionItems} formFields={formFields} />
+        <ViewOpenForm initialStage={initialStage} registrationConfig={registrationConfig} extendedCfg={extendedCfg} studentYears={studentYears} docLimits={docLimits} divisions={divisions} piTemplateUrl={piTemplateUrl} minReasonWords={minReasonWords} formSections={formSections} formFields={formFields} />
         
         {/* Dynamic Selection Steps View Rendering */}
         {selectionSteps.map((step: any, idx: number) => (

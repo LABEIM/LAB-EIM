@@ -2,9 +2,9 @@ name: Unified CI/CD Pipeline (Cloudflare Primary + Vercel Backup)
 
 on:
   push:
-    branches: [ "main", "master", "astro-version" ]
+    branches: [ "main" ]
   pull_request:
-    branches: [ "main", "master", "astro-version" ]
+    branches: [ "main" ]
   workflow_dispatch:
     inputs:
       deploy_target:
@@ -23,11 +23,21 @@ concurrency:
 
 env:
   ASTRO_TELEMETRY_DISABLED: 1
+  NODE_VERSION: 22
+  # NOTE: This MUST be a plain env var, NOT a secret.
+  # GitHub Actions masks any job output containing a secret substring,
+  # which causes deploy URLs containing the project name to be silently
+  # dropped (the "Skip output ... since it may contain secret" warning).
+  CF_PAGES_PROJECT: lab-eim
 
 jobs:
+  # ──────────────────────────────────────────────────────────────────────
+  # Stage 1: CI Validation & Static Build
+  # ──────────────────────────────────────────────────────────────────────
   validate:
     name: CI Validation & Static Build
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -35,7 +45,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version: ${{ env.NODE_VERSION }}
           cache: npm
 
       - name: Install dependencies
@@ -45,38 +55,68 @@ jobs:
         run: npx astro check
 
       - name: Build static site export
+        id: build
         run: |
+          BUILD_START=$(date +%s)
           rm -rf .astro dist
           npm run build
+          BUILD_END=$(date +%s)
+          BUILD_DURATION=$((BUILD_END - BUILD_START))
+          echo "duration=${BUILD_DURATION}s" >> $GITHUB_OUTPUT
         env:
           PUBLIC_GOOGLE_SHEET_SCRIPT_URL: ${{ secrets.PUBLIC_GOOGLE_SHEET_SCRIPT_URL }}
           PUBLIC_KEYSTATIC_GITHUB_APP_SLUG: ${{ secrets.PUBLIC_KEYSTATIC_GITHUB_APP_SLUG }}
           PUBLIC_RECRUITMENT_SECRET: ${{ secrets.PUBLIC_RECRUITMENT_SECRET }}
+
+      - name: Generate build artifact hash
+        id: hash
+        run: |
+          HASH=$(find dist -type f -exec sha256sum {} \; | sort | sha256sum | cut -d' ' -f1)
+          echo "sha256=${HASH}" >> $GITHUB_OUTPUT
 
       - name: Upload dist build artifact
         uses: actions/upload-artifact@v4
         with:
           name: dist-static-build
           path: dist/
-          retention-days: 1
+          retention-days: 3
 
+      - name: Build summary
+        run: |
+          echo "### Build Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Metric | Value |" >> $GITHUB_STEP_SUMMARY
+          echo "|--------|-------|" >> $GITHUB_STEP_SUMMARY
+          echo "| Build Duration | ${{ steps.build.outputs.duration }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Artifact SHA256 | \`${HASH:0:16}...\` |" >> $GITHUB_STEP_SUMMARY
+          echo "| Artifact Size | $(du -sh dist | cut -f1) |" >> $GITHUB_STEP_SUMMARY
+          echo "| Branch | \`${{ github.ref_name }}\` |" >> $GITHUB_STEP_SUMMARY
+          echo "| Commit | \`${{ github.sha }}\` |" >> $GITHUB_STEP_SUMMARY
+        env:
+          HASH: ${{ steps.hash.outputs.sha256 }}
+
+  # ──────────────────────────────────────────────────────────────────────
+  # Stage 2a: Deploy to Cloudflare Pages (Primary)
+  # ──────────────────────────────────────────────────────────────────────
   deploy-cloudflare:
     name: Deploy to Cloudflare Pages (Primary)
     needs: validate
-    if: github.event_name == 'push' || github.event_name == 'pull_request' || (github.event_name == 'workflow_dispatch' && (inputs.deploy_target == 'primary' || inputs.deploy_target == 'both'))
+    if: >-
+      github.event_name == 'push' ||
+      github.event_name == 'pull_request' ||
+      (github.event_name == 'workflow_dispatch' &&
+       (inputs.deploy_target == 'primary' || inputs.deploy_target == 'both'))
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     permissions:
       contents: read
       deployments: write
     environment:
-      name: ${{ github.event_name == 'pull_request' && 'preview' || 'production' }}
-      url: ${{ steps.deploy_cloudflare.outputs.url }}
+      name: ${{ github.event_name == 'pull_request' && 'cloudflare-preview' || 'cloudflare-production' }}
+      url: ${{ steps.deploy_cloudflare.outputs.deploy_url }}
     outputs:
-      deploy_url: ${{ steps.deploy_cloudflare.outputs.url }}
+      deploy_url: ${{ steps.deploy_cloudflare.outputs.deploy_url }}
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
-
       - name: Download dist build artifact
         uses: actions/download-artifact@v4
         with:
@@ -86,51 +126,128 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version: ${{ env.NODE_VERSION }}
 
-      - name: Deploy to Cloudflare Pages via Wrangler
+      - name: Deploy to Cloudflare Pages via Wrangler (with retry)
         id: deploy_cloudflare
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
         run: |
-          PROJECT_NAME="${{ secrets.CLOUDFLARE_PROJECT_NAME || 'lab-eim' }}"
-          BRANCH_NAME="${{ github.head_ref || github.ref_name }}"
-          
+          PROJECT_NAME="${CF_PAGES_PROJECT}"
+
+          RAW_HEAD_REF="${{ github.head_ref }}"
+          RAW_REF_NAME="${{ github.ref_name }}"
+          BRANCH_NAME="${RAW_HEAD_REF:-$RAW_REF_NAME}"
+
           # Auto-create Pages project shell if it does not exist yet
           npx wrangler pages project create "$PROJECT_NAME" --production-branch="main" > /dev/null 2>&1 || true
 
-          # Deploy prebuilt static assets to Cloudflare Pages / Workers
-          npx wrangler pages deploy dist --project-name="$PROJECT_NAME" --branch="$BRANCH_NAME" --commit-dirty=true | tee deploy.log
+          # Deploy with retry logic (3 attempts, exponential backoff)
+          MAX_RETRIES=3
+          RETRY_DELAY=10
+          for ATTEMPT in $(seq 1 $MAX_RETRIES); do
+            echo "::group::Deployment attempt $ATTEMPT/$MAX_RETRIES"
+            if npx wrangler pages deploy dist \
+              --project-name="$PROJECT_NAME" \
+              --branch="$BRANCH_NAME" \
+              --commit-dirty=true 2>&1 | tee deploy.log; then
+              echo "::endgroup::"
+              echo "Deployment succeeded on attempt $ATTEMPT"
+              break
+            fi
+            echo "::endgroup::"
+            if [ "$ATTEMPT" -lt "$MAX_RETRIES" ]; then
+              echo "Attempt $ATTEMPT failed, retrying in ${RETRY_DELAY}s..."
+              sleep $RETRY_DELAY
+              RETRY_DELAY=$((RETRY_DELAY * 2))
+            else
+              echo "All $MAX_RETRIES deployment attempts failed"
+              exit 1
+            fi
+          done
 
-          # Extract live deployment URL (.workers.dev or .pages.dev)
-          DEPLOY_URL=$(grep -oE 'https://[a-zA-Z0-9.-]+\.(workers\.dev|pages\.dev)' deploy.log | head -n 1)
-          if [ -z "$DEPLOY_URL" ]; then
-            DEPLOY_URL="https://${PROJECT_NAME}.laboratoriumeim.workers.dev"
+          # Extract deployment URL — strip ANSI codes, find .pages.dev or .workers.dev URL
+          DEPLOY_URL=$(sed 's/\x1B\[[0-9;]*[a-zA-Z]//g' deploy.log \
+            | grep -oP 'https://[a-zA-Z0-9.-]+\.(pages\.dev|workers\.dev)' \
+            | grep -iv 'dash\.cloudflare\|api\.cloudflare' \
+            | head -1 \
+            | tr -cd 'a-zA-Z0-9.:/_-')
+
+          # Fallback to standard Cloudflare Pages branch preview URL pattern
+          if [ -z "$DEPLOY_URL" ] || ! echo "$DEPLOY_URL" | grep -q '^https://'; then
+            CLEAN_BRANCH=$(echo "$BRANCH_NAME" | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z0-9]/-/g; s/^-//; s/-$//')
+            if [ "$CLEAN_BRANCH" = "main" ] || [ "$CLEAN_BRANCH" = "master" ]; then
+              DEPLOY_URL="https://${PROJECT_NAME}.pages.dev"
+            else
+              DEPLOY_URL="https://${CLEAN_BRANCH}.${PROJECT_NAME}.pages.dev"
+            fi
           fi
-          echo "Captured live deployment URL: $DEPLOY_URL"
-          echo "url=$DEPLOY_URL" >> $GITHUB_OUTPUT
 
+          echo "Captured live deployment URL: $DEPLOY_URL"
+          echo "deploy_url=$DEPLOY_URL" >> $GITHUB_OUTPUT
+
+          # Also write to file as artifact fallback (immune to secret masking)
+          echo "$DEPLOY_URL" > cf_deploy_url.txt
+
+      - name: Upload CF deploy URL artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: cf-deploy-url
+          path: cf_deploy_url.txt
+          retention-days: 1
+
+      - name: Deployment summary
+        run: |
+          echo "### Cloudflare Pages Deployment" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Detail | Value |" >> $GITHUB_STEP_SUMMARY
+          echo "|--------|-------|" >> $GITHUB_STEP_SUMMARY
+          echo "| URL | ${{ steps.deploy_cloudflare.outputs.deploy_url }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Branch | \`${{ github.head_ref || github.ref_name }}\` |" >> $GITHUB_STEP_SUMMARY
+          echo "| Status | Deployed |" >> $GITHUB_STEP_SUMMARY
+
+  # ──────────────────────────────────────────────────────────────────────
+  # Stage 2b: Deploy to Vercel (Parallel Backup)
+  # ──────────────────────────────────────────────────────────────────────
   deploy-vercel:
     name: Deploy to Vercel (Parallel Target)
     needs: validate
-    if: github.event_name == 'push' || github.event_name == 'pull_request' || (github.event_name == 'workflow_dispatch' && (inputs.deploy_target == 'backup' || inputs.deploy_target == 'both'))
+    if: >-
+      github.event_name == 'push' ||
+      github.event_name == 'pull_request' ||
+      (github.event_name == 'workflow_dispatch' &&
+       (inputs.deploy_target == 'backup' || inputs.deploy_target == 'both'))
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     permissions:
       contents: read
       pull-requests: write
       deployments: write
     environment:
-      name: ${{ github.event_name == 'pull_request' && 'preview' || 'backup-production' }}
-      url: ${{ steps.deploy_preview.outputs.deploy_url || steps.deploy_production.outputs.deploy_url }}
+      name: ${{ github.event_name == 'pull_request' && 'vercel-preview' || 'vercel-production' }}
+      url: ${{ steps.resolve_url.outputs.deploy_url }}
     outputs:
-      deploy_url: ${{ steps.deploy_preview.outputs.deploy_url || steps.deploy_production.outputs.deploy_url }}
+      deploy_url: ${{ steps.resolve_url.outputs.deploy_url }}
+    # NOTE: VERCEL_ORG_ID and VERCEL_PROJECT_ID are intentionally declared at
+    # the job level (not as secrets) so the Vercel CLI can read them from the
+    # environment.  The CLI uses them to target the correct project without
+    # needing a `vercel link` step or a committed .vercel/project.json.
     env:
       VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
       VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
     steps:
-      - name: Checkout Repository
+      - name: Checkout repository
+        # The repo checkout is needed for vercel.json (buildCommand: null,
+        # outputDirectory: dist) so the Vercel CLI knows to skip the source
+        # build and deploy the pre-built dist/ directory instead.
+        # Without it the CLI auto-detects Astro and tries to rebuild from
+        # source, which fails on a runner that only has dist/.
         uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            vercel.json
+          sparse-checkout-cone-mode: false
 
       - name: Download dist build artifact
         uses: actions/download-artifact@v4
@@ -141,62 +258,241 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: 22
-          cache: npm
+          node-version: ${{ env.NODE_VERSION }}
 
       - name: Install Vercel CLI
         run: npm install --global vercel@latest
 
-      - name: Deploy static output to Vercel (Preview)
-        if: github.event_name == 'pull_request'
-        id: deploy_preview
+      - name: Pull Vercel project settings
+        # vercel pull creates .vercel/project.json (links this working directory
+        # to the Vercel project) and downloads env vars.  Must run before
+        # vercel deploy --prebuilt so the project metadata is in place.
         run: |
-          DEPLOY_URL=$(vercel deploy --yes --token=${{ secrets.VERCEL_TOKEN }})
+          ENV_ARG="preview"
+          if [ "${{ github.event_name }}" != "pull_request" ]; then
+            ENV_ARG="production"
+          fi
+          vercel pull --yes --environment="$ENV_ARG" --token=${{ secrets.VERCEL_TOKEN }}
+
+      - name: Build Vercel Output API structure
+        # Vercel's Build Output API (v3) format lets us deploy a pre-built
+        # static site with --prebuilt and completely bypass the server-side
+        # "vercel build" step (which would try to run "astro build" and fail
+        # because the source files are not present on the runner).
+        #
+        # Required structure:
+        #   .vercel/output/
+        #     config.json   — {"version": 3}
+        #     static/       — all static files to serve
+        run: |
+          mkdir -p .vercel/output/static
+          cp -r dist/. .vercel/output/static/
+          printf '{"version":3}\n' > .vercel/output/config.json
+          echo "Vercel Output API structure ready:"
+          ls -la .vercel/output/
+
+      - name: Deploy to Vercel (with retry)
+        id: deploy
+        run: |
+          PROD_FLAG=""
+          if [ "${{ github.event_name }}" != "pull_request" ]; then
+            PROD_FLAG="--prod"
+          fi
+
+          # --prebuilt tells the CLI to upload .vercel/output/ directly
+          # and skip ALL server-side building.  The URL is still generated and
+          # printed to stdout, but we retrieve it via API (next step) to avoid
+          # GitHub's secret-masking redacting the hostname.
+          MAX_RETRIES=3
+          RETRY_DELAY=10
+          DEPLOY_EXIT=1
+          for ATTEMPT in $(seq 1 $MAX_RETRIES); do
+            echo "::group::Deployment attempt $ATTEMPT/$MAX_RETRIES"
+            vercel deploy --prebuilt $PROD_FLAG --yes --token=${{ secrets.VERCEL_TOKEN }} 2>&1
+            DEPLOY_EXIT=$?
+            echo "::endgroup::"
+            if [ "$DEPLOY_EXIT" -eq 0 ]; then
+              echo "Deployment succeeded on attempt $ATTEMPT"
+              break
+            fi
+            if [ "$ATTEMPT" -lt "$MAX_RETRIES" ]; then
+              echo "Attempt $ATTEMPT failed (exit $DEPLOY_EXIT), retrying in ${RETRY_DELAY}s..."
+              sleep $RETRY_DELAY
+              RETRY_DELAY=$((RETRY_DELAY * 2))
+            else
+              echo "All $MAX_RETRIES deployment attempts failed"
+              exit 1
+            fi
+          done
+
+      - name: Resolve Vercel deployment URL via API
+        # GitHub Actions masks secrets in ALL stdout output. The preview URL
+        # (e.g. https://project-hash-org.vercel.app) often contains a substring
+        # of VERCEL_PROJECT_ID, causing GitHub to silently redact it before any
+        # grep can see it.
+        # Querying the Vercel REST API avoids this: the JSON response is received
+        # via curl and processed entirely in shell, never passing through GitHub's
+        # log-masking pipeline.
+        id: resolve_url
+        run: |
+          echo "Querying Vercel API for the latest deployment URL..."
+
+          API_RESPONSE=$(curl -sf \
+            -H "Authorization: Bearer ${{ secrets.VERCEL_TOKEN }}" \
+            "https://api.vercel.com/v6/deployments?projectId=${VERCEL_PROJECT_ID}&teamId=${VERCEL_ORG_ID}&limit=1" \
+            || echo "")
+
+          # Extract the hostname from the first deployment in the response.
+          # jq is available on ubuntu-latest; grep fallback kept for safety.
+          if command -v jq &>/dev/null; then
+            DEPLOY_HOST=$(echo "$API_RESPONSE" | jq -r '.deployments[0].url // empty' 2>/dev/null)
+          else
+            DEPLOY_HOST=$(echo "$API_RESPONSE" \
+              | grep -oP '"url"\s*:\s*"\K[^"]+' \
+              | head -1)
+          fi
+
+          if [ -n "$DEPLOY_HOST" ]; then
+            # The API returns only the hostname (no https:// scheme).
+            case "$DEPLOY_HOST" in
+              https://*) DEPLOY_URL="$DEPLOY_HOST" ;;
+              *)         DEPLOY_URL="https://${DEPLOY_HOST}" ;;
+            esac
+            echo "Resolved Vercel deployment URL: $DEPLOY_URL"
+          else
+            echo "::warning::Could not resolve Vercel deployment URL via API."
+            echo "API response (first 500 chars): ${API_RESPONSE:0:500}"
+            DEPLOY_URL=""
+          fi
+
+          # Write the URL to the artifact file via direct shell redirect —
+          # this is NOT subject to GitHub Actions secret masking.
+          echo "$DEPLOY_URL" > vercel_deploy_url.txt
           echo "deploy_url=$DEPLOY_URL" >> $GITHUB_OUTPUT
 
-      - name: Deploy static output to Vercel (Production)
-        if: github.event_name != 'pull_request'
-        id: deploy_production
-        run: |
-          DEPLOY_URL=$(vercel deploy --prod --yes --token=${{ secrets.VERCEL_TOKEN }})
-          echo "deploy_url=$DEPLOY_URL" >> $GITHUB_OUTPUT
+      - name: Upload Vercel deploy URL artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: vercel-deploy-url
+          path: vercel_deploy_url.txt
+          retention-days: 1
 
+      - name: Deployment summary
+        run: |
+          echo "### Vercel Deployment" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Detail | Value |" >> $GITHUB_STEP_SUMMARY
+          echo "|--------|-------|" >> $GITHUB_STEP_SUMMARY
+          echo "| URL | ${{ steps.resolve_url.outputs.deploy_url }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Branch | \`${{ github.head_ref || github.ref_name }}\` |" >> $GITHUB_STEP_SUMMARY
+          echo "| Status | Deployed |" >> $GITHUB_STEP_SUMMARY
+
+  # ──────────────────────────────────────────────────────────────────────
+  # Stage 3: Post PR Preview Comment
+  # ──────────────────────────────────────────────────────────────────────
   comment-pr:
     name: Post PR Preview Comment
     needs: [deploy-cloudflare, deploy-vercel]
-    if: github.event_name == 'pull_request' && success()
+    if: >-
+      github.event_name == 'pull_request' &&
+      (needs.deploy-cloudflare.result == 'success' || needs.deploy-vercel.result == 'success')
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     permissions:
       pull-requests: write
     steps:
-      - name: Comment PR Preview URLs
+      - name: Download CF deploy URL artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: cf-deploy-url
+          path: .
+        continue-on-error: true
+
+      - name: Download Vercel deploy URL artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: vercel-deploy-url
+          path: .
+        continue-on-error: true
+
+      - name: Build comment body
+        id: build_body
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           CF_URL: ${{ needs.deploy-cloudflare.outputs.deploy_url }}
           VERCEL_URL: ${{ needs.deploy-vercel.outputs.deploy_url }}
         run: |
-          gh pr comment ${{ github.event.pull_request.number }} --body "🚀 **Preview Deployments Ready!**
+          CF_CLEAN=$(echo "$CF_URL" | tr -cd 'a-zA-Z0-9.:/_-')
 
-          - ☁️ **Cloudflare Pages Preview**: $CF_URL
-          - ▲ **Vercel Preview**: $VERCEL_URL"
+          # Fallback: read CF URL from artifact if job output was masked
+          if [ -z "$CF_CLEAN" ] && [ -f cf_deploy_url.txt ]; then
+            CF_CLEAN=$(cat cf_deploy_url.txt | tr -cd 'a-zA-Z0-9.:/_-')
+            echo "Recovered CF URL from artifact fallback"
+          fi
 
+          VERCEL_CLEAN=$(echo "$VERCEL_URL" | tr -cd 'a-zA-Z0-9.:/_-')
+
+          # Fallback: read Vercel URL from artifact if job output was masked
+          if [ -z "$VERCEL_CLEAN" ] && [ -f vercel_deploy_url.txt ]; then
+            VERCEL_CLEAN=$(cat vercel_deploy_url.txt | tr -cd 'a-zA-Z0-9.:/_-')
+            echo "Recovered Vercel URL from artifact fallback"
+          fi
+
+          echo "Captured CF_URL: '$CF_CLEAN'"
+          echo "Captured VERCEL_URL: '$VERCEL_CLEAN'"
+
+          {
+            echo "body<<COMMENT_EOF"
+            echo "**Preview Deployments Ready!**"
+            echo ""
+            if [ -n "$CF_CLEAN" ]; then
+              echo "| Platform | Preview URL | Status |"
+              echo "|----------|-------------|--------|"
+              echo "| Cloudflare Pages | $CF_CLEAN | Live |"
+              if [ -n "$VERCEL_CLEAN" ]; then
+                echo "| Vercel | $VERCEL_CLEAN | Live |"
+              fi
+            elif [ -n "$VERCEL_CLEAN" ]; then
+              echo "| Platform | Preview URL | Status |"
+              echo "|----------|-------------|--------|"
+              echo "| Vercel | $VERCEL_CLEAN | Live |"
+            fi
+            echo ""
+            echo "---"
+            echo "*Commit: \`${{ github.event.pull_request.head.sha }}\` · Workflow: [#${{ github.run_number }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})*"
+            echo "COMMENT_EOF"
+          } >> $GITHUB_OUTPUT
+
+      - name: Find existing preview comment
+        uses: peter-evans/find-comment@v3
+        id: find_comment
+        with:
+          issue-number: ${{ github.event.pull_request.number }}
+          comment-author: 'github-actions[bot]'
+          body-includes: 'Preview Deployments Ready'
+
+      - name: Create or update PR comment
+        uses: peter-evans/create-or-update-comment@v4
+        with:
+          comment-id: ${{ steps.find_comment.outputs.comment-id }}
+          issue-number: ${{ github.event.pull_request.number }}
+          body: ${{ steps.build_body.outputs.body }}
+          edit-mode: replace
+
+  # ──────────────────────────────────────────────────────────────────────
+  # Stage 4: Lighthouse Performance Audit
+  # ──────────────────────────────────────────────────────────────────────
   lighthouse:
     name: Lighthouse Audit
-    needs: deploy-cloudflare
+    needs: [validate, deploy-cloudflare]
     if: always() && needs.deploy-cloudflare.result == 'success'
     runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      pull-requests: write
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-
-      - name: Setup Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: 22
-          cache: npm
-
-      - name: Install dependencies
-        run: npm ci --legacy-peer-deps
 
       - name: Download dist build artifact
         uses: actions/download-artifact@v4
@@ -204,16 +500,193 @@ jobs:
           name: dist-static-build
           path: dist/
 
+      - name: Download CF deploy URL artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: cf-deploy-url
+          path: .
+        continue-on-error: true
+
+      - name: Resolve target URL for Lighthouse
+        id: target_url
+        env:
+          NEEDS_URL: ${{ needs.deploy-cloudflare.outputs.deploy_url }}
+        run: |
+          TARGET=""
+          if [ -n "$NEEDS_URL" ]; then
+            TARGET=$(echo "$NEEDS_URL" | tr -cd 'a-zA-Z0-9.:/_-')
+          fi
+          if [ -z "$TARGET" ] && [ -f cf_deploy_url.txt ]; then
+            TARGET=$(cat cf_deploy_url.txt | tr -cd 'a-zA-Z0-9.:/_-')
+          fi
+          echo "Resolved target URL: '${TARGET:-(static fallback)}'"
+          echo "url=$TARGET" >> $GITHUB_OUTPUT
+
+      - name: Build Lighthouse URL list (Live Cloudflare URL)
+        if: ${{ steps.target_url.outputs.url != '' }}
+        id: build_url_list
+        env:
+          BASE_URL: ${{ steps.target_url.outputs.url }}
+        run: |
+          BASE=$(echo "$BASE_URL" | sed 's|/$||')
+          {
+            echo "urls<<EOF_URLS"
+            echo "${BASE}/"
+            echo "${BASE}/about/"
+            echo "${BASE}/contact/"
+            echo "${BASE}/structure/"
+            echo "${BASE}/registration/"
+            echo "${BASE}/event/"
+            echo "${BASE}/news/"
+            echo "${BASE}/event/audit-benchmark-event/"
+            echo "${BASE}/news/audit-benchmark-news/"
+            echo "EOF_URLS"
+          } >> "$GITHUB_OUTPUT"
+          echo "Lighthouse will audit these URLs:"
+          grep -A 20 "^urls<<" "$GITHUB_OUTPUT" | grep -v "<<\|EOF_URLS" | tail -9
+
       - name: Run Lighthouse audit (Live Cloudflare URL)
-        if: ${{ needs.deploy-cloudflare.outputs.deploy_url }}
+        if: ${{ steps.target_url.outputs.url != '' }}
+        id: lighthouse_live
         uses: treosh/lighthouse-ci-action@v12
         with:
-          configPath: './.lighthouserc.json'
-          urls: |
-            ${{ needs.deploy-cloudflare.outputs.deploy_url }}
+          configPath: ${{ github.event_name == 'push' && './.lighthouserc.prod.json' || './.lighthouserc.json' }}
+          urls: ${{ steps.build_url_list.outputs.urls }}
+          uploadArtifacts: true
+
 
       - name: Run Lighthouse audit (Static Fallback)
-        if: ${{ !needs.deploy-cloudflare.outputs.deploy_url }}
+        if: ${{ steps.target_url.outputs.url == '' }}
+        id: lighthouse_static
         uses: treosh/lighthouse-ci-action@v12
         with:
-          configPath: './.lighthouserc.json'
+          configPath: ${{ github.event_name == 'push' && './.lighthouserc.prod.json' || './.lighthouserc.json' }}
+          uploadArtifacts: true
+
+      - name: Format and record Lighthouse summary
+        if: always()
+        id: parse_lh
+        env:
+          TARGET_URL: ${{ steps.target_url.outputs.url }}
+          LIVE_MANIFEST: ${{ steps.lighthouse_live.outputs.manifest }}
+          STATIC_MANIFEST: ${{ steps.lighthouse_static.outputs.manifest }}
+          LIVE_LINKS: ${{ steps.lighthouse_live.outputs.links }}
+          STATIC_LINKS: ${{ steps.lighthouse_static.outputs.links }}
+        run: |
+          node -e '
+            const fs = require("fs");
+            const targetUrl = process.env.TARGET_URL || "static dist/";
+            const liveManifestStr = process.env.LIVE_MANIFEST || "";
+            const staticManifestStr = process.env.STATIC_MANIFEST || "";
+            const liveLinksStr = process.env.LIVE_LINKS || "";
+            const staticLinksStr = process.env.STATIC_LINKS || "";
+            const summaryFile = process.env.GITHUB_STEP_SUMMARY;
+            const outputFile = process.env.GITHUB_OUTPUT;
+
+            let manifest = null;
+            let links = {};
+
+            try {
+              const rawManifest = liveManifestStr || staticManifestStr;
+              if (rawManifest) manifest = JSON.parse(rawManifest);
+            } catch (e) {}
+
+            if (!manifest && fs.existsSync(".lighthouseci/manifest.json")) {
+              try {
+                manifest = JSON.parse(fs.readFileSync(".lighthouseci/manifest.json", "utf8"));
+              } catch (e) {}
+            }
+
+            try {
+              const rawLinks = liveLinksStr || staticLinksStr;
+              if (rawLinks) links = JSON.parse(rawLinks);
+            } catch (e) {}
+
+            if (Object.keys(links).length === 0 && fs.existsSync(".lighthouseci/links.json")) {
+              try {
+                links = JSON.parse(fs.readFileSync(".lighthouseci/links.json", "utf8"));
+              } catch (e) {}
+            }
+
+            let md = "### ⚡ Lighthouse Audit Results\n\n";
+            md += `**Target URL:** \`${targetUrl}\`\n\n`;
+
+            if (manifest && Array.isArray(manifest) && manifest.length > 0) {
+              const representativeRuns = manifest.filter(r => r.isRepresentativeRun);
+              const runsToDisplay = representativeRuns.length > 0 ? representativeRuns : [manifest[0]];
+
+              runsToDisplay.forEach((run, idx) => {
+                const summary = run.summary || {};
+                const reportUrl = links[run.url] || links[Object.keys(links)[idx]] || null;
+
+                const getStatus = (score) => {
+                  if (score === undefined || score === null) return { pct: "N/A", status: "⚪ N/A" };
+                  const pct = Math.round(score * 100);
+                  if (pct >= 90) return { pct: `${pct}%`, status: "🟢 Pass" };
+                  if (pct >= 50) return { pct: `${pct}%`, status: "🟠 Average" };
+                  return { pct: `${pct}%`, status: "🔴 Fail" };
+                };
+
+                const perf = getStatus(summary.performance);
+                const a11y = getStatus(summary.accessibility);
+                const bp = getStatus(summary["best-practices"]);
+                const seo = getStatus(summary.seo);
+
+                const pageLabel = run.url
+                  ? (() => {
+                      try {
+                        const u = new URL(run.url);
+                        const path = u.pathname === "/" ? "(Home)" : u.pathname;
+                        return `**📄 \`${path}\`**`;
+                      } catch (e) {
+                        return `**📄 \`${run.url}\`**`;
+                      }
+                    })()
+                  : `**📄 Run ${idx + 1}**`;
+                md += `${pageLabel}\n\n`;
+
+                md += "| Category | Score | Status |\n";
+                md += "| :--- | :---: | :--- |\n";
+                md += `| 🚀 Performance | **${perf.pct}** | ${perf.status} |\n`;
+                md += `| ♿ Accessibility | **${a11y.pct}** | ${a11y.status} |\n`;
+                md += `| 🛡️ Best Practices | **${bp.pct}** | ${bp.status} |\n`;
+                md += `| 🔍 SEO | **${seo.pct}** | ${seo.status} |\n\n`;
+
+                if (reportUrl) {
+                  md += `🔗 [View Interactive Lighthouse Report](${reportUrl})\n\n`;
+                }
+              });
+              md += "*Full reports are also saved in workflow artifacts (`lhci-artifacts`).*\n";
+            } else {
+              md += "⚠️ *No Lighthouse audit manifest could be read. Check workflow artifacts or job logs for details.*\n";
+            }
+
+            if (summaryFile) {
+              fs.appendFileSync(summaryFile, md);
+            }
+
+            if (outputFile) {
+              const eof = "EOF_" + Math.random().toString(36).substring(2);
+              fs.appendFileSync(outputFile, `comment_body<<${eof}\n${md}\n${eof}\n`);
+            }
+          '
+
+      - name: Find existing PR comment
+        if: always() && github.event_name == 'pull_request'
+        uses: peter-evans/find-comment@v3
+        id: find_comment
+        with:
+          issue-number: ${{ github.event.pull_request.number }}
+          comment-author: 'github-actions[bot]'
+          body-includes: 'Preview Deployments Ready'
+
+      - name: Append Lighthouse results to PR comment
+        if: always() && github.event_name == 'pull_request' && steps.find_comment.outputs.comment-id != ''
+        uses: peter-evans/create-or-update-comment@v4
+        with:
+          comment-id: ${{ steps.find_comment.outputs.comment-id }}
+          body: |
+            
+            ---
+            ${{ steps.parse_lh.outputs.comment_body }}
+          edit-mode: append

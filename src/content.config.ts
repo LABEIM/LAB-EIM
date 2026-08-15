@@ -13,6 +13,7 @@ const newsCollection = defineCollection({
     excerpt: z.string().optional(),
     tags: z.array(z.string()).optional(),
     featured: z.boolean().optional().default(false),
+    audit: z.boolean().optional().default(false),
   }),
 });
 
@@ -32,6 +33,7 @@ const eventsCollection = defineCollection({
     benefits: z.array(z.string()).optional(),
     requirements: z.array(z.string()).optional(),
     show_register: z.boolean().optional().default(true),
+    audit: z.boolean().optional().default(false),
   }),
 });
 

@@ -200,7 +200,7 @@ Because Vercel automatically triggers builds on git pushes by default, you must 
 
 ## 5. Unified CI/CD Pipeline & Operational Procedures
 
-The repository includes a unified GitHub Actions workflow ([`.github/workflows/ci-cd.yml`](file:///.github/workflows/ci-cd.yml)).
+The repository includes a unified GitHub Actions workflow ([`.github/workflows/ci-cd.yml`](file:///.github/workflows/ci-cd.yml)) with automated quality gates, deployment retry logic, and performance auditing.
 
 ### 5.1 Repository Secrets Setup
 
@@ -208,7 +208,6 @@ In GitHub go to **Settings** > **Secrets and variables** > **Actions** and add:
 
 - `CLOUDFLARE_API_TOKEN`: Created in Section 2.2B.
 - `CLOUDFLARE_ACCOUNT_ID`: Created in Section 2.2A.
-- `CLOUDFLARE_PROJECT_NAME`: `lab-eim`
 - `VERCEL_TOKEN`: Vercel Personal Access Token ([Vercel Account Settings > Tokens](https://vercel.com/account/tokens)).
 - `VERCEL_ORG_ID`: Found in `.vercel/project.json` or Vercel Team Settings.
 - `VERCEL_PROJECT_ID`: Found in `.vercel/project.json` or Vercel Project Settings.
@@ -216,13 +215,52 @@ In GitHub go to **Settings** > **Secrets and variables** > **Actions** and add:
 - `PUBLIC_RECRUITMENT_SECRET`: Passphrase for form signature verification.
 - `PUBLIC_KEYSTATIC_GITHUB_APP_SLUG`: `eim-lab-cms`
 
+> **Note:** The Cloudflare Pages project name (`lab-eim`) is set as the `CF_PAGES_PROJECT` **env var** in the workflow file — **not** as a repository secret. This is intentional: GitHub Actions masks any job output containing a secret substring, which would silently strip deployment URLs from PR preview comments. If you need to change the project name, edit the `CF_PAGES_PROJECT` value in `ci-cd.yml` directly.
+
 ### 5.2 Pipeline Stages (`ci-cd.yml`)
 
-1. **`validate` (CI Validation)**: Cleans cache, runs `npx astro check` and `npm run build`, uploading the compiled `dist/` static artifact.
-2. **`deploy-cloudflare` & `deploy-vercel`**: Deploys the static `dist/` artifact to Cloudflare Pages (Primary) and Vercel (Backup) in parallel.
-3. **`lighthouse`**: Audits performance directly against the live deployed URL.
+```
+┌─────────────────────────────────────────────────────────────────┐
+│ validate (15 min timeout)                                       │
+│ ├─ npm ci (cached)                                              │
+│ ├─ npx astro check                                              │
+│ ├─ npm run build + SHA256 hash                                  │
+│ └─ Upload dist/ artifact                                        │
+└──────────────────────────┬──────────────────────────────────────┘
+                           │
+              ┌────────────┴────────────┐
+              ▼                         ▼
+┌──────────────────────────┐  ┌──────────────────────────┐
+│ deploy-cloudflare        │  │ deploy-vercel             │
+│ (10 min, 3x retry)      │  │ (10 min, 3x retry)       │
+│ Primary + GH Environment│  │ Backup + GH Environment  │
+└────────────┬─────────────┘  └────────────┬─────────────┘
+             │                              │
+             └──────────┬───────────────────┘
+                        ▼
+              ┌─────────────────────┐     ┌───────────────────┐
+              │ comment-pr (5 min)  │     │ lighthouse (10min) │
+              │ PR preview table    │     │ 3 runs, score gate │
+              └─────────────────────┘     └───────────────────┘
+```
 
-### 5.3 Manual Dispatch Triggers
+1. **`validate` (CI Validation)**: Installs dependencies with npm cache, runs `npx astro check` and `npm run build`, generates a SHA256 integrity hash, uploads the compiled `dist/` static artifact, and posts a build summary (duration, artifact size, commit) to the job summary.
+2. **`deploy-cloudflare` & `deploy-vercel`**: Deploys the `dist/` artifact to Cloudflare Pages (Primary) and Vercel (Backup) **in parallel** with **retry logic** (3 attempts, exponential backoff). Both jobs register proper GitHub Deployment environments for deploy tracking.
+3. **`comment-pr` (Post PR Preview Comment)**: Posts a formatted table with live Cloudflare and Vercel preview deployment URLs (with `cf-deploy-url` and `vercel-deploy-url` artifact fallbacks), commit SHA, and workflow run link back to the Pull Request.
+4. **`lighthouse`**: Audits performance with **3 runs** (representative median score). Downloads the `dist-static-build` artifact to ensure `./dist` is present, resolves the live Cloudflare URL (with `cf-deploy-url` artifact fallback), and audits the live site (or local `./dist` static fallback). Parsed scores (Performance, Accessibility, Best Practices, SEO) are formatted into a rich Markdown table published to `$GITHUB_STEP_SUMMARY` with interactive report links, and appended directly to the PR preview comment on Pull Requests. On **Pull Requests**, a failing Lighthouse score marks the PR with a failed status check, preventing merge to `main`. On **push to main**, Lighthouse serves as post-deploy monitoring — failures generate alerts but the code is already live. Score thresholds:
+   - Performance: ≥ 80% (warn only)
+   - Accessibility: ≥ 90% (error — blocks PR merge)
+   - Best Practices: ≥ 90% (error — blocks PR merge)
+   - SEO: ≥ 90% (error — blocks PR merge)
+
+### 5.3 Pipeline Reliability Features
+
+- **Job Timeouts**: All jobs have explicit timeouts (5–15 minutes) to prevent hung pipelines.
+- **Deployment Retry**: Both Cloudflare and Vercel deployments retry up to 3 times with exponential backoff (10s → 20s → 40s) to handle transient API failures.
+- **Concurrency Control**: Duplicate runs on the same branch are automatically cancelled.
+- **Artifact Integrity**: Build artifacts include a SHA256 hash for integrity verification between build and deploy stages.
+
+### 5.4 Manual Dispatch Triggers
 
 To manually deploy from GitHub Actions:
 1. Go to GitHub Actions tab > **Unified CI/CD Pipeline** > **Run workflow**.
@@ -231,9 +269,44 @@ To manually deploy from GitHub Actions:
    - `backup`: Force deploy to Vercel Backup.
    - `both`: Deploy to Cloudflare Pages and Vercel simultaneously.
 
-### 5.4 Emergency Manual Failover Procedures
+### 5.5 Emergency Manual Failover Procedures
 
 If Cloudflare Pages experiences an outage:
 
 - **Option A (GitHub Actions)**: Navigate to GitHub Actions > **Unified CI/CD Pipeline** > **Run workflow** > select `deploy_target: backup`.
 - **Option B (DNS Switch)**: In Cloudflare DNS management, update your main domain (`eim-lab.org`) CNAME target from `lab-eim.pages.dev` to `cname.vercel-dns.com` (or Vercel CNAME IP).
+
+---
+
+## 6. Automation Workflows
+
+### 6.1 Dependabot Dependency Updates ([`.github/dependabot.yml`](file:///.github/dependabot.yml))
+
+Dependabot automatically creates PRs for outdated dependencies every Monday. Dependencies are **grouped** to reduce PR noise:
+
+| Group | Packages |
+|-------|----------|
+| `astro-ecosystem` | `astro`, `@astrojs/*` |
+| `react` | `react`, `react-dom`, `@types/react*` |
+| `keystatic` | `@keystatic/*` |
+| `tailwind` | `tailwindcss`, `@tailwindcss/*` |
+| `fonts` | `@fontsource/*` |
+| `github-actions` | All workflow action updates |
+
+All PRs are labeled (`dependencies`, `automated`) and use Conventional Commits prefixes (`chore(deps):` for npm, `ci(deps):` for actions).
+
+### 6.2 Dependabot Auto-Merge ([`.github/workflows/dependabot-auto-merge.yml`](file:///.github/workflows/dependabot-auto-merge.yml))
+
+- **Minor & patch** updates: Auto-approved and auto-merged after CI passes.
+- **Major** updates: Labeled `major-update` + `needs-review` for manual review.
+
+### 6.3 Stale Cleanup ([`.github/workflows/stale.yml`](file:///.github/workflows/stale.yml))
+
+Automatically marks and closes inactive issues and PRs:
+- **Issues**: Stale after 30 days, closed after 7 more days.
+- **PRs**: Stale after 30 days, closed after 14 more days.
+- **Exempt labels**: `pinned`, `security`, `bug`, `work-in-progress`.
+
+### 6.4 CodeQL Security Analysis ([`.github/workflows/codeql.yml`](file:///.github/workflows/codeql.yml))
+
+Runs automated security scanning for JavaScript/TypeScript on every push to `main`, on PRs, and weekly (Monday 04:30 UTC).

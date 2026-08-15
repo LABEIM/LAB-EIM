@@ -609,6 +609,19 @@ jobs:
                 const bp = getStatus(summary["best-practices"]);
                 const seo = getStatus(summary.seo);
 
+                const pageLabel = run.url
+                  ? (() => {
+                      try {
+                        const u = new URL(run.url);
+                        const path = u.pathname === "/" ? "(Home)" : u.pathname;
+                        return `**📄 \`${path}\`**`;
+                      } catch (e) {
+                        return `**📄 \`${run.url}\`**`;
+                      }
+                    })()
+                  : `**📄 Run ${idx + 1}**`;
+                md += `${pageLabel}\n\n`;
+
                 md += "| Category | Score | Status |\n";
                 md += "| :--- | :---: | :--- |\n";
                 md += `| 🚀 Performance | **${perf.pct}** | ${perf.status} |\n`;

@@ -550,7 +550,7 @@ jobs:
         id: lighthouse_live
         uses: treosh/lighthouse-ci-action@v12
         with:
-          configPath: './.lighthouserc.json'
+          configPath: ${{ github.event_name == 'push' && './.lighthouserc.prod.json' || './.lighthouserc.json' }}
           urls: ${{ steps.build_url_list.outputs.urls }}
           uploadArtifacts: true
 
@@ -560,7 +560,7 @@ jobs:
         id: lighthouse_static
         uses: treosh/lighthouse-ci-action@v12
         with:
-          configPath: './.lighthouserc.json'
+          configPath: ${{ github.event_name == 'push' && './.lighthouserc.prod.json' || './.lighthouserc.json' }}
           uploadArtifacts: true
 
       - name: Format and record Lighthouse summary

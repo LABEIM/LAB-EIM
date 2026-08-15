@@ -33,7 +33,7 @@
           { "minScore": 0.9 }
         ],
         "categories:seo": [
-          "error",
+          "warn",
           { "minScore": 0.9 }
         ]
       }

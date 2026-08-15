@@ -24,7 +24,7 @@ const tags = item.data.tags || [];
 const { Content } = await render(item);
 
 const rawAllNews = await getCollection('news');
-const allNews = getCollectionEntriesForLocale(rawAllNews, locale);
+const allNews = getCollectionEntriesForLocale(rawAllNews, locale).filter((item: any) => !item.data.audit);
 const relatedNews = getRelatedNews(item.id, allNews, 3);
 
 const formattedDate = new Date(item.data.news_date).toLocaleDateString('id-ID', {

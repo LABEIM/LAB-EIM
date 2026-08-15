@@ -226,12 +226,9 @@ jobs:
       deployments: write
     environment:
       name: ${{ github.event_name == 'pull_request' && 'vercel-preview' || 'vercel-production' }}
-      url: ${{ steps.deploy.outputs.deploy_url }}
+      url: ${{ steps.resolve_url.outputs.deploy_url }}
     outputs:
-      deploy_url: ${{ steps.deploy.outputs.deploy_url }}
-    env:
-      VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-      VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+      deploy_url: ${{ steps.resolve_url.outputs.deploy_url }}
     steps:
       - name: Download dist build artifact
         uses: actions/download-artifact@v4
@@ -252,28 +249,25 @@ jobs:
 
       - name: Deploy to Vercel (with retry)
         id: deploy
+        env:
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
         run: |
           PROD_FLAG=""
-          VERCEL_ENV="preview"
           if [ "${{ github.event_name }}" != "pull_request" ]; then
             PROD_FLAG="--prod"
-            VERCEL_ENV="production"
           fi
 
-          # Pull Vercel project settings so --prebuilt works correctly.
-          # The environment must match the deployment target so the CLI resolves
-          # the correct .vercel/output path.
-          vercel pull --yes --environment="$VERCEL_ENV" --token=${{ secrets.VERCEL_TOKEN }}
-
-          # Deploy with retry logic (3 attempts, exponential backoff)
-          # --prebuilt: deploy the pre-built dist/ artifact directly; avoids a
-          #   fresh re-build inside Vercel and ensures the output URL is a
-          #   *.vercel.app preview URL rather than a vercel.com dashboard link.
+          # Deploy with retry logic (3 attempts, exponential backoff).
+          # NOTE: We do NOT parse stdout for the URL here — GitHub Actions masks
+          # secrets in all process output, and the preview URL often contains a
+          # substring of VERCEL_PROJECT_ID which causes silent redaction.
+          # URL resolution is handled via the Vercel API in the next step.
           MAX_RETRIES=3
           RETRY_DELAY=10
           for ATTEMPT in $(seq 1 $MAX_RETRIES); do
             echo "::group::Deployment attempt $ATTEMPT/$MAX_RETRIES"
-            if vercel deploy --prebuilt $PROD_FLAG --yes --token=${{ secrets.VERCEL_TOKEN }} 2>&1 | tee deploy.log; then
+            if vercel deploy $PROD_FLAG --yes --token=${{ secrets.VERCEL_TOKEN }} 2>&1; then
               echo "::endgroup::"
               echo "Deployment succeeded on attempt $ATTEMPT"
               break
@@ -289,30 +283,53 @@ jobs:
             fi
           done
 
-          # Strategy 1: the Vercel CLI always prints the deployment URL as the
-          #   very last non-empty line of stdout (after stripping ANSI codes).
-          CLEAN_LOG=$(sed 's/\x1B\[[0-9;]*[a-zA-Z]//g' deploy.log)
-          DEPLOY_URL=$(echo "$CLEAN_LOG" \
-            | grep -oP 'https://[a-zA-Z0-9._-]+\.vercel\.app' \
-            | tail -1 \
-            | tr -cd 'a-zA-Z0-9.:/_-')
+      - name: Resolve Vercel deployment URL via API
+        # GitHub Actions masks secrets in ALL stdout output. The preview URL
+        # (e.g. https://project-hash-org.vercel.app) often contains a substring
+        # of VERCEL_PROJECT_ID, causing GitHub to silently redact it before any
+        # grep can see it.
+        # Querying the Vercel REST API avoids this: the JSON response is received
+        # via curl and processed entirely in shell, never passing through GitHub's
+        # log-masking pipeline.
+        id: resolve_url
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+        run: |
+          echo "Querying Vercel API for the latest deployment URL..."
 
-          # Strategy 2: fall back to the last non-empty line if grep found nothing
-          if [ -z "$DEPLOY_URL" ]; then
-            DEPLOY_URL=$(echo "$CLEAN_LOG" \
-              | grep -oP 'https://[a-zA-Z0-9.:/_-]+' \
-              | grep -v 'vercel\.com' \
-              | tail -1 \
-              | tr -cd 'a-zA-Z0-9.:/_-')
+          API_RESPONSE=$(curl -sf \
+            -H "Authorization: Bearer ${VERCEL_TOKEN}" \
+            "https://api.vercel.com/v6/deployments?projectId=${VERCEL_PROJECT_ID}&teamId=${VERCEL_ORG_ID}&limit=1" \
+            || echo "")
+
+          # Extract the hostname from the first deployment in the response.
+          # jq is available on ubuntu-latest; grep fallback kept for safety.
+          if command -v jq &>/dev/null; then
+            DEPLOY_HOST=$(echo "$API_RESPONSE" | jq -r '.deployments[0].url // empty' 2>/dev/null)
+          else
+            DEPLOY_HOST=$(echo "$API_RESPONSE" \
+              | grep -oP '"url"\s*:\s*"\K[^"]+' \
+              | head -1)
           fi
 
-          echo "Captured live Vercel deployment URL: $DEPLOY_URL"
+          if [ -n "$DEPLOY_HOST" ]; then
+            # The API returns only the hostname (no https:// scheme).
+            case "$DEPLOY_HOST" in
+              https://*) DEPLOY_URL="$DEPLOY_HOST" ;;
+              *)         DEPLOY_URL="https://${DEPLOY_HOST}" ;;
+            esac
+            echo "Resolved Vercel deployment URL: $DEPLOY_URL"
+          else
+            echo "::warning::Could not resolve Vercel deployment URL via API."
+            echo "API response (first 500 chars): ${API_RESPONSE:0:500}"
+            DEPLOY_URL=""
+          fi
 
-          # Write the raw URL to the artifact file BEFORE further sanitising so
-          # the comment-pr fallback always has a valid value even if job outputs
-          # are masked by GitHub's secret redaction.
+          # Write the URL to the artifact file via direct shell redirect —
+          # this is NOT subject to GitHub Actions secret masking.
           echo "$DEPLOY_URL" > vercel_deploy_url.txt
-
           echo "deploy_url=$DEPLOY_URL" >> $GITHUB_OUTPUT
 
       - name: Upload Vercel deploy URL artifact
@@ -328,7 +345,7 @@ jobs:
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "| Detail | Value |" >> $GITHUB_STEP_SUMMARY
           echo "|--------|-------|" >> $GITHUB_STEP_SUMMARY
-          echo "| URL | ${{ steps.deploy.outputs.deploy_url }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| URL | ${{ steps.resolve_url.outputs.deploy_url }} |" >> $GITHUB_STEP_SUMMARY
           echo "| Branch | \`${{ github.head_ref || github.ref_name }}\` |" >> $GITHUB_STEP_SUMMARY
           echo "| Status | Deployed |" >> $GITHUB_STEP_SUMMARY
 

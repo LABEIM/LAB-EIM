@@ -247,20 +247,33 @@ jobs:
       - name: Install Vercel CLI
         run: npm install --global vercel@39
 
+      - name: Link Vercel project
+        run: vercel link --yes --token=${{ secrets.VERCEL_TOKEN }}
+
       - name: Deploy to Vercel (with retry)
         id: deploy
         run: |
           PROD_FLAG=""
+          VERCEL_ENV="preview"
           if [ "${{ github.event_name }}" != "pull_request" ]; then
             PROD_FLAG="--prod"
+            VERCEL_ENV="production"
           fi
 
+          # Pull Vercel project settings so --prebuilt works correctly.
+          # The environment must match the deployment target so the CLI resolves
+          # the correct .vercel/output path.
+          vercel pull --yes --environment="$VERCEL_ENV" --token=${{ secrets.VERCEL_TOKEN }}
+
           # Deploy with retry logic (3 attempts, exponential backoff)
+          # --prebuilt: deploy the pre-built dist/ artifact directly; avoids a
+          #   fresh re-build inside Vercel and ensures the output URL is a
+          #   *.vercel.app preview URL rather than a vercel.com dashboard link.
           MAX_RETRIES=3
           RETRY_DELAY=10
           for ATTEMPT in $(seq 1 $MAX_RETRIES); do
             echo "::group::Deployment attempt $ATTEMPT/$MAX_RETRIES"
-            if vercel deploy $PROD_FLAG --yes --token=${{ secrets.VERCEL_TOKEN }} 2>&1 | tee deploy.log; then
+            if vercel deploy --prebuilt $PROD_FLAG --yes --token=${{ secrets.VERCEL_TOKEN }} 2>&1 | tee deploy.log; then
               echo "::endgroup::"
               echo "Deployment succeeded on attempt $ATTEMPT"
               break
@@ -276,18 +289,31 @@ jobs:
             fi
           done
 
-          # Extract deployment URL — strip ANSI codes, find .vercel.app URL
-          DEPLOY_URL=$(sed 's/\x1B\[[0-9;]*[a-zA-Z]//g' deploy.log \
-            | grep -oP 'https://[a-zA-Z0-9.-]+\.vercel\.app' \
-            | grep -iv 'vercel\.com' \
-            | head -1 \
+          # Strategy 1: the Vercel CLI always prints the deployment URL as the
+          #   very last non-empty line of stdout (after stripping ANSI codes).
+          CLEAN_LOG=$(sed 's/\x1B\[[0-9;]*[a-zA-Z]//g' deploy.log)
+          DEPLOY_URL=$(echo "$CLEAN_LOG" \
+            | grep -oP 'https://[a-zA-Z0-9._-]+\.vercel\.app' \
+            | tail -1 \
             | tr -cd 'a-zA-Z0-9.:/_-')
 
-          echo "Captured live Vercel deployment URL: $DEPLOY_URL"
-          echo "deploy_url=$DEPLOY_URL" >> $GITHUB_OUTPUT
+          # Strategy 2: fall back to the last non-empty line if grep found nothing
+          if [ -z "$DEPLOY_URL" ]; then
+            DEPLOY_URL=$(echo "$CLEAN_LOG" \
+              | grep -oP 'https://[a-zA-Z0-9.:/_-]+' \
+              | grep -v 'vercel\.com' \
+              | tail -1 \
+              | tr -cd 'a-zA-Z0-9.:/_-')
+          fi
 
-          # Also write to file as artifact fallback (immune to secret masking)
+          echo "Captured live Vercel deployment URL: $DEPLOY_URL"
+
+          # Write the raw URL to the artifact file BEFORE further sanitising so
+          # the comment-pr fallback always has a valid value even if job outputs
+          # are masked by GitHub's secret redaction.
           echo "$DEPLOY_URL" > vercel_deploy_url.txt
+
+          echo "deploy_url=$DEPLOY_URL" >> $GITHUB_OUTPUT
 
       - name: Upload Vercel deploy URL artifact
         uses: actions/upload-artifact@v4

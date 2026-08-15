@@ -229,6 +229,13 @@ jobs:
       url: ${{ steps.resolve_url.outputs.deploy_url }}
     outputs:
       deploy_url: ${{ steps.resolve_url.outputs.deploy_url }}
+    # NOTE: VERCEL_ORG_ID and VERCEL_PROJECT_ID are intentionally declared at
+    # the job level (not as secrets) so the Vercel CLI can read them from the
+    # environment.  The CLI uses them to target the correct project without
+    # needing a `vercel link` step or a committed .vercel/project.json.
+    env:
+      VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+      VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
     steps:
       - name: Download dist build artifact
         uses: actions/download-artifact@v4
@@ -244,14 +251,8 @@ jobs:
       - name: Install Vercel CLI
         run: npm install --global vercel@39
 
-      - name: Link Vercel project
-        run: vercel link --yes --token=${{ secrets.VERCEL_TOKEN }}
-
       - name: Deploy to Vercel (with retry)
         id: deploy
-        env:
-          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
         run: |
           PROD_FLAG=""
           if [ "${{ github.event_name }}" != "pull_request" ]; then
@@ -259,6 +260,8 @@ jobs:
           fi
 
           # Deploy with retry logic (3 attempts, exponential backoff).
+          # The Vercel CLI reads VERCEL_ORG_ID and VERCEL_PROJECT_ID from the
+          # environment (set at job level above) to target the correct project.
           # NOTE: We do NOT parse stdout for the URL here — GitHub Actions masks
           # secrets in all process output, and the preview URL often contains a
           # substring of VERCEL_PROJECT_ID which causes silent redaction.
@@ -292,15 +295,11 @@ jobs:
         # via curl and processed entirely in shell, never passing through GitHub's
         # log-masking pipeline.
         id: resolve_url
-        env:
-          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
-          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
-          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
         run: |
           echo "Querying Vercel API for the latest deployment URL..."
 
           API_RESPONSE=$(curl -sf \
-            -H "Authorization: Bearer ${VERCEL_TOKEN}" \
+            -H "Authorization: Bearer ${{ secrets.VERCEL_TOKEN }}" \
             "https://api.vercel.com/v6/deployments?projectId=${VERCEL_PROJECT_ID}&teamId=${VERCEL_ORG_ID}&limit=1" \
             || echo "")
 

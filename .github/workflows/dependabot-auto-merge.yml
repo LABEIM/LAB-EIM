@@ -1,7 +1,11 @@
 name: Dependabot Auto-Merge
 
 on:
-  pull_request:
+  # pull_request_target runs in the base branch context (not the PR head),
+  # so it avoids unnecessary skipped workflow runs for non-Dependabot PRs.
+  # Safe because this workflow only calls GitHub APIs — it does not checkout
+  # or execute any code from the PR branch.
+  pull_request_target:
 
 permissions:
   contents: write
@@ -16,7 +20,7 @@ jobs:
     steps:
       - name: Fetch Dependabot metadata
         id: metadata
-        uses: dependabot/fetch-metadata@v2
+        uses: dependabot/fetch-metadata@21025c705c08248db411dc16f3619e6b5f9ea21a # v2
         with:
           github-token: "${{ secrets.GITHUB_TOKEN }}"
 

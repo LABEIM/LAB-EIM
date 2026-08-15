@@ -45,6 +45,8 @@ export function initContentFilter(options: ContentFilterOptions) {
   let currentStatus = 'all';
   let currentSort = 'desc'; // 'desc' | 'asc'
   let currentPage = 1;
+  let currentAuditParam: string | null = null;
+  let currentEmptyParam: string | null = null;
 
   function parseURLState() {
     const params = new URLSearchParams(window.location.search);
@@ -52,6 +54,8 @@ export function initContentFilter(options: ContentFilterOptions) {
     currentCategory = params.get('category') || params.get('cat') || 'all';
     currentStatus = params.get('status') || 'all';
     currentSort = params.get('sort') || 'desc';
+    currentAuditParam = params.get('audit') || params.get('show_audit');
+    currentEmptyParam = params.get('empty') || params.get('mock_empty');
     const pageParam = parseInt(params.get('page') || '1', 10);
     currentPage = isNaN(pageParam) || pageParam < 1 ? 1 : pageParam;
   }
@@ -62,6 +66,8 @@ export function initContentFilter(options: ContentFilterOptions) {
     if (currentCategory !== 'all') params.set('category', currentCategory);
     if (currentStatus !== 'all') params.set('status', currentStatus);
     if (currentSort !== 'desc') params.set('sort', currentSort);
+    if (currentAuditParam !== null) params.set('audit', currentAuditParam);
+    if (currentEmptyParam !== null) params.set('empty', currentEmptyParam);
     if (currentPage > 1) params.set('page', currentPage.toString());
 
     const queryString = params.toString();
@@ -99,7 +105,7 @@ export function initContentFilter(options: ContentFilterOptions) {
       }
     });
 
-    const isFiltered = currentSearch.trim() !== '' || currentCategory !== 'all' || currentStatus !== 'all' || currentSort !== 'desc';
+    const isFiltered = currentSearch.trim() !== '' || currentCategory !== 'all' || currentStatus !== 'all' || currentSort !== 'desc' || currentAuditParam !== null || currentEmptyParam !== null;
     if (resetBtn) {
       resetBtn.style.display = isFiltered ? 'inline-flex' : 'none';
     }
@@ -111,17 +117,27 @@ export function initContentFilter(options: ContentFilterOptions) {
 
     // 1. Filter matching cards
     const query = currentSearch.toLowerCase().trim();
-    const matchingCards = cards.filter(card => {
-      const catAttr = card.getAttribute('data-category') || '';
-      const statusAttr = card.getAttribute('data-status') || '';
-      const searchText = card.getAttribute('data-search-text') || '';
+    const isForceEmpty = currentEmptyParam === 'true' || currentEmptyParam === '1';
+    const isHideAudit = currentAuditParam === 'false' || currentAuditParam === '0';
 
-      const matchesCat = currentCategory === 'all' || catAttr.toLowerCase() === currentCategory.toLowerCase();
-      const matchesStatus = currentStatus === 'all' || statusAttr.toLowerCase() === currentStatus.toLowerCase();
-      const matchesQuery = !query || searchText.toLowerCase().includes(query);
+    const matchingCards = isForceEmpty
+      ? []
+      : cards.filter(card => {
+          const isAuditCard = card.getAttribute('data-audit') === 'true';
+          if (isHideAudit && isAuditCard) {
+            return false;
+          }
 
-      return matchesCat && matchesStatus && matchesQuery;
-    });
+          const catAttr = card.getAttribute('data-category') || '';
+          const statusAttr = card.getAttribute('data-status') || '';
+          const searchText = card.getAttribute('data-search-text') || '';
+
+          const matchesCat = currentCategory === 'all' || catAttr.toLowerCase() === currentCategory.toLowerCase();
+          const matchesStatus = currentStatus === 'all' || statusAttr.toLowerCase() === currentStatus.toLowerCase();
+          const matchesQuery = !query || searchText.toLowerCase().includes(query);
+
+          return matchesCat && matchesStatus && matchesQuery;
+        });
 
     // 2. Sort matching cards
     matchingCards.sort((a, b) => {

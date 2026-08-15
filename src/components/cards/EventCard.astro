@@ -41,6 +41,7 @@ const searchText = `${event.data.title} ${event.data.category} ${event.data.desc
   data-status={event.data.status}
   data-date={event.data.event_date}
   data-search-text={searchText}
+  data-audit={event.data.audit ? 'true' : undefined}
 >
   <div class="event-cover-img">
     <img src={coverImg} alt={`Cover ${event.data.title}`} />

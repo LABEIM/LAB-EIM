@@ -3,6 +3,14 @@ name: Unified CI/CD Pipeline (Cloudflare Primary + Vercel Backup)
 on:
   push:
     branches: [ "main" ]
+    paths-ignore:
+      - 'README.md'
+      - 'DEPLOYMENT.md'
+      - 'REGISTRATION_SETUP.md'
+      - 'AGENTS.md'
+      - 'CLAUDE.md'
+      - 'LICENSE'
+      - 'code.gs'
   pull_request:
     branches: [ "main" ]
   workflow_dispatch:
@@ -30,6 +38,10 @@ env:
   # dropped (the "Skip output ... since it may contain secret" warning).
   CF_PAGES_PROJECT: lab-eim
 
+# Restrict default GITHUB_TOKEN permissions. Each job declares only what it
+# needs via its own `permissions` block.
+permissions: {}
+
 jobs:
   # ──────────────────────────────────────────────────────────────────────
   # Stage 1: CI Validation & Static Build
@@ -40,16 +52,16 @@ jobs:
     timeout-minutes: 15
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
 
       - name: Setup Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: npm
 
       - name: Install dependencies
-        run: npm ci --legacy-peer-deps
+        run: npm ci
 
       - name: Run Astro diagnostics
         run: npx astro check
@@ -75,7 +87,7 @@ jobs:
           echo "sha256=${HASH}" >> $GITHUB_OUTPUT
 
       - name: Upload dist build artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: dist-static-build
           path: dist/
@@ -118,13 +130,13 @@ jobs:
       deploy_url: ${{ steps.deploy_cloudflare.outputs.deploy_url }}
     steps:
       - name: Download dist build artifact
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
         with:
           name: dist-static-build
           path: dist/
 
       - name: Setup Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version: ${{ env.NODE_VERSION }}
 
@@ -167,16 +179,36 @@ jobs:
             fi
           done
 
-          # Extract deployment URL — strip ANSI codes, find .pages.dev or .workers.dev URL
-          DEPLOY_URL=$(sed 's/\x1B\[[0-9;]*[a-zA-Z]//g' deploy.log \
-            | grep -oP 'https://[a-zA-Z0-9.-]+\.(pages\.dev|workers\.dev)' \
-            | grep -iv 'dash\.cloudflare\|api\.cloudflare' \
-            | head -1 \
-            | tr -cd 'a-zA-Z0-9.:/_-')
+          CLEAN_BRANCH=$(echo "$BRANCH_NAME" | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z0-9]/-/g; s/^-//; s/-$//')
 
-          # Fallback to standard Cloudflare Pages branch preview URL pattern
+          # Parse wrangler deploy output for canonical Production URL or Branch Preview URL
+          PROD_URL=$(grep -i "Production URL:" deploy.log | grep -oP 'https://[a-zA-Z0-9.-]+\.pages\.dev' | head -1 | tr -cd 'a-zA-Z0-9.:/_-' || true)
+          BRANCH_PREVIEW_URL=$(grep -i "Branch Preview URL:" deploy.log | grep -oP 'https://[a-zA-Z0-9.-]+\.pages\.dev' | head -1 | tr -cd 'a-zA-Z0-9.:/_-' || true)
+
+          DEPLOY_URL=""
+          if [ "$CLEAN_BRANCH" = "main" ] || [ "$CLEAN_BRANCH" = "master" ]; then
+            if [ -n "$PROD_URL" ]; then
+              DEPLOY_URL="$PROD_URL"
+            else
+              DEPLOY_URL="https://${PROJECT_NAME}.pages.dev"
+            fi
+          else
+            if [ -n "$BRANCH_PREVIEW_URL" ]; then
+              DEPLOY_URL="$BRANCH_PREVIEW_URL"
+            fi
+          fi
+
+          # Fallback: if no specific URL captured, look for general pages.dev/workers.dev URL
+          if [ -z "$DEPLOY_URL" ]; then
+            DEPLOY_URL=$(sed 's/\x1B\[[0-9;]*[a-zA-Z]//g' deploy.log \
+              | grep -oP 'https://[a-zA-Z0-9.-]+\.(pages\.dev|workers\.dev)' \
+              | grep -iv 'dash\.cloudflare\|api\.cloudflare' \
+              | head -1 \
+              | tr -cd 'a-zA-Z0-9.:/_-' || true)
+          fi
+
+          # Final fallback: construct standard Cloudflare Pages URL pattern
           if [ -z "$DEPLOY_URL" ] || ! echo "$DEPLOY_URL" | grep -q '^https://'; then
-            CLEAN_BRANCH=$(echo "$BRANCH_NAME" | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z0-9]/-/g; s/^-//; s/-$//')
             if [ "$CLEAN_BRANCH" = "main" ] || [ "$CLEAN_BRANCH" = "master" ]; then
               DEPLOY_URL="https://${PROJECT_NAME}.pages.dev"
             else
@@ -191,7 +223,7 @@ jobs:
           echo "$DEPLOY_URL" > cf_deploy_url.txt
 
       - name: Upload CF deploy URL artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: cf-deploy-url
           path: cf_deploy_url.txt
@@ -243,20 +275,20 @@ jobs:
         # build and deploy the pre-built dist/ directory instead.
         # Without it the CLI auto-detects Astro and tries to rebuild from
         # source, which fails on a runner that only has dist/.
-        uses: actions/checkout@v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
           sparse-checkout: |
             vercel.json
           sparse-checkout-cone-mode: false
 
       - name: Download dist build artifact
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
         with:
           name: dist-static-build
           path: dist/
 
       - name: Setup Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version: ${{ env.NODE_VERSION }}
 
@@ -371,7 +403,7 @@ jobs:
           echo "deploy_url=$DEPLOY_URL" >> $GITHUB_OUTPUT
 
       - name: Upload Vercel deploy URL artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: vercel-deploy-url
           path: vercel_deploy_url.txt
@@ -402,14 +434,14 @@ jobs:
       pull-requests: write
     steps:
       - name: Download CF deploy URL artifact
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
         with:
           name: cf-deploy-url
           path: .
         continue-on-error: true
 
       - name: Download Vercel deploy URL artifact
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
         with:
           name: vercel-deploy-url
           path: .
@@ -463,7 +495,7 @@ jobs:
           } >> $GITHUB_OUTPUT
 
       - name: Find existing preview comment
-        uses: peter-evans/find-comment@v3
+        uses: peter-evans/find-comment@3eae4d37986fb5a8592848f6a574fdf654e61f9e # v3
         id: find_comment
         with:
           issue-number: ${{ github.event.pull_request.number }}
@@ -471,7 +503,7 @@ jobs:
           body-includes: 'Preview Deployments Ready'
 
       - name: Create or update PR comment
-        uses: peter-evans/create-or-update-comment@v4
+        uses: peter-evans/create-or-update-comment@71345be0265236311c031f5c7866368bd1eff043 # v4
         with:
           comment-id: ${{ steps.find_comment.outputs.comment-id }}
           issue-number: ${{ github.event.pull_request.number }}
@@ -492,16 +524,16 @@ jobs:
       pull-requests: write
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
 
       - name: Download dist build artifact
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
         with:
           name: dist-static-build
           path: dist/
 
       - name: Download CF deploy URL artifact
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
         with:
           name: cf-deploy-url
           path: .
@@ -548,19 +580,18 @@ jobs:
       - name: Run Lighthouse audit (Live Cloudflare URL)
         if: ${{ steps.target_url.outputs.url != '' }}
         id: lighthouse_live
-        uses: treosh/lighthouse-ci-action@v12
+        uses: treosh/lighthouse-ci-action@512cc908a55bfb0ad231facca52adf3d3a651df4 # v12
         with:
           configPath: ${{ github.event_name == 'push' && './.lighthouserc.prod.json' || './.lighthouserc.json' }}
           urls: ${{ steps.build_url_list.outputs.urls }}
           uploadArtifacts: true
 
-
       - name: Run Lighthouse audit (Static Fallback)
         if: ${{ steps.target_url.outputs.url == '' }}
         id: lighthouse_static
-        uses: treosh/lighthouse-ci-action@v12
+        uses: treosh/lighthouse-ci-action@512cc908a55bfb0ad231facca52adf3d3a651df4 # v12
         with:
-          configPath: ${{ github.event_name == 'push' && './.lighthouserc.prod.json' || './.lighthouserc.json' }}
+          configPath: './.lighthouserc.static.json'
           uploadArtifacts: true
 
       - name: Format and record Lighthouse summary
@@ -673,7 +704,7 @@ jobs:
 
       - name: Find existing PR comment
         if: always() && github.event_name == 'pull_request'
-        uses: peter-evans/find-comment@v3
+        uses: peter-evans/find-comment@3eae4d37986fb5a8592848f6a574fdf654e61f9e # v3
         id: find_comment
         with:
           issue-number: ${{ github.event.pull_request.number }}
@@ -682,7 +713,7 @@ jobs:
 
       - name: Append Lighthouse results to PR comment
         if: always() && github.event_name == 'pull_request' && steps.find_comment.outputs.comment-id != ''
-        uses: peter-evans/create-or-update-comment@v4
+        uses: peter-evans/create-or-update-comment@71345be0265236311c031f5c7866368bd1eff043 # v4
         with:
           comment-id: ${{ steps.find_comment.outputs.comment-id }}
           body: |

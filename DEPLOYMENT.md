@@ -86,6 +86,19 @@ npm run build
 ```
 The compiled static HTML/CSS/JS files will be exported to the `dist/` directory.
 
+### 1.6 Audit Benchmark Content & Developer URL Testing Toggles
+
+Content entries marked with `audit: true` (e.g. `src/content/news/audit-benchmark-news.md` and `src/content/events/audit-benchmark-event.md`) serve as fixed benchmark content for CI/CD performance testing and as sample cards in local development.
+
+- **Environment Behavior**:
+  - **Production Builds**: `audit: true` content is automatically filtered out from news, events, and homepage listings.
+  - **Local Development & Preview Deployments**: `audit: true` content is retained as example cards when browsing.
+
+- **URL Query Parameters for Developer Testing**:
+  When testing locally or in preview environments, the following URL query parameters can be appended to `/news/` or `/event/`:
+  - `?audit=false` (or `?audit=0`): Hides ONLY `audit: true` benchmark cards. Regular non-audit cards remain visible.
+  - `?empty=true` (or `?mock_empty=true`): **Force-hides ALL content cards** (both regular and audit) to test empty state page layouts ("Belum Ada Berita" / "Belum Ada Kegiatan") even when items exist in the CMS.
+
 ---
 
 ## 2. Primary Deployment: Cloudflare Pages
@@ -245,16 +258,20 @@ In GitHub go to **Settings** > **Secrets and variables** > **Actions** and add:
 ```
 
 1. **`validate` (CI Validation)**: Installs dependencies with npm cache, runs `npx astro check` and `npm run build`, generates a SHA256 integrity hash, uploads the compiled `dist/` static artifact, and posts a build summary (duration, artifact size, commit) to the job summary.
-2. **`deploy-cloudflare` & `deploy-vercel`**: Deploys the `dist/` artifact to Cloudflare Pages (Primary) and Vercel (Backup) **in parallel** with **retry logic** (3 attempts, exponential backoff). Both jobs register proper GitHub Deployment environments for deploy tracking.
+2. **`deploy-cloudflare` & `deploy-vercel`**: Deploys the `dist/` artifact to Cloudflare Pages (Primary) and Vercel (Backup) **in parallel** with **retry logic** (3 attempts, exponential backoff). `deploy-cloudflare` resolves the canonical Production URL (`https://lab-eim.pages.dev`) when running on `main` branch, and branch alias URLs (`https://<branch>.lab-eim.pages.dev`) on feature branches, ignoring temporary preview commit hashes. Both jobs register proper GitHub Deployment environments for deploy tracking.
 3. **`comment-pr` (Post PR Preview Comment)**: Posts a formatted table with live Cloudflare and Vercel preview deployment URLs (with `cf-deploy-url` and `vercel-deploy-url` artifact fallbacks), commit SHA, and workflow run link back to the Pull Request.
 4. **`lighthouse`**: Audits performance with **3 runs** (representative median score). Downloads the `dist-static-build` artifact to ensure `./dist` is present, resolves the live Cloudflare URL (with `cf-deploy-url` artifact fallback), and audits the live site (or local `./dist` static fallback). Parsed scores (Performance, Accessibility, Best Practices, SEO) are formatted into a rich Markdown table published to `$GITHUB_STEP_SUMMARY` with interactive report links, and appended directly to the PR preview comment on Pull Requests. On **Pull Requests**, a failing Lighthouse score marks the PR with a failed status check, preventing merge to `main`. On **push to main**, Lighthouse serves as post-deploy monitoring — failures generate alerts but the code is already live. Score thresholds:
    - Performance: ≥ 80% (warn only)
    - Accessibility: ≥ 90% (error — blocks PR merge)
    - Best Practices: ≥ 90% (error — blocks PR merge)
-   - SEO: ≥ 90% (error — blocks PR merge)
+   - SEO: ≥ 90% (error — blocks PR merge; `is-crawlable` check turned off so platform `X-Robots-Tag: noindex` headers on preview builds do not skew score calculations)
 
-### 5.3 Pipeline Reliability Features
+### 5.3 Pipeline Security & Reliability Features
 
+- **Action SHA Pinning**: All GitHub Actions are pinned to full 40-character commit SHAs for supply chain security (protecting against tag mutation attacks). Dependabot automatically monitors and opens PRs for SHA version updates.
+- **Principle of Least Privilege**: Top-level `permissions: {}` block restricts default `GITHUB_TOKEN` access. Each job explicitly declares minimum required permissions.
+- **Path Filtering (`paths-ignore`)**: Push events to `main` ignore root documentation updates (`README.md`, `DEPLOYMENT.md`, etc.), saving CI runner minutes while preserving full verification for content (`src/content/`) and source code. PR events always run full verification.
+- **Centralized `.npmrc`**: Configures `legacy-peer-deps=true` at repository level for consistent dependency installation across CI and local environments.
 - **Job Timeouts**: All jobs have explicit timeouts (5–15 minutes) to prevent hung pipelines.
 - **Deployment Retry**: Both Cloudflare and Vercel deployments retry up to 3 times with exponential backoff (10s → 20s → 40s) to handle transient API failures.
 - **Concurrency Control**: Duplicate runs on the same branch are automatically cancelled.
@@ -297,6 +314,7 @@ All PRs are labeled (`dependencies`, `automated`) and use Conventional Commits p
 
 ### 6.2 Dependabot Auto-Merge ([`.github/workflows/dependabot-auto-merge.yml`](file:///.github/workflows/dependabot-auto-merge.yml))
 
+Triggered via `pull_request_target` (runs in base branch context with secret access while skipping execution for non-Dependabot PRs):
 - **Minor & patch** updates: Auto-approved and auto-merged after CI passes.
 - **Major** updates: Labeled `major-update` + `needs-review` for manual review.
 
@@ -309,4 +327,28 @@ Automatically marks and closes inactive issues and PRs:
 
 ### 6.4 CodeQL Security Analysis ([`.github/workflows/codeql.yml`](file:///.github/workflows/codeql.yml))
 
-Runs automated security scanning for JavaScript/TypeScript on every push to `main`, on PRs, and weekly (Monday 04:30 UTC).
+Runs automated static application security testing (SAST) for JavaScript/TypeScript on every push to `main`, on PRs, and weekly (Monday 04:30 UTC).
+
+### 6.5 Dependency Review ([`.github/workflows/dependency-review.yml`](file:///.github/workflows/dependency-review.yml))
+
+Scans pull requests for newly introduced vulnerable dependencies or invalid licenses before code is merged into `main`. Fails on vulnerabilities with `high` or `critical` severity.
+
+> **Requirement**: Requires **Dependency graph** enabled in GitHub repository settings (**Settings** > **Advanced Security** / **Code security and analysis**).
+
+### 6.6 Recommended GitHub Repository Security Settings Guide
+
+To maximize security and ensure all CI/CD security workflows operate smoothly, enable the following settings in your repository on GitHub (**Settings** > **Advanced Security** or **Code security and analysis**):
+
+| Feature | Recommended Action | Purpose |
+| :--- | :--- | :--- |
+| **Dependency graph** | **Enable** (Required) | Required by `.github/workflows/dependency-review.yml` to parse `package-lock.json` and block vulnerable dependencies on PRs. |
+| **Dependabot alerts** | **Enable** | Sends maintainer notifications when an installed npm package has a known CVE vulnerability. |
+| **Dependabot security updates** | **Enable** | Automatically creates security fix PRs when patches become available for vulnerable dependencies. |
+| **Secret Protection** | **Enable** | Scans commits to prevent accidental pushes of secret API keys, tokens, or credentials. |
+| **Private vulnerability reporting** | **Enable** | Allows security researchers to privately disclose security vulnerabilities to repository maintainers. |
+
+*Note: For public organization repositories, all of these features are 100% free.*
+
+
+
+

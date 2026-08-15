@@ -63,7 +63,7 @@ Before ending a session, the agent must perform these tasks:
 - `src/layouts/Layout.astro`: Base wrapper page layout.
 - `src/components/`: Reusable Astro and React UI components (Navbar, Footer, etc.).
 - `src/pages/`: File-system routing directories, including localized routes and Keystatic admin (`/keystatic`).
-- `src/utils/`: Business logic, i18n helpers, registration logic, and TypeScript interfaces (`i18n.ts`, `registration-config.ts`, `recruitment.ts`, `division-mapper.ts`, `types.ts`, `constants.ts`).
+- `src/utils/`: Business logic, i18n helpers, content filtering, registration logic, and TypeScript interfaces (`i18n.ts`, `content-helpers.ts`, `registration-config.ts`, `recruitment.ts`, `division-mapper.ts`, `types.ts`, `constants.ts`).
 
 ### 2.3 Role-Based Access Control & Scoping (If Applicable)
 - **Not Applicable**: The EIM Research Lab website is a fully public-facing static application. Keystatic CMS operates locally or via GitHub integration without a database backend or authentication schemas.

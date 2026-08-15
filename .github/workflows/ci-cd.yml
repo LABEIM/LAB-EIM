@@ -40,10 +40,10 @@ jobs:
     timeout-minutes: 15
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Setup Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: npm
@@ -75,7 +75,7 @@ jobs:
           echo "sha256=${HASH}" >> $GITHUB_OUTPUT
 
       - name: Upload dist build artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: dist-static-build
           path: dist/
@@ -118,13 +118,13 @@ jobs:
       deploy_url: ${{ steps.deploy_cloudflare.outputs.deploy_url }}
     steps:
       - name: Download dist build artifact
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: dist-static-build
           path: dist/
 
       - name: Setup Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7
         with:
           node-version: ${{ env.NODE_VERSION }}
 
@@ -191,7 +191,7 @@ jobs:
           echo "$DEPLOY_URL" > cf_deploy_url.txt
 
       - name: Upload CF deploy URL artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: cf-deploy-url
           path: cf_deploy_url.txt
@@ -243,20 +243,20 @@ jobs:
         # build and deploy the pre-built dist/ directory instead.
         # Without it the CLI auto-detects Astro and tries to rebuild from
         # source, which fails on a runner that only has dist/.
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           sparse-checkout: |
             vercel.json
           sparse-checkout-cone-mode: false
 
       - name: Download dist build artifact
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: dist-static-build
           path: dist/
 
       - name: Setup Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7
         with:
           node-version: ${{ env.NODE_VERSION }}
 
@@ -371,7 +371,7 @@ jobs:
           echo "deploy_url=$DEPLOY_URL" >> $GITHUB_OUTPUT
 
       - name: Upload Vercel deploy URL artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: vercel-deploy-url
           path: vercel_deploy_url.txt
@@ -402,14 +402,14 @@ jobs:
       pull-requests: write
     steps:
       - name: Download CF deploy URL artifact
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: cf-deploy-url
           path: .
         continue-on-error: true
 
       - name: Download Vercel deploy URL artifact
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: vercel-deploy-url
           path: .
@@ -463,7 +463,7 @@ jobs:
           } >> $GITHUB_OUTPUT
 
       - name: Find existing preview comment
-        uses: peter-evans/find-comment@v3
+        uses: peter-evans/find-comment@v4
         id: find_comment
         with:
           issue-number: ${{ github.event.pull_request.number }}
@@ -471,7 +471,7 @@ jobs:
           body-includes: 'Preview Deployments Ready'
 
       - name: Create or update PR comment
-        uses: peter-evans/create-or-update-comment@v4
+        uses: peter-evans/create-or-update-comment@v5
         with:
           comment-id: ${{ steps.find_comment.outputs.comment-id }}
           issue-number: ${{ github.event.pull_request.number }}
@@ -492,16 +492,16 @@ jobs:
       pull-requests: write
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Download dist build artifact
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: dist-static-build
           path: dist/
 
       - name: Download CF deploy URL artifact
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: cf-deploy-url
           path: .
@@ -673,7 +673,7 @@ jobs:
 
       - name: Find existing PR comment
         if: always() && github.event_name == 'pull_request'
-        uses: peter-evans/find-comment@v3
+        uses: peter-evans/find-comment@v4
         id: find_comment
         with:
           issue-number: ${{ github.event.pull_request.number }}
@@ -682,7 +682,7 @@ jobs:
 
       - name: Append Lighthouse results to PR comment
         if: always() && github.event_name == 'pull_request' && steps.find_comment.outputs.comment-id != ''
-        uses: peter-evans/create-or-update-comment@v4
+        uses: peter-evans/create-or-update-comment@v5
         with:
           comment-id: ${{ steps.find_comment.outputs.comment-id }}
           body: |

@@ -237,6 +237,18 @@ jobs:
       VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
       VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
     steps:
+      - name: Checkout repository
+        # The repo checkout is needed for vercel.json (buildCommand: null,
+        # outputDirectory: dist) so the Vercel CLI knows to skip the source
+        # build and deploy the pre-built dist/ directory instead.
+        # Without it the CLI auto-detects Astro and tries to rebuild from
+        # source, which fails on a runner that only has dist/.
+        uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            vercel.json
+          sparse-checkout-cone-mode: false
+
       - name: Download dist build artifact
         uses: actions/download-artifact@v4
         with:
@@ -251,33 +263,44 @@ jobs:
       - name: Install Vercel CLI
         run: npm install --global vercel@39
 
+      - name: Pull Vercel project settings
+        # Creates .vercel/project.json which the CLI uses to target the right
+        # project.  Must run BEFORE vercel deploy so the project is linked.
+        run: vercel pull --yes --environment=preview --token=${{ secrets.VERCEL_TOKEN }}
+
       - name: Deploy to Vercel (with retry)
         id: deploy
         run: |
           PROD_FLAG=""
+          ENV_FLAG="--environment=preview"
           if [ "${{ github.event_name }}" != "pull_request" ]; then
             PROD_FLAG="--prod"
+            ENV_FLAG="--environment=production"
           fi
 
+          # Re-pull with the correct environment now that we know it.
+          vercel pull --yes $ENV_FLAG --token=${{ secrets.VERCEL_TOKEN }}
+
           # Deploy with retry logic (3 attempts, exponential backoff).
-          # The Vercel CLI reads VERCEL_ORG_ID and VERCEL_PROJECT_ID from the
-          # environment (set at job level above) to target the correct project.
-          # NOTE: We do NOT parse stdout for the URL here — GitHub Actions masks
-          # secrets in all process output, and the preview URL often contains a
-          # substring of VERCEL_PROJECT_ID which causes silent redaction.
-          # URL resolution is handled via the Vercel API in the next step.
+          # vercel.json sets buildCommand:null + outputDirectory:dist so the
+          # CLI deploys the pre-built dist/ without triggering a source rebuild.
+          # NOTE: We do NOT parse stdout for the URL — GitHub Actions masks
+          # secrets in all process output and the preview URL often contains a
+          # substring of VERCEL_PROJECT_ID causing silent redaction.
           MAX_RETRIES=3
           RETRY_DELAY=10
+          DEPLOY_EXIT=1
           for ATTEMPT in $(seq 1 $MAX_RETRIES); do
             echo "::group::Deployment attempt $ATTEMPT/$MAX_RETRIES"
-            if vercel deploy $PROD_FLAG --yes --token=${{ secrets.VERCEL_TOKEN }} 2>&1; then
-              echo "::endgroup::"
+            vercel deploy $PROD_FLAG --yes --token=${{ secrets.VERCEL_TOKEN }} 2>&1
+            DEPLOY_EXIT=$?
+            echo "::endgroup::"
+            if [ "$DEPLOY_EXIT" -eq 0 ]; then
               echo "Deployment succeeded on attempt $ATTEMPT"
               break
             fi
-            echo "::endgroup::"
             if [ "$ATTEMPT" -lt "$MAX_RETRIES" ]; then
-              echo "Attempt $ATTEMPT failed, retrying in ${RETRY_DELAY}s..."
+              echo "Attempt $ATTEMPT failed (exit $DEPLOY_EXIT), retrying in ${RETRY_DELAY}s..."
               sleep $RETRY_DELAY
               RETRY_DELAY=$((RETRY_DELAY * 2))
             else

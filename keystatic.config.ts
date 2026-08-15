@@ -364,6 +364,40 @@ export default config({
         formFields: registrationSchema.formFields,
       },
     }),
+    forms: collection({
+      label: 'Forms & Surveys',
+      slugField: 'title',
+      path: 'src/content/forms/*',
+      format: { data: 'json' },
+      schema: {
+        title: fields.slug({ name: { label: 'Form Title' } }),
+        category: fields.text({ label: 'Category / Tag', defaultValue: 'Survey' }),
+        formType: fields.select({
+          label: 'Form Engine Purpose / Mode',
+          options: [
+            { label: 'Event / Webinar Signup Form', value: 'event' },
+            { label: 'Generic Form / Survey (Google Forms / Microsoft Forms experience)', value: 'generic' },
+          ],
+          defaultValue: 'generic',
+        }),
+        status: fields.select({
+          label: 'Operational Status Override',
+          options: [
+            { label: 'Open / Active', value: 'open' },
+            { label: 'Upcoming / Opening Soon', value: 'upcoming' },
+            { label: 'Closed / Period Ended', value: 'closed' },
+          ],
+          defaultValue: 'open',
+        }),
+        open_date: fields.text({ label: 'Opening Date (Optional ISO format: YYYY-MM-DDTHH:mm:ss)' }),
+        deadline: fields.text({ label: 'Deadline Date (Optional ISO format: YYYY-MM-DDTHH:mm:ss)' }),
+        description: fields.text({ label: 'Form Description / Instructions (Optional)', multiline: true }),
+        icon: fields.text({ label: 'FontAwesome Icon Class (e.g. fa-solid fa-square-poll-vertical)', defaultValue: 'fa-solid fa-file-pen' }),
+        success_message: fields.text({ label: 'Custom Success / Thank-You Message', multiline: true }),
+        formSections: registrationSchema.formSections,
+        formFields: registrationSchema.formFields,
+      },
+    }),
   },
   singletons: {
     site: singleton({

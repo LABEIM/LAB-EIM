@@ -59,7 +59,48 @@ if (rawRegistrationData) {
   }
 }
 
-// 2. Process Event / Custom Forms
+let standaloneForms: any[] = [];
+try {
+  standaloneForms = await getCollection('forms');
+} catch (e) {}
+
+// 2. Process Standalone Forms & Surveys Collection
+standaloneForms.forEach((fm: any) => {
+  const fmData = fm.data;
+  const slug = getCleanSlug(fm.id);
+  const openMs = fmData.open_date ? parseGlobalDateStr(fmData.open_date) : 0;
+  const deadlineMs = fmData.deadline ? parseGlobalDateStr(fmData.deadline) : 0;
+
+  let status: 'open' | 'upcoming' | 'closed' = (fmData.status as any) || 'open';
+  if (fmData.status === 'closed' || (deadlineMs > 0 && now > deadlineMs)) {
+    status = 'closed';
+  } else if (fmData.status === 'upcoming' || (openMs > 0 && now < openMs)) {
+    status = 'upcoming';
+  } else if (openMs <= now && (deadlineMs === 0 || now <= deadlineMs)) {
+    status = 'open';
+  }
+
+  const isWithin30DaysClosed = status === 'closed' ? (deadlineMs > 0 ? (now - deadlineMs <= THIRTY_DAYS_MS) : true) : true;
+
+  if (status === 'open' || status === 'upcoming' || isWithin30DaysClosed) {
+    const targetLink = getLocalizedPath(`/forms/${slug}`, locale);
+    formItems.push({
+      id: slug,
+      title: fmData.title,
+      description: typeof fmData.description === 'string' ? fmData.description : '',
+      category: fmData.category || 'Survei',
+      type: (fmData.formType || 'generic') as any,
+      status,
+      openDateStr: fmData.open_date,
+      deadlineStr: fmData.deadline,
+      icon: fmData.icon || 'fa-solid fa-file-pen',
+      targetUrl: targetLink,
+      closedDateMs: deadlineMs
+    });
+  }
+});
+
+// 3. Process Event / Custom Forms
 allEvents.forEach((ev: any) => {
   const evData = ev.data;
   if (!evData.show_register && evData.status === 'completed') return;

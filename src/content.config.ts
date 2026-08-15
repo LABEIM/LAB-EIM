@@ -42,7 +42,28 @@ const eventsCollection = defineCollection({
   }),
 });
 
+const formsCollection = defineCollection({
+  loader: glob({ pattern: '[^_]*.{json,md,mdx}', base: "./src/content/forms" }),
+  schema: z.object({
+    title: z.string(),
+    category: z.string().optional().default('Form'),
+    formType: z.enum(['event', 'generic']).optional().default('generic'),
+    status: z.enum(['open', 'upcoming', 'closed']).optional().default('open'),
+    open_date: z.string().optional(),
+    deadline: z.string().optional(),
+    description: z.string().optional(),
+    icon: z.string().optional().default('fa-solid fa-file-pen'),
+    success_message: z.string().optional(),
+    form_sections: z.array(z.any()).optional(),
+    form_fields: z.array(z.any()).optional(),
+    formSections: z.array(z.any()).optional(),
+    formFields: z.array(z.any()).optional(),
+    audit: z.boolean().optional().default(false),
+  }),
+});
+
 export const collections = {
   news: newsCollection,
   events: eventsCollection,
+  forms: formsCollection,
 };

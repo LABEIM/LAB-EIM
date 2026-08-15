@@ -1,0 +1,56 @@
+{
+  "title": "Survei Kepuasan Fasilitas Lab 2026",
+  "category": "Survei",
+  "formType": "generic",
+  "status": "open",
+  "open_date": "2026-08-01T00:00:00",
+  "deadline": "2026-09-30T23:59:59",
+  "description": "Formulir umpan balik dan evaluasi fasilitas EIM Research Lab untuk peningkatan kualitas sarana riset.",
+  "icon": "fa-solid fa-square-poll-vertical",
+  "success_message": "Terima kasih atas partisipasi Anda dalam survei evaluasi fasilitas EIM Research Lab!",
+  "formSections": [
+    {
+      "id": "section_feedback",
+      "title": "Informasi & Masukan",
+      "description": "Isi data dan masukan Anda mengenai fasilitas laboratorium.",
+      "icon": "fa-solid fa-list-check"
+    }
+  ],
+  "formFields": [
+    {
+      "id": "nama_responden",
+      "label": "Nama Lengkap (Opsional)",
+      "type": "text",
+      "placeholder": "Contoh: Budi Santoso",
+      "description": "Isi nama Anda jika ingin dicantumkan.",
+      "sectionId": "section_feedback",
+      "validationState": "optional"
+    },
+    {
+      "id": "status_pengguna",
+      "label": "Status Pengguna Lab",
+      "type": "select",
+      "placeholder": "-- Pilih Status Pengguna --",
+      "sectionId": "section_feedback",
+      "validationState": "required",
+      "options": ["Mahasiswa Praktikum", "Asisten Lab", "Peneliti / Dosen", "Pengunjung Umum"]
+    },
+    {
+      "id": "penilaian_fasilitas",
+      "label": "Tingkat Kepuasan Fasilitas",
+      "type": "radio",
+      "sectionId": "section_feedback",
+      "validationState": "required",
+      "options": ["Sangat Puas", "Puas", "Cukup Puas", "Kurang Puas"]
+    },
+    {
+      "id": "saran_perbaikan",
+      "label": "Saran & Masukan Perbaikan",
+      "type": "textarea",
+      "placeholder": "Tuliskan saran perbaikan untuk jaringan, perangkat keras, atau kenyamanan lab...",
+      "sectionId": "section_feedback",
+      "validationState": "required",
+      "minWords": 5
+    }
+  ]
+}

@@ -13,37 +13,46 @@ import { parseGlobalDateStr } from '../../utils/date';
 
 export async function getStaticPaths() {
   const events = await getCollection('events');
-  return events.map((event: any) => {
-    const slug = getCleanSlug(event.id);
-    return {
-      params: { slug },
-      props: { event },
-    };
-  });
+  let forms: any[] = [];
+  try {
+    forms = await getCollection('forms');
+  } catch (e) {}
+
+  const eventPaths = events.map((event: any) => ({
+    params: { slug: getCleanSlug(event.id) },
+    props: { item: event },
+  }));
+
+  const formPaths = forms.map((form: any) => ({
+    params: { slug: getCleanSlug(form.id) },
+    props: { item: form },
+  }));
+
+  return [...eventPaths, ...formPaths];
 }
 
 const locale = getLocaleFromUrl(Astro.url);
-const { event } = Astro.props;
+const { item } = Astro.props;
 const rawRegistrationConfig = await getLocalizedJsonData<any>('registration', locale);
 const divisionsData = await getLocalizedJsonData<any>('divisions', locale);
 
 const divisions = parseDivisions(divisionsData);
 
-const eventData = event.data;
-const eventCustomFields = eventData.form_fields || eventData.formFields;
-const eventCustomSections = eventData.form_sections || eventData.formSections;
+const itemData = item.data;
+const itemCustomFields = itemData.form_fields || itemData.formFields;
+const itemCustomSections = itemData.form_sections || itemData.formSections;
 
 const registrationConfig = {
   ...rawRegistrationConfig,
-  heroTitle: eventData.title,
-  title: eventData.title,
-  heroDescription: typeof eventData.description === 'string' ? eventData.description : '',
-  formType: 'event' as const,
-  ...(eventData.open_date || eventData.openDate ? { openDate: eventData.open_date || eventData.openDate } : {}),
-  ...(eventData.deadline ? { deadline: eventData.deadline } : {}),
-  ...(eventData.success_message || eventData.successMessage ? { successMessage: eventData.success_message || eventData.successMessage } : {}),
-  ...(eventCustomSections && eventCustomSections.length > 0 ? { formSections: eventCustomSections } : {}),
-  ...(eventCustomFields && eventCustomFields.length > 0 ? { formFields: eventCustomFields } : {}),
+  heroTitle: itemData.title,
+  title: itemData.title,
+  heroDescription: typeof itemData.description === 'string' ? itemData.description : '',
+  formType: (itemData.formType || 'event') as 'event' | 'generic',
+  ...(itemData.open_date || itemData.openDate ? { openDate: itemData.open_date || itemData.openDate } : {}),
+  ...(itemData.deadline ? { deadline: itemData.deadline } : {}),
+  ...(itemData.success_message || itemData.successMessage ? { successMessage: itemData.success_message || itemData.successMessage } : {}),
+  ...(itemCustomSections && itemCustomSections.length > 0 ? { formSections: itemCustomSections } : {}),
+  ...(itemCustomFields && itemCustomFields.length > 0 ? { formFields: itemCustomFields } : {}),
 };
 
 const {
@@ -69,24 +78,24 @@ const {
 
 const now = Date.now();
 const openMs = openDateStr ? parseGlobalDateStr(openDateStr) : 0;
-const deadlineMs = deadlineStr ? parseGlobalDateStr(deadlineStr) : (eventData.event_date ? parseGlobalDateStr(eventData.event_date) : 0);
+const deadlineMs = deadlineStr ? parseGlobalDateStr(deadlineStr) : (itemData.event_date ? parseGlobalDateStr(itemData.event_date) : 0);
 
 let initialStage = 'open';
-if (eventData.status === 'completed') {
+if (itemData.status === 'completed') {
   initialStage = 'closed';
-} else if (eventData.status === 'upcoming' || (openMs > 0 && now < openMs)) {
+} else if (itemData.status === 'upcoming' || (openMs > 0 && now < openMs)) {
   initialStage = 'upcoming';
 } else if (deadlineMs > 0 && now > deadlineMs) {
   initialStage = 'closed';
 }
 ---
 
-<Layout title={`${eventData.title} - EIM Research Lab`}>
+<Layout title={`${itemData.title} - EIM Research Lab`}>
   <section class="page-header registration-page-header">
     <div class="container">
       <div class="page-header-content">
-        <h1>{eventData.title}</h1>
-        <p class="hero-desc">{typeof eventData.description === 'string' ? eventData.description : 'Pendaftaran Kegiatan EIM Research Lab'}</p>
+        <h1>{itemData.title}</h1>
+        <p class="hero-desc">{typeof itemData.description === 'string' ? itemData.description : 'Pendaftaran Kegiatan EIM Research Lab'}</p>
       </div>
     </div>
   </section>
@@ -97,7 +106,7 @@ if (eventData.status === 'completed') {
         class="registration-form-container glass-panel" 
         id="registration-container" 
         data-form-type={formType}
-        data-event-id={event.id}
+        data-event-id={item.id}
         data-success-message={successMessage || ''}
         data-stage={initialStage}
         data-status="auto"

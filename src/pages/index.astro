@@ -26,6 +26,7 @@ const rawNews = await getCollection('news');
 const localizedNews = getCollectionEntriesForLocale(rawNews, locale);
 
 const latestNews = localizedNews
+  .filter((item: any) => !item.data.audit)
   .sort((a, b) => {
     if (a.data.featured !== b.data.featured) {
       return a.data.featured ? -1 : 1;
@@ -36,7 +37,7 @@ const latestNews = localizedNews
 
 // Fetch upcoming events for poster popup
 const rawEvents = await getCollection('events');
-const upcomingEvents = rawEvents.filter(event => event.data.status === 'upcoming');
+const upcomingEvents = rawEvents.filter(event => !event.data.audit && event.data.status === 'upcoming');
 
 // Calculate active recruitment stage
 const currentStage = getCurrentRecruitmentStage(registrationConfig);

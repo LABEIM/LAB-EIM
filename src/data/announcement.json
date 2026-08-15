@@ -6,7 +6,7 @@
   "badgeText": "REKRUTMEN",
   "message": "Pendaftaran Asisten EIM Research Lab sedang berlangsung! Daftarkan diri Anda sekarang.",
   "ctaText": "Daftar Sekarang",
-  "ctaLink": "/registration",
+  "ctaLink": "/open-recruitment",
   "dismissible": true,
   "id": "announcement-2026-v1"
 }

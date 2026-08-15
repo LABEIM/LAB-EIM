@@ -113,7 +113,7 @@ export function calculateStageFromDates(
   }
 
   return announcementTime > 0 && nowMs < announcementTime
-    ? (enabledSteps.length > 0 ? `${enabledSteps[enabledSteps.length - 1].id}_results` : 'interview')
+    ? 'final_selection'
     : 'announcement';
 }
 

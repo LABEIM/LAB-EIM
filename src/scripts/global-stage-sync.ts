@@ -13,7 +13,7 @@ export function syncNavbarCTA(activeStage: string): void {
 
   const joinLabel = navbar.getAttribute('data-join-label') || 'Join Us';
   const contactLabel = navbar.getAttribute('data-contact-label') || 'Kontak';
-  const joinHref = navbar.getAttribute('data-join-href') || '/registration';
+  const joinHref = navbar.getAttribute('data-join-href') || '/open-recruitment';
   const contactHref = navbar.getAttribute('data-contact-href') || '/contact';
 
   const isRecruitmentActive = activeStage === 'open' || activeStage === 'extended' || activeStage === 'fallback';
@@ -48,8 +48,11 @@ export function syncNavbarCTA(activeStage: string): void {
     cleanPath = cleanPath.slice(0, -1);
   }
 
-  const rawActiveHref = isRecruitmentActive ? '/registration' : '/contact';
-  if (cleanPath.startsWith(rawActiveHref)) {
+  const isMatch = isRecruitmentActive
+    ? (cleanPath.startsWith('/open-recruitment') || cleanPath.startsWith('/registration'))
+    : cleanPath.startsWith('/contact');
+
+  if (isMatch) {
     ctaLink.classList.add('active');
   } else {
     ctaLink.classList.remove('active');
@@ -84,7 +87,7 @@ export function syncHeroRecruitmentBtn(activeStage: string): void {
     icon.className = `fa-solid ${actionConfig.icon}`;
   }
 
-  const joinHref = heroBtn.getAttribute('data-join-href') || '/registration';
+  const joinHref = heroBtn.getAttribute('data-join-href') || '/open-recruitment';
   heroBtn.setAttribute('href', joinHref);
 }
 

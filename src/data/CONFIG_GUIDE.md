@@ -2,7 +2,7 @@
 
 This guide explains how to update the laboratory divisions, staff members, and recruitment registration details using the JSON files in the `src/data/` directory.
 
-Admin Portal: https://lab-eim.vercel.app/keystatic
+Admin Portal: https://eimlab.org/keystatic
 
 ---
 
@@ -65,7 +65,7 @@ This file contains the list of all active laboratory assistants.
 ---
 
 ## 3. Dynamic Registration Form & Engine Settings (`src/data/registration.json`)
-This file configures the dynamic registration form engine (`/registration`), supporting **Recruitment Staff Registration**, **Event Signups**, and **Generic Surveys**.
+This file configures the dynamic registration form engine (`/open-recruitment` and `/forms/[slug]`), supporting **Recruitment Staff Registration**, **Event Signups**, and **Generic Surveys**.
 
 ### Operational Modes (`formType`)
 * **`formType`** (String): Defines the operational mode of the form engine:

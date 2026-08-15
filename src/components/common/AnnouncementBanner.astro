@@ -20,7 +20,7 @@ try {
     badgeText: 'REKRUTMEN',
     message: 'Pendaftaran Asisten EIM Research Lab sedang berlangsung!',
     ctaText: 'Daftar Sekarang',
-    ctaLink: '/registration',
+    ctaLink: '/open-recruitment',
     dismissible: true,
     id: 'announcement-2026-v1',
   };
@@ -54,7 +54,7 @@ let {
   badgeText = 'REKRUTMEN',
   message = 'Pendaftaran Asisten EIM Research Lab sedang berlangsung!',
   ctaText = 'Daftar Sekarang',
-  ctaLink = '/registration',
+  ctaLink = '/open-recruitment',
   dismissible = true,
   id = 'announcement-2026-v1',
 } = announcementConfig;
@@ -73,42 +73,42 @@ if (enabled && mode === 'auto_recruitment' && registrationConfig) {
     badgeText = 'REKRUTMEN DIBUKA';
     message = 'Pendaftaran Asisten EIM Research Lab telah resmi dibuka!';
     ctaText = 'Daftar Sekarang';
-    ctaLink = '/registration';
+    ctaLink = '/open-recruitment';
   } else if (stage === 'extended') {
     alertType = 'recruitment';
     icon = 'fa-solid fa-clock-rotate-left';
     badgeText = 'DIPERPANJANG';
     message = registrationConfig?.extendedConfig?.bannerMessage || 'Pendaftaran Asisten EIM Research Lab diperpanjang!';
     ctaText = 'Daftar Sekarang';
-    ctaLink = '/registration';
+    ctaLink = '/open-recruitment';
   } else if (stage === 'fallback') {
     alertType = 'recruitment';
     icon = 'fa-solid fa-user-plus';
     badgeText = 'FORM CADANGAN';
     message = 'Pendaftaran Asisten EIM Research Lab sedang berlangsung via Formulir Cadangan!';
     ctaText = 'Daftar Sekarang';
-    ctaLink = '/registration';
+    ctaLink = '/open-recruitment';
   } else if (stage === 'upcoming') {
     alertType = 'recruitment';
     icon = 'fa-solid fa-calendar-check';
     badgeText = 'SEGERA DIBUKA';
     message = registrationConfig?.upcomingConfig?.title || 'Pendaftaran Asisten EIM Research Lab akan segera dibuka!';
     ctaText = 'Lihat Persyaratan';
-    ctaLink = '/registration';
+    ctaLink = '/open-recruitment';
   } else if (stage === 'announcement') {
     alertType = 'success';
     icon = 'fa-solid fa-trophy';
     badgeText = 'HASIL AKHIR';
     message = 'Pengumuman Akhir Kelulusan Asisten EIM Research Lab!';
     ctaText = 'Lihat Pengumuman';
-    ctaLink = '/registration';
+    ctaLink = '/open-recruitment';
   } else if (stage.endsWith('_results') || stage === 'selection_results' || stage === 'technical_test_results') {
     alertType = 'success';
     icon = 'fa-solid fa-bullhorn';
     badgeText = 'PENGUMUMAN';
     message = 'Pengumuman hasil seleksi rekrutmen asisten telah dibuka!';
     ctaText = 'Cek Status';
-    ctaLink = '/registration';
+    ctaLink = '/open-recruitment';
   } else if (stage === 'closed') {
     enabled = false;
   } else {
@@ -117,7 +117,7 @@ if (enabled && mode === 'auto_recruitment' && registrationConfig) {
     badgeText = 'TAHAP SELEKSI';
     message = 'Tahap seleksi rekrutmen asisten sedang berlangsung!';
     ctaText = 'Lihat Informasi';
-    ctaLink = '/registration';
+    ctaLink = '/open-recruitment';
   }
 }
 

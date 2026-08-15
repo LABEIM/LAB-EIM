@@ -584,6 +584,7 @@ jobs:
         with:
           configPath: ${{ github.event_name == 'push' && './.lighthouserc.prod.json' || './.lighthouserc.json' }}
           urls: ${{ steps.build_url_list.outputs.urls }}
+          staticDistDir: ""
           uploadArtifacts: true
 
       - name: Run Lighthouse audit (Static Fallback)

@@ -616,7 +616,7 @@ function sendConfirmationEmail(data, isRevision) {
 
                         <!-- PARAGRAPH -->
                         <p style="margin: 0 0 16px 0; font-size: 14px; line-height: 1.6; color: #374151; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
-                            Informasi pengumuman hasil seleksi dan instruksi teknikal akan diumumkan sesuai jadwal melalui email dan kanal komunikasi resmi laboratorium kami.
+                            Informasi selanjutnya akan diumumkan melalui email dan kanal komunikasi resmi laboratorium kami.
                         </p>
 
                         <!-- DIVIDER LINE -->

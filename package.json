@@ -12,6 +12,7 @@
     "sync:results": "npx -y tsx src/scripts/sync-recruitment-results.ts",
     "sync:results:replace": "npx -y tsx src/scripts/sync-recruitment-results.ts --replace",
     "clear:results": "npx -y tsx src/scripts/sync-recruitment-results.ts --clear",
+    "generate:assets": "npx -y tsx src/scripts/generate-assets.ts",
     "test": "npx tsx src/scripts/test-registration.ts",
     "preview": "astro preview",
     "astro": "astro"

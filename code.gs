@@ -314,86 +314,397 @@ function sendConfirmationEmail(data, isRevision) {
   const linkCv = data['Link CV'] ? escapeHtml(data['Link CV']) : '';
   const linkPi = data['Link PI (Pakta Integritas)'] ? escapeHtml(data['Link PI (Pakta Integritas)']) : '';
   const safeWaUrl = getSafeWhatsAppUrl();
-  const logoUrl = (scriptProp.getProperty('LOGO_URL') || 'https://eimlab.org/assets/email/logo-white.png').trim();
+  const logoUrl = (scriptProp.getProperty('LOGO_URL') || 'https://eimlab.org/assets/email/logo.png').trim();
 
   const subjectPrefix = isRevision ? '[REVISI] ' : '';
-  const subject = `${subjectPrefix}[EIM Research Lab] Confirmation of Recruitment Registration - ${safeNama}`;
+  const subject = `${subjectPrefix}[EIM Research Lab] Konfirmasi Pendaftaran Calon Asisten - ${safeNama}`;
   
-  const htmlBody = `
-    <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 600px; margin: 0 auto; background-color: #0b0f19; color: #e2e8f0; border-radius: 12px; overflow: hidden; border: 1px solid #1e293b;">
-      <div style="background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); padding: 30px; text-align: center; border-bottom: 2px solid #06b6d4;">
-        ${logoUrl ? `<div style="margin-bottom: 12px;"><img src="${escapeHtml(logoUrl)}" alt="EIM Research Lab" width="190" style="display: inline-block; width: 190px; max-width: 100%; height: auto; border: 0;" /></div>` : '<h1 style="color: #06b6d4; margin: 0; font-size: 24px; text-transform: uppercase; letter-spacing: 1px;">EIM Research Lab</h1>'}
-        <p style="color: #94a3b8; margin-top: 8px; font-size: 14px;">Assistant Recruitment Confirmation ${isRevision ? '<span style="color: #f97316; font-weight: bold;">[REVISI]</span>' : ''}</p>
-      </div>
+  const htmlBody = `<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml"
+    xmlns:o="urn:schemas-microsoft-com:office:office">
 
-      <div style="padding: 30px;">
-        ${isRevision ? `
-        <div style="background-color: #451a03; border-left: 4px solid #f97316; color: #ffedd5; padding: 14px 18px; border-radius: 6px; margin-bottom: 20px; font-size: 14px;">
-          <strong>ℹ️ Pemberitahuan Revisi:</strong> Ini adalah konfirmasi data pendaftaran perbaikan <strong>[REVISI]</strong>. Berkas dan data terbaru Anda telah berhasil kami catat.
-        </div>
-        ` : ''}
-        <h2 style="color: #f8fafc; font-size: 18px; margin-top: 0;">Halo, ${safeNama}!</h2>
-        <p style="color: #cbd5e1; line-height: 1.6;">Terima kasih telah mendaftar sebagai calon asisten di <strong>EIM Research Lab</strong>. Berkas dan data pendaftaran Anda telah berhasil kami terima.</p>
-        
-        <div style="background-color: #1e293b; border-left: 4px solid #06b6d4; padding: 20px; border-radius: 6px; margin: 25px 0;">
-          <h3 style="color: #06b6d4; margin-top: 0; font-size: 15px; text-transform: uppercase; letter-spacing: 0.5px;">Ringkasan Pendaftaran</h3>
-          <table style="width: 100%; color: #cbd5e1; font-size: 14px; border-collapse: collapse;">
-            <tr><td style="padding: 6px 0; width: 40%; color: #94a3b8;">Nama Lengkap</td><td style="padding: 6px 0; font-weight: 600;">: ${safeNama}</td></tr>
-            <tr><td style="padding: 6px 0; color: #94a3b8;">NIM</td><td style="padding: 6px 0; font-weight: 600;">: ${safeNim}</td></tr>
-            <tr><td style="padding: 6px 0; color: #94a3b8;">Angkatan</td><td style="padding: 6px 0; font-weight: 600;">: ${safeAngkatan}</td></tr>
-            <tr><td style="padding: 6px 0; color: #94a3b8;">Pilihan Divisi 1</td><td style="padding: 6px 0; font-weight: 600;">: ${safeDivisi1}</td></tr>
-            <tr><td style="padding: 6px 0; color: #94a3b8;">Pilihan Divisi 2</td><td style="padding: 6px 0; font-weight: 600;">: ${safeDivisi2}</td></tr>
-            ${showPortfolio ? `<tr><td style="padding: 6px 0; color: #94a3b8;">Link Portofolio</td><td style="padding: 6px 0;"><a href="${safePorto}" style="color: #38bdf8;" target="_blank">Lihat Portofolio</a></td></tr>` : ''}
-            <tr><td style="padding: 6px 0; color: #94a3b8;">Bersedia Dipindah</td><td style="padding: 6px 0; font-weight: 600;">: ${safeBersedia}</td></tr>
-          </table>
-        </div>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Konfirmasi Pendaftaran Calon Asisten - EIM Research Lab</title>
+    <!--[if mso]>
+  <noscript>
+    <xml>
+      <o:OfficeDocumentSettings>
+        <o:AllowPNG/>
+        <o:PixelsPerInch>96</o:PixelsPerInch>
+      </o:OfficeDocumentSettings>
+    </xml>
+  </noscript>
+  <![endif]-->
+    <style type="text/css">
+        body,
+        table,
+        td,
+        a {
+            -webkit-text-size-adjust: 100%;
+            -ms-text-size-adjust: 100%;
+        }
 
-        ${(linkKsm || linkKhs || linkMl || linkCv || linkPi) ? `
-        <div style="background-color: #1e293b; border-left: 4px solid #38bdf8; padding: 20px; border-radius: 6px; margin: 25px 0;">
-          <h3 style="color: #38bdf8; margin-top: 0; font-size: 15px; text-transform: uppercase; letter-spacing: 0.5px;">Berkas Terunggah (Uploaded Documents)</h3>
-          <p style="color: #94a3b8; font-size: 12px; margin-top: -4px; margin-bottom: 14px;">Klik tautan berkas di bawah ini untuk memastikan dokumen yang Anda kirimkan sudah benar:</p>
-          <table style="width: 100%; color: #cbd5e1; font-size: 14px; border-collapse: collapse;">
-            ${linkKsm ? `<tr><td style="padding: 6px 0; width: 40%; color: #94a3b8;">Kartu Studi Mahasiswa (KSM)</td><td style="padding: 6px 0;">: <a href="${linkKsm}" style="color: #38bdf8; text-decoration: underline;" target="_blank">Lihat Berkas KSM</a></td></tr>` : ''}
-            ${linkKhs ? `<tr><td style="padding: 6px 0; color: #94a3b8;">Kartu Hasil Studi (KHS)</td><td style="padding: 6px 0;">: <a href="${linkKhs}" style="color: #38bdf8; text-decoration: underline;" target="_blank">Lihat Berkas KHS</a></td></tr>` : ''}
-            ${linkMl ? `<tr><td style="padding: 6px 0; color: #94a3b8;">Motivation Letter (ML)</td><td style="padding: 6px 0;">: <a href="${linkMl}" style="color: #38bdf8; text-decoration: underline;" target="_blank">Lihat Motivation Letter</a></td></tr>` : ''}
-            ${linkCv ? `<tr><td style="padding: 6px 0; color: #94a3b8;">Curriculum Vitae (CV)</td><td style="padding: 6px 0;">: <a href="${linkCv}" style="color: #38bdf8; text-decoration: underline;" target="_blank">Lihat CV</a></td></tr>` : ''}
-            ${linkPi ? `<tr><td style="padding: 6px 0; color: #94a3b8;">Pakta Integritas (PI)</td><td style="padding: 6px 0;">: <a href="${linkPi}" style="color: #38bdf8; text-decoration: underline;" target="_blank">Lihat Pakta Integritas</a></td></tr>` : ''}
-          </table>
-        </div>
-        ` : ''}
+        table,
+        td {
+            mso-table-lspace: 0pt;
+            mso-table-rspace: 0pt;
+        }
 
-        ${safeWaUrl ? `
-        <div style="background-color: #064e3b; border-left: 4px solid #10b981; padding: 20px; border-radius: 6px; margin: 25px 0;">
-          <h3 style="color: #34d399; margin-top: 0; font-size: 15px; text-transform: uppercase; letter-spacing: 0.5px;">💬 Grup WhatsApp Calon Asisten</h3>
-          <p style="color: #a7f3d0; font-size: 14px; line-height: 1.5; margin-top: 6px; margin-bottom: 16px;">
-            Silakan bergabung ke grup WhatsApp calon asisten EIM Research Lab untuk mendapatkan informasi dan pengumuman terbaru seputar proses seleksi:
-          </p>
-          <div style="text-align: center; margin: 10px 0 5px 0;">
-            <a href="${safeWaUrl}" target="_blank" rel="noopener noreferrer" style="background-color: #10b981; color: #ffffff; padding: 12px 24px; border-radius: 8px; font-weight: 600; text-decoration: none; display: inline-block; font-size: 14px; border: 1px solid #059669;">
-              📲 Gabung Grup WhatsApp
-            </a>
-          </div>
-        </div>
-        ` : ''}
+        img {
+            -ms-interpolation-mode: bicubic;
+            border: 0;
+            height: auto;
+            line-height: 100%;
+            outline: none;
+            text-decoration: none;
+        }
 
-        <p style="color: #cbd5e1; line-height: 1.6;">Tahapan berikutnya akan diinformasikan lebih lanjut melalui email dan / atau WhatsApp Group Rekrutmen resmi EIM Research Lab.</p>
-        
-        <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #334155; text-align: center; font-size: 12px; color: #64748b;">
-          <p style="margin: 0;">EIM Research Lab &copy; ${new Date().getFullYear()} — Enterprise & Infrastructure Management</p>
+        table {
+            border-collapse: collapse !important;
+        }
+
+        body {
+            height: 100% !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            width: 100% !important;
+            background-color: #F4F5F7;
+        }
+
+        a[x-apple-data-detectors] {
+            color: inherit !important;
+            text-decoration: none !important;
+            font-size: inherit !important;
+            font-family: inherit !important;
+            font-weight: inherit !important;
+            line-height: inherit !important;
+        }
+
+        @media screen and (max-width: 600px) {
+            .email-container {
+                width: 100% !important;
+                margin: auto !important;
+            }
+
+            .fluid {
+                max-width: 100% !important;
+                height: auto !important;
+                margin-left: auto !important;
+                margin-right: auto !important;
+            }
+
+            .stack-column,
+            .stack-column-center {
+                display: block !important;
+                width: 100% !important;
+                max-width: 100% !important;
+                direction: ltr !important;
+            }
+
+            .content-padding {
+                padding: 24px 20px !important;
+            }
+        }
+    </style>
+</head>
+
+<body width="100%" style="margin: 0; padding: 0 !important; mso-line-height-rule: exactly; background-color: #F4F5F7;">
+    <center style="width: 100%; background-color: #F4F5F7; padding-top: 30px; padding-bottom: 40px;">
+        <!--[if mso]>
+    <table role="presentation" aria-hidden="true" border="0" cellspacing="0" cellpadding="0" width="600" align="center">
+    <tr>
+    <td>
+    <![endif]-->
+        <div style="max-width: 600px; margin: 0 auto;" class="email-container">
+
+            <!-- MAIN CONTAINER CARD -->
+            <table role="presentation" aria-hidden="true" cellspacing="0" cellpadding="0" border="0" width="100%"
+                style="margin: auto; background-color: #FFFFFF; border-top: 5px solid #0D6A75; box-shadow: 0 1px 4px rgba(0,0,0,0.06); border-radius: 4px;">
+                <tr>
+                    <td class="content-padding" style="padding: 36px 40px; text-align: left;">
+
+                        <!-- LOGO HEADER -->
+                        <table role="presentation" aria-hidden="true" cellspacing="0" cellpadding="0" border="0"
+                            width="100%">
+                            <tr>
+                                <td style="padding-bottom: 28px;">
+                                    <img src="${escapeHtml(logoUrl)}"
+                                        alt="Enterprise Infrastructure Management" width="180"
+                                        style="max-width: 100%; width: 180px; height: auto; display: block; border: 0;">
+                                </td>
+                            </tr>
+                        </table>
+
+                        <!-- HEADING -->
+                        <h1 style="font-size: 22px; line-height: 1.3; font-weight: 700; margin: 0 0 16px 0; text-align: left; color: #111827; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
+                            Konfirmasi Pendaftaran Calon Asisten Lab EIM ${isRevision ? '<span style="color: #EA580C; font-size: 18px;">[REVISI]</span>' : ''}
+                        </h1>
+
+                        <!-- CALLOUT BANNER -->
+                        ${isRevision ? `
+                        <div style="margin: 0 0 24px 0; background-color: #FFF7ED; border-left: 4px solid #EA580C; border-radius: 4px; padding: 14px 18px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
+                            <p style="margin: 0 0 6px 0; font-size: 14px; font-weight: 700; color: #9A3412;">
+                                Pemberitahuan Revisi Data Pendaftaran
+                            </p>
+                            <p style="margin: 0; font-size: 13.5px; line-height: 1.55; color: #9A3412;">
+                                Ini adalah konfirmasi data pendaftaran perbaikan <strong>[REVISI]</strong>. Berkas dan data terbaru Anda telah berhasil kami simpan dan perbarui.
+                            </p>
+                        </div>
+                        ` : `
+                        <div style="margin: 0 0 24px 0; background-color: #F0F9FA; border-left: 4px solid #0D6A75; border-radius: 4px; padding: 14px 18px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
+                            <p style="margin: 0 0 6px 0; font-size: 14px; font-weight: 700; color: #094B53;">
+                                Pendaftaran Berhasil Diterima
+                            </p>
+                            <p style="margin: 0; font-size: 13.5px; line-height: 1.55; color: #094B53;">
+                                Berkas dan formulir pendaftaran Anda telah berhasil dicatat pada sistem seleksi asisten EIM Research Lab.
+                            </p>
+                        </div>
+                        `}
+
+                        <!-- PARAGRAPH -->
+                        <p style="margin: 0 0 16px 0; font-size: 14px; line-height: 1.6; color: #374151; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
+                            Halo <strong style="color: #111827; font-weight: 700;">${safeNama}</strong>,
+                        </p>
+                        <p style="margin: 0 0 20px 0; font-size: 14px; line-height: 1.6; color: #374151; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
+                            Terima kasih telah mendaftar sebagai calon asisten di <strong>Enterprise Infrastructure Management (EIM) Research Lab</strong>. Berikut adalah rincian data pendaftaran yang kami terima:
+                        </p>
+
+                        <!-- REGISTRATION SUMMARY LIST -->
+                        <div style="margin: 0 0 20px 0;">
+                            <table role="presentation" aria-hidden="true" cellspacing="0" cellpadding="0" border="0" width="100%">
+                                <tr>
+                                    <td valign="top" style="padding: 4px 8px 4px 0; width: 18px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 13.5px; color: #0D6A75;">
+                                        <span style="color: #0D6A75; font-size: 16px; line-height: 1;">•</span>
+                                    </td>
+                                    <td valign="top" style="padding: 4px 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 13.5px; line-height: 1.55; color: #374151;">
+                                        <strong style="color: #111827;">Nama Lengkap:</strong> ${safeNama}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td valign="top" style="padding: 4px 8px 4px 0; width: 18px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 13.5px; color: #0D6A75;">
+                                        <span style="color: #0D6A75; font-size: 16px; line-height: 1;">•</span>
+                                    </td>
+                                    <td valign="top" style="padding: 4px 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 13.5px; line-height: 1.55; color: #374151;">
+                                        <strong style="color: #111827;">NIM:</strong> <code style="background-color: #F3F4F6; color: #1F2937; padding: 2px 6px; border-radius: 4px; font-size: 90%; font-family: SFMono-Regular, Consolas, 'Liberation Mono', Menlo, monospace;">${safeNim}</code>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td valign="top" style="padding: 4px 8px 4px 0; width: 18px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 13.5px; color: #0D6A75;">
+                                        <span style="color: #0D6A75; font-size: 16px; line-height: 1;">•</span>
+                                    </td>
+                                    <td valign="top" style="padding: 4px 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 13.5px; line-height: 1.55; color: #374151;">
+                                        <strong style="color: #111827;">Angkatan:</strong> ${safeAngkatan}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td valign="top" style="padding: 4px 8px 4px 0; width: 18px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 13.5px; color: #0D6A75;">
+                                        <span style="color: #0D6A75; font-size: 16px; line-height: 1;">•</span>
+                                    </td>
+                                    <td valign="top" style="padding: 4px 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 13.5px; line-height: 1.55; color: #374151;">
+                                        <strong style="color: #111827;">Pilihan Divisi 1:</strong> ${safeDivisi1}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td valign="top" style="padding: 4px 8px 4px 0; width: 18px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 13.5px; color: #0D6A75;">
+                                        <span style="color: #0D6A75; font-size: 16px; line-height: 1;">•</span>
+                                    </td>
+                                    <td valign="top" style="padding: 4px 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 13.5px; line-height: 1.55; color: #374151;">
+                                        <strong style="color: #111827;">Pilihan Divisi 2:</strong> ${safeDivisi2}
+                                    </td>
+                                </tr>
+                                ${showPortfolio ? `
+                                <tr>
+                                    <td valign="top" style="padding: 4px 8px 4px 0; width: 18px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 13.5px; color: #0D6A75;">
+                                        <span style="color: #0D6A75; font-size: 16px; line-height: 1;">•</span>
+                                    </td>
+                                    <td valign="top" style="padding: 4px 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 13.5px; line-height: 1.55; color: #374151;">
+                                        <strong style="color: #111827;">Portofolio:</strong> <a href="${safePorto}" style="color: #0D6A75; text-decoration: underline; font-weight: 500;" target="_blank">Lihat Portofolio</a>
+                                    </td>
+                                </tr>` : ''}
+                                <tr>
+                                    <td valign="top" style="padding: 4px 8px 4px 0; width: 18px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 13.5px; color: #0D6A75;">
+                                        <span style="color: #0D6A75; font-size: 16px; line-height: 1;">•</span>
+                                    </td>
+                                    <td valign="top" style="padding: 4px 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 13.5px; line-height: 1.55; color: #374151;">
+                                        <strong style="color: #111827;">Bersedia Dipindah Divisi:</strong> ${safeBersedia}
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+
+                        <!-- UPLOADED DOCUMENTS LIST -->
+                        ${(linkKsm || linkKhs || linkMl || linkCv || linkPi) ? `
+                        <div style="margin: 0 0 20px 0;">
+                            <p style="margin: 0 0 10px 0; font-size: 14px; font-weight: 700; color: #111827; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+                                Berkas Dokumen Terunggah:
+                            </p>
+                            <table role="presentation" aria-hidden="true" cellspacing="0" cellpadding="0" border="0" width="100%">
+                                ${linkKsm ? `
+                                <tr>
+                                    <td valign="top" style="padding: 3px 8px 3px 0; width: 20px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 13.5px; color: #0D6A75;">
+                                        <span style="color: #0D6A75; font-size: 16px; line-height: 1;">•</span>
+                                    </td>
+                                    <td valign="top" style="padding: 3px 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 13.5px; line-height: 1.55; color: #374151;">
+                                        Kartu Studi Mahasiswa (KSM): <a href="${linkKsm}" style="color: #0D6A75; text-decoration: underline; font-weight: 500;" target="_blank">Lihat Dokumen KSM</a>
+                                    </td>
+                                </tr>` : ''}
+                                ${linkKhs ? `
+                                <tr>
+                                    <td valign="top" style="padding: 3px 8px 3px 0; width: 20px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 13.5px; color: #0D6A75;">
+                                        <span style="color: #0D6A75; font-size: 16px; line-height: 1;">•</span>
+                                    </td>
+                                    <td valign="top" style="padding: 3px 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 13.5px; line-height: 1.55; color: #374151;">
+                                        Kartu Hasil Studi (KHS): <a href="${linkKhs}" style="color: #0D6A75; text-decoration: underline; font-weight: 500;" target="_blank">Lihat Dokumen KHS</a>
+                                    </td>
+                                </tr>` : ''}
+                                ${linkMl ? `
+                                <tr>
+                                    <td valign="top" style="padding: 3px 8px 3px 0; width: 20px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 13.5px; color: #0D6A75;">
+                                        <span style="color: #0D6A75; font-size: 16px; line-height: 1;">•</span>
+                                    </td>
+                                    <td valign="top" style="padding: 3px 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 13.5px; line-height: 1.55; color: #374151;">
+                                        Motivation Letter (ML): <a href="${linkMl}" style="color: #0D6A75; text-decoration: underline; font-weight: 500;" target="_blank">Lihat Dokumen ML</a>
+                                    </td>
+                                </tr>` : ''}
+                                ${linkCv ? `
+                                <tr>
+                                    <td valign="top" style="padding: 3px 8px 3px 0; width: 20px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 13.5px; color: #0D6A75;">
+                                        <span style="color: #0D6A75; font-size: 16px; line-height: 1;">•</span>
+                                    </td>
+                                    <td valign="top" style="padding: 3px 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 13.5px; line-height: 1.55; color: #374151;">
+                                        Curriculum Vitae (CV): <a href="${linkCv}" style="color: #0D6A75; text-decoration: underline; font-weight: 500;" target="_blank">Lihat Dokumen CV</a>
+                                    </td>
+                                </tr>` : ''}
+                                ${linkPi ? `
+                                <tr>
+                                    <td valign="top" style="padding: 3px 8px 3px 0; width: 20px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 13.5px; color: #0D6A75;">
+                                        <span style="color: #0D6A75; font-size: 16px; line-height: 1;">•</span>
+                                    </td>
+                                    <td valign="top" style="padding: 3px 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 13.5px; line-height: 1.55; color: #374151;">
+                                        Pakta Integritas (PI): <a href="${linkPi}" style="color: #0D6A75; text-decoration: underline; font-weight: 500;" target="_blank">Lihat Pakta Integritas</a>
+                                    </td>
+                                </tr>` : ''}
+                            </table>
+                        </div>
+                        ` : ''}
+
+                        <!-- WHATSAPP GROUP CTA CALLOUT -->
+                        ${safeWaUrl ? `
+                        <div style="margin: 0 0 24px 0; background-color: #F0F9FA; border-left: 4px solid #0D6A75; border-radius: 4px; padding: 14px 18px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
+                            <p style="margin: 0 0 6px 0; font-size: 14px; font-weight: 700; color: #094B53;">
+                                Grup WhatsApp Calon Asisten
+                            </p>
+                            <p style="margin: 0 0 14px 0; font-size: 13.5px; line-height: 1.55; color: #094B53;">
+                                Silakan bergabung ke grup WhatsApp resmi calon asisten EIM Research Lab untuk koordinasi dan pengumuman tahapan seleksi selanjutnya.
+                            </p>
+                            <!-- CTA BUTTON -->
+                            <table role="presentation" aria-hidden="true" cellspacing="0" cellpadding="0" border="0" style="margin: 0;">
+                                <tr>
+                                    <td style="border-radius: 6px; background-color: #0D6A75; text-align: left;">
+                                        <a href="${safeWaUrl}" target="_blank" rel="noopener noreferrer"
+                                            style="background-color: #0D6A75; border: 1px solid #0D6A75; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 14px; font-weight: 600; color: #FFFFFF; text-decoration: none; padding: 10px 22px; display: inline-block; border-radius: 6px; text-align: center;">
+                                            Gabung Grup WhatsApp &rarr;
+                                        </a>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                        ` : ''}
+
+                        <!-- PARAGRAPH -->
+                        <p style="margin: 0 0 16px 0; font-size: 14px; line-height: 1.6; color: #374151; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
+                            Informasi pengumuman hasil seleksi dan instruksi teknikal akan diumumkan sesuai jadwal melalui email dan kanal komunikasi resmi laboratorium kami.
+                        </p>
+
+                        <!-- DIVIDER LINE -->
+                        <div style="padding-top: 20px; padding-bottom: 20px;">
+                            <hr style="border: 0; border-top: 1px solid #E5E7EB; margin: 0;">
+                        </div>
+
+                        <!-- SIGNOFF -->
+                        <div style="margin: 20px 0 8px 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+                            <p style="margin: 0 0 6px 0; font-size: 14px; color: #374151;">
+                                Salam hangat,
+                            </p>
+                            <p style="margin: 0; font-size: 14px; font-weight: 700; color: #111827;">
+                                Tim Rekrutmen Asisten EIM
+                            </p>
+                            <p style="margin: 2px 0 0 0; font-size: 13px; color: #4B5563;">
+                                Enterprise Infrastructure Management Research Laboratory
+                            </p>
+                            <p style="margin: 2px 0 0 0; font-size: 13px; color: #6B7280;">
+                                Telkom University, Bandung
+                            </p>
+                        </div>
+
+                    </td>
+                </tr>
+            </table>
+
+            <!-- FOOTER -->
+            <table role="presentation" aria-hidden="true" cellspacing="0" cellpadding="0" border="0" width="100%"
+                style="margin: auto;">
+                <tr>
+                    <td
+                        style="padding: 28px 20px 0 20px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 12px; line-height: 1.6; text-align: center; color: #6B7280;">
+                        <p style="margin: 0 0 6px 0;">Copyright &copy; ${new Date().getFullYear()} Enterprise Infrastructure Management Research Laboratory.</p>
+                        <p style="margin: 0 0 16px 0;">Gedung TULT Lantai 8, Ruang TULT.08.09, Telkom University, Bandung, Indonesia</p>
+                        <p style="margin: 0 0 20px 0;">
+                            <a href="https://eimlab.org" style="color: #4B5563; text-decoration: underline;" target="_blank">Website Lab</a> &nbsp;|&nbsp; 
+                            <a href="mailto:laboratoriumeim@gmail.com" style="color: #4B5563; text-decoration: underline;" target="_blank">Hubungi Kami</a>
+                        </p>
+                        
+                        <!-- SOCIAL MEDIA ICONS -->
+                        <table role="presentation" aria-hidden="true" cellspacing="0" cellpadding="0" border="0"
+                            align="center" style="margin: 0 auto;">
+                            <tr>
+                                <td style="padding: 0 6px;">
+                                    <a href="https://www.instagram.com/eimresearchlab/" target="_blank" style="text-decoration: none;">
+                                        <img src="https://cdn-icons-png.flaticon.com/512/1384/1384063.png" width="20" height="20" alt="Instagram" style="display: block; opacity: 0.75; border: 0;">
+                                    </a>
+                                </td>
+                                <td style="padding: 0 6px;">
+                                    <a href="https://linkedin.com/company/keprofesian-enterprise-infrastructure-management-eim/" target="_blank" style="text-decoration: none;">
+                                        <img src="https://cdn-icons-png.flaticon.com/512/145/145807.png" width="20" height="20" alt="LinkedIn" style="display: block; opacity: 0.75; border: 0;">
+                                    </a>
+                                </td>
+                                <td style="padding: 0 6px;">
+                                    <a href="https://github.com/LABEIM" target="_blank" style="text-decoration: none;">
+                                        <img src="https://cdn-icons-png.flaticon.com/512/733/733553.png" width="20" height="20" alt="GitHub" style="display: block; opacity: 0.75; border: 0;">
+                                    </a>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+            </table>
+
         </div>
-      </div>
-    </div>
-  `;
+        <!--[if mso]>
+    </td>
+    </tr>
+    </table>
+    <![endif]-->
+    </center>
+</body>
+
+</html>`;
 
   const plainTextBody = `Halo ${data['Nama Lengkap']},\n\n` +
-    `Terima kasih telah mendaftar sebagai calon asisten di EIM Research Lab. Data pendaftaran Anda telah berhasil kami terima.\n\n` +
+    `Terima kasih telah mendaftar sebagai calon asisten di Enterprise Infrastructure Management (EIM) Research Lab. Data pendaftaran Anda telah berhasil kami terima.\n\n` +
     `Ringkasan Pendaftaran:\n` +
     `- Nama Lengkap: ${data['Nama Lengkap']}\n` +
     `- NIM: ${data['NIM']}\n` +
     `- Angkatan: ${data['Angkatan']}\n` +
     `- Divisi 1: ${data['Divisi 1']}\n` +
-    `- Divisi 2: ${data['Divisi 2']}\n\n` +
-    `Salam,\nEIM Research Lab`;
+    `- Divisi 2: ${data['Divisi 2']}\n` +
+    (showPortfolio ? `- Link Portofolio: ${data['Portofolio MedHum']}\n` : '') +
+    `- Bersedia Dipindah: ${data['Bersedia Dipindah Divisi']}\n\n` +
+    (safeWaUrl ? `Grup WhatsApp Calon Asisten: ${safeWaUrl}\n\n` : '') +
+    `Salam,\nTim Rekrutmen Asisten EIM Research Lab\nTelkom University, Bandung`;
 
   try {
     MailApp.sendEmail({

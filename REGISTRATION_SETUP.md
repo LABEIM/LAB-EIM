@@ -45,7 +45,7 @@ This document is a step-by-step guide for setting up, configuring, and operating
    * **`MAKE_FILES_PUBLIC`**: `true` *(Optional. Set to `true` if uploaded Drive links should be viewable via link by candidates. Defaults to `false`)*
    * **`PORTFOLIO_DIVISIONS`**: `Medhum` *(Optional. Comma-separated division values requiring portfolio links, e.g. `Medhum, Riset, Design`. Defaults to `Medhum`. Controlled via Keystatic CMS with four configurable modes: `required` [wajib divisi tertentu & opsional divisi lain], `only_trigger` [wajib hanya divisi tertentu & disembunyikan divisi lain], `optional` [opsional untuk semua divisi], and `disabled` [disembunyikan untuk semua divisi])*
    * **`WA_GROUP_URL`**: `https://chat.whatsapp.com/YOUR_GROUP_INVITE_CODE` *(Optional. Official WhatsApp group invite URL for applicants. Must start with `https://chat.whatsapp.com/` or `https://wa.me/` for security)*
-   * **`LOGO_URL`**: `https://eimlab.org/assets/email/logo-white.png` *(Optional. Public HTTPS URL for the header logo in registration confirmation emails. Defaults to `https://eimlab.org/assets/email/logo-white.png`)*
+   * **`LOGO_URL`**: `https://eimlab.org/assets/email/logo.png` *(Optional. Public HTTPS URL for the header logo in registration confirmation emails. Defaults to `https://eimlab.org/assets/email/logo.png`)*
 
 ### 3. Google Drive Folder & Security Permissions Guide
 > [!IMPORTANT]

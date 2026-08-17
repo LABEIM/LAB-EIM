@@ -1,82 +1,82 @@
 # EIM Brand & Email Assets Hub
 
-Dokumentasi resmi seluruh asset visual, logo, emblem, banner, dan ikon media sosial untuk **Enterprise Infrastructure Management (EIM) Research Lab**.
+Official documentation for all visual assets, logos, emblems, banners, and social media icons for the **Enterprise Infrastructure Management (EIM) Research Lab**.
 
-Seluruh asset di-host secara publik melalui web server / CDN Cloudflare Pages sehingga dapat diakses secara online oleh klien email (**Gmail**, **Outlook**, **Apple Mail**, **Yahoo**), aplikasi web, dan integrasi backend.
+All assets are hosted publicly via the web server / Cloudflare Pages CDN so they can be accessed online by email clients (**Gmail**, **Outlook**, **Apple Mail**, **Yahoo**), web applications, and backend integrations.
 
 ---
 
-## 🌐 Base URL Domain
+## Base URL Domain
 
-Setelah website di-deploy, seluruh asset dapat diakses melalui URL publik:
+Once the website is deployed, all assets are accessible via the public URL:
 
 ```text
-https://<domain-website>/assets/
+https://<website-domain>/assets/
 ```
 
-*Contoh:*
+*Examples:*
 - `https://eimresearchlab.com/assets/email/logo.png`
 - `https://labeim.pages.dev/assets/email/logo.png`
 
 ---
 
-## 📧 Email-Optimized Assets (`/assets/email/`)
+## Email-Optimized Assets (`/assets/email/`)
 
-Asset yang dirancang dan dikompresi khusus untuk kebutuhan email HTML, newsletter, konfirmasi pendaftaran, dan integrasi email studio.
+Assets specifically designed and compressed for HTML emails, newsletters, registration confirmations, and email studio integrations.
 
-| Asset File | Format | Resolusi (@2x) | Ukuran | Rekomendasi Background | Penggunaan |
+| Asset File | Format | Resolution (@2x) | Size | Recommended Background | Usage |
 | :--- | :--- | :--- | :--- | :--- | :--- |
-| [`/assets/email/logo.png`](file:///home/arukast/Projects/website-eim/public/assets/email/logo.png) | PNG (Transparan) | 500 × 114 px | **8.4 KB** | Light / White | Header email utama (versi horizontal) |
-| [`/assets/email/logo-white.png`](file:///home/arukast/Projects/website-eim/public/assets/email/logo-white.png) | PNG (Transparan) | 500 × 114 px | **8.9 KB** | Dark / Navy | Header email Dark Mode (teks putih) |
-| [`/assets/email/logo-compact.png`](file:///home/arukast/Projects/website-eim/public/assets/email/logo-compact.png) | PNG (Transparan) | 500 × 172 px | **8.2 KB** | Light / White | Logo ringkas ("EIM Research Lab") |
-| [`/assets/email/logo-compact-white.png`](file:///home/arukast/Projects/website-eim/public/assets/email/logo-compact-white.png) | PNG (Transparan) | 500 × 172 px | **8.2 KB** | Dark / Navy | Logo ringkas teks putih untuk tema gelap |
-| [`/assets/email/logo-vertical.png`](file:///home/arukast/Projects/website-eim/public/assets/email/logo-vertical.png) | PNG (Transparan) | 400 × 287 px | **9.6 KB** | Light / White | Susunan vertikal klasik untuk footer/memo |
-| [`/assets/email/logo-vertical-white.png`](file:///home/arukast/Projects/website-eim/public/assets/email/logo-vertical-white.png) | PNG (Transparan) | 400 × 287 px | **11 KB** | Dark / Navy | Susunan vertikal teks putih |
-| [`/assets/email/logo-icon.png`](file:///home/arukast/Projects/website-eim/public/assets/email/logo-icon.png) | PNG (Transparan) | 256 × 256 px | **5.3 KB** | Any | Emblem heksagonal 3D (Avatar pengirim) |
-| [`/assets/email/banner-dark.png`](file:///home/arukast/Projects/website-eim/public/assets/email/banner-dark.png) | PNG | 600 × 140 px | **7.8 KB** | Dark Mode | Banner lebar 600px gradient navy & cyan |
-| [`/assets/email/banner-light.png`](file:///home/arukast/Projects/website-eim/public/assets/email/banner-light.png) | PNG | 600 × 140 px | **7.7 KB** | Light Mode | Banner lebar 600px clean gradient putih |
+| `public/assets/email/logo.png` | PNG (Transparent) | 500 × 114 px | **8.4 KB** | Light / White | Main email header (horizontal version) |
+| `public/assets/email/logo-white.png` | PNG (Transparent) | 500 × 114 px | **8.9 KB** | Dark / Navy | Dark Mode email header (white text) |
+| `public/assets/email/logo-compact.png` | PNG (Transparent) | 500 × 172 px | **8.2 KB** | Light / White | Compact logo ("EIM Research Lab") |
+| `public/assets/email/logo-compact-white.png` | PNG (Transparent) | 500 × 172 px | **8.2 KB** | Dark / Navy | Compact logo with white text for dark themes |
+| `public/assets/email/logo-vertical.png` | PNG (Transparent) | 400 × 287 px | **9.6 KB** | Light / White | Classic vertical layout for footer/memo |
+| `public/assets/email/logo-vertical-white.png` | PNG (Transparent) | 400 × 287 px | **11 KB** | Dark / Navy | Vertical layout with white text |
+| `public/assets/email/logo-icon.png` | PNG (Transparent) | 256 × 256 px | **5.3 KB** | Any | 3D hexagonal emblem (Sender avatar) |
+| `public/assets/email/banner-dark.png` | PNG | 600 × 140 px | **7.8 KB** | Dark Mode | 600px wide banner with navy & cyan gradient |
+| `public/assets/email/banner-light.png` | PNG | 600 × 140 px | **7.7 KB** | Light Mode | 600px wide clean white gradient banner |
 
 ---
 
-## 📱 Social & UI Icons (`/assets/email/icons/`)
+## Social & UI Icons (`/assets/email/icons/`)
 
-Icon navigasi & media sosial retina-ready (96x96 px @2x) untuk footer email:
+Retina-ready navigation and social media icons (96x96 px @2x) for email footers:
 
-| Icon File | Path | Ukuran | Warna |
+| Icon File | Path | Size | Color |
 | :--- | :--- | :--- | :--- |
-| **Instagram** | `/assets/email/icons/instagram.png` | 2.2 KB | Slate Gray (`#94a3b8`) |
-| **LinkedIn** | `/assets/email/icons/linkedin.png` | 1.6 KB | Slate Gray (`#94a3b8`) |
-| **GitHub** | `/assets/email/icons/github.png` | 2.2 KB | Slate Gray (`#94a3b8`) |
-| **Website** | `/assets/email/icons/website.png` | 3.0 KB | Slate Gray (`#94a3b8`) |
-| **Email** | `/assets/email/icons/email.png` | 1.5 KB | Slate Gray (`#94a3b8`) |
-| **WhatsApp** | `/assets/email/icons/whatsapp.png` | 2.6 KB | Emerald Green (`#34d399`) |
+| **Instagram** | `public/assets/email/icons/instagram.png` | 2.2 KB | Slate Gray (`#94a3b8`) |
+| **LinkedIn** | `public/assets/email/icons/linkedin.png` | 1.6 KB | Slate Gray (`#94a3b8`) |
+| **GitHub** | `public/assets/email/icons/github.png` | 2.2 KB | Slate Gray (`#94a3b8`) |
+| **Website** | `public/assets/email/icons/website.png` | 3.0 KB | Slate Gray (`#94a3b8`) |
+| **Email** | `public/assets/email/icons/email.png` | 1.5 KB | Slate Gray (`#94a3b8`) |
+| **WhatsApp** | `public/assets/email/icons/whatsapp.png` | 2.6 KB | Emerald Green (`#34d399`) |
 
 ---
 
-## 🎨 Master Brand Assets (`/assets/brand/`)
+## Master Brand Assets (`/assets/brand/`)
 
-Asset resolusi penuh untuk publikasi, website, dokumen PDF, dan materi presentasi:
+Full resolution assets for publications, website, PDF documents, and presentation decks:
 
-| Asset File | Format | Resolusi | Ukuran | Deskripsi |
+| Asset File | Format | Resolution | Size | Description |
 | :--- | :--- | :--- | :--- | :--- |
-| [`eim-logo.png`](file:///home/arukast/Projects/website-eim/public/assets/brand/eim-logo.png) | PNG | 1600 × 365 px | 33 KB | Master logo horizontal standar |
-| [`eim-logo-horizontal-white.png`](file:///home/arukast/Projects/website-eim/public/assets/brand/eim-logo-horizontal-white.png) | PNG | 1600 × 365 px | 31 KB | Master logo horizontal teks putih |
-| [`eim-logo-compact.png`](file:///home/arukast/Projects/website-eim/public/assets/brand/eim-logo-compact.png) | PNG | 1000 × 344 px | 46 KB | Master logo compact EIM Research Lab |
-| [`eim-logo-compact-white.png`](file:///home/arukast/Projects/website-eim/public/assets/brand/eim-logo-compact-white.png) | PNG | 1000 × 344 px | 45 KB | Master logo compact teks putih |
-| [`eim-logo-vertical.png`](file:///home/arukast/Projects/website-eim/public/assets/brand/eim-logo-vertical.png) | PNG | 1200 × 862 px | 36 KB | Master logo vertikal standar |
-| [`eim-logo-vertical-white.png`](file:///home/arukast/Projects/website-eim/public/assets/brand/eim-logo-vertical-white.png) | PNG | 1200 × 862 px | 35 KB | Master logo vertikal teks putih |
-| [`eim-emblem.png`](file:///home/arukast/Projects/website-eim/public/assets/brand/eim-emblem.png) | PNG | 1686 × 1932 px | 105 KB | Master emblem 3D heksagonal tanpa teks |
-| [`eim-logo-icon.png`](file:///home/arukast/Projects/website-eim/public/assets/brand/eim-logo-icon.png) | PNG | 512 × 512 px | 12 KB | Icon persegi emblem 512x512 |
-| [`eim-favicon.png`](file:///home/arukast/Projects/website-eim/public/assets/brand/eim-favicon.png) | PNG | 64 × 64 px | 4.6 KB | Favicon web browser |
+| `public/assets/brand/eim-logo.png` | PNG | 1600 × 365 px | 33 KB | Standard horizontal master logo |
+| `public/assets/brand/eim-logo-horizontal-white.png` | PNG | 1600 × 365 px | 31 KB | Master horizontal logo with white text |
+| `public/assets/brand/eim-logo-compact.png` | PNG | 1000 × 344 px | 46 KB | Compact master logo EIM Research Lab |
+| `public/assets/brand/eim-logo-compact-white.png` | PNG | 1000 × 344 px | 45 KB | Compact master logo with white text |
+| `public/assets/brand/eim-logo-vertical.png` | PNG | 1200 × 862 px | 36 KB | Standard vertical master logo |
+| `public/assets/brand/eim-logo-vertical-white.png` | PNG | 1200 × 862 px | 35 KB | Master vertical logo with white text |
+| `public/assets/brand/eim-emblem.png` | PNG | 1686 × 1932 px | 105 KB | 3D hexagonal emblem master without text |
+| `public/assets/brand/eim-logo-icon.png` | PNG | 512 × 512 px | 12 KB | Square emblem icon 512x512 |
+| `public/assets/brand/eim-favicon.png` | PNG | 64 × 64 px | 4.6 KB | Web browser favicon |
 
 ---
 
-## 💻 Panduan & Contoh Penggunaan
+## Usage Guide & Examples
 
-### 1. HTML Email Standar (Inline Style)
+### 1. Standard HTML Email (Inline Styles)
 
 ```html
-<!-- Logo Header Email (Tema Terang) -->
+<!-- Email Header Logo (Light Theme) -->
 <table border="0" cellpadding="0" cellspacing="0" width="100%">
   <tr>
     <td align="center" style="padding: 24px 0;">
@@ -93,10 +93,10 @@ Asset resolusi penuh untuk publikasi, website, dokumen PDF, dan materi presentas
 </table>
 ```
 
-### 2. Header Email Dark Mode (Gmail / Outlook)
+### 2. Dark Mode Email Header (Gmail / Outlook)
 
 ```html
-<!-- Logo Header Email (Tema Gelap) -->
+<!-- Email Header Logo (Dark Theme) -->
 <div style="background-color: #0f172a; padding: 25px; text-align: center; border-radius: 8px 8px 0 0;">
   <img 
     src="https://eimresearchlab.com/assets/email/logo-white.png" 
@@ -109,18 +109,18 @@ Asset resolusi penuh untuk publikasi, website, dokumen PDF, dan materi presentas
 
 ### 3. Email Template Studio / React Email Preset
 
-Di project `email-template-eim` (misal di `src/presets/newsletter.ts` atau `staffMemo.ts`):
+In project `email-template-eim` (e.g. in `src/presets/newsletter.ts` or `staffMemo.ts`):
 
 ```typescript
 header: {
   showLogo: true,
-  logoUrl: 'https://eimresearchlab.com/assets/email/logo.png', // atau logo-white.png
+  logoUrl: 'https://eimresearchlab.com/assets/email/logo.png', // or logo-white.png
   logoAlt: 'EIM Research Lab',
   logoWidth: 190,
 }
 ```
 
-### 4. Footer Media Sosial Email
+### 4. Email Social Media Footer
 
 ```html
 <!-- Social Links Footer -->
@@ -139,9 +139,9 @@ header: {
 
 ---
 
-## 🛠️ Regenerate Assets
+## Regenerate Assets
 
-Jika ada pembaruan pada master image logo, seluruh asset dapat di-generate ulang secara otomatis dengan satu perintah:
+If there are updates to the master logo images, all assets can be automatically regenerated with a single command:
 
 ```bash
 npm run generate:assets

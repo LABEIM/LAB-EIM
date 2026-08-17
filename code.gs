@@ -314,6 +314,7 @@ function sendConfirmationEmail(data, isRevision) {
   const linkCv = data['Link CV'] ? escapeHtml(data['Link CV']) : '';
   const linkPi = data['Link PI (Pakta Integritas)'] ? escapeHtml(data['Link PI (Pakta Integritas)']) : '';
   const safeWaUrl = getSafeWhatsAppUrl();
+  const logoUrl = (scriptProp.getProperty('LOGO_URL') || 'https://eimlab.org/assets/email/logo-white.png').trim();
 
   const subjectPrefix = isRevision ? '[REVISI] ' : '';
   const subject = `${subjectPrefix}[EIM Research Lab] Confirmation of Recruitment Registration - ${safeNama}`;
@@ -321,7 +322,7 @@ function sendConfirmationEmail(data, isRevision) {
   const htmlBody = `
     <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 600px; margin: 0 auto; background-color: #0b0f19; color: #e2e8f0; border-radius: 12px; overflow: hidden; border: 1px solid #1e293b;">
       <div style="background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); padding: 30px; text-align: center; border-bottom: 2px solid #06b6d4;">
-        <h1 style="color: #06b6d4; margin: 0; font-size: 24px; text-transform: uppercase; letter-spacing: 1px;">EIM Research Lab</h1>
+        ${logoUrl ? `<div style="margin-bottom: 12px;"><img src="${escapeHtml(logoUrl)}" alt="EIM Research Lab" width="190" style="display: inline-block; width: 190px; max-width: 100%; height: auto; border: 0;" /></div>` : '<h1 style="color: #06b6d4; margin: 0; font-size: 24px; text-transform: uppercase; letter-spacing: 1px;">EIM Research Lab</h1>'}
         <p style="color: #94a3b8; margin-top: 8px; font-size: 14px;">Assistant Recruitment Confirmation ${isRevision ? '<span style="color: #f97316; font-weight: bold;">[REVISI]</span>' : ''}</p>
       </div>
 

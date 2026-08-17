@@ -1,0 +1,468 @@
+---
+import Layout from '../layouts/Layout.astro';
+import '../styles/pages/assets.css';
+
+const assetsData = [
+  // Email Optimized Assets
+  {
+    id: 'email-logo-dark',
+    name: 'Email Header Logo (Horizontal)',
+    category: 'email',
+    path: '/assets/email/logo.png',
+    format: 'PNG',
+    dimensions: '500 × 114 px',
+    size: '8.4 KB',
+    description: 'Logo horizontal resmi untuk header email dengan latar belakang terang / putih.',
+    recommendedBg: 'light',
+    recommendedWidth: 200,
+  },
+  {
+    id: 'email-logo-white',
+    name: 'Email Header Logo - White Text',
+    category: 'email',
+    path: '/assets/email/logo-white.png',
+    format: 'PNG',
+    dimensions: '500 × 114 px',
+    size: '8.9 KB',
+    description: 'Logo horizontal teks putih kontras tinggi untuk header email bertema gelap (Dark Mode).',
+    recommendedBg: 'dark',
+    recommendedWidth: 200,
+  },
+  {
+    id: 'email-logo-compact-dark',
+    name: 'Email Compact Logo (EIM Research Lab)',
+    category: 'email',
+    path: '/assets/email/logo-compact.png',
+    format: 'PNG',
+    dimensions: '500 × 172 px',
+    size: '8.2 KB',
+    description: 'Logo ringkas dengan tipografi EIM Research Lab Telkom University untuk header email.',
+    recommendedBg: 'light',
+    recommendedWidth: 160,
+  },
+  {
+    id: 'email-logo-compact-white',
+    name: 'Email Compact Logo - White Text',
+    category: 'email',
+    path: '/assets/email/logo-compact-white.png',
+    format: 'PNG',
+    dimensions: '500 × 172 px',
+    size: '8.2 KB',
+    description: 'Logo ringkas teks putih untuk header email dan kartu informasi tema gelap.',
+    recommendedBg: 'dark',
+    recommendedWidth: 160,
+  },
+  {
+    id: 'email-banner-dark',
+    name: 'Email Header Banner (Dark)',
+    category: 'email',
+    path: '/assets/email/banner-dark.png',
+    format: 'PNG',
+    dimensions: '600 × 140 px',
+    size: '7.8 KB',
+    description: 'Banner header email responsif 600px dengan gradient navy-cyan yang elegan.',
+    recommendedBg: 'dark',
+    recommendedWidth: 600,
+  },
+  {
+    id: 'email-banner-light',
+    name: 'Email Header Banner (Light)',
+    category: 'email',
+    path: '/assets/email/banner-light.png',
+    format: 'PNG',
+    dimensions: '600 × 140 px',
+    size: '7.7 KB',
+    description: 'Banner header email responsif 600px dengan latar belakang terang bersih.',
+    recommendedBg: 'light',
+    recommendedWidth: 600,
+  },
+  {
+    id: 'email-logo-vertical',
+    name: 'Email Logo Vertical (Standard)',
+    category: 'email',
+    path: '/assets/email/logo-vertical.png',
+    format: 'PNG',
+    dimensions: '400 × 287 px',
+    size: '9.6 KB',
+    description: 'Susunan logo vertikal klasik untuk footer email, konfirmasi pendaftaran, atau memo.',
+    recommendedBg: 'light',
+    recommendedWidth: 140,
+  },
+  {
+    id: 'email-logo-vertical-white',
+    name: 'Email Logo Vertical (White Text)',
+    category: 'email',
+    path: '/assets/email/logo-vertical-white.png',
+    format: 'PNG',
+    dimensions: '400 × 287 px',
+    size: '11 KB',
+    description: 'Susunan logo vertikal teks putih untuk template email bertema gelap.',
+    recommendedBg: 'dark',
+    recommendedWidth: 140,
+  },
+  {
+    id: 'email-logo-icon',
+    name: 'Email Emblem Icon (Square)',
+    category: 'email',
+    path: '/assets/email/logo-icon.png',
+    format: 'PNG',
+    dimensions: '256 × 256 px',
+    size: '5.3 KB',
+    description: 'Icon lambang heksagonal 3D transparan untuk avatar pengirim, badge, dan avatar email.',
+    recommendedBg: 'dark',
+    recommendedWidth: 64,
+  },
+
+  // Social & UI Icons
+  {
+    id: 'icon-instagram',
+    name: 'Instagram Social Icon',
+    category: 'icons',
+    path: '/assets/email/icons/instagram.png',
+    format: 'PNG',
+    dimensions: '96 × 96 px',
+    size: '2.2 KB',
+    description: 'Icon Instagram retina-ready untuk link media sosial di footer email.',
+    recommendedBg: 'dark',
+    recommendedWidth: 24,
+  },
+  {
+    id: 'icon-linkedin',
+    name: 'LinkedIn Social Icon',
+    category: 'icons',
+    path: '/assets/email/icons/linkedin.png',
+    format: 'PNG',
+    dimensions: '96 × 96 px',
+    size: '1.6 KB',
+    description: 'Icon LinkedIn retina-ready untuk footer email dan dokumen resmi.',
+    recommendedBg: 'dark',
+    recommendedWidth: 24,
+  },
+  {
+    id: 'icon-github',
+    name: 'GitHub Social Icon',
+    category: 'icons',
+    path: '/assets/email/icons/github.png',
+    format: 'PNG',
+    dimensions: '96 × 96 px',
+    size: '2.2 KB',
+    description: 'Icon GitHub resmi untuk repositori riset dan template email teknis.',
+    recommendedBg: 'dark',
+    recommendedWidth: 24,
+  },
+  {
+    id: 'icon-website',
+    name: 'Website / Globe Icon',
+    category: 'icons',
+    path: '/assets/email/icons/website.png',
+    format: 'PNG',
+    dimensions: '96 × 96 px',
+    size: '3.0 KB',
+    description: 'Icon tautan portal web untuk navigasi dan footer email.',
+    recommendedBg: 'dark',
+    recommendedWidth: 24,
+  },
+  {
+    id: 'icon-email',
+    name: 'Email Mailbox Icon',
+    category: 'icons',
+    path: '/assets/email/icons/email.png',
+    format: 'PNG',
+    dimensions: '96 × 96 px',
+    size: '1.5 KB',
+    description: 'Icon email untuk contact person dan link surat resmi.',
+    recommendedBg: 'dark',
+    recommendedWidth: 24,
+  },
+  {
+    id: 'icon-whatsapp',
+    name: 'WhatsApp Contact Icon',
+    category: 'icons',
+    path: '/assets/email/icons/whatsapp.png',
+    format: 'PNG',
+    dimensions: '96 × 96 px',
+    size: '2.6 KB',
+    description: 'Icon WhatsApp hijau brand untuk link grup rekrutmen dan chat asisten.',
+    recommendedBg: 'dark',
+    recommendedWidth: 24,
+  },
+
+  // Brand Master Assets
+  {
+    id: 'brand-logo-main',
+    name: 'Master Horizontal Logo (High-Res)',
+    category: 'brand',
+    path: '/assets/brand/eim-logo-horizontal.png',
+    format: 'PNG',
+    dimensions: '1600 × 365 px',
+    size: '33 KB',
+    description: 'Master logo horizontal beresolusi tinggi untuk presentasi, situs web, dan publikasi.',
+    recommendedBg: 'light',
+    recommendedWidth: 320,
+  },
+  {
+    id: 'brand-logo-white',
+    name: 'Master Horizontal Logo White',
+    category: 'brand',
+    path: '/assets/brand/eim-logo-horizontal-white.png',
+    format: 'PNG',
+    dimensions: '1600 × 365 px',
+    size: '31 KB',
+    description: 'Master logo horizontal teks putih untuk media presentasi atau video berlatar gelap.',
+    recommendedBg: 'dark',
+    recommendedWidth: 320,
+  },
+  {
+    id: 'brand-emblem-master',
+    name: 'Master 3D Emblem (Raw)',
+    category: 'brand',
+    path: '/assets/brand/eim-emblem.png',
+    format: 'PNG',
+    dimensions: '1686 × 1932 px',
+    size: '105 KB',
+    description: 'Emblem logo heksagonal 3D resolusi penuh tanpa teks dengan transparansi sempurna.',
+    recommendedBg: 'light',
+    recommendedWidth: 250,
+  },
+  {
+    id: 'brand-favicon',
+    name: 'Favicon Icon',
+    category: 'brand',
+    path: '/assets/brand/eim-favicon.png',
+    format: 'PNG',
+    dimensions: '64 × 64 px',
+    size: '4.6 KB',
+    description: 'Favicon browser standar dan thumbnail ikon aplikasi.',
+    recommendedBg: 'dark',
+    recommendedWidth: 32,
+  },
+];
+---
+
+<Layout
+  title="EIM Brand & Email Assets CDN | EIM Research Lab"
+  description="Koleksi asset resmi logo dan icon EIM Research Lab yang dioptimalkan untuk email template, website, dan media online."
+>
+  <main class="assets-page-container">
+    <section class="assets-hero">
+      <div class="assets-badge">
+        <span>⚡ CDN & Brand Assets Hub</span>
+      </div>
+      <h1 class="assets-title">
+        Official <span class="assets-title-highlight">Brand & Email Assets</span>
+      </h1>
+      <p class="assets-subtitle">
+        Asset visual resmi EIM Research Lab yang di-host secara publik dan dioptimalkan khusus untuk 
+        template email, integrasi API, Google Apps Script, dan media digital.
+      </p>
+    </section>
+
+    <!-- Filters -->
+    <div class="assets-filters" id="assets-filters">
+      <button class="filter-tab-btn active" data-filter="all">Semua Asset ({assetsData.length})</button>
+      <button class="filter-tab-btn" data-filter="email">Email Optimized ({assetsData.filter(a => a.category === 'email').length})</button>
+      <button class="filter-tab-btn" data-filter="icons">Social & UI Icons ({assetsData.filter(a => a.category === 'icons').length})</button>
+      <button class="filter-tab-btn" data-filter="brand">Brand Master ({assetsData.filter(a => a.category === 'brand').length})</button>
+    </div>
+
+    <!-- Assets Grid -->
+    <div class="assets-grid" id="assets-grid">
+      {assetsData.map((asset) => (
+        <article class="asset-card" data-category={asset.category} id={`card-${asset.id}`}>
+          <div class={`asset-preview-stage bg-${asset.recommendedBg}`} id={`stage-${asset.id}`}>
+            <img 
+              src={asset.path} 
+              alt={asset.name} 
+              class="asset-preview-img" 
+              loading="lazy" 
+            />
+            <button 
+              class="asset-bg-toggle-btn" 
+              data-target={`stage-${asset.id}`} 
+              title="Ganti Latar Preview (Gelap / Terang)"
+            >
+              🌓 Mode
+            </button>
+          </div>
+
+          <div class="asset-card-content">
+            <div class="asset-meta-tags">
+              <span class="meta-pill meta-pill-format">{asset.format}</span>
+              <span class="meta-pill meta-pill-size">{asset.dimensions}</span>
+              <span class="meta-pill meta-pill-use">{asset.size}</span>
+            </div>
+
+            <h2 class="asset-card-title">{asset.name}</h2>
+            <p class="asset-card-desc">{asset.description}</p>
+
+            <div class="asset-actions">
+              <div class="asset-action-btn-row">
+                <button 
+                  class="asset-btn asset-btn-primary copy-url-btn" 
+                  data-path={asset.path}
+                >
+                  🔗 Salin URL
+                </button>
+                <button 
+                  class="asset-btn asset-btn-secondary copy-html-btn" 
+                  data-path={asset.path} 
+                  data-name={asset.name} 
+                  data-width={asset.recommendedWidth}
+                >
+                  📄 Salin &lt;img&gt;
+                </button>
+              </div>
+              <a 
+                href={asset.path} 
+                download 
+                class="asset-btn asset-btn-outline"
+              >
+                ⬇️ Unduh File ({asset.format})
+              </a>
+            </div>
+          </div>
+        </article>
+      ))}
+    </div>
+
+    <!-- Guidelines Section -->
+    <section class="assets-guidelines">
+      <div class="guidelines-header">
+        <h2 class="guidelines-title">Panduan Penggunaan Asset pada Email</h2>
+        <p class="guidelines-desc">
+          Tips teknis agar logo dan gambar tampil optimal, tajam, dan tidak diblokir oleh klien email (Gmail, Outlook, Apple Mail).
+        </p>
+      </div>
+
+      <div class="guidelines-grid">
+        <div class="guideline-box">
+          <div class="guideline-box-icon">🌐</div>
+          <h3 class="guideline-box-title">Gunakan Public HTTPS URL</h3>
+          <p class="guideline-box-text">
+            Klien email tidak dapat membaca file lokal komputer atau format Base64 secara konsisten. Selalu gunakan URL absolut HTTPS yang di-host di domain ini.
+          </p>
+        </div>
+
+        <div class="guideline-box">
+          <div class="guideline-box-icon">📱</div>
+          <h3 class="guideline-box-title">Format PNG & Retina 2x</h3>
+          <p class="guideline-box-text">
+            Koleksi asset email ini dibuat dengan resolusi 2x (misal gambar 500px dengan tag width 200px) agar sangat tajam di layar Retina smartphone dan monitor 4K.
+          </p>
+        </div>
+
+        <div class="guideline-box">
+          <div class="guideline-box-icon">⚡</div>
+          <h3 class="guideline-box-title">Ukuran Ringan (&lt; 15 KB)</h3>
+          <p class="guideline-box-text">
+            Seluruh asset telah dikompresi maksimal tanpa mengurangi kualitas, menjamin email terbuka instan tanpa delay dan lolos filter spam.
+          </p>
+        </div>
+      </div>
+
+      <div class="snippet-title">Contoh Kode HTML Email:</div>
+      <pre class="snippet-box"><code>&lt;!-- Logo Header Email EIM --&gt;
+&lt;img 
+  src="https://eimresearchlab.com/assets/email/logo.png" 
+  alt="EIM Research Lab" 
+  width="200" 
+  style="display: block; width: 200px; max-width: 100%; height: auto; border: 0;" 
+/&gt;</code></pre>
+    </section>
+  </main>
+</Layout>
+
+<script>
+  // Filter tabs logic
+  const filterButtons = document.querySelectorAll('.filter-tab-btn');
+  const cards = document.querySelectorAll('.asset-card');
+
+  filterButtons.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      filterButtons.forEach((b) => b.classList.remove('active'));
+      btn.classList.add('active');
+
+      const filter = btn.getAttribute('data-filter');
+      cards.forEach((card) => {
+        const category = card.getAttribute('data-category');
+        if (filter === 'all' || category === filter) {
+          (card as HTMLElement).style.display = 'flex';
+        } else {
+          (card as HTMLElement).style.display = 'none';
+        }
+      });
+    });
+  });
+
+  // Background toggle logic for preview stages
+  const bgToggles = document.querySelectorAll('.asset-bg-toggle-btn');
+  bgToggles.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const targetId = btn.getAttribute('data-target');
+      if (!targetId) return;
+      const stage = document.getElementById(targetId);
+      if (!stage) return;
+
+      if (stage.classList.contains('bg-dark')) {
+        stage.classList.remove('bg-dark');
+        stage.classList.add('bg-light');
+      } else {
+        stage.classList.remove('bg-light');
+        stage.classList.add('bg-dark');
+      }
+    });
+  });
+
+  // Copy Public URL
+  const copyUrlBtns = document.querySelectorAll('.copy-url-btn');
+  copyUrlBtns.forEach((btn) => {
+    btn.addEventListener('click', async () => {
+      const path = btn.getAttribute('data-path');
+      if (!path) return;
+
+      const origin = window.location.origin;
+      const fullUrl = `${origin}${path}`;
+
+      try {
+        await navigator.clipboard.writeText(fullUrl);
+        const originalText = btn.textContent;
+        btn.textContent = '✓ Tersalin!';
+        btn.classList.add('copied');
+        setTimeout(() => {
+          btn.textContent = originalText;
+          btn.classList.remove('copied');
+        }, 2000);
+      } catch (err) {
+        console.error('Failed to copy URL:', err);
+      }
+    });
+  });
+
+  // Copy HTML Snippet
+  const copyHtmlBtns = document.querySelectorAll('.copy-html-btn');
+  copyHtmlBtns.forEach((btn) => {
+    btn.addEventListener('click', async () => {
+      const path = btn.getAttribute('data-path');
+      const name = btn.getAttribute('data-name') || 'EIM Logo';
+      const width = btn.getAttribute('data-width') || '200';
+      if (!path) return;
+
+      const origin = window.location.origin;
+      const fullUrl = `${origin}${path}`;
+      const snippet = `<img src="${fullUrl}" alt="${name}" width="${width}" style="display: block; width: ${width}px; max-width: 100%; height: auto; border: 0;" />`;
+
+      try {
+        await navigator.clipboard.writeText(snippet);
+        const originalText = btn.textContent;
+        btn.textContent = '✓ Tag Tersalin!';
+        btn.classList.add('copied');
+        setTimeout(() => {
+          btn.textContent = originalText;
+          btn.classList.remove('copied');
+        }, 2000);
+      } catch (err) {
+        console.error('Failed to copy HTML:', err);
+      }
+    });
+  });
+</script>

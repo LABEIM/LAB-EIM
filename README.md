@@ -13,11 +13,12 @@ Official website of the Enterprise Infrastructure Management (EIM) Research Lab,
 
 ## Documentation Index
 
-For detailed instructions on local development, deployment, backend integrations, and data management, refer to the guides below:
+For detailed instructions on local development, deployment, backend integrations, brand assets, and data management, refer to the guides below:
 
 1. **[Deployment & Hosting Guide](DEPLOYMENT.md)**: Local development setup, Cloudflare Pages primary deployment, Keystatic CMS configuration, Vercel backup hosting, and dual-hosting CI/CD pipeline.
-2. **[Registration Setup & Operations Guide](REGISTRATION_SETUP.md)**: Google Apps Script (`code.gs`) backend setup, Google Drive permissions, recruitment pipeline stages, and candidate selection announcement management.
-3. **[Data & Content Configuration Guide](src/data/CONFIG_GUIDE.md)**: Customizing laboratory divisions, staff member profiles, site metadata, and Keystatic CMS singletons.
+2. **[Brand & Email Assets Hub](ASSETS.md)**: Public CDN endpoints, email-optimized logos, dark/light banners, and social icons for email templates.
+3. **[Registration Setup & Operations Guide](REGISTRATION_SETUP.md)**: Google Apps Script (`code.gs`) backend setup, Google Drive permissions, recruitment pipeline stages, and candidate selection announcement management.
+4. **[Data & Content Configuration Guide](src/data/CONFIG_GUIDE.md)**: Customizing laboratory divisions, staff member profiles, site metadata, and Keystatic CMS singletons.
 
 ## Directory Structure
 

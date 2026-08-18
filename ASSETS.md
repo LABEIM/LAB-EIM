@@ -8,15 +8,12 @@ All assets are hosted publicly via the web server / Cloudflare Pages CDN so they
 
 ## Base URL Domain
 
-Once the website is deployed, all assets are accessible via the public URL:
+All assets are accessible via the public URL:
 
 ```text
-https://<website-domain>/assets/
+https://eimlab.org/assets/
 ```
 
-*Examples:*
-- `https://eimresearchlab.com/assets/email/logo.png`
-- `https://labeim.pages.dev/assets/email/logo.png`
 
 ---
 

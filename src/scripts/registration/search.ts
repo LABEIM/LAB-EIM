@@ -16,8 +16,57 @@ interface Candidate {
   [key: string]: any;
 }
 
+/**
+ * Normalizes a NIM or search query for consistent comparison
+ * (strips spaces, hyphens, underscores and converts to lowercase).
+ */
+function normalizeNim(val: string | number | undefined | null): string {
+  if (val == null) return '';
+  return String(val).trim().replace(/[\s\-_]/g, '').toLowerCase();
+}
 
-function parseBulkImportText(text: string): Candidate[] {
+/**
+ * Gets candidate results data from container data-attributes or fallback imported JSON.
+ */
+function getResultsConfigData(): any {
+  if (typeof document !== 'undefined') {
+    const container = document.getElementById('registration-container');
+    if (container) {
+      const raw = container.getAttribute('data-recruitment-results');
+      if (raw) {
+        try {
+          return JSON.parse(raw);
+        } catch (e) {}
+      }
+    }
+  }
+  return resultsData;
+}
+
+/**
+ * Normalizes step identifiers and aliases to standard keys.
+ */
+function normalizeStepIdentifier(stepId: string): string {
+  const clean = (stepId || '').toLowerCase().replace(/[\-_]/g, '');
+  if (clean === 'selection' || clean === 'screening' || clean === 'berkas' || clean === 'seleksiberkas' || clean === 'admin' || clean === 'administrasi') {
+    return 'selection';
+  }
+  if (clean === 'technicaltest' || clean === 'technical' || clean === 'teknikal' || clean === 'testeknikal' || clean === 'test') {
+    return 'technical_test';
+  }
+  if (clean === 'interview' || clean === 'wawancara' || clean === 'interviewstage') {
+    return 'interview';
+  }
+  if (clean === 'finalselection' || clean === 'final' || clean === 'seleksiakhir' || clean === 'announcement' || clean === 'pengumuman') {
+    return 'final_selection';
+  }
+  return stepId.toLowerCase().replace(/-/g, '_');
+}
+
+/**
+ * Parses spreadsheet bulk paste into structured Candidate objects.
+ */
+function parseBulkImportText(text: string, activeSteps: Array<{ id: string }> = []): Candidate[] {
   if (!text || typeof text !== 'string') return [];
   const lines = text.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
   if (!lines.length) return [];
@@ -30,52 +79,106 @@ function parseBulkImportText(text: string): Candidate[] {
   const firstLineLower = lines[0].toLowerCase();
   const startIdx = firstLineLower.includes('nim') ? 1 : 0;
 
+  const defaultStepIds = activeSteps.length > 0
+    ? activeSteps.map(s => s.id)
+    : ['selection', 'technical_test', 'interview', 'final_selection'];
+
   for (let i = startIdx; i < lines.length; i++) {
     const cols = lines[i].split(delimiter).map(c => c.trim().replace(/^["']|["']$/g, ''));
     const nim = cols[0] || '';
     if (!nim || nim.length < 3) continue;
 
-    const screeningRaw = (cols[2] || '').toLowerCase();
-    const technicalRaw = (cols[3] || '').toLowerCase();
-    const finalRaw = (cols[4] || '').toLowerCase();
-
-    const stageStatuses: CandidateStepStatus[] = [
-      { stepId: 'selection', status: ['passed', 'failed'].includes(screeningRaw) ? screeningRaw : 'passed' },
-    ];
-    if (technicalRaw) {
-      stageStatuses.push({ stepId: 'technical_test', status: ['passed', 'failed'].includes(technicalRaw) ? technicalRaw : 'passed' });
-    }
-
+    const division = cols[1] || '';
+    const stageStatuses: CandidateStepStatus[] = [];
     const candidate: Candidate = {
-      nim: nim,
-      division: cols[1] || '',
+      nim,
+      division,
       stageStatuses,
-      notes: cols[5] || '',
     };
 
-    if (finalRaw) {
-      candidate.finalStatus = ['accepted', 'waitlist', 'rejected'].includes(finalRaw) ? finalRaw : 'accepted';
+    // Parse step statuses across active selection steps
+    for (let sIdx = 0; sIdx < defaultStepIds.length; sIdx++) {
+      const colVal = (cols[2 + sIdx] || '').toLowerCase();
+      if (!colVal) continue;
+
+      const stepId = defaultStepIds[sIdx];
+      const isPass = ['passed', 'pass', 'lolos', 'lulus', 'accepted', 'diterima', 'true'].includes(colVal);
+      const isFail = ['failed', 'fail', 'tidak lolos', 'tidak_lolos', 'tidak lulus', 'gagal', 'rejected', 'false'].includes(colVal);
+      const statusVal = isFail ? 'failed' : (isPass ? 'passed' : colVal);
+
+      stageStatuses.push({ stepId, status: statusVal });
+      candidate[`${stepId}Status`] = statusVal;
+      candidate[stepId] = statusVal;
     }
+
+    const finalColIdx = 2 + defaultStepIds.length;
+    const finalRaw = (cols[finalColIdx] || '').toLowerCase();
+    if (finalRaw) {
+      if (['accepted', 'diterima', 'lolos', 'lulus'].includes(finalRaw)) {
+        candidate.finalStatus = 'accepted';
+      } else if (['waitlist', 'cadangan', 'pending'].includes(finalRaw)) {
+        candidate.finalStatus = 'waitlist';
+      } else if (['rejected', 'gagal', 'tidak lolos', 'tidak lulus', 'failed'].includes(finalRaw)) {
+        candidate.finalStatus = 'rejected';
+      } else {
+        candidate.finalStatus = finalRaw;
+      }
+    }
+
+    const notesColIdx = 3 + defaultStepIds.length;
+    candidate.notes = cols[notesColIdx] || (cols.length > finalColIdx + 1 ? cols[cols.length - 1] : '');
 
     results.push(candidate);
   }
   return results;
 }
 
-
-function findCandidate(query: string): Candidate | undefined {
-  const q = query.trim().toLowerCase();
+/**
+ * Finds candidate record by NIM, checking structured array, bulk text, and aliases.
+ */
+function findCandidate(query: string, activeSteps: any[] = []): Candidate | undefined {
+  const q = normalizeNim(query);
   if (!q) return undefined;
 
-  const structured: Candidate[] = (resultsData as any).candidates || [];
-  const bulkText: string = (resultsData as any).bulkImportText || '';
-  const fromBulk = parseBulkImportText(bulkText);
-  const allCandidates = [...structured, ...fromBulk];
+  const data = getResultsConfigData();
+  const structured: Candidate[] = Array.isArray(data?.candidates) ? data.candidates : [];
+  const bulkText: string = data?.bulkImportText || '';
+  const fromBulk = parseBulkImportText(bulkText, activeSteps);
 
-  return allCandidates.find(c => {
-    const nimStr = c.nim != null ? String(c.nim).trim().toLowerCase() : '';
-    return nimStr === q;
+  // Map to merge candidate info if present in both
+  const candidateMap = new Map<string, Candidate>();
+
+  structured.forEach(c => {
+    const key = normalizeNim(c.nim);
+    if (key) {
+      candidateMap.set(key, { ...c });
+    }
   });
+
+  fromBulk.forEach(c => {
+    const key = normalizeNim(c.nim);
+    if (!key) return;
+    const existing = candidateMap.get(key);
+    if (existing) {
+      if (c.division && !existing.division) existing.division = c.division;
+      if (c.finalStatus && !existing.finalStatus) existing.finalStatus = c.finalStatus;
+      if (c.notes && !existing.notes) existing.notes = c.notes;
+      if (Array.isArray(c.stageStatuses) && c.stageStatuses.length > 0) {
+        const existingStages = Array.isArray(existing.stageStatuses) ? [...existing.stageStatuses] : [];
+        c.stageStatuses.forEach(st => {
+          const normSt = normalizeStepIdentifier(st.stepId);
+          if (!existingStages.some(s => normalizeStepIdentifier(s.stepId) === normSt)) {
+            existingStages.push(st);
+          }
+        });
+        existing.stageStatuses = existingStages;
+      }
+    } else {
+      candidateMap.set(key, c);
+    }
+  });
+
+  return candidateMap.get(q);
 }
 
 function escapeHtml(text: string | number | undefined | null): string {
@@ -94,14 +197,16 @@ function setResultDisplay(box: HTMLElement, statusClass: 'status-passed' | 'stat
 }
 
 function getIsEnglish(): boolean {
+  if (typeof document === 'undefined') return false;
   const container = document.getElementById('registration-container');
   if (container && container.getAttribute('data-locale')) {
     return container.getAttribute('data-locale') === 'en';
   }
-  return window.location.pathname.startsWith('/en');
+  return typeof window !== 'undefined' && window.location.pathname.startsWith('/en');
 }
 
 function getSelectionStepsConfig(): any[] {
+  if (typeof document === 'undefined') return [];
   const container = document.getElementById('registration-container');
   if (container) {
     const raw = container.getAttribute('data-selection-steps');
@@ -114,46 +219,62 @@ function getSelectionStepsConfig(): any[] {
   return [];
 }
 
+/**
+ * Initializes all NIM search boxes across selection steps and announcement views.
+ */
 export function initRegistrationSearch() {
+  if (typeof document === 'undefined') return;
   const isEn = getIsEnglish();
+  const selectionStepsConfig = getSelectionStepsConfig();
 
-  // Discover all search buttons (both legacy IDs and dynamic step search IDs)
-  const searchButtons = Array.from(document.querySelectorAll<HTMLButtonElement>('[id$="-nim-btn"]'));
-
-  // Also include main announcement search if it exists and wasn't matched
-  const mainSearchBtn = document.getElementById('search-nim-btn') as HTMLButtonElement | null;
-  if (mainSearchBtn && !searchButtons.includes(mainSearchBtn)) {
-    searchButtons.push(mainSearchBtn);
-  }
+  // Discover all search buttons (matching various ID conventions and container classes)
+  const searchButtons = Array.from(
+    document.querySelectorAll<HTMLButtonElement>(
+      '[id$="-nim-btn"], [id$="-search-btn"], [id^="search-"][id$="-btn"], button.reg-btn-search'
+    )
+  );
 
   searchButtons.forEach((btn) => {
-    const btnId = btn.id;
-    const inputId = btnId.replace(/-btn$/, '-input');
-    const resultBoxId = btnId.replace(/-btn$/, '-result-box');
+    const btnId = btn.id || '';
+    const containerBox = btn.closest('.search-lookup-box');
 
-    const input = document.getElementById(inputId) as HTMLInputElement | null;
-    const resultBox = document.getElementById(resultBoxId);
+    // Robust input resolution
+    const input = ((btnId ? document.getElementById(btnId.replace(/-btn$/, '-input')) : null)
+      || (btnId ? document.getElementById(btnId.replace(/-nim-btn$/, '-nim-input')) : null)
+      || (btnId ? document.getElementById(btnId.replace(/-nim-btn$/, '-input')) : null)
+      || (containerBox ? containerBox.querySelector<HTMLInputElement>('input[type="text"]') : null)) as HTMLInputElement | null;
+
+    // Robust resultBox resolution
+    const resultBox = (btnId ? document.getElementById(btnId.replace(/-btn$/, '-result-box')) : null)
+      || (btnId ? document.getElementById(btnId.replace(/-nim-btn$/, '-result-box')) : null)
+      || (btnId ? document.getElementById(btnId.replace(/-nim-btn$/, '-nim-result-box')) : null)
+      || (containerBox ? containerBox.querySelector<HTMLElement>('.search-result-display') : null);
 
     if (!input || !resultBox) return;
 
-    // Prevent double listener attachment
+    // Prevent duplicate event listener bindings
     if (btn.getAttribute('data-search-bound') === 'true') return;
     btn.setAttribute('data-search-bound', 'true');
 
-    // Extract step key from button ID (e.g. search-selection-nim-btn -> selection, search-nim-btn -> announcement)
+    // Extract step key from button ID or attributes
     let stepKey = 'announcement';
-    if (btnId === 'search-nim-btn') {
+    if (btnId === 'search-nim-btn' || btnId === 'search-announcement-nim-btn' || btnId === 'search-final-nim-btn') {
       stepKey = 'announcement';
     } else {
-      const matchKey = btnId.match(/^search-(.*?)-nim-btn$/);
+      const matchKey = btnId.match(/^search-(.*?)-(?:nim-)?btn$/);
       if (matchKey && matchKey[1]) {
         stepKey = matchKey[1];
       }
     }
 
+    const normKey = normalizeStepIdentifier(stepKey);
+    const matchedStepCfg = selectionStepsConfig.find(
+      (s: any) => normalizeStepIdentifier(s.id) === normKey || s.id === stepKey
+    );
+
     const executeSearch = () => {
-      const query = input.value.trim();
-      if (!query) {
+      const rawQuery = input.value.trim();
+      if (!rawQuery) {
         setResultDisplay(
           resultBox,
           'status-error',
@@ -162,27 +283,23 @@ export function initRegistrationSearch() {
         return;
       }
 
-      const match = findCandidate(query);
+      const match = findCandidate(rawQuery, selectionStepsConfig);
       if (!match) {
         setResultDisplay(
           resultBox,
           'status-muted',
           isEn
-            ? `No result record found for NIM "<strong>${escapeHtml(query)}</strong>".`
-            : `Data hasil seleksi tidak ditemukan untuk NIM "<strong>${escapeHtml(query)}</strong>".`
+            ? `No result record found for NIM "<strong>${escapeHtml(rawQuery)}</strong>".`
+            : `Data hasil seleksi tidak ditemukan untuk NIM "<strong>${escapeHtml(rawQuery)}</strong>".`
         );
         return;
       }
 
-      const normalizedStepKey = stepKey.replace(/-/g, '_');
-      const selectionStepsConfig = getSelectionStepsConfig();
-      const matchedStepCfg = selectionStepsConfig.find((s: any) => s.id === stepKey || s.id === normalizedStepKey);
-
-      // Final selection announcement view
-      if (normalizedStepKey === 'announcement' || normalizedStepKey === 'final' || normalizedStepKey === 'final_selection') {
+      // 1. Final Selection Announcement View
+      if (normKey === 'final_selection' || normKey === 'announcement' || stepKey === 'announcement' || stepKey === 'final') {
         const finalStatusVal = (match.finalStatus || match.status || '').toLowerCase();
-        const isAccepted = finalStatusVal === 'accepted';
-        const isWaitlist = finalStatusVal === 'waitlist';
+        const isAccepted = ['accepted', 'diterima', 'lolos', 'lulus'].includes(finalStatusVal);
+        const isWaitlist = ['waitlist', 'cadangan'].includes(finalStatusVal);
 
         let defaultOutcomeNote = '';
         if (matchedStepCfg && matchedStepCfg.resultsConfig) {
@@ -197,11 +314,17 @@ export function initRegistrationSearch() {
 
         if (!defaultOutcomeNote) {
           if (isAccepted) {
-            defaultOutcomeNote = isEn ? 'You have been accepted as an assistant at EIM Research Lab.' : 'Selamat! Anda diterima menjadi asisten di EIM Research Lab.';
+            defaultOutcomeNote = isEn
+              ? 'Congratulations! You have been accepted as an assistant at EIM Research Lab.'
+              : 'Selamat! Anda dinyatakan diterima sebagai asisten di EIM Research Lab.';
           } else if (isWaitlist) {
-            defaultOutcomeNote = isEn ? 'You are on the recruitment waitlist.' : 'Anda masuk dalam daftar cadangan (Waitlist).';
+            defaultOutcomeNote = isEn
+              ? 'You are on the recruitment waitlist.'
+              : 'Anda masuk dalam daftar cadangan (Waitlist) asisten EIM Research Lab.';
           } else {
-            defaultOutcomeNote = isEn ? 'Thank you for participating in this recruitment cycle.' : 'Terima kasih telah mengikuti seluruh rangkaian rekrutmen asisten EIM Research Lab.';
+            defaultOutcomeNote = isEn
+              ? 'Thank you for participating in this recruitment cycle.'
+              : 'Terima kasih telah mengikuti seluruh rangkaian rekrutmen asisten EIM Research Lab.';
           }
         }
 
@@ -244,15 +367,17 @@ export function initRegistrationSearch() {
         return;
       }
 
-
-
-      // Dynamic step-specific status lookup
+      // 2. Step-Specific Selection Evaluation View (e.g. Selection/Screening, Technical Test, Interview)
       let stepStatus = '';
       let stepNote = '';
 
-      // 1. Primary check: match from stageStatuses array if present
+      // Check stageStatuses array matching stepId or normalized aliases
       if (Array.isArray(match.stageStatuses)) {
-        const foundStep = match.stageStatuses.find((s: any) => s.stepId === stepKey || s.stepId === normalizedStepKey);
+        const foundStep = match.stageStatuses.find((s: any) => {
+          const itemNorm = normalizeStepIdentifier(s.stepId || '');
+          return itemNorm === normKey || s.stepId === stepKey || s.stepId === normKey;
+        });
+
         if (foundStep && foundStep.status) {
           stepStatus = String(foundStep.status).toLowerCase();
           if (foundStep.notes) {
@@ -261,64 +386,105 @@ export function initRegistrationSearch() {
         }
       }
 
-      // 2. Secondary check: specific property names on candidate object
+      // Secondary property check on candidate object (e.g. c.screeningStatus, c.selectionStatus, c.technicalTestStatus)
       if (!stepStatus) {
-        const camelStepKey = normalizedStepKey.replace(/_([a-z])/g, (_, letter) => letter.toUpperCase());
-        const customKeyCamel = `${camelStepKey}Status`;
-        const customKeyExact = `${normalizedStepKey}Status`;
+        const camelNorm = normKey.replace(/_([a-z])/g, (_, letter) => letter.toUpperCase());
+        const candidatesKeys = [
+          `${camelNorm}Status`,
+          `${normKey}Status`,
+          `${stepKey}Status`,
+          camelNorm,
+          normKey,
+          stepKey,
+        ];
 
-        if ((match as any)[customKeyCamel]) {
-          stepStatus = String((match as any)[customKeyCamel]).toLowerCase();
-        } else if ((match as any)[customKeyExact]) {
-          stepStatus = String((match as any)[customKeyExact]).toLowerCase();
-        } else if ((match as any)[stepKey]) {
-          stepStatus = String((match as any)[stepKey]).toLowerCase();
-        } else if ((match as any)[normalizedStepKey]) {
-          stepStatus = String((match as any)[normalizedStepKey]).toLowerCase();
+        if (normKey === 'selection') {
+          candidatesKeys.push('screeningStatus', 'screening', 'berkasStatus', 'berkas', 'seleksiStatus', 'seleksi');
+        } else if (normKey === 'technical_test') {
+          candidatesKeys.push('technicalStatus', 'technical', 'teknikalStatus', 'teknikal');
+        } else if (normKey === 'interview') {
+          candidatesKeys.push('wawancaraStatus', 'wawancara');
+        }
+
+        for (const k of candidatesKeys) {
+          if ((match as any)[k]) {
+            stepStatus = String((match as any)[k]).toLowerCase();
+            break;
+          }
         }
       }
 
+      // Default to passed if record exists but status was unassigned
       if (!stepStatus) {
         stepStatus = 'passed';
       }
 
-      const isPassed = stepStatus === 'passed';
+      const isPassed = ['passed', 'pass', 'lolos', 'lulus', 'accepted', 'diterima', 'true'].includes(stepStatus);
+      const isWaitlist = ['waitlist', 'cadangan', 'pending', 'menunggu'].includes(stepStatus);
 
-      // Resolve step default note from Dynamic Selection Pipeline Steps configuration
+      // Resolve step default message from step configuration
       let stepDefaultNote = '';
       if (matchedStepCfg && matchedStepCfg.resultsConfig) {
-        stepDefaultNote = isPassed
-          ? (matchedStepCfg.resultsConfig.passedMessage || '')
-          : (matchedStepCfg.resultsConfig.failedMessage || '');
+        if (isPassed) {
+          stepDefaultNote = matchedStepCfg.resultsConfig.passedMessage || '';
+        } else if (isWaitlist) {
+          stepDefaultNote = matchedStepCfg.resultsConfig.waitlistMessage || '';
+        } else {
+          stepDefaultNote = matchedStepCfg.resultsConfig.failedMessage || '';
+        }
       }
 
+      // For intermediate steps, do not leak final rejection notes into passed steps
+      const noteText = stepNote || stepDefaultNote || (isPassed ? match.notes : '') || '';
 
-      const noteText = stepNote || match.notes || stepDefaultNote;
+      const defaultFallbackMsg = isPassed
+        ? (isEn
+            ? 'Congratulations! You have passed this selection step. Please check your email or official WhatsApp group for details.'
+            : 'Selamat! Anda dinyatakan lolos pada tahap ini. Cek email atau WhatsApp Group rekrutmen untuk informasi tahap selanjutnya.')
+        : (isWaitlist
+            ? (isEn
+                ? 'You are on the waiting list for this selection step.'
+                : 'Anda masuk dalam daftar cadangan untuk tahap seleksi ini.')
+            : (isEn
+                ? 'Thank you for participating in this selection phase.'
+                : 'Terima kasih telah mengikuti tahap seleksi ini.'));
+
+      const resultTitle = isPassed
+        ? (isEn ? 'PASSED EVALUATION STEP' : 'LOLOS TAHAP SELEKSI')
+        : (isWaitlist
+            ? (isEn ? 'WAITLIST / PENDING EVALUATION' : 'STATUS CADANGAN / PROSES')
+            : (isEn ? 'SELECTION RESULT' : 'STATUS TAHAP SELEKSI'));
 
       setResultDisplay(
         resultBox,
-        isPassed ? 'status-passed' : 'status-muted',
+        isPassed ? 'status-passed' : (isWaitlist ? 'status-info' : 'status-muted'),
         `
           <div class="search-result-title">
-            ${isPassed ? (isEn ? 'PASSED EVALUATION STEP' : 'LOLOS TAHAP SELEKSI') : (isEn ? 'Evaluation Step Status' : 'Status Tahap Seleksi')}
+            <i class="fa-solid ${isPassed ? 'fa-circle-check' : (isWaitlist ? 'fa-clock' : 'fa-circle-info')}"></i> ${resultTitle}
           </div>
           <div class="search-result-nim">NIM: <strong>${escapeHtml(match.nim)}</strong></div>
           ${match.division ? `<div class="search-result-division">${isEn ? 'Division:' : 'Divisi:'} <strong>${escapeHtml(match.division)}</strong></div>` : ''}
           <p class="search-result-desc">
-            ${noteText
-              ? escapeHtml(noteText)
-              : (isPassed
-                  ? (isEn ? 'Congratulations! You have passed this selection step. Please check your email or official communication channel for details.' : 'Selamat! Anda dinyatakan lolos pada tahap ini. Cek email atau WhatsApp Group rekrutmen untuk informasi lebih lanjut.')
-                  : (isEn ? 'Thank you for participating in this selection phase.' : 'Terima kasih telah mengikuti tahap seleksi ini.'))}
+            ${escapeHtml(noteText || defaultFallbackMsg)}
           </p>
         `
       );
     };
 
-
     btn.addEventListener('click', executeSearch);
-    input.addEventListener('keypress', (e) => {
-      if (e.key === 'Enter') executeSearch();
+    input.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        executeSearch();
+      }
     });
   });
 }
+
+// Automatically re-bind search on dynamic stage transitions
+if (typeof window !== 'undefined') {
+  window.addEventListener('eim:stage-changed', () => {
+    setTimeout(initRegistrationSearch, 50);
+  });
+}
+

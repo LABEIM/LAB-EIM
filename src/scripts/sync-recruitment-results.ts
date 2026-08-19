@@ -71,23 +71,34 @@ function parseBulkImportText(text: string): Candidate[] {
     // Parse step statuses according to active selection steps
     for (let sIdx = 0; sIdx < activeSteps.length; sIdx++) {
       const colVal = (cols[2 + sIdx] || '').toLowerCase();
+      if (!colVal) continue;
+
       const stepId = activeSteps[sIdx].id;
-      const statusVal = ['passed', 'failed'].includes(colVal) ? colVal : 'passed';
+      const isPass = ['passed', 'pass', 'lolos', 'lulus', 'accepted', 'diterima', 'true'].includes(colVal);
+      const isFail = ['failed', 'fail', 'tidak lolos', 'tidak_lolos', 'tidak lulus', 'gagal', 'rejected', 'false'].includes(colVal);
+      const statusVal = isFail ? 'failed' : (isPass ? 'passed' : colVal);
       
       stageStatuses.push({ stepId, status: statusVal });
       candidate[`${stepId}Status`] = statusVal;
       candidate[stepId] = statusVal;
     }
 
-
     const finalColIdx = 2 + activeSteps.length;
     const finalRaw = (cols[finalColIdx] || '').toLowerCase();
     if (finalRaw) {
-      candidate.finalStatus = ['accepted', 'waitlist', 'rejected'].includes(finalRaw) ? finalRaw : 'accepted';
+      if (['accepted', 'diterima', 'lolos', 'lulus'].includes(finalRaw)) {
+        candidate.finalStatus = 'accepted';
+      } else if (['waitlist', 'cadangan', 'pending'].includes(finalRaw)) {
+        candidate.finalStatus = 'waitlist';
+      } else if (['rejected', 'gagal', 'tidak lolos', 'tidak lulus', 'failed'].includes(finalRaw)) {
+        candidate.finalStatus = 'rejected';
+      } else {
+        candidate.finalStatus = finalRaw;
+      }
     }
 
     const notesColIdx = 3 + activeSteps.length;
-    candidate.notes = cols[notesColIdx] || cols[cols.length - 1] || '';
+    candidate.notes = cols[notesColIdx] || (cols.length > finalColIdx + 1 ? cols[cols.length - 1] : '');
 
     results.push(candidate);
   }

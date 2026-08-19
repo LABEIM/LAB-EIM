@@ -1,7 +1,6 @@
 {
   "batch": "Rekrutmen Asisten 2026",
   "publishedDate": "2026-08-01",
-  "bulkImportText": "1202210001\tCyber Security\tpassed\tpassed\taccepted\tSelamat! Anda diterima sebagai asisten divisi Cyber Security.\n1202210002\tNetwork & Infrastructure\tpassed\tpassed\taccepted\tSelamat! Anda diterima sebagai asisten divisi Network.\n1202210005\tSoftware Engineering\tpassed\tfailed\trejected\tTerima kasih telah mengikuti proses rekrutmen.",
   "candidates": [
     {
       "nim": "1202210001",
@@ -53,22 +52,9 @@
     },
     {
       "nim": "1202210005",
-      "division": "Software Engineering",
       "stageStatuses": [
         {
           "stepId": "selection",
-          "status": "passed"
-        },
-        {
-          "stepId": "technical_test",
-          "status": "failed"
-        },
-        {
-          "stepId": "interview",
-          "status": "passed"
-        },
-        {
-          "stepId": "final_selection",
           "status": "passed"
         }
       ],

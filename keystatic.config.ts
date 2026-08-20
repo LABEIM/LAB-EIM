@@ -6,6 +6,11 @@ const registrationSchema = {
     description: 'Set to "auto" for automatic date-based calculation. Default lifecycle phases: "upcoming", "open", "extended", "final_selection", "announcement", "closed", "fallback". You can also override to any selection phase defined under Dynamic Selection Pipeline Steps by using its Step Identifier Key (e.g., "selection", "technical_test", "fgd", "interview"). To trigger a step\'s results announcement phase, append "_results" to its Step Identifier Key (e.g., "selection_results", "technical_test_results", "interview_results").',
     defaultValue: 'auto',
   }),
+  autoCloseAfterDeadline: fields.checkbox({
+    label: 'Auto-Close Form After Deadline',
+    description: 'Automatically switch recruitment stage to Closed (view-closed) once the deadline passes.',
+    defaultValue: true,
+  }),
 
 
 

@@ -146,6 +146,7 @@ export interface FieldStates {
 
 export interface RecruitmentConfig {
   status?: string;
+  autoCloseAfterDeadline?: boolean;
   timezone?: string;
   timezoneOffset?: string;
   upcomingStartDate?: string;
@@ -225,6 +226,7 @@ export interface RegistrationPageConfigs {
   openDateStr: string;
   deadlineStr: string;
   extendedDeadlineStr: string;
+  autoCloseAfterDeadline: boolean;
   contactPersons: ContactPerson[];
   upcomingCfg: UpcomingConfig;
   extendedCfg: ExtendedConfig;

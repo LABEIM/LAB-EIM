@@ -6,6 +6,7 @@ import {
   validateSingleFile,
   validateRegistrationForm
 } from './registration/validation';
+import { calculateStageFromDates } from './registration/stage';
 
 function assert(condition: boolean, testName: string) {
   if (condition) {
@@ -292,6 +293,54 @@ const testCumulativeValid = validateRegistrationForm(
   ]
 );
 assert(testCumulativeValid.valid === true, 'Cumulative upload size within 15MB limit (9MB total) -> PASS');
+
+// 9. Recruitment Lifecycle Stage & Auto-Close Tests
+console.log('\n9️⃣ Testing Recruitment Lifecycle Stages & Auto-Close:');
+
+const mockStageConfig = {
+  status: 'auto',
+  autoCloseAfterDeadline: true,
+  timezoneOffset: '+07:00',
+  upcomingStartDate: '2026-08-01T00:00:00',
+  openDate: '2026-08-14T00:00:00',
+  deadline: '2026-08-20T23:59:59',
+  extendedDeadline: '',
+  announcementDate: '2026-09-09T00:00:00',
+  selectionSteps: [
+    {
+      id: 'selection',
+      enabled: true,
+      title: 'Seleksi Berkas',
+      shortLabel: 'Seleksi Berkas',
+      startDate: '2026-08-24T00:00:00',
+      endDate: '2026-08-25T23:59:59',
+      templateType: 'in_progress' as const
+    }
+  ]
+};
+
+// 9.1: Upcoming Stage (before openDate)
+const tUpcoming = new Date('2026-08-10T12:00:00+07:00').getTime();
+assert(calculateStageFromDates(mockStageConfig, tUpcoming) === 'upcoming', 'Timestamp before openDate should return "upcoming"');
+
+// 9.2: Open Stage (between openDate and deadline)
+const tOpen = new Date('2026-08-15T12:00:00+07:00').getTime();
+assert(calculateStageFromDates(mockStageConfig, tOpen) === 'open', 'Timestamp during active period should return "open"');
+
+// 9.3: Auto-Close Stage (after deadline, before first selection step)
+const tAfterDeadline = new Date('2026-08-21T00:00:01+07:00').getTime();
+assert(calculateStageFromDates(mockStageConfig, tAfterDeadline) === 'closed', 'Timestamp immediately after deadline with empty extendedDeadline should return "closed"');
+
+// 9.4: Extended Stage (when valid extendedDeadline is explicitly defined)
+const mockExtendedConfig = {
+  ...mockStageConfig,
+  extendedDeadline: '2026-08-23T23:59:59'
+};
+assert(calculateStageFromDates(mockExtendedConfig, tAfterDeadline) === 'extended', 'Timestamp past deadline with valid future extendedDeadline should return "extended"');
+
+// 9.5: Selection Step Active Stage (when selection step startDate arrives)
+const tSelectionStep = new Date('2026-08-24T10:00:00+07:00').getTime();
+assert(calculateStageFromDates(mockStageConfig, tSelectionStep) === 'selection', 'Timestamp during selection step window should return "selection"');
 
 console.log('\n✨ All Automated Registration Unit Tests Execution Completed Successfully!');
 

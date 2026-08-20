@@ -6,74 +6,23 @@
     {
       "nim": "1202210001",
       "division": "Cyber Security",
-      "stageStatuses": [
-        {
-          "stepId": "selection",
-          "status": "passed"
-        },
-        {
-          "stepId": "technical_test",
-          "status": "passed"
-        },
-        {
-          "stepId": "interview",
-          "status": "passed"
-        },
-        {
-          "stepId": "final_selection",
-          "status": "passed"
-        }
-      ],
+      "stageStatuses": [],
       "finalStatus": "accepted",
-      "notes": "Selamat! Anda diterima sebagai asisten divisi Cyber Security."
+      "notes": "passed"
     },
     {
       "nim": "1202210002",
       "division": "Network & Infrastructure",
-      "stageStatuses": [
-        {
-          "stepId": "selection",
-          "status": "passed"
-        },
-        {
-          "stepId": "technical_test",
-          "status": "passed"
-        },
-        {
-          "stepId": "interview",
-          "status": "passed"
-        },
-        {
-          "stepId": "final_selection",
-          "status": "passed"
-        }
-      ],
+      "stageStatuses": [],
       "finalStatus": "accepted",
-      "notes": "Selamat! Anda diterima sebagai asisten divisi Network."
+      "notes": "passed"
     },
     {
       "nim": "1202210005",
       "division": "Software Engineering",
-      "stageStatuses": [
-        {
-          "stepId": "selection",
-          "status": "passed"
-        },
-        {
-          "stepId": "technical_test",
-          "status": "failed"
-        },
-        {
-          "stepId": "interview",
-          "status": "passed"
-        },
-        {
-          "stepId": "final_selection",
-          "status": "passed"
-        }
-      ],
-      "finalStatus": "rejected",
-      "notes": "Terima kasih telah mengikuti proses rekrutmen."
+      "stageStatuses": [],
+      "finalStatus": "accepted",
+      "notes": "failed"
     }
   ]
 }

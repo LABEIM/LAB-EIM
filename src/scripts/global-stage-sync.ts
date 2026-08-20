@@ -108,8 +108,12 @@ export function initGlobalStageSync(overrideStage?: string): string {
       }
     } catch (e) {}
 
+    const autoCloseAttr = configEl.getAttribute('data-auto-close-after-deadline');
+    const autoCloseAfterDeadline = autoCloseAttr !== null ? autoCloseAttr === 'true' : true;
+
     const config = {
       status,
+      autoCloseAfterDeadline,
       timezoneOffset,
       upcomingStartDate: configEl.getAttribute('data-upcoming-start-date') || undefined,
       openDate: configEl.getAttribute('data-open-date') || undefined,

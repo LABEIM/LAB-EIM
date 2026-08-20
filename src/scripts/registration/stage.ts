@@ -14,6 +14,7 @@ function parseDateWithOffset(dateStr?: string, offset: string = GLOBAL_SITE_TIME
 export function calculateStageFromDates(
   config: {
     status?: string;
+    autoCloseAfterDeadline?: boolean | string;
     timezoneOffset?: string;
     upcomingStartDate?: string;
     openDate?: string;
@@ -64,13 +65,25 @@ export function calculateStageFromDates(
     return 'upcoming';
   } else if (deadlineTime > 0 && nowMs < deadlineTime) {
     return 'open';
-  } else if (extendedTime > 0 && nowMs < extendedTime) {
+  } else if (extendedTime > 0 && deadlineTime > 0 && extendedTime > deadlineTime && nowMs >= deadlineTime && nowMs < extendedTime) {
     return 'extended';
   }
+
+  const autoClose = config.autoCloseAfterDeadline !== undefined
+    ? (config.autoCloseAfterDeadline === true || config.autoCloseAfterDeadline === 'true')
+    : true;
 
   const enabledSteps = rawSteps.filter((s) => s.enabled !== false);
 
   if (enabledSteps.length > 0) {
+    // Check if we are in the window between registration deadline and first step start date
+    const firstStep = enabledSteps[0];
+    const firstStepStartTime = firstStep.startDate ? parseDateWithOffset(firstStep.startDate, offset) : 0;
+
+    if (firstStepStartTime > 0 && nowMs < firstStepStartTime) {
+      return 'closed';
+    }
+
     for (let i = 0; i < enabledSteps.length; i++) {
       const step = enabledSteps[i];
       const stepStartTime = step.startDate ? parseDateWithOffset(step.startDate, offset) : 0;
@@ -98,22 +111,21 @@ export function calculateStageFromDates(
       }
     }
   } else {
-    // Fallback legacy calculation
-    const selectionResultsTime = parseDateWithOffset(config.selectionResultsDate, offset);
-    const technicalTestStartTime = parseDateWithOffset(config.technicalTestStartDate, offset);
-    const technicalTestEndTime = parseDateWithOffset(config.technicalTestEndDate, offset);
-    const interviewStartTime = parseDateWithOffset(config.interviewStartDate, offset);
-    const interviewEndTime = parseDateWithOffset(config.interviewEndDate, offset);
+    // When no selection steps are enabled
+    if (announcementTime > 0 && nowMs >= announcementTime) {
+      return 'announcement';
+    }
+    if (autoClose) {
+      return 'closed';
+    }
+  }
 
-    if (selectionResultsTime > 0 && nowMs < selectionResultsTime) return 'selection';
-    if (technicalTestStartTime > 0 && nowMs < technicalTestStartTime) return 'selection_results';
-    if (technicalTestEndTime > 0 && nowMs <= technicalTestEndTime) return 'technical_test';
-    if (interviewStartTime > 0 && nowMs < interviewStartTime) return 'technical_test_results';
-    if (interviewEndTime > 0 && nowMs <= interviewEndTime) return 'interview';
+  if (announcementTime > 0 && nowMs >= announcementTime) {
+    return 'announcement';
   }
 
   return announcementTime > 0 && nowMs < announcementTime
-    ? (enabledSteps.length > 0 ? `${enabledSteps[enabledSteps.length - 1].id}_results` : 'interview')
+    ? (enabledSteps.length > 0 ? `${enabledSteps[enabledSteps.length - 1].id}_results` : 'closed')
     : 'announcement';
 }
 
@@ -179,6 +191,8 @@ export function getEffectiveNowMs(): number {
 export function syncRegistrationStage(container: HTMLElement): RecruitmentStage {
   const status = container.getAttribute('data-status') || 'auto';
   const timezoneOffset = container.getAttribute('data-timezone-offset') || '+07:00';
+  const autoCloseAttr = container.getAttribute('data-auto-close-after-deadline');
+  const autoCloseAfterDeadline = autoCloseAttr !== null ? autoCloseAttr === 'true' : true;
 
   let selectionSteps: SelectionStepConfig[] = [];
   try {
@@ -190,6 +204,7 @@ export function syncRegistrationStage(container: HTMLElement): RecruitmentStage 
 
   const config = {
     status,
+    autoCloseAfterDeadline,
     timezoneOffset,
     upcomingStartDate: container.getAttribute('data-upcoming-start-date') || undefined,
     openDate: container.getAttribute('data-open-date') || undefined,

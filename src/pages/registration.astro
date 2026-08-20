@@ -43,6 +43,7 @@ const {
   openDateStr,
   deadlineStr,
   extendedDeadlineStr,
+  autoCloseAfterDeadline,
   contactPersons,
   upcomingCfg,
   extendedCfg,
@@ -87,6 +88,7 @@ acceptedCandidates.forEach((candidate: any) => {
         id="registration-container" 
         data-stage={initialStage}
         data-status={registrationConfig.status || 'auto'}
+        data-auto-close-after-deadline={String(autoCloseAfterDeadline)}
         data-timezone-offset={registrationConfig.timezoneOffset || '+07:00'}
         data-upcoming-start-date={registrationConfig.upcomingStartDate || DEFAULT_RECRUITMENT_DATES.upcomingStartDate}
         data-open-date={openDateStr}
@@ -112,6 +114,8 @@ acceptedCandidates.forEach((candidate: any) => {
               if (!c) return;
               var st = c.getAttribute('data-status') || 'auto';
               var tzOffset = c.getAttribute('data-timezone-offset') || '+07:00';
+              var autoCloseAttr = c.getAttribute('data-auto-close-after-deadline');
+              var autoClose = autoCloseAttr !== null ? autoCloseAttr === 'true' : true;
               var now = Date.now();
               var parseDate = function(str) {
                 if (!str) return 0;
@@ -158,40 +162,55 @@ acceptedCandidates.forEach((candidate: any) => {
                 if (uTime > 0 && now < uTime) stage = 'closed';
                 else if (oTime > 0 && now < oTime) stage = 'upcoming';
                 else if (dTime > 0 && now < dTime) stage = 'open';
-                else if (eTime > 0 && now < eTime) stage = 'extended';
+                else if (eTime > 0 && dTime > 0 && eTime > dTime && now >= dTime && now < eTime) stage = 'extended';
                 else {
                   var enabledSteps = stepsArr.filter(function(s) { return s.enabled !== false; });
                   var foundStage = '';
-                  for (var i = 0; i < enabledSteps.length; i++) {
-                    var stp = enabledSteps[i];
-                    var sStart = parseDate(stp.startDate);
-                    var sEnd = parseDate(stp.endDate);
-                    var sRes = parseDate(stp.resultsDate);
-                    if (sEnd > 0 && now <= sEnd) {
-                      if (sStart > 0 && now < sStart && i > 0) {
-                        var prevStp = enabledSteps[i - 1];
-                        foundStage = prevStp.resultsDate ? (prevStp.id + '_results') : prevStp.id;
-                        break;
+
+                  if (enabledSteps.length > 0) {
+                    var firstStart = parseDate(enabledSteps[0].startDate);
+                    if (firstStart > 0 && now < firstStart) {
+                      foundStage = 'closed';
+                    } else {
+                      for (var i = 0; i < enabledSteps.length; i++) {
+                        var stp = enabledSteps[i];
+                        var sStart = parseDate(stp.startDate);
+                        var sEnd = parseDate(stp.endDate);
+                        var sRes = parseDate(stp.resultsDate);
+                        if (sEnd > 0 && now <= sEnd) {
+                          if (sStart > 0 && now < sStart && i > 0) {
+                            var prevStp = enabledSteps[i - 1];
+                            foundStage = prevStp.resultsDate ? (prevStp.id + '_results') : prevStp.id;
+                            break;
+                          }
+                          foundStage = stp.id;
+                          break;
+                        }
+                        if (sRes > 0 && now < sRes) {
+                          foundStage = stp.id + '_results';
+                          break;
+                        }
+                        var nxt = enabledSteps[i + 1];
+                        if (nxt && nxt.startDate) {
+                          if (now < parseDate(nxt.startDate)) {
+                            foundStage = stp.id + '_results';
+                            break;
+                          }
+                        }
                       }
-                      foundStage = stp.id;
-                      break;
                     }
-                    if (sRes > 0 && now < sRes) {
-                      foundStage = stp.id + '_results';
-                      break;
-                    }
-                    var nxt = enabledSteps[i + 1];
-                    if (nxt && nxt.startDate) {
-                      if (now < parseDate(nxt.startDate)) {
-                        foundStage = stp.id + '_results';
-                        break;
-                      }
+                  } else {
+                    if (aTime > 0 && now >= aTime) {
+                      foundStage = 'announcement';
+                    } else if (autoClose) {
+                      foundStage = 'closed';
                     }
                   }
+
                   if (foundStage) {
                     stage = foundStage;
                   } else if (aTime > 0 && now < aTime) {
-                    stage = 'final_selection';
+                    stage = enabledSteps.length > 0 ? (enabledSteps[enabledSteps.length - 1].id + '_results') : 'closed';
                   } else {
                     stage = 'announcement';
                   }

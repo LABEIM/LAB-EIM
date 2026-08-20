@@ -29,7 +29,7 @@ export function getRegistrationPageConfigs(
 
   const openDateStr = config.openDate || DEFAULT_RECRUITMENT_DATES.openDate;
   const deadlineStr = config.deadline || DEFAULT_RECRUITMENT_DATES.deadline;
-  const extendedDeadlineStr = config.extendedDeadline || DEFAULT_RECRUITMENT_DATES.extendedDeadline;
+  const extendedDeadlineStr = config.extendedDeadline || "";
 
   const contactPersons = config.contactPersons || [];
 
@@ -181,6 +181,8 @@ export function getRegistrationPageConfigs(
   ];
 
 
+  const autoCloseAfterDeadline = config.autoCloseAfterDeadline !== undefined ? Boolean(config.autoCloseAfterDeadline) : true;
+
   const selectionSteps = (config.selectionSteps && config.selectionSteps.length > 0)
     ? config.selectionSteps
     : defaultSelectionSteps;
@@ -197,6 +199,7 @@ export function getRegistrationPageConfigs(
     openDateStr,
     deadlineStr,
     extendedDeadlineStr,
+    autoCloseAfterDeadline,
     contactPersons,
     upcomingCfg,
     extendedCfg,

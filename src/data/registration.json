@@ -100,7 +100,8 @@
       "inProgressConfig": {
         "title": "Tahap Seleksi Berkas Sedang Berlangsung",
         "subtitle": "Tim kami sedang melakukan verifikasi seluruh berkas administrasi yang telah dikirimkan.",
-        "message": "Terima kasih telah mendaftar! Verifikasi dokumen dan seleksi administratif sedang berjalan."
+        "message": "Terima kasih telah mendaftar! Verifikasi dokumen dan seleksi administratif sedang berjalan.",
+        "scheduleInfo": "26 - 28 Agustus 2026"
       },
       "resultsConfig": {
         "title": "Pengumuman Seleksi Berkas",
@@ -123,8 +124,7 @@
         "title": "Tahap Tes Teknikal Sedang Berlangsung",
         "subtitle": "Penilaian keterampilan praktis dan tantangan teknikal sedang berjalan.",
         "message": "Silakan cek WhatsApp Group Recruitmen untuk informasi terkait tahap Teknikal.",
-        "scheduleInfo": "29 - 30 Agustus 2026",
-        "locationInfo": "EIM Research Lab / Pengumpulan Online"
+        "scheduleInfo": "30 - 31 Agustus 2026"
       },
       "resultsConfig": {
         "title": "Pengumuman Tes Teknikal",
@@ -139,8 +139,8 @@
       "title": "Tahap Wawancara & Microteaching",
       "shortLabel": "Tahap Wawancara",
       "icon": "fa-solid fa-comments",
-      "startDate": "2026-09-05T00:00:00",
-      "endDate": "2026-09-06T23:59:59",
+      "startDate": "2026-09-04T00:00:00",
+      "endDate": "2026-09-07T23:59:59",
       "templateType": "in_progress",
       "inProgressConfig": {
         "title": "Tahap Wawancara & Microteaching Sedang Berlangsung",

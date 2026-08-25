@@ -5,6 +5,7 @@
   "upcomingStartDate": "2026-08-01T00:00:00",
   "openDate": "2026-08-14T00:00:00",
   "deadline": "2026-08-20T23:59:59",
+  "extendedDeadline": "2026-08-27T23:59:59",
   "announcementDate": "2026-09-09T00:00:00",
   "title": "Formulir Pendaftaran Asisten",
   "subtitle": "Lengkapi formulir di bawah ini dengan informasi yang valid dan benar.",
@@ -88,13 +89,13 @@
   "selectionSteps": [
     {
       "id": "selection",
-      "enabled": false,
+      "enabled": true,
       "title": "Seleksi Berkas",
       "shortLabel": "Seleksi Berkas",
       "icon": "fa-solid fa-file-lines",
-      "startDate": "2026-08-24T00:00:00",
-      "endDate": "2026-08-25T23:59:59",
-      "resultsDate": "2026-08-26T00:00:00",
+      "startDate": "2026-08-28T00:00:00",
+      "endDate": "2026-08-28T23:59:59",
+      "resultsDate": "2026-08-29T00:00:00",
       "templateType": "in_progress",
       "inProgressConfig": {
         "title": "Tahap Seleksi Berkas Sedang Berlangsung",
@@ -110,12 +111,12 @@
     },
     {
       "id": "technical_test",
-      "enabled": false,
+      "enabled": true,
       "title": "Tes Teknikal",
       "shortLabel": "Tes Teknikal",
       "icon": "fa-solid fa-laptop-code",
-      "startDate": "2026-08-29T00:00:00",
-      "endDate": "2026-08-30T23:59:59",
+      "startDate": "2026-08-30T00:00:00",
+      "endDate": "2026-08-31T23:59:59",
       "resultsDate": "2026-09-01T00:00:00",
       "templateType": "in_progress",
       "inProgressConfig": {
@@ -134,39 +135,36 @@
     },
     {
       "id": "interview",
-      "enabled": false,
-      "title": "Tahap Wawancara",
+      "enabled": true,
+      "title": "Tahap Wawancara & Microteaching",
       "shortLabel": "Tahap Wawancara",
       "icon": "fa-solid fa-comments",
       "startDate": "2026-09-05T00:00:00",
       "endDate": "2026-09-06T23:59:59",
       "templateType": "in_progress",
       "inProgressConfig": {
-        "title": "Tahap Wawancara Sedang Berlangsung",
-        "subtitle": "Sesi wawancara kandidat sedang berlangsung bersama tim EIM Research Lab.",
-        "message": "Silakan cek WhatsApp Group Recruitmen untuk informasi terkait tahap wawancara.",
-        "scheduleInfo": "05 - 06 September 2026",
-        "locationInfo": "EIM Research Lab / Zoom Room Online"
+        "title": "Tahap Wawancara & Microteaching Sedang Berlangsung",
+        "subtitle": "Sesi wawancara & microteaching kandidat sedang berlangsung bersama tim EIM Research Lab.",
+        "message": "Silakan cek WhatsApp Group Recruitmen untuk informasi terkait tahap wawancara & microteaching.",
+        "scheduleInfo": "04 - 07 September 2026"
       },
       "resultsConfig": {}
     },
     {
       "id": "final_selection",
-      "enabled": false,
+      "enabled": true,
       "title": "Seleksi Akhir & Olah Nilai",
       "shortLabel": "Seleksi Akhir",
       "icon": "fa-solid fa-user-check",
-      "startDate": "2026-09-07T00:00:00",
+      "startDate": "2026-09-08T00:00:00",
       "endDate": "2026-09-08T23:59:59",
       "templateType": "info",
       "inProgressConfig": {
         "title": "Seleksi Akhir & Olah Nilai Sedang Berlangsung",
-        "subtitle": "Seluruh rangkaian seleksi dan sesi wawancara telah selesai.",
+        "subtitle": "Seluruh rangkaian seleksi telah selesai.",
         "message": "Terima kasih kepada seluruh kandidat yang telah mengikuti seluruh rangkaian seleksi. Tim EIM Research Lab saat ini sedang melakukan rekapitulasi nilai dan verifikasi kelulusan akhir. Pengumuman kelulusan akhir akan dipublikasikan pada 9 September 2026."
       },
-      "resultsConfig": {
-        "subtitle": "Cek apakah Anda lolos tes teknikal dan berhak mengikuti tahap selanjutnya."
-      }
+      "resultsConfig": {}
     }
   ],
   "contactPersons": [

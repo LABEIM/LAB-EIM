@@ -11,7 +11,7 @@
   "subtitle": "Lengkapi formulir di bawah ini dengan informasi yang valid dan benar.",
   "formDescriptionTitle": "Requirements:",
   "formDescriptionItems": [
-    "Mahasiswa aktif S1 Sistem Informasi Telkom University angkatan 2024 atau 2025",
+    "Mahasiswa aktif S1 Sistem Informasi Telkom University angkatan 2024",
     "Memiliki minat di bidang Jaringan, Cloud Computing, atau Cybersecurity",
     "Bukan anggota atau bersedia mengundurkan diri dari laboratorium lain di Universitas Telkom",
     "Kartu Hasil Studi (KHS)",
@@ -24,8 +24,7 @@
   "heroTitle": "Pendaftaran Asisten Lab",
   "heroDescription": "Bergabunglah bersama kami menjadi bagian dari EIM Research Lab. Kembangkan potensi Anda dalam bidang infrastruktur IT, jaringan, dan riset teknologi.",
   "studentYears": [
-    "2024",
-    "2025"
+    "2024"
   ],
   "portfolioDivisionTriggerValues": "Medhum",
   "piTemplateUrl": "https://docs.google.com/document/d/1Uv-S_jSEJx77hY_96NA_cXjPjOQViHVz/edit?usp=sharing&ouid=105717872277990358898&rtpof=true&sd=true",

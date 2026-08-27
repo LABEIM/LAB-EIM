@@ -49,7 +49,7 @@ export function getCurrentRecruitmentStage(
   const upcomingStartDateStr = config.upcomingStartDate || DEFAULT_RECRUITMENT_DATES.upcomingStartDate;
   const openDateStr = config.openDate || DEFAULT_RECRUITMENT_DATES.openDate;
   const deadlineStr = config.deadline || DEFAULT_RECRUITMENT_DATES.deadline;
-  const extendedDeadlineStr = config.extendedDeadline || DEFAULT_RECRUITMENT_DATES.extendedDeadline;
+  const extendedDeadlineStr = config.extendedDeadline || "";
   const announcementDateStr = config.announcementDate || DEFAULT_RECRUITMENT_DATES.announcementDate;
 
   const nowTime = new Date().getTime();
@@ -65,15 +65,26 @@ export function getCurrentRecruitmentStage(
     return 'upcoming';
   } else if (deadlineTime > 0 && nowTime < deadlineTime) {
     return 'open';
-  } else if (extendedTime > 0 && nowTime < extendedTime) {
+  } else if (extendedTime > 0 && deadlineTime > 0 && extendedTime > deadlineTime && nowTime >= deadlineTime && nowTime < extendedTime) {
     return 'extended';
   }
+
+  const autoCloseAfterDeadline = config.autoCloseAfterDeadline !== undefined 
+    ? Boolean(config.autoCloseAfterDeadline) 
+    : true;
 
   // Dynamic Selection Steps Evaluation
   const enabledSteps = rawSteps.filter((s: any) => s.enabled !== false);
 
-
   if (enabledSteps.length > 0) {
+    // Check if we are in the window between registration deadline and first step start date
+    const firstStep = enabledSteps[0];
+    const firstStepStartTime = firstStep.startDate ? parseConfigDateStr(firstStep.startDate, offset) : 0;
+
+    if (firstStepStartTime > 0 && nowTime < firstStepStartTime) {
+      return 'closed';
+    }
+
     for (let i = 0; i < enabledSteps.length; i++) {
       const step = enabledSteps[i];
       const stepStartTime = step.startDate ? parseConfigDateStr(step.startDate, offset) : 0;
@@ -82,7 +93,7 @@ export function getCurrentRecruitmentStage(
 
       // In-Progress phase (between startDate and endDate)
       if (stepEndTime > 0 && nowTime <= stepEndTime) {
-        // If before start date of this step but past deadline, we are waiting or showing previous results
+        // If before start date of this step but past previous step, show previous results or step
         if (stepStartTime > 0 && nowTime < stepStartTime && i > 0) {
           const prevStep = enabledSteps[i - 1];
           return prevStep.resultsDate ? `${prevStep.id}_results` : prevStep.id;
@@ -105,27 +116,22 @@ export function getCurrentRecruitmentStage(
       }
     }
   } else {
-    // Fallback static stage evaluation
-    const selectionResultsTime = parseConfigDateStr(config.selectionResultsDate || DEFAULT_RECRUITMENT_DATES.selectionResultsDate, offset);
-    const technicalTestStartTime = parseConfigDateStr(config.technicalTestStartDate || DEFAULT_RECRUITMENT_DATES.technicalTestStartDate, offset);
-    const technicalTestEndTime = parseConfigDateStr(config.technicalTestEndDate || DEFAULT_RECRUITMENT_DATES.technicalTestEndDate, offset);
-    const interviewStartTime = parseConfigDateStr(config.interviewStartDate || DEFAULT_RECRUITMENT_DATES.interviewStartDate, offset);
-    const interviewEndTime = parseConfigDateStr(config.interviewEndDate || DEFAULT_RECRUITMENT_DATES.interviewEndDate, offset);
-
-    if (nowTime < selectionResultsTime) return 'selection';
-    if (nowTime < technicalTestStartTime) return 'selection_results';
-    if (nowTime <= technicalTestEndTime) return 'technical_test';
-    if (nowTime < interviewStartTime) return 'technical_test_results';
-    if (nowTime <= interviewEndTime) return 'interview';
+    // When no selection steps are enabled
+    if (announcementTime > 0 && nowTime >= announcementTime) {
+      return 'announcement';
+    }
+    if (autoCloseAfterDeadline) {
+      return 'closed';
+    }
   }
 
   if (announcementTime > 0 && nowTime >= announcementTime) {
     return 'announcement';
   }
 
-  // If past all step deadlines but before final announcement, return 'final_selection'
+  // If past all step deadlines but before final announcement, return last step results or final selection
   return announcementTime > 0 && nowTime < announcementTime
-    ? 'final_selection'
+    ? (enabledSteps.length > 0 ? `${enabledSteps[enabledSteps.length - 1].id}_results` : 'closed')
     : 'announcement';
 }
 

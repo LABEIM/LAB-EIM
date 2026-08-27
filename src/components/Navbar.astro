@@ -50,6 +50,7 @@ const isActive = (rawHref: string) => {
   class="navbar"
   id="navbar"
   data-status={registrationData?.status || 'auto'}
+  data-auto-close-after-deadline={String(registrationData?.autoCloseAfterDeadline ?? true)}
   data-timezone-offset={registrationData?.timezoneOffset || '+07:00'}
   data-upcoming-start-date={registrationData?.upcomingStartDate || ''}
   data-open-date={registrationData?.openDate || ''}
@@ -132,7 +133,7 @@ const isActive = (rawHref: string) => {
       } else if (status === 'auto') {
         if (openMs > 0 && now >= openMs && deadlineMs > 0 && now < deadlineMs) {
           isActive = true;
-        } else if (extMs > 0 && now >= deadlineMs && now < extMs) {
+        } else if (extMs > 0 && deadlineMs > 0 && extMs > deadlineMs && now >= deadlineMs && now < extMs) {
           isActive = true;
         }
       }

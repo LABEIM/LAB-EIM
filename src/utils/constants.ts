@@ -14,7 +14,7 @@ export const DEFAULT_RECRUITMENT_DATES = {
   upcomingStartDate: "2026-08-01T00:00:00",
   openDate: "2026-08-13T00:00:00",
   deadline: "2026-08-20T23:59:59",
-  extendedDeadline: "2026-08-23T23:59:59",
+  extendedDeadline: "",
   selectionResultsDate: "2026-08-26T00:00:00",
   technicalTestStartDate: "2026-08-29T00:00:00",
   technicalTestEndDate: "2026-08-30T23:59:59",

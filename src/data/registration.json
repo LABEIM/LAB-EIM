@@ -1,16 +1,17 @@
 {
-  "status": "selection_results",
+  "status": "auto",
+  "autoCloseAfterDeadline": false,
   "timezoneOffset": "+07:00",
   "upcomingStartDate": "2026-08-01T00:00:00",
   "openDate": "2026-08-14T00:00:00",
   "deadline": "2026-08-20T23:59:59",
-  "extendedDeadline": "2026-08-23T23:59:59",
-  "announcementDate": "2026-09-09T00:00:00",
+  "extendedDeadline": "2026-08-26T23:59:59",
+  "announcementDate": "2026-09-08T00:00:00",
   "title": "Formulir Pendaftaran Asisten",
   "subtitle": "Lengkapi formulir di bawah ini dengan informasi yang valid dan benar.",
   "formDescriptionTitle": "Requirements:",
   "formDescriptionItems": [
-    "Mahasiswa aktif S1 Sistem Informasi Telkom University angkatan 2024 atau 2025",
+    "Mahasiswa aktif S1 Sistem Informasi Telkom University angkatan 2024",
     "Memiliki minat di bidang Jaringan, Cloud Computing, atau Cybersecurity",
     "Bukan anggota atau bersedia mengundurkan diri dari laboratorium lain di Universitas Telkom",
     "Kartu Hasil Studi (KHS)",
@@ -23,8 +24,7 @@
   "heroTitle": "Pendaftaran Asisten Lab",
   "heroDescription": "Bergabunglah bersama kami menjadi bagian dari EIM Research Lab. Kembangkan potensi Anda dalam bidang infrastruktur IT, jaringan, dan riset teknologi.",
   "studentYears": [
-    "2024",
-    "2025"
+    "2024"
   ],
   "portfolioDivisionTriggerValues": "Medhum",
   "piTemplateUrl": "https://docs.google.com/document/d/1Uv-S_jSEJx77hY_96NA_cXjPjOQViHVz/edit?usp=sharing&ouid=105717872277990358898&rtpof=true&sd=true",
@@ -92,14 +92,15 @@
       "title": "Seleksi Berkas",
       "shortLabel": "Seleksi Berkas",
       "icon": "fa-solid fa-file-lines",
-      "startDate": "2026-08-24T00:00:00",
-      "endDate": "2026-08-25T23:59:59",
-      "resultsDate": "2026-08-26T00:00:00",
+      "startDate": "2026-08-26T00:00:00",
+      "endDate": "2026-08-27T23:59:59",
+      "resultsDate": "2026-08-28T00:00:00",
       "templateType": "in_progress",
       "inProgressConfig": {
         "title": "Tahap Seleksi Berkas Sedang Berlangsung",
         "subtitle": "Tim kami sedang melakukan verifikasi seluruh berkas administrasi yang telah dikirimkan.",
-        "message": "Terima kasih telah mendaftar! Verifikasi dokumen dan seleksi administratif sedang berjalan."
+        "message": "Terima kasih telah mendaftar! Verifikasi dokumen dan seleksi administratif sedang berjalan.",
+        "scheduleInfo": "26 - 27 Agustus 2026"
       },
       "resultsConfig": {
         "title": "Pengumuman Seleksi Berkas",
@@ -122,8 +123,7 @@
         "title": "Tahap Tes Teknikal Sedang Berlangsung",
         "subtitle": "Penilaian keterampilan praktis dan tantangan teknikal sedang berjalan.",
         "message": "Silakan cek WhatsApp Group Recruitmen untuk informasi terkait tahap Teknikal.",
-        "scheduleInfo": "29 - 30 Agustus 2026",
-        "locationInfo": "EIM Research Lab / Pengumpulan Online"
+        "scheduleInfo": "29 - 30 Agustus 2026"
       },
       "resultsConfig": {
         "title": "Pengumuman Tes Teknikal",
@@ -135,18 +135,17 @@
     {
       "id": "interview",
       "enabled": true,
-      "title": "Tahap Wawancara",
+      "title": "Tahap Wawancara & Microteaching",
       "shortLabel": "Tahap Wawancara",
       "icon": "fa-solid fa-comments",
-      "startDate": "2026-09-05T00:00:00",
+      "startDate": "2026-09-03T00:00:00",
       "endDate": "2026-09-06T23:59:59",
       "templateType": "in_progress",
       "inProgressConfig": {
-        "title": "Tahap Wawancara Sedang Berlangsung",
-        "subtitle": "Sesi wawancara kandidat sedang berlangsung bersama tim EIM Research Lab.",
-        "message": "Silakan cek WhatsApp Group Recruitmen untuk informasi terkait tahap wawancara.",
-        "scheduleInfo": "05 - 06 September 2026",
-        "locationInfo": "EIM Research Lab / Zoom Room Online"
+        "title": "Tahap Wawancara & Microteaching Sedang Berlangsung",
+        "subtitle": "Sesi wawancara & microteaching kandidat sedang berlangsung bersama tim EIM Research Lab.",
+        "message": "Silakan cek WhatsApp Group Recruitmen untuk informasi terkait tahap wawancara & microteaching.",
+        "scheduleInfo": "03 - 06 September 2026"
       },
       "resultsConfig": {}
     },
@@ -157,16 +156,14 @@
       "shortLabel": "Seleksi Akhir",
       "icon": "fa-solid fa-user-check",
       "startDate": "2026-09-07T00:00:00",
-      "endDate": "2026-09-08T23:59:59",
+      "endDate": "2026-09-07T23:59:59",
       "templateType": "info",
       "inProgressConfig": {
         "title": "Seleksi Akhir & Olah Nilai Sedang Berlangsung",
-        "subtitle": "Seluruh rangkaian seleksi dan sesi wawancara telah selesai.",
+        "subtitle": "Seluruh rangkaian seleksi telah selesai.",
         "message": "Terima kasih kepada seluruh kandidat yang telah mengikuti seluruh rangkaian seleksi. Tim EIM Research Lab saat ini sedang melakukan rekapitulasi nilai dan verifikasi kelulusan akhir. Pengumuman kelulusan akhir akan dipublikasikan pada 9 September 2026."
       },
-      "resultsConfig": {
-        "subtitle": "Cek apakah Anda lolos tes teknikal dan berhak mengikuti tahap selanjutnya."
-      }
+      "resultsConfig": {}
     }
   ],
   "contactPersons": [

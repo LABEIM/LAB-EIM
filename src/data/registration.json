@@ -6,7 +6,7 @@
   "openDate": "2026-08-14T00:00:00",
   "deadline": "2026-08-20T23:59:59",
   "extendedDeadline": "2026-08-26T23:59:59",
-  "announcementDate": "2026-09-08T00:00:00",
+  "announcementDate": "2026-09-08T07:00:00",
   "title": "Formulir Pendaftaran Asisten",
   "subtitle": "Lengkapi formulir di bawah ini dengan informasi yang valid dan benar.",
   "formDescriptionTitle": "Requirements:",
@@ -93,8 +93,8 @@
       "shortLabel": "Seleksi Berkas",
       "icon": "fa-solid fa-file-lines",
       "startDate": "2026-08-26T00:00:00",
-      "endDate": "2026-08-27T23:59:59",
-      "resultsDate": "2026-08-28T00:00:00",
+      "endDate": "2026-08-28T06:59:59",
+      "resultsDate": "2026-08-28T07:00:00",
       "templateType": "in_progress",
       "inProgressConfig": {
         "title": "Tahap Seleksi Berkas Sedang Berlangsung",
@@ -105,8 +105,8 @@
       "resultsConfig": {
         "title": "Pengumuman Seleksi Berkas",
         "subtitle": "Cek apakah Anda lolos seleksi berkas dan berhak mengikuti tahap selanjutnya.",
-        "passedMessage": "Selamat! Anda dinyatakan lolos seleksi berkas. Silakan cek WhatsApp Group rekrutmen untuk informasi tahap selanjutnya.",
-        "failedMessage": "Mohon maaf Anda dinyatakan tidak lolos seleksi berkas. Terima kasih telah mengikuti tahap seleksi berkas rekrutmen asisten EIM Research Lab."
+        "passedMessage": "Selamat! 🎉 Anda dinyatakan **LOLOS** Seleksi Administrasi dan berhak melanjutkan ke tahap Tes Teknikal.\n\n📅 Jadwal Tes Teknikal: 29–30 Agustus 2026 \n📢 Info detail (waktu, lokasi/link, dan ketentuan) akan dibagikan melalui WhatsApp Group Recruitment. Pastikan Anda sudah bergabung.\n\nSampai jumpa di tahap selanjutnya!",
+        "failedMessage": "Terima kasih telah mendaftar sebagai Asisten Lab EIM Research Lab.\n\nSetelah melalui proses verifikasi berkas, untuk saat ini Anda belum berhasil melanjutkan ke tahap Tes Teknikal.\n\nKami sangat menghargai minat dan usaha Anda. Semoga pengalaman ini tetap bermanfaat, dan jangan ragu untuk mendaftar kembali di rekrutmen berikutnya.\n\nTerima kasih atas partisipasinya."
       }
     },
     {
@@ -115,9 +115,9 @@
       "title": "Tes Teknikal",
       "shortLabel": "Tes Teknikal",
       "icon": "fa-solid fa-laptop-code",
-      "startDate": "2026-08-29T00:00:00",
-      "endDate": "2026-08-30T23:59:59",
-      "resultsDate": "2026-09-01T00:00:00",
+      "startDate": "2026-08-29T07:00:00",
+      "endDate": "2026-09-01T06:59:59",
+      "resultsDate": "2026-09-01T07:00:00",
       "templateType": "in_progress",
       "inProgressConfig": {
         "title": "Tahap Tes Teknikal Sedang Berlangsung",
@@ -156,7 +156,7 @@
       "shortLabel": "Seleksi Akhir",
       "icon": "fa-solid fa-user-check",
       "startDate": "2026-09-07T00:00:00",
-      "endDate": "2026-09-07T23:59:59",
+      "endDate": "2026-09-08T06:59:59",
       "templateType": "info",
       "inProgressConfig": {
         "title": "Seleksi Akhir & Olah Nilai Sedang Berlangsung",

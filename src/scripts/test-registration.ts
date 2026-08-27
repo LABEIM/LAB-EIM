@@ -294,8 +294,170 @@ const testCumulativeValid = validateRegistrationForm(
 );
 assert(testCumulativeValid.valid === true, 'Cumulative upload size within 15MB limit (9MB total) -> PASS');
 
+// 9. Candidate Search and NIM Lookup Tests
+console.log('\n9️⃣ Testing Recruitment Results NIM Lookup & Search:');
+
+// Setup minimal mock DOM environment for Node.js test execution
+class MockHTMLElement {
+  id: string = '';
+  value: string = '';
+  innerHTML: string = '';
+  className: string = '';
+  attributes: Record<string, string> = {};
+  listeners: Record<string, Function[]> = {};
+  parentElement: MockHTMLElement | null = null;
+  children: MockHTMLElement[] = [];
+
+  constructor(id: string = '') {
+    this.id = id;
+  }
+
+  getAttribute(name: string): string | null {
+    return this.attributes[name] ?? null;
+  }
+
+  setAttribute(name: string, value: string) {
+    this.attributes[name] = value;
+  }
+
+  addEventListener(event: string, handler: Function) {
+    if (!this.listeners[event]) this.listeners[event] = [];
+    this.listeners[event].push(handler);
+  }
+
+  dispatchEvent(event: { type: string; key?: string; preventDefault?: Function }) {
+    if (this.listeners[event.type]) {
+      this.listeners[event.type].forEach(fn => fn(event));
+    }
+  }
+
+  closest(_selector: string): MockHTMLElement | null {
+    return this.parentElement;
+  }
+
+  querySelector(selector: string): MockHTMLElement | null {
+    return this.children.find(c => c.id.includes(selector.replace(/^[.#]/, ''))) || null;
+  }
+}
+
+const mockContainer = new MockHTMLElement('registration-container');
+mockContainer.setAttribute(
+  'data-selection-steps',
+  JSON.stringify([
+    {
+      id: 'selection',
+      title: 'Seleksi Berkas',
+      resultsConfig: {
+        passedMessage: 'Selamat! Anda dinyatakan lolos seleksi berkas.',
+        failedMessage: 'Mohon maaf Anda dinyatakan tidak lolos seleksi berkas.'
+      }
+    },
+    {
+      id: 'technical_test',
+      title: 'Tes Teknikal',
+      resultsConfig: {
+        passedMessage: 'Selamat! Anda dinyatakan lolos tes teknikal.',
+        failedMessage: 'Mohon maaf Anda dinyatakan tidak lolos tes teknikal.'
+      }
+    }
+  ])
+);
+
+const elementsMap: Record<string, MockHTMLElement> = {
+  'registration-container': mockContainer,
+  'search-selection-nim-input': new MockHTMLElement('search-selection-nim-input'),
+  'search-selection-nim-btn': new MockHTMLElement('search-selection-nim-btn'),
+  'search-selection-result-box': new MockHTMLElement('search-selection-result-box'),
+  'search-nim-input': new MockHTMLElement('search-nim-input'),
+  'search-nim-btn': new MockHTMLElement('search-nim-btn'),
+  'search-result-box': new MockHTMLElement('search-result-box'),
+};
+
+// Set parent linkages
+const mockBox = new MockHTMLElement('search-lookup-box');
+mockBox.children = [elementsMap['search-selection-nim-input'], elementsMap['search-selection-nim-btn'], elementsMap['search-selection-result-box']];
+elementsMap['search-selection-nim-input'].parentElement = mockBox;
+elementsMap['search-selection-nim-btn'].parentElement = mockBox;
+elementsMap['search-selection-result-box'].parentElement = mockBox;
+
+(globalThis as any).document = {
+  getElementById: (id: string) => elementsMap[id] || null,
+  querySelectorAll: (_selector: string) => [elementsMap['search-selection-nim-btn'], elementsMap['search-nim-btn']].filter(Boolean)
+};
+
+const { initRegistrationSearch } = await import('./registration/search');
+initRegistrationSearch();
+
+// Test 9.1: Screening / Selection search for candidate 102022400023 (Passed selection)
+const selectionInput = elementsMap['search-selection-nim-input'];
+const selectionBtn = elementsMap['search-selection-nim-btn'];
+const selectionResultBox = elementsMap['search-selection-result-box'];
+
+selectionInput.value = '102022400023';
+selectionBtn.dispatchEvent({ type: 'click' });
+assert(
+  selectionResultBox.className.includes('status-passed') && selectionResultBox.innerHTML.includes('102022400023'),
+  'Candidate 102022400023 in screening search -> Shows PASSED status with NIM'
+);
+
+// Test 9.2: Screening search with formatted NIM (e.g. spaces/dashes: " 102022400023 ")
+selectionInput.value = '  102022400023  ';
+selectionBtn.dispatchEvent({ type: 'click' });
+assert(
+  selectionResultBox.className.includes('status-passed'),
+  'Candidate search with leading/trailing spaces -> Normalizes and matches candidate'
+);
+
+// Test 9.3: Search for unknown NIM -> Shows not found (muted)
+selectionInput.value = '9999999999';
+selectionBtn.dispatchEvent({ type: 'click' });
+assert(
+  selectionResultBox.className.includes('status-muted') && selectionResultBox.innerHTML.includes('tidak ditemukan'),
+  'Unknown NIM search -> Shows data tidak ditemukan message'
+);
+
+// Test 9.4: Search with empty NIM query -> Shows error prompt
+selectionInput.value = '';
+selectionBtn.dispatchEvent({ type: 'click' });
+assert(
+  selectionResultBox.className.includes('status-error') && selectionResultBox.innerHTML.includes('Masukkan NIM'),
+  'Empty NIM search -> Shows validation prompt'
+);
+
+// Test 9.5: Final announcement search for candidate 102022400023
+const annInput = elementsMap['search-nim-input'];
+const annBtn = elementsMap['search-nim-btn'];
+const annResultBox = elementsMap['search-result-box'];
+
+annInput.value = '102022400023';
+annBtn.dispatchEvent({ type: 'click' });
+assert(
+  annResultBox.className.includes('is-visible') && annResultBox.innerHTML.includes('102022400023'),
+  'Final announcement search for candidate 102022400023 -> Renders candidate search result'
+);
+
+// Test 9.6: Screening search for candidate with failed status (102022400119)
+selectionInput.value = '102022400119';
+selectionBtn.dispatchEvent({ type: 'click' });
+assert(
+  selectionResultBox.className.includes('status-muted') && selectionResultBox.innerHTML.includes('102022400119'),
+  'Screening search for failed candidate -> Renders muted result with NIM'
+);
+
+// 9.7: Testing Rich-Text Formatting for Candidate Notes
+const { formatMessageMarkdown } = await import('./registration/search');
+const testRawNote = 'Selamat! Anda dinyatakan **LOLOS** pada tahap *Seleksi Berkas*. Catatan: <u>Wajib hadir</u> tepat waktu. Cek `grup WA`.';
+const formattedNote = formatMessageMarkdown(testRawNote);
+assert(
+  formattedNote.includes('<strong>LOLOS</strong>') &&
+  formattedNote.includes('<em>Seleksi Berkas</em>') &&
+  formattedNote.includes('<u>Wajib hadir</u>') &&
+  formattedNote.includes('<code class="search-result-code">grup WA</code>'),
+  'formatMessageMarkdown -> Correctly converts **bold**, *italic*, <u>underline</u>, and `code`'
+);
+
 // 9. Recruitment Lifecycle Stage & Auto-Close Tests
-console.log('\n9️⃣ Testing Recruitment Lifecycle Stages & Auto-Close:');
+console.log('\n🔟 Testing Recruitment Lifecycle Stages & Auto-Close:');
 
 const mockStageConfig = {
   status: 'auto',
@@ -343,4 +505,5 @@ const tSelectionStep = new Date('2026-08-24T10:00:00+07:00').getTime();
 assert(calculateStageFromDates(mockStageConfig, tSelectionStep) === 'selection', 'Timestamp during selection step window should return "selection"');
 
 console.log('\n✨ All Automated Registration Unit Tests Execution Completed Successfully!');
+
 

@@ -1,28 +1,6 @@
 {
   "batch": "Rekrutmen Asisten 2026",
   "publishedDate": "2026-08-01",
-  "bulkImportText": "1202210001\tCyber Security\tpassed\tpassed\taccepted\tSelamat! Anda diterima sebagai asisten divisi Cyber Security.\n1202210002\tNetwork & Infrastructure\tpassed\tpassed\taccepted\tSelamat! Anda diterima sebagai asisten divisi Network.\n1202210005\tSoftware Engineering\tpassed\tfailed\trejected\tTerima kasih telah mengikuti proses rekrutmen.",
-  "candidates": [
-    {
-      "nim": "1202210001",
-      "division": "Cyber Security",
-      "stageStatuses": [],
-      "finalStatus": "accepted",
-      "notes": "passed"
-    },
-    {
-      "nim": "1202210002",
-      "division": "Network & Infrastructure",
-      "stageStatuses": [],
-      "finalStatus": "accepted",
-      "notes": "passed"
-    },
-    {
-      "nim": "1202210005",
-      "division": "Software Engineering",
-      "stageStatuses": [],
-      "finalStatus": "accepted",
-      "notes": "failed"
-    }
-  ]
+  "bulkImportText": "102022400119\t\tpassed\n102022400023\t\tpassed\n102022400254\t\tpassed\n102022500209\t\tpassed\n102022530011\t\tpassed\n102022400215\t\tpassed\n102022400116\t\tpassed\n102022500198\t\tpassed\n102022400030\t\tpassed\n102022500115\t\tpassed\n102022400319\t\tpassed\n102022500110\t\tfailed\n102022500050\t\tpassed\n102022400244\t\tfailed\n102022400306\t\tpassed\n102022400031\t\tpassed\n102022430045\t\tpassed\n102022400099\t\tpassed\n102022500186\t\tfailed\n102022400122\t\tpassed\n102022400037\t\tpassed\n102022400058\t\tpassed\n102022400009\t\tpassed\n102022400102\t\tpassed\n102022400269\t\tpassed\n102022400100\t\tpassed\n102022400343\t\tfailed\n102022530037\t\tfailed\n102022500003\t\tfailed\n102022400268\t\tpassed\n102022500266\t\tfailed\n102022430016\t\tpassed\n102022400135\t\tfailed\n102022500063\t\tpassed\n102022400050\t\tpassed\n102022500286\t\tpassed\n102022400026\t\tpassed\n102022400011\t\tpassed\n102022400344\t\tpassed\n102022400150\t\tpassed\n102022400049\t\tpassed\n102022400062\t\tpassed\n102022400282\t\tfailed",
+  "candidates": []
 }

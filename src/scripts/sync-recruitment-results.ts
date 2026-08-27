@@ -66,6 +66,8 @@ function parseBulkImportText(text: string): Candidate[] {
       nim,
       division,
       stageStatuses,
+      finalStatus: '',
+      notes: '',
     };
 
     // Parse step statuses according to active selection steps
@@ -79,8 +81,6 @@ function parseBulkImportText(text: string): Candidate[] {
       const statusVal = isFail ? 'failed' : (isPass ? 'passed' : colVal);
       
       stageStatuses.push({ stepId, status: statusVal });
-      candidate[`${stepId}Status`] = statusVal;
-      candidate[stepId] = statusVal;
     }
 
     const finalColIdx = 2 + activeSteps.length;
@@ -160,7 +160,15 @@ export function syncRecruitmentResults(mode: 'merge' | 'replace' | 'clear' = 'me
 
   existingCandidates.forEach(c => {
     if (c.nim) {
-      candidateMap.set(String(c.nim).trim(), c);
+      // Sanitize candidate to only allowed schema properties
+      const sanitized: Candidate = {
+        nim: String(c.nim).trim(),
+        division: c.division || '',
+        stageStatuses: Array.isArray(c.stageStatuses) ? c.stageStatuses : [],
+        finalStatus: c.finalStatus || '',
+        notes: c.notes || '',
+      };
+      candidateMap.set(sanitized.nim, sanitized);
     }
   });
 
@@ -169,9 +177,7 @@ export function syncRecruitmentResults(mode: 'merge' | 'replace' | 'clear' = 'me
     const existing = candidateMap.get(nimKey);
     if (existing) {
       if (c.division) existing.division = c.division;
-      if (c.stageStatuses) existing.stageStatuses = c.stageStatuses;
-      if (c.screeningStatus) existing.screeningStatus = c.screeningStatus;
-      if (c.technicalTestStatus) existing.technicalTestStatus = c.technicalTestStatus;
+      if (c.stageStatuses && c.stageStatuses.length) existing.stageStatuses = c.stageStatuses;
       if (c.finalStatus) existing.finalStatus = c.finalStatus;
       if (c.notes) existing.notes = c.notes;
     } else {

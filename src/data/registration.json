@@ -104,7 +104,7 @@
       "resultsConfig": {
         "title": "Pengumuman Seleksi Berkas",
         "subtitle": "Cek apakah Anda lolos seleksi berkas dan berhak mengikuti tahap selanjutnya.",
-        "passedMessage": "Selamat! Anda dinyatakan lolos seleksi berkas. Silakan cek WhatsApp Group rekrutmen untuk informasi tahap selanjutnya.",
+        "passedMessage": "Selamat! Anda dinyatakan LOLOS Seleksi Administrasi dan berhak melanjutkan ke tahap Tes Teknikal.\n\nJadwal Tes Teknikal: 29–30 Agustus 2026\nInfo detail (waktu, lokasi/link, dan ketentuan) akan dibagikan melalui WhatsApp Group Recruitment. Pastikan Anda sudah bergabung.\n\nSampai jumpa di tahap selanjutnya!",
         "failedMessage": "Mohon maaf Anda dinyatakan tidak lolos seleksi berkas. Terima kasih telah mengikuti tahap seleksi berkas rekrutmen asisten EIM Research Lab."
       }
     },

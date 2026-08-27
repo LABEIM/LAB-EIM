@@ -381,6 +381,8 @@
   margin-top: 8px;
   font-size: 0.9rem;
   color: var(--text-secondary);
+  white-space: pre-line;
+  line-height: 1.6;
 }
 
 /* Form Styles */

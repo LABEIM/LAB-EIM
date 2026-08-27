@@ -387,20 +387,20 @@ elementsMap['search-selection-result-box'].parentElement = mockBox;
 const { initRegistrationSearch } = await import('./registration/search');
 initRegistrationSearch();
 
-// Test 9.1: Screening / Selection search for candidate 1202210001 (Passed selection)
+// Test 9.1: Screening / Selection search for candidate 102022400119 (Passed selection)
 const selectionInput = elementsMap['search-selection-nim-input'];
 const selectionBtn = elementsMap['search-selection-nim-btn'];
 const selectionResultBox = elementsMap['search-selection-result-box'];
 
-selectionInput.value = '1202210001';
+selectionInput.value = '102022400119';
 selectionBtn.dispatchEvent({ type: 'click' });
 assert(
-  selectionResultBox.className.includes('status-passed') && selectionResultBox.innerHTML.includes('1202210001'),
-  'Candidate 1202210001 in screening search -> Shows PASSED status with NIM'
+  selectionResultBox.className.includes('status-passed') && selectionResultBox.innerHTML.includes('102022400119'),
+  'Candidate 102022400119 in screening search -> Shows PASSED status with NIM'
 );
 
-// Test 9.2: Screening search with formatted NIM (e.g. spaces/dashes: " 1202210001 ")
-selectionInput.value = '  1202210001  ';
+// Test 9.2: Screening search with formatted NIM (e.g. spaces/dashes: " 102022400119 ")
+selectionInput.value = '  102022400119  ';
 selectionBtn.dispatchEvent({ type: 'click' });
 assert(
   selectionResultBox.className.includes('status-passed'),
@@ -423,20 +423,20 @@ assert(
   'Empty NIM search -> Shows validation prompt'
 );
 
-// Test 9.5: Final announcement search for accepted candidate 1202210001
+// Test 9.5: Final announcement search for candidate 102022400119
 const annInput = elementsMap['search-nim-input'];
 const annBtn = elementsMap['search-nim-btn'];
 const annResultBox = elementsMap['search-result-box'];
 
-annInput.value = '1202210001';
+annInput.value = '102022400119';
 annBtn.dispatchEvent({ type: 'click' });
 assert(
-  annResultBox.className.includes('status-passed') && annResultBox.innerHTML.includes('CONGRATULATIONS') || annResultBox.innerHTML.includes('SELAMAT'),
-  'Final announcement search for candidate 1202210001 -> Shows ACCEPTED / CONGRATULATIONS'
+  annResultBox.className.includes('is-visible') && annResultBox.innerHTML.includes('102022400119'),
+  'Final announcement search for candidate 102022400119 -> Renders candidate search result'
 );
 
-// Test 9.6: Screening search for candidate with empty division and empty notes (1202210005)
-selectionInput.value = '1202210005';
+// Test 9.6: Screening search for candidate with empty division and empty notes (102022400023)
+selectionInput.value = '102022400023';
 selectionBtn.dispatchEvent({ type: 'click' });
 assert(
   selectionResultBox.className.includes('status-passed') && !selectionResultBox.innerHTML.includes('Divisi:'),

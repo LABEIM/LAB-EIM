@@ -31,7 +31,7 @@ function getActiveSelectionSteps(): Array<{ id: string; title: string }> {
         return regData.selectionSteps.filter((s: any) => s.enabled !== false);
       }
     }
-  } catch (e) {}
+  } catch (e) { }
   return [
     { id: 'selection', title: 'Seleksi Berkas' },
     { id: 'technical_test', title: 'Tes Teknikal' },
@@ -66,28 +66,39 @@ function parseBulkImportText(text: string): Candidate[] {
       nim,
       division,
       stageStatuses,
+      finalStatus: '',
+      notes: '',
     };
 
     // Parse step statuses according to active selection steps
     for (let sIdx = 0; sIdx < activeSteps.length; sIdx++) {
       const colVal = (cols[2 + sIdx] || '').toLowerCase();
-      const stepId = activeSteps[sIdx].id;
-      const statusVal = ['passed', 'failed'].includes(colVal) ? colVal : 'passed';
-      
-      stageStatuses.push({ stepId, status: statusVal });
-      candidate[`${stepId}Status`] = statusVal;
-      candidate[stepId] = statusVal;
-    }
+      if (!colVal) continue;
 
+      const stepId = activeSteps[sIdx].id;
+      const isPass = ['passed', 'pass', 'lolos', 'lulus', 'accepted', 'diterima', 'true'].includes(colVal);
+      const isFail = ['failed', 'fail', 'tidak lolos', 'tidak_lolos', 'tidak lulus', 'gagal', 'rejected', 'false'].includes(colVal);
+      const statusVal = isFail ? 'failed' : (isPass ? 'passed' : colVal);
+
+      stageStatuses.push({ stepId, status: statusVal });
+    }
 
     const finalColIdx = 2 + activeSteps.length;
     const finalRaw = (cols[finalColIdx] || '').toLowerCase();
     if (finalRaw) {
-      candidate.finalStatus = ['accepted', 'waitlist', 'rejected'].includes(finalRaw) ? finalRaw : 'accepted';
+      if (['accepted', 'diterima', 'lolos', 'lulus'].includes(finalRaw)) {
+        candidate.finalStatus = 'accepted';
+      } else if (['waitlist', 'cadangan', 'pending'].includes(finalRaw)) {
+        candidate.finalStatus = 'waitlist';
+      } else if (['rejected', 'gagal', 'tidak lolos', 'tidak lulus', 'failed'].includes(finalRaw)) {
+        candidate.finalStatus = 'rejected';
+      } else {
+        candidate.finalStatus = finalRaw;
+      }
     }
 
     const notesColIdx = 3 + activeSteps.length;
-    candidate.notes = cols[notesColIdx] || cols[cols.length - 1] || '';
+    candidate.notes = cols[notesColIdx] || (cols.length > finalColIdx + 1 ? cols[cols.length - 1] : '');
 
     results.push(candidate);
   }
@@ -149,7 +160,15 @@ export function syncRecruitmentResults(mode: 'merge' | 'replace' | 'clear' = 'me
 
   existingCandidates.forEach(c => {
     if (c.nim) {
-      candidateMap.set(String(c.nim).trim(), c);
+      // Sanitize candidate to only allowed schema properties
+      const sanitized: Candidate = {
+        nim: String(c.nim).trim(),
+        division: c.division || '',
+        stageStatuses: Array.isArray(c.stageStatuses) ? c.stageStatuses : [],
+        finalStatus: c.finalStatus || '',
+        notes: c.notes || '',
+      };
+      candidateMap.set(sanitized.nim, sanitized);
     }
   });
 
@@ -158,9 +177,7 @@ export function syncRecruitmentResults(mode: 'merge' | 'replace' | 'clear' = 'me
     const existing = candidateMap.get(nimKey);
     if (existing) {
       if (c.division) existing.division = c.division;
-      if (c.stageStatuses) existing.stageStatuses = c.stageStatuses;
-      if (c.screeningStatus) existing.screeningStatus = c.screeningStatus;
-      if (c.technicalTestStatus) existing.technicalTestStatus = c.technicalTestStatus;
+      if (c.stageStatuses && c.stageStatuses.length) existing.stageStatuses = c.stageStatuses;
       if (c.finalStatus) existing.finalStatus = c.finalStatus;
       if (c.notes) existing.notes = c.notes;
     } else {

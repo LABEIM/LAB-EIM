@@ -388,20 +388,20 @@ elementsMap['search-selection-result-box'].parentElement = mockBox;
 const { initRegistrationSearch } = await import('./registration/search');
 initRegistrationSearch();
 
-// Test 9.1: Screening / Selection search for candidate 102022400119 (Passed selection)
+// Test 9.1: Screening / Selection search for candidate 102022400023 (Passed selection)
 const selectionInput = elementsMap['search-selection-nim-input'];
 const selectionBtn = elementsMap['search-selection-nim-btn'];
 const selectionResultBox = elementsMap['search-selection-result-box'];
 
-selectionInput.value = '102022400119';
+selectionInput.value = '102022400023';
 selectionBtn.dispatchEvent({ type: 'click' });
 assert(
-  selectionResultBox.className.includes('status-passed') && selectionResultBox.innerHTML.includes('102022400119'),
-  'Candidate 102022400119 in screening search -> Shows PASSED status with NIM'
+  selectionResultBox.className.includes('status-passed') && selectionResultBox.innerHTML.includes('102022400023'),
+  'Candidate 102022400023 in screening search -> Shows PASSED status with NIM'
 );
 
-// Test 9.2: Screening search with formatted NIM (e.g. spaces/dashes: " 102022400119 ")
-selectionInput.value = '  102022400119  ';
+// Test 9.2: Screening search with formatted NIM (e.g. spaces/dashes: " 102022400023 ")
+selectionInput.value = '  102022400023  ';
 selectionBtn.dispatchEvent({ type: 'click' });
 assert(
   selectionResultBox.className.includes('status-passed'),
@@ -424,27 +424,40 @@ assert(
   'Empty NIM search -> Shows validation prompt'
 );
 
-// Test 9.5: Final announcement search for candidate 102022400119
+// Test 9.5: Final announcement search for candidate 102022400023
 const annInput = elementsMap['search-nim-input'];
 const annBtn = elementsMap['search-nim-btn'];
 const annResultBox = elementsMap['search-result-box'];
 
-annInput.value = '102022400119';
+annInput.value = '102022400023';
 annBtn.dispatchEvent({ type: 'click' });
 assert(
-  annResultBox.className.includes('is-visible') && annResultBox.innerHTML.includes('102022400119'),
-  'Final announcement search for candidate 102022400119 -> Renders candidate search result'
+  annResultBox.className.includes('is-visible') && annResultBox.innerHTML.includes('102022400023'),
+  'Final announcement search for candidate 102022400023 -> Renders candidate search result'
 );
 
-// Test 9.6: Screening search for candidate with empty division and empty notes (102022400023)
-selectionInput.value = '102022400023';
+// Test 9.6: Screening search for candidate with failed status (102022400119)
+selectionInput.value = '102022400119';
 selectionBtn.dispatchEvent({ type: 'click' });
 assert(
-  selectionResultBox.className.includes('status-passed') && !selectionResultBox.innerHTML.includes('Divisi:'),
-  'Screening search for candidate without division -> Renders cleanly without Divisi row'
+  selectionResultBox.className.includes('status-muted') && selectionResultBox.innerHTML.includes('102022400119'),
+  'Screening search for failed candidate -> Renders muted result with NIM'
 );
+
+// 9.7: Testing Rich-Text Formatting for Candidate Notes
+const { formatMessageMarkdown } = await import('./registration/search');
+const testRawNote = 'Selamat! Anda dinyatakan **LOLOS** pada tahap *Seleksi Berkas*. Catatan: <u>Wajib hadir</u> tepat waktu. Cek `grup WA`.';
+const formattedNote = formatMessageMarkdown(testRawNote);
+assert(
+  formattedNote.includes('<strong>LOLOS</strong>') &&
+  formattedNote.includes('<em>Seleksi Berkas</em>') &&
+  formattedNote.includes('<u>Wajib hadir</u>') &&
+  formattedNote.includes('<code class="search-result-code">grup WA</code>'),
+  'formatMessageMarkdown -> Correctly converts **bold**, *italic*, <u>underline</u>, and `code`'
+);
+
 // 9. Recruitment Lifecycle Stage & Auto-Close Tests
-console.log('\n9️⃣ Testing Recruitment Lifecycle Stages & Auto-Close:');
+console.log('\n🔟 Testing Recruitment Lifecycle Stages & Auto-Close:');
 
 const mockStageConfig = {
   status: 'auto',

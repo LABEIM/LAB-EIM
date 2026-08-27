@@ -191,6 +191,37 @@ function escapeHtml(text: string | number | undefined | null): string {
     .replace(/'/g, '&#039;');
 }
 
+export function formatMessageMarkdown(text: string | number | undefined | null): string {
+  if (text == null) return '';
+  let formatted = escapeHtml(text);
+
+  // Safe HTML tags (re-enable safe tags after escaping)
+  formatted = formatted
+    .replace(/&lt;u&gt;(.*?)&lt;\/u&gt;/gi, '<u>$1</u>')
+    .replace(/&lt;b&gt;(.*?)&lt;\/b&gt;/gi, '<strong>$1</strong>')
+    .replace(/&lt;i&gt;(.*?)&lt;\/i&gt;/gi, '<em>$1</em>')
+    .replace(/&lt;strong&gt;(.*?)&lt;\/strong&gt;/gi, '<strong>$1</strong>')
+    .replace(/&lt;em&gt;(.*?)&lt;\/em&gt;/gi, '<em>$1</em>');
+
+  // Bold + Italic: ***text***
+  formatted = formatted.replace(/\*\*\*(.+?)\*\*\*/g, '<strong><em>$1</em></strong>');
+
+  // Bold: **text**
+  formatted = formatted.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+
+  // Underline: __text__
+  formatted = formatted.replace(/__(.+?)__/g, '<u>$1</u>');
+
+  // Italic: *text* or _text_
+  formatted = formatted.replace(/\*([^\*]+?)\*/g, '<em>$1</em>');
+  formatted = formatted.replace(/(^|[^\w])_([^_]+?)_([^\w]|$)/g, '$1<em>$2</em>$3');
+
+  // Inline code: `text`
+  formatted = formatted.replace(/`([^`]+?)`/g, '<code class="search-result-code">$1</code>');
+
+  return formatted;
+}
+
 function setResultDisplay(box: HTMLElement, statusClass: 'status-passed' | 'status-info' | 'status-error' | 'status-muted', htmlContent: string) {
   box.className = `search-result-display is-visible ${statusClass}`;
   box.innerHTML = htmlContent;
@@ -239,16 +270,16 @@ export function initRegistrationSearch() {
     const containerBox = btn.closest('.search-lookup-box');
 
     // Robust input resolution
-    const input = ((btnId ? document.getElementById(btnId.replace(/-btn$/, '-input')) : null)
-      || (btnId ? document.getElementById(btnId.replace(/-nim-btn$/, '-nim-input')) : null)
+    const input = ((btnId ? document.getElementById(btnId.replace(/-nim-btn$/, '-nim-input')) : null)
       || (btnId ? document.getElementById(btnId.replace(/-nim-btn$/, '-input')) : null)
+      || (btnId ? document.getElementById(btnId.replace(/-btn$/, '-input')) : null)
       || (containerBox ? containerBox.querySelector<HTMLInputElement>('input[type="text"]') : null)) as HTMLInputElement | null;
 
     // Robust resultBox resolution
-    const resultBox = (btnId ? document.getElementById(btnId.replace(/-btn$/, '-result-box')) : null)
-      || (btnId ? document.getElementById(btnId.replace(/-nim-btn$/, '-result-box')) : null)
+    const resultBox = ((btnId ? document.getElementById(btnId.replace(/-nim-btn$/, '-result-box')) : null)
       || (btnId ? document.getElementById(btnId.replace(/-nim-btn$/, '-nim-result-box')) : null)
-      || (containerBox ? containerBox.querySelector<HTMLElement>('.search-result-display') : null);
+      || (btnId ? document.getElementById(btnId.replace(/-btn$/, '-result-box')) : null)
+      || (containerBox ? containerBox.querySelector<HTMLElement>('.search-result-display') : null));
 
     if (!input || !resultBox) return;
 
@@ -338,7 +369,7 @@ export function initRegistrationSearch() {
               <div class="search-result-title-lg"><i class="fa-solid fa-circle-check"></i> ${isEn ? 'CONGRATULATIONS!' : 'SELAMAT! ANDA DITERIMA'}</div>
               <div class="search-result-nim">NIM: <strong>${escapeHtml(match.nim)}</strong></div>
               ${match.division ? `<div class="search-result-division">${isEn ? 'Division:' : 'Divisi:'} <strong>${escapeHtml(match.division)}</strong></div>` : ''}
-              <p class="search-result-desc">${escapeHtml(noteContent)}</p>
+              <p class="search-result-desc">${formatMessageMarkdown(noteContent)}</p>
             `
           );
         } else if (isWaitlist) {
@@ -349,7 +380,7 @@ export function initRegistrationSearch() {
               <div class="search-result-title"><i class="fa-solid fa-clock"></i> Status: WAITLIST</div>
               <div class="search-result-nim">NIM: <strong>${escapeHtml(match.nim)}</strong></div>
               ${match.division ? `<div class="search-result-division">${isEn ? 'Division:' : 'Divisi:'} <strong>${escapeHtml(match.division)}</strong></div>` : ''}
-              <p class="search-result-desc">${escapeHtml(noteContent)}</p>
+              <p class="search-result-desc">${formatMessageMarkdown(noteContent)}</p>
             `
           );
         } else {
@@ -360,7 +391,7 @@ export function initRegistrationSearch() {
               <div class="search-result-title"><i class="fa-solid fa-info-circle"></i> Status: ${escapeHtml((finalStatusVal || 'evaluated').toUpperCase())}</div>
               <div class="search-result-nim">NIM: <strong>${escapeHtml(match.nim)}</strong></div>
               ${match.division ? `<div class="search-result-division">${isEn ? 'Division:' : 'Divisi:'} <strong>${escapeHtml(match.division)}</strong></div>` : ''}
-              <p class="search-result-desc">${escapeHtml(noteContent)}</p>
+              <p class="search-result-desc">${formatMessageMarkdown(noteContent)}</p>
             `
           );
         }
@@ -465,7 +496,7 @@ export function initRegistrationSearch() {
           <div class="search-result-nim">NIM: <strong>${escapeHtml(match.nim)}</strong></div>
           ${match.division ? `<div class="search-result-division">${isEn ? 'Division:' : 'Divisi:'} <strong>${escapeHtml(match.division)}</strong></div>` : ''}
           <p class="search-result-desc">
-            ${escapeHtml(noteText || defaultFallbackMsg)}
+            ${formatMessageMarkdown(noteText || defaultFallbackMsg)}
           </p>
         `
       );

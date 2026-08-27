@@ -298,11 +298,12 @@ const recruitmentResultsSchema = {
       finalStatus: fields.select({
         label: 'Final Selection Status',
         options: [
+          { label: 'Pending / In Progress (Belum Ditentukan / Sedang Berjalan)', value: 'pending' },
           { label: 'Accepted (Diterima)', value: 'accepted' },
           { label: 'Waitlist (Cadangan)', value: 'waitlist' },
           { label: 'Rejected (Tidak Diterima)', value: 'rejected' },
         ],
-        defaultValue: 'accepted',
+        defaultValue: 'pending',
       }),
       notes: fields.text({ label: 'Custom Notes / Feedback', multiline: true }),
     }),

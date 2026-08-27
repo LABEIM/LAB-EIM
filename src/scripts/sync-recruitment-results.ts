@@ -31,7 +31,7 @@ function getActiveSelectionSteps(): Array<{ id: string; title: string }> {
         return regData.selectionSteps.filter((s: any) => s.enabled !== false);
       }
     }
-  } catch (e) {}
+  } catch (e) { }
   return [
     { id: 'selection', title: 'Seleksi Berkas' },
     { id: 'technical_test', title: 'Tes Teknikal' },
@@ -79,7 +79,7 @@ function parseBulkImportText(text: string): Candidate[] {
       const isPass = ['passed', 'pass', 'lolos', 'lulus', 'accepted', 'diterima', 'true'].includes(colVal);
       const isFail = ['failed', 'fail', 'tidak lolos', 'tidak_lolos', 'tidak lulus', 'gagal', 'rejected', 'false'].includes(colVal);
       const statusVal = isFail ? 'failed' : (isPass ? 'passed' : colVal);
-      
+
       stageStatuses.push({ stepId, status: statusVal });
     }
 

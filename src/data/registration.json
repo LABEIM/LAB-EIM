@@ -93,8 +93,8 @@
       "shortLabel": "Seleksi Berkas",
       "icon": "fa-solid fa-file-lines",
       "startDate": "2026-08-26T00:00:00",
-      "endDate": "2026-08-27T23:59:59",
-      "resultsDate": "2026-08-28T00:00:00",
+      "endDate": "2026-08-28T06:59:59",
+      "resultsDate": "2026-08-28T07:00:00",
       "templateType": "in_progress",
       "inProgressConfig": {
         "title": "Tahap Seleksi Berkas Sedang Berlangsung",

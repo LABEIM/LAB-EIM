@@ -1,5 +1,5 @@
 {
-  "status": "auto",
+  "status": "technical_test_results",
   "autoCloseAfterDeadline": false,
   "timezoneOffset": "+07:00",
   "upcomingStartDate": "2026-08-01T00:00:00",
@@ -112,34 +112,34 @@
     {
       "id": "technical_test",
       "enabled": true,
-      "title": "Tes Teknikal",
-      "shortLabel": "Tes Teknikal",
+      "title": "Technical Test",
+      "shortLabel": "Technical Test",
       "icon": "fa-solid fa-laptop-code",
       "startDate": "2026-08-29T07:00:00",
-      "endDate": "2026-09-01T11:59:59",
-      "resultsDate": "2026-09-01T12:00:00",
+      "endDate": "2026-09-01T06:59:59",
+      "resultsDate": "2026-09-01T07:00:00",
       "templateType": "in_progress",
       "inProgressConfig": {
-        "title": "Tahap Tes Teknikal Sedang Berlangsung",
-        "subtitle": "Penilaian keterampilan praktis dan tantangan teknikal sedang berjalan.",
-        "message": "Silakan cek WhatsApp Group Recruitmen untuk informasi terkait tahap Teknikal.",
+        "title": "Tahap Technical Test Sedang Berlangsung",
+        "subtitle": "Penilaian keterampilan praktis dan teknikal sedang berjalan.",
+        "message": "Silakan cek WhatsApp Group Recruitment untuk informasi terkait tahap Technical Test.",
         "scheduleInfo": "29 - 30 Agustus 2026"
       },
       "resultsConfig": {
-        "title": "Pengumuman Tes Teknikal",
-        "subtitle": "Cek apakah Anda lolos tes teknikal dan berhak mengikuti tahap selanjutnya.",
-        "passedMessage": "Selamat! Anda dinyatakan lolos tes teknikal. Silakan cek WhatsApp Group rekrutmen untuk informasi tahap selanjutnya.",
-        "failedMessage": "Mohon maaf Anda dinyatakan tidak lolos tes teknikal. Terima kasih telah mengikuti tes teknikal rekrutmen asisten EIM Research Lab."
+        "title": "Pengumuman Technical Test",
+        "subtitle": "Cek apakah Anda lolos Technical Test dan berhak mengikuti tahap selanjutnya.",
+        "passedMessage": "Selamat! 🎉\nAnda dinyatakan **-LOLOS-** Technical Test dan berhak melanjutkan ke tahap Wawancara & Microteaching.\n\nJadwal Wawancara & Microteaching 3–6 September 2026 \nInfo detail (waktu, lokasi/link, dan ketentuan) akan dibagikan melalui WhatsApp Group Recruitment. Pastikan Anda sudah bergabung.\n\nSampai jumpa di tahap selanjutnya!",
+        "failedMessage": "Terima kasih telah mendaftar sebagai Asisten Lab EIM Research Lab.\n\nSetelah melalui proses Technical Test, untuk saat ini Anda belum berhasil melanjutkan ke tahap Wawancara & Microteaching.\n\nKami sangat menghargai minat dan usaha Anda. Semoga pengalaman ini tetap bermanfaat, dan jangan ragu untuk mendaftar kembali di rekrutmen berikutnya.\n\nTerima kasih atas partisipasinya."
       }
     },
     {
       "id": "interview",
       "enabled": true,
       "title": "Tahap Wawancara & Microteaching",
-      "shortLabel": "Tahap Wawancara",
+      "shortLabel": "Wawancara & Microteaching",
       "icon": "fa-solid fa-comments",
       "startDate": "2026-09-03T00:00:00",
-      "endDate": "2026-09-06T23:59:59",
+      "endDate": "2026-09-08T06:59:59",
       "templateType": "in_progress",
       "inProgressConfig": {
         "title": "Tahap Wawancara & Microteaching Sedang Berlangsung",
@@ -151,7 +151,7 @@
     },
     {
       "id": "final_selection",
-      "enabled": true,
+      "enabled": false,
       "title": "Seleksi Akhir & Olah Nilai",
       "shortLabel": "Seleksi Akhir",
       "icon": "fa-solid fa-user-check",

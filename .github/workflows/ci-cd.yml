@@ -52,10 +52,10 @@ jobs:
     timeout-minutes: 15
     steps:
       - name: Checkout repository
-        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       - name: Setup Node
-        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: npm
@@ -87,7 +87,7 @@ jobs:
           echo "sha256=${HASH}" >> $GITHUB_OUTPUT
 
       - name: Upload dist build artifact
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: dist-static-build
           path: dist/
@@ -130,13 +130,13 @@ jobs:
       deploy_url: ${{ steps.deploy_cloudflare.outputs.deploy_url }}
     steps:
       - name: Download dist build artifact
-        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         with:
           name: dist-static-build
           path: dist/
 
       - name: Setup Node
-        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
           node-version: ${{ env.NODE_VERSION }}
 
@@ -223,7 +223,7 @@ jobs:
           echo "$DEPLOY_URL" > cf_deploy_url.txt
 
       - name: Upload CF deploy URL artifact
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: cf-deploy-url
           path: cf_deploy_url.txt
@@ -275,20 +275,20 @@ jobs:
         # build and deploy the pre-built dist/ directory instead.
         # Without it the CLI auto-detects Astro and tries to rebuild from
         # source, which fails on a runner that only has dist/.
-        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           sparse-checkout: |
             vercel.json
           sparse-checkout-cone-mode: false
 
       - name: Download dist build artifact
-        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         with:
           name: dist-static-build
           path: dist/
 
       - name: Setup Node
-        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
           node-version: ${{ env.NODE_VERSION }}
 
@@ -403,7 +403,7 @@ jobs:
           echo "deploy_url=$DEPLOY_URL" >> $GITHUB_OUTPUT
 
       - name: Upload Vercel deploy URL artifact
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: vercel-deploy-url
           path: vercel_deploy_url.txt
@@ -434,14 +434,14 @@ jobs:
       pull-requests: write
     steps:
       - name: Download CF deploy URL artifact
-        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         with:
           name: cf-deploy-url
           path: .
         continue-on-error: true
 
       - name: Download Vercel deploy URL artifact
-        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         with:
           name: vercel-deploy-url
           path: .
@@ -495,7 +495,7 @@ jobs:
           } >> $GITHUB_OUTPUT
 
       - name: Find existing preview comment
-        uses: peter-evans/find-comment@3eae4d37986fb5a8592848f6a574fdf654e61f9e # v3
+        uses: peter-evans/find-comment@b30e6a3c0ed37e7c023ccd3f1db5c6c0b0c23aad # v4.0.0
         id: find_comment
         with:
           issue-number: ${{ github.event.pull_request.number }}
@@ -503,7 +503,7 @@ jobs:
           body-includes: 'Preview Deployments Ready'
 
       - name: Create or update PR comment
-        uses: peter-evans/create-or-update-comment@71345be0265236311c031f5c7866368bd1eff043 # v4
+        uses: peter-evans/create-or-update-comment@e8674b075228eee787fea43ef493e45ece1004c9 # v5.0.0
         with:
           comment-id: ${{ steps.find_comment.outputs.comment-id }}
           issue-number: ${{ github.event.pull_request.number }}
@@ -524,16 +524,16 @@ jobs:
       pull-requests: write
     steps:
       - name: Checkout repository
-        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       - name: Download dist build artifact
-        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         with:
           name: dist-static-build
           path: dist/
 
       - name: Download CF deploy URL artifact
-        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         with:
           name: cf-deploy-url
           path: .
@@ -580,7 +580,7 @@ jobs:
       - name: Run Lighthouse audit (Live Cloudflare URL)
         if: ${{ steps.target_url.outputs.url != '' }}
         id: lighthouse_live
-        uses: treosh/lighthouse-ci-action@512cc908a55bfb0ad231facca52adf3d3a651df4 # v12
+        uses: treosh/lighthouse-ci-action@3e7e23fb74242897f95c0ba9cabad3d0227b9b18 # v12
         with:
           configPath: ${{ github.event_name == 'push' && './.lighthouserc.prod.json' || './.lighthouserc.json' }}
           urls: ${{ steps.build_url_list.outputs.urls }}
@@ -589,7 +589,7 @@ jobs:
       - name: Run Lighthouse audit (Static Fallback)
         if: ${{ steps.target_url.outputs.url == '' }}
         id: lighthouse_static
-        uses: treosh/lighthouse-ci-action@512cc908a55bfb0ad231facca52adf3d3a651df4 # v12
+        uses: treosh/lighthouse-ci-action@3e7e23fb74242897f95c0ba9cabad3d0227b9b18 # v12
         with:
           configPath: './.lighthouserc.static.json'
           uploadArtifacts: true
@@ -704,7 +704,7 @@ jobs:
 
       - name: Find existing PR comment
         if: always() && github.event_name == 'pull_request'
-        uses: peter-evans/find-comment@3eae4d37986fb5a8592848f6a574fdf654e61f9e # v3
+        uses: peter-evans/find-comment@b30e6a3c0ed37e7c023ccd3f1db5c6c0b0c23aad # v4.0.0
         id: find_comment
         with:
           issue-number: ${{ github.event.pull_request.number }}
@@ -713,7 +713,7 @@ jobs:
 
       - name: Append Lighthouse results to PR comment
         if: always() && github.event_name == 'pull_request' && steps.find_comment.outputs.comment-id != ''
-        uses: peter-evans/create-or-update-comment@71345be0265236311c031f5c7866368bd1eff043 # v4
+        uses: peter-evans/create-or-update-comment@e8674b075228eee787fea43ef493e45ece1004c9 # v5.0.0
         with:
           comment-id: ${{ steps.find_comment.outputs.comment-id }}
           body: |

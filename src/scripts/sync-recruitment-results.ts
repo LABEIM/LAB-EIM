@@ -36,7 +36,6 @@ function getActiveSelectionSteps(): Array<{ id: string; title: string }> {
     { id: 'selection', title: 'Seleksi Berkas' },
     { id: 'technical_test', title: 'Tes Teknikal' },
     { id: 'interview', title: 'Tahap Wawancara' },
-    { id: 'final_selection', title: 'Seleksi Akhir' },
   ];
 }
 
@@ -55,6 +54,21 @@ function parseBulkImportText(text: string): Candidate[] {
   const hasHeader = firstLineLower.includes('nim');
   const startIdx = hasHeader ? 1 : 0;
 
+  // Filter out final_selection / announcement — those are not intermediate stage columns
+  const stageStepIds = activeSteps
+    .filter((s: any) => {
+      const id = (s.id || '').toLowerCase();
+      return id !== 'final_selection' && id !== 'announcement' && id !== 'pengumuman';
+    })
+    .map((s: any) => s.id);
+
+  // Keywords that identify a final outcome column
+  const outcomeKeywords = [
+    'accepted', 'diterima', 'lolos', 'lulus',
+    'waitlist', 'cadangan', 'pending',
+    'rejected', 'gagal', 'tidak lolos', 'tidak_lolos', 'tidak lulus', 'failed',
+  ];
+
   for (let i = startIdx; i < lines.length; i++) {
     const cols = lines[i].split(delimiter).map(c => c.trim().replace(/^["']|["']$/g, ''));
     const nim = cols[0] || '';
@@ -70,12 +84,26 @@ function parseBulkImportText(text: string): Candidate[] {
       notes: '',
     };
 
-    // Parse step statuses according to active selection steps
-    for (let sIdx = 0; sIdx < activeSteps.length; sIdx++) {
+    // Auto-detect final status column by scanning backwards for an outcome keyword
+    let detectedFinalColIdx = -1;
+    for (let ci = cols.length - 1; ci >= 2; ci--) {
+      const val = (cols[ci] || '').toLowerCase();
+      if (outcomeKeywords.includes(val)) {
+        detectedFinalColIdx = ci;
+        break;
+      }
+    }
+
+    const stageColCount = detectedFinalColIdx > 2
+      ? detectedFinalColIdx - 2
+      : stageStepIds.length;
+
+    // Parse step statuses according to active (non-final) selection steps
+    for (let sIdx = 0; sIdx < Math.min(stageColCount, stageStepIds.length); sIdx++) {
       const colVal = (cols[2 + sIdx] || '').toLowerCase();
       if (!colVal) continue;
 
-      const stepId = activeSteps[sIdx].id;
+      const stepId = stageStepIds[sIdx];
       const isPass = ['passed', 'pass', 'lolos', 'lulus', 'accepted', 'diterima', 'true'].includes(colVal);
       const isFail = ['failed', 'fail', 'tidak lolos', 'tidak_lolos', 'tidak lulus', 'gagal', 'rejected', 'false'].includes(colVal);
       const statusVal = isFail ? 'failed' : (isPass ? 'passed' : colVal);
@@ -83,22 +111,32 @@ function parseBulkImportText(text: string): Candidate[] {
       stageStatuses.push({ stepId, status: statusVal });
     }
 
-    const finalColIdx = 2 + activeSteps.length;
-    const finalRaw = (cols[finalColIdx] || '').toLowerCase();
-    if (finalRaw) {
+    if (detectedFinalColIdx !== -1) {
+      const finalRaw = (cols[detectedFinalColIdx] || '').toLowerCase();
       if (['accepted', 'diterima', 'lolos', 'lulus'].includes(finalRaw)) {
         candidate.finalStatus = 'accepted';
       } else if (['waitlist', 'cadangan', 'pending'].includes(finalRaw)) {
         candidate.finalStatus = 'waitlist';
-      } else if (['rejected', 'gagal', 'tidak lolos', 'tidak lulus', 'failed'].includes(finalRaw)) {
+      } else if (['rejected', 'gagal', 'tidak lolos', 'tidak_lolos', 'tidak lulus', 'failed'].includes(finalRaw)) {
         candidate.finalStatus = 'rejected';
       } else {
         candidate.finalStatus = finalRaw;
       }
-    }
 
-    const notesColIdx = 3 + activeSteps.length;
-    candidate.notes = cols[notesColIdx] || (cols.length > finalColIdx + 1 ? cols[cols.length - 1] : '');
+      // Notes column is anything after the detected final status column
+      if (cols.length > detectedFinalColIdx + 1) {
+        candidate.notes = cols[detectedFinalColIdx + 1] || '';
+      }
+    } else {
+      // Fallback: use fixed offset if no keyword found
+      const fallbackFinalIdx = 2 + stageStepIds.length;
+      const finalRaw = (cols[fallbackFinalIdx] || '').toLowerCase();
+      if (finalRaw) {
+        candidate.finalStatus = finalRaw;
+      }
+      const notesIdx = fallbackFinalIdx + 1;
+      candidate.notes = cols.length > notesIdx ? cols[notesIdx] || '' : '';
+    }
 
     results.push(candidate);
   }

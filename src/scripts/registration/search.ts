@@ -1,4 +1,5 @@
 import resultsData from '../../data/recruitment_results.json';
+import registrationData from '../../data/registration.json';
 
 interface CandidateStepStatus {
   stepId: string;
@@ -66,6 +67,13 @@ function normalizeStepIdentifier(stepId: string): string {
 /**
  * Parses spreadsheet bulk paste into structured Candidate objects.
  */
+// Keywords that identify a final outcome column in bulkImportText
+const OUTCOME_KEYWORDS = [
+  'accepted', 'diterima', 'lolos', 'lulus',
+  'waitlist', 'cadangan', 'pending',
+  'rejected', 'gagal', 'tidak lolos', 'tidak_lolos', 'tidak lulus', 'failed',
+];
+
 function parseBulkImportText(text: string, activeSteps: Array<{ id: string }> = []): Candidate[] {
   if (!text || typeof text !== 'string') return [];
   const lines = text.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
@@ -79,9 +87,20 @@ function parseBulkImportText(text: string, activeSteps: Array<{ id: string }> = 
   const firstLineLower = lines[0].toLowerCase();
   const startIdx = firstLineLower.includes('nim') ? 1 : 0;
 
-  const defaultStepIds = activeSteps.length > 0
-    ? activeSteps.map(s => s.id)
-    : ['selection', 'technical_test', 'interview', 'final_selection'];
+  // Only count actual intermediate stage steps (exclude final_selection / announcement).
+  // The final status is always the last outcome-keyword column in the row.
+  const stageStepIds = (activeSteps.length > 0
+    ? activeSteps
+    : [
+        { id: 'selection' },
+        { id: 'technical_test' },
+        { id: 'interview' },
+        { id: 'final_selection' },
+      ] as Array<{ id: string }>
+  ).filter(s => {
+    const id = (s.id || '').toLowerCase();
+    return id !== 'final_selection' && id !== 'announcement' && id !== 'pengumuman';
+  }).map(s => s.id);
 
   for (let i = startIdx; i < lines.length; i++) {
     const cols = lines[i].split(delimiter).map(c => c.trim().replace(/^["']|["']$/g, ''));
@@ -96,12 +115,29 @@ function parseBulkImportText(text: string, activeSteps: Array<{ id: string }> = 
       stageStatuses,
     };
 
-    // Parse step statuses across active selection steps
-    for (let sIdx = 0; sIdx < defaultStepIds.length; sIdx++) {
+    // Auto-detect final status column:
+    // Walk from the last column backwards to find the first outcome keyword.
+    let detectedFinalColIdx = -1;
+    for (let ci = cols.length - 1; ci >= 2; ci--) {
+      const val = (cols[ci] || '').toLowerCase();
+      if (OUTCOME_KEYWORDS.includes(val)) {
+        detectedFinalColIdx = ci;
+        break;
+      }
+    }
+
+    // The stage step columns are cols[2] through cols[detectedFinalColIdx - 1].
+    // If no outcome keyword was found, fall back to defaultStepIds count.
+    const stageColCount = detectedFinalColIdx > 2
+      ? detectedFinalColIdx - 2
+      : stageStepIds.length;
+
+    // Parse step statuses across active (non-final) selection steps
+    for (let sIdx = 0; sIdx < Math.min(stageColCount, stageStepIds.length); sIdx++) {
       const colVal = (cols[2 + sIdx] || '').toLowerCase();
       if (!colVal) continue;
 
-      const stepId = defaultStepIds[sIdx];
+      const stepId = stageStepIds[sIdx];
       const isPass = ['passed', 'pass', 'lolos', 'lulus', 'accepted', 'diterima', 'true'].includes(colVal);
       const isFail = ['failed', 'fail', 'tidak lolos', 'tidak_lolos', 'tidak lulus', 'gagal', 'rejected', 'false'].includes(colVal);
       const statusVal = isFail ? 'failed' : (isPass ? 'passed' : colVal);
@@ -111,22 +147,32 @@ function parseBulkImportText(text: string, activeSteps: Array<{ id: string }> = 
       candidate[stepId] = statusVal;
     }
 
-    const finalColIdx = 2 + defaultStepIds.length;
-    const finalRaw = (cols[finalColIdx] || '').toLowerCase();
-    if (finalRaw) {
+    if (detectedFinalColIdx !== -1) {
+      const finalRaw = (cols[detectedFinalColIdx] || '').toLowerCase();
       if (['accepted', 'diterima', 'lolos', 'lulus'].includes(finalRaw)) {
         candidate.finalStatus = 'accepted';
       } else if (['waitlist', 'cadangan', 'pending'].includes(finalRaw)) {
         candidate.finalStatus = 'waitlist';
-      } else if (['rejected', 'gagal', 'tidak lolos', 'tidak lulus', 'failed'].includes(finalRaw)) {
+      } else if (['rejected', 'gagal', 'tidak lolos', 'tidak_lolos', 'tidak lulus', 'failed'].includes(finalRaw)) {
         candidate.finalStatus = 'rejected';
       } else {
         candidate.finalStatus = finalRaw;
       }
-    }
 
-    const notesColIdx = 3 + defaultStepIds.length;
-    candidate.notes = cols[notesColIdx] || (cols.length > finalColIdx + 1 ? cols[cols.length - 1] : '');
+      // Notes column is anything after the final status column
+      if (cols.length > detectedFinalColIdx + 1) {
+        candidate.notes = cols[detectedFinalColIdx + 1] || '';
+      }
+    } else {
+      // Fallback: use fixed offset if no keyword found
+      const fallbackFinalIdx = 2 + stageStepIds.length;
+      const finalRaw = (cols[fallbackFinalIdx] || '').toLowerCase();
+      if (finalRaw) {
+        candidate.finalStatus = finalRaw;
+      }
+      const notesIdx = fallbackFinalIdx + 1;
+      candidate.notes = cols.length > notesIdx ? cols[notesIdx] || '' : '';
+    }
 
     results.push(candidate);
   }
@@ -251,6 +297,17 @@ function getSelectionStepsConfig(): any[] {
 }
 
 /**
+ * Reads announcementConfig from the container's data-recruitment-results
+ * or falls back to the imported JSON, in order to get accepted/rejected messages.
+ */
+function getAnnouncementConfig(): { acceptedMessage?: string; rejectedMessage?: string; waitlistMessage?: string } {
+  try {
+    if (registrationData?.announcementConfig) return registrationData.announcementConfig;
+  } catch (e) {}
+  return {};
+}
+
+/**
  * Initializes all NIM search boxes across selection steps and announcement views.
  */
 export function initRegistrationSearch() {
@@ -331,9 +388,27 @@ export function initRegistrationSearch() {
         const finalStatusVal = (match.finalStatus || match.status || '').toLowerCase();
         const isAccepted = ['accepted', 'diterima', 'lolos', 'lulus'].includes(finalStatusVal);
         const isWaitlist = ['waitlist', 'cadangan'].includes(finalStatusVal);
+        const isRejected = ['rejected', 'gagal', 'failed', 'tidak lolos', 'tidak lulus'].includes(finalStatusVal);
+
+        // Priority 1: Candidate-specific notes from data
+        // Priority 2: announcementConfig messages (stored in registration.json)
+        // Priority 3: step resultsConfig messages (for backward compatibility)
+        // Priority 4: Generic hardcoded fallback
+        const announcementCfg = getAnnouncementConfig();
 
         let defaultOutcomeNote = '';
-        if (matchedStepCfg && matchedStepCfg.resultsConfig) {
+
+        // Read from announcementConfig first (the canonical source for announcement messages)
+        if (isAccepted) {
+          defaultOutcomeNote = (announcementCfg as any).acceptedMessage || (announcementCfg as any).passedMessage || '';
+        } else if (isWaitlist) {
+          defaultOutcomeNote = (announcementCfg as any).waitlistMessage || '';
+        } else if (isRejected) {
+          defaultOutcomeNote = (announcementCfg as any).rejectedMessage || (announcementCfg as any).failedMessage || '';
+        }
+
+        // Fall back to step resultsConfig (backward compatibility)
+        if (!defaultOutcomeNote && matchedStepCfg && matchedStepCfg.resultsConfig) {
           if (isAccepted) {
             defaultOutcomeNote = matchedStepCfg.resultsConfig.passedMessage || (matchedStepCfg.resultsConfig as any).acceptedMessage || '';
           } else if (isWaitlist) {
@@ -343,19 +418,20 @@ export function initRegistrationSearch() {
           }
         }
 
+        // Generic fallback
         if (!defaultOutcomeNote) {
           if (isAccepted) {
             defaultOutcomeNote = isEn
               ? 'Congratulations! You have been accepted as an assistant at EIM Research Lab.'
-              : 'Selamat! Anda dinyatakan diterima sebagai asisten di EIM Research Lab.';
+              : (announcementCfg as any).acceptedMessage || (announcementCfg as any).passedMessage || 'Selamat! Anda dinyatakan diterima sebagai asisten di EIM Research Lab.';
           } else if (isWaitlist) {
             defaultOutcomeNote = isEn
               ? 'You are on the recruitment waitlist.'
-              : 'Anda masuk dalam daftar cadangan (Waitlist) asisten EIM Research Lab.';
+              : (announcementCfg as any).waitlistMessage || 'Anda masuk dalam daftar cadangan (Waitlist) asisten EIM Research Lab.';
           } else {
             defaultOutcomeNote = isEn
               ? 'Thank you for participating in this recruitment cycle.'
-              : 'Terima kasih telah mengikuti seluruh rangkaian rekrutmen asisten EIM Research Lab.';
+              : (announcementCfg as any).rejectedMessage || (announcementCfg as any).failedMessage || 'Terima kasih telah mengikuti seluruh rangkaian rekrutmen asisten EIM Research Lab.';
           }
         }
 
@@ -383,12 +459,23 @@ export function initRegistrationSearch() {
               <p class="search-result-desc">${formatMessageMarkdown(noteContent)}</p>
             `
           );
+        } else if (isRejected) {
+          setResultDisplay(
+            resultBox,
+            'status-error',
+            `
+              <div class="search-result-title"><i class="fa-solid fa-circle-xmark"></i> ${isEn ? 'RESULT: NOT ACCEPTED' : 'HASIL: BELUM DITERIMA'}</div>
+              <div class="search-result-nim">NIM: <strong>${escapeHtml(match.nim)}</strong></div>
+              ${match.division ? `<div class="search-result-division">${isEn ? 'Division:' : 'Divisi:'} <strong>${escapeHtml(match.division)}</strong></div>` : ''}
+              <p class="search-result-desc">${formatMessageMarkdown(noteContent)}</p>
+            `
+          );
         } else {
           setResultDisplay(
             resultBox,
             'status-info',
             `
-              <div class="search-result-title"><i class="fa-solid fa-info-circle"></i> Status: ${escapeHtml((finalStatusVal || 'evaluated').toUpperCase())}</div>
+              <div class="search-result-title"><i class="fa-solid fa-info-circle"></i> Status: ${escapeHtml((finalStatusVal || 'EVALUATED').toUpperCase())}</div>
               <div class="search-result-nim">NIM: <strong>${escapeHtml(match.nim)}</strong></div>
               ${match.division ? `<div class="search-result-division">${isEn ? 'Division:' : 'Divisi:'} <strong>${escapeHtml(match.division)}</strong></div>` : ''}
               <p class="search-result-desc">${formatMessageMarkdown(noteContent)}</p>

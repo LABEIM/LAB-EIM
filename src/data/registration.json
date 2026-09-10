@@ -6,7 +6,7 @@
   "openDate": "2026-08-14T00:00:00",
   "deadline": "2026-08-20T23:59:59",
   "extendedDeadline": "2026-08-26T23:59:59",
-  "announcementDate": "2026-09-10T07:00:00",
+  "announcementDate": "2026-09-10T08:15:00",
   "title": "Formulir Pendaftaran Asisten",
   "subtitle": "Lengkapi formulir di bawah ini dengan informasi yang valid dan benar.",
   "formDescriptionTitle": "Requirements:",
@@ -69,7 +69,9 @@
   "finalSelectionConfig": {},
   "announcementConfig": {
     "title": "Pengumuman Seleksi Akhir",
-    "subtitle": "Cek hasil kelulusan akhir Anda di bawah ini. Selamat kepada seluruh kandidat yang diterima!",
+    "subtitle": "Cek hasil kelulusan akhir Anda di bawah ini dengan cara memasukkan NIM!",
+    "acceptedMessage": "Setelah melalui seluruh tahapan seleksi yang panjang, Selamat! 🎉\nAnda dinyatakan **LOLOS** dalam seleksi akhir Asisten EIM Research Lab periode 2026/2027..\n\nSelamat bergabung di EIM Research Lab! 🫶🏻\n\nSilakan segera cek email Anda dan balas email tersebut untuk melakukan konfirmasi kepastian bergabung **maksimal 10 September 2026 · 23.59 WIB**.",
+    "rejectedMessage": "Terima kasih telah mengikuti seluruh tahapan seleksi Asisten EIM Research Lab periode 2026/2027.\n\nSetelah mempertimbangkan seluruh proses seleksi dengan cermat, kami mengabarkan bahwa Anda **belum berhasil** lolos pada tahapan akhir ini.\n\nKami sangat mengapresiasi waktu, minat, dan kerja keras yang telah Anda tunjukkan. Tetap semangat, semoga pengalaman ini membawa manfaat untuk perjalanan Anda ke depan, dan kami menyambut baik kehadiran Anda pada rekrutmen di kesempatan berikutnya.",
     "newsUrl": "/news/pengumuman-rekrutmen-2026"
   },
   "closedConfig": {
@@ -139,7 +141,7 @@
       "shortLabel": "Wawancara & Microteaching",
       "icon": "fa-solid fa-comments",
       "startDate": "2026-09-03T00:00:00",
-      "endDate": "2026-09-10T06:59:59",
+      "endDate": "2026-09-10T08:14:59",
       "templateType": "in_progress",
       "inProgressConfig": {
         "title": "Tahap Wawancara & Microteaching Sedang Berlangsung",
@@ -156,7 +158,7 @@
       "shortLabel": "Seleksi Akhir",
       "icon": "fa-solid fa-user-check",
       "startDate": "2026-09-07T00:00:00",
-      "endDate": "2026-09-08T06:59:59",
+      "endDate": "2026-09-09T19:40:00",
       "templateType": "info",
       "inProgressConfig": {
         "title": "Seleksi Akhir & Olah Nilai Sedang Berlangsung",

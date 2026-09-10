@@ -359,8 +359,37 @@ mockContainer.setAttribute(
         passedMessage: 'Selamat! Anda dinyatakan lolos tes teknikal.',
         failedMessage: 'Mohon maaf Anda dinyatakan tidak lolos tes teknikal.'
       }
+    },
+    {
+      id: 'interview',
+      title: 'Wawancara & Microteaching',
+      resultsConfig: {}
+    },
+    {
+      id: 'final_selection',
+      enabled: false,
+      title: 'Seleksi Akhir',
+      resultsConfig: {}
     }
   ])
+);
+
+// Provide announcementConfig so announcement search picks up proper accepted/rejected messages
+mockContainer.setAttribute(
+  'data-recruitment-results',
+  JSON.stringify({
+    announcementConfig: {
+      acceptedMessage: 'Selamat! Anda dinyatakan LOLOS seleksi akhir.',
+      rejectedMessage: 'Terima kasih. Anda belum berhasil lolos seleksi akhir.',
+    },
+    bulkImportText: [
+      '102022400023\t\tpassed\tpassed\taccepted',
+      '102022430045\t\tpassed\tpassed\taccepted',
+      '102022400026\t\tpassed\tpassed\trejected',
+      '102022400119\t\tpassed\tfailed',
+    ].join('\n'),
+    candidates: [],
+  })
 );
 
 const elementsMap: Record<string, MockHTMLElement> = {
@@ -424,16 +453,36 @@ assert(
   'Empty NIM search -> Shows validation prompt'
 );
 
-// Test 9.5: Final announcement search for candidate 102022400023
+// Test 9.5a: Final announcement search for ACCEPTED candidate 102022430045
 const annInput = elementsMap['search-nim-input'];
 const annBtn = elementsMap['search-nim-btn'];
 const annResultBox = elementsMap['search-result-box'];
 
+annInput.value = '102022430045';
+annBtn.dispatchEvent({ type: 'click' });
+assert(
+  annResultBox.className.includes('status-passed') &&
+  annResultBox.innerHTML.includes('102022430045') &&
+  annResultBox.innerHTML.includes('SELAMAT'),
+  'Final announcement search for accepted candidate 102022430045 -> Shows SELAMAT DITERIMA'
+);
+
+// Test 9.5b: Final announcement search for REJECTED candidate 102022400026
+annInput.value = '102022400026';
+annBtn.dispatchEvent({ type: 'click' });
+assert(
+  annResultBox.className.includes('status-error') &&
+  annResultBox.innerHTML.includes('102022400026') &&
+  annResultBox.innerHTML.includes('BELUM DITERIMA'),
+  'Final announcement search for rejected candidate 102022400026 -> Shows BELUM DITERIMA'
+);
+
+// Test 9.5c: Accepted candidate 102022400023 shows correct result
 annInput.value = '102022400023';
 annBtn.dispatchEvent({ type: 'click' });
 assert(
-  annResultBox.className.includes('is-visible') && annResultBox.innerHTML.includes('102022400023'),
-  'Final announcement search for candidate 102022400023 -> Renders candidate search result'
+  annResultBox.className.includes('status-passed') && annResultBox.innerHTML.includes('102022400023'),
+  'Final announcement search for candidate 102022400023 -> Renders accepted search result'
 );
 
 // Test 9.6: Screening search for candidate with failed status (102022400119)

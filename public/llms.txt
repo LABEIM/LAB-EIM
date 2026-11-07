@@ -1,0 +1,35 @@
+# EIM Research Lab Website — Enterprise Infrastructure Management (EIM) Research Laboratory
+
+> Official website of the Enterprise Infrastructure Management (EIM) Research Laboratory, Telkom University.
+
+## Project Overview
+- **Project Name:** EIM Research Lab Website
+- **Organization:** Enterprise Infrastructure Management (EIM) Research Laboratory, Telkom University
+- **Repository:** https://github.com/LABEIM/LAB-EIM
+- **Production URL:** https://eimlab.org/
+- **Documentation:** https://github.com/LABEIM/LAB-EIM#readme
+- **Maintainer Contact:** lab@eimlab.org
+
+## Tech Stack & Architecture
+- **Framework:** Astro v7.1.6 (static site generation) with React 19 islands
+- **Content:** Keystatic CMS with Markdown collections and JSON data files (no database)
+- **Styling:** Tailwind CSS v4.3.3 with modular vanilla CSS
+- **Deployment:** Cloudflare Pages (primary), Vercel (backup)
+- **CI/CD:** LABEIM Shared CI/CD Workflow (`.github/workflows/ci-cd.yml`)
+
+## Key Endpoints & Routes
+- `/` : Home page
+- `/about` : Laboratory profile and history
+- `/assets` : Brand and email asset hub
+- `/contact` : Contact information
+- `/structure` : Divisions and staff profiles
+- `/news`, `/news/[id]` : News listing and article detail
+- `/event`, `/event/[id]` : Event listing and detail
+- `/registration` : Recruitment registration form
+- `/api/save-recruitment-results` : Persists recruitment results
+
+## Developer & Agent Guidelines
+- [Full Context & Architecture (llms-full.txt)](https://eimlab.org/llms-full.txt): Comprehensive technical specifications, data schemas, and architecture diagrams.
+- See [`AGENTS.md`](https://github.com/LABEIM/LAB-EIM/blob/main/AGENTS.md) for coding standards, workflows, and quality gates.
+- See [`CONTRIBUTING.md`](https://github.com/LABEIM/LAB-EIM/blob/main/CONTRIBUTING.md) for branch strategy and pull request instructions.
+- See [`SECURITY.md`](https://github.com/LABEIM/LAB-EIM/blob/main/SECURITY.md) for vulnerability disclosure.

@@ -1,0 +1,43 @@
+# ==============================================================================
+# Enterprise Infrastructure Management (EIM) Research Laboratory
+# Project: EIM Research Lab Website
+# Host: https://eimlab.org/
+# ==============================================================================
+
+# Search Engine Crawlers
+User-agent: Googlebot
+User-agent: Bingbot
+User-agent: Applebot
+User-agent: DuckDuckBot
+Allow: /
+Disallow: /admin/
+Disallow: /keystatic/
+Disallow: /api/internal/
+Disallow: /_artifacts/
+Disallow: /scratch/
+
+# AI Crawlers & LLM Agents
+User-agent: GPTBot
+User-agent: ClaudeBot
+User-agent: PerplexityBot
+User-agent: Google-Extended
+Allow: /
+Allow: /llms.txt
+Allow: /llms-full.txt
+Disallow: /admin/
+Disallow: /keystatic/
+Disallow: /api/internal/
+Disallow: /_artifacts/
+Disallow: /scratch/
+
+# Default Crawl Rules
+User-agent: *
+Allow: /
+Disallow: /admin/
+Disallow: /keystatic/
+Disallow: /api/internal/
+Disallow: /_artifacts/
+Disallow: /scratch/
+
+# Sitemaps
+Sitemap: https://eimlab.org/sitemap.xml

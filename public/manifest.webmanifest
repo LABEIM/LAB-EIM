@@ -1,0 +1,24 @@
+{
+  "name": "EIM Research Lab Website",
+  "short_name": "EIM Lab",
+  "description": "Official website of the Enterprise Infrastructure Management (EIM) Research Laboratory, Telkom University.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0B0F19",
+  "theme_color": "#4F46E5",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "https://eimlab.org/assets/brand/eim-favicon.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "https://eimlab.org/assets/logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

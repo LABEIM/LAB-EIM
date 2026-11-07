@@ -1,0 +1,97 @@
+# EIM Research Lab Website — Comprehensive Context (llms-full.txt)
+
+> Full technical specifications, routes, architecture, directory structure, and development guidelines for EIM Research Lab Website at the Enterprise Infrastructure Management (EIM) Research Laboratory.
+
+## 1. Project Overview
+- **Project Name:** EIM Research Lab Website
+- **Organization:** Enterprise Infrastructure Management (EIM) Research Laboratory, Telkom University
+- **Campus Location:** TULT Building 8th Floor, Room TULT.08.09, Bandung, Indonesia
+- **Official Website:** https://eimlab.org
+- **Repository:** https://github.com/LABEIM/LAB-EIM
+- **Production URL:** https://eimlab.org/
+- **Documentation:** https://github.com/LABEIM/LAB-EIM#readme
+- **Maintainer Contact:** lab@eimlab.org
+
+### Purpose & Scope
+The EIM Research Lab Website is the official public site of the Enterprise Infrastructure Management (EIM) Research Laboratory at Telkom University. It presents laboratory news, events, research divisions, staff profiles, and recruitment announcements. The site is statically generated with Astro and its content is managed through Keystatic CMS as Markdown collections and JSON data files; there is no database backend or authentication layer.
+
+---
+
+## 2. Tech Stack & System Architecture
+
+### Technology Stack
+- **Frontend / Fullstack Framework:** Astro v7.1.6 (static site generation) with React 19 islands
+- **Backend / API Engine:** None (static site); Google Apps Script handles registration form submissions
+- **Database / Storage:** Markdown content collections (`src/content/`) and JSON data files (`src/data/`); no database
+- **Styling:** Tailwind CSS v4.3.3 with modular vanilla CSS (`src/styles/`)
+- **Authentication:** None (fully public site); Keystatic CMS runs locally or through its GitHub integration
+- **Hosting / Edge Platform:** Cloudflare Pages (primary), Vercel (backup)
+- **CI/CD:** GitHub Actions (`.github/workflows/ci-cd.yml`)
+
+### Architectural Overview
+```
+[ Client Browser ]
+        │
+        ▼
+[ Cloudflare Edge CDN ]
+        │
+        ▼
+[ Static Astro Build ]
+   ├── Markdown content (news, events)
+   ├── JSON data (site, members, divisions, registration)
+   └── React islands (client-side interactivity)
+        │
+        ▼
+[ Google Apps Script ]  ← registration form submissions
+```
+
+---
+
+## 3. Directory Layout & Core Files
+
+```text
+.
+├── src/
+│   ├── components/            # Reusable Astro and React components
+│   ├── content/               # Markdown collections (news/, events/)
+│   ├── data/                  # JSON site configuration and CONFIG_GUIDE.md
+│   ├── layouts/               # Base page layout (Layout.astro)
+│   ├── pages/                 # File-system routes
+│   ├── styles/                # Modular CSS and design tokens
+│   └── utils/                 # i18n, content helpers, registration logic, types
+├── public/                    # Static assets, robots.txt, sitemap.xml, llms files
+│   └── .well-known/           # RFC 9116 security.txt
+├── AGENTS.md                  # AI coding agent workflow and rules
+├── CLAUDE.md                  # Claude Code operational instructions
+├── CONTRIBUTING.md            # Git branch strategy & PR guidelines
+├── SECURITY.md                # Vulnerability reporting SLOs
+└── README.md                  # Main repository README
+```
+
+---
+
+## 4. Key Endpoints & Routes
+
+| Method | Endpoint | Description | Auth Required |
+| :--- | :--- | :--- | :---: |
+| `GET` | `/` | Home page | No |
+| `GET` | `/about` | Laboratory profile and history | No |
+| `GET` | `/assets` | Brand and email asset hub | No |
+| `GET` | `/contact` | Contact information | No |
+| `GET` | `/structure` | Divisions and staff profiles | No |
+| `GET` | `/news` | News listing | No |
+| `GET` | `/news/[id]` | News article detail | No |
+| `GET` | `/event` | Event listing | No |
+| `GET` | `/event/[id]` | Event detail | No |
+| `GET` | `/registration` | Recruitment registration form | No |
+| `POST` | `/api/save-recruitment-results` | Persists recruitment results | No |
+| `GET` | `/.well-known/security.txt` | RFC 9116 security disclosure | No |
+| `GET` | `/llms.txt` | Concise AI context document | No |
+
+---
+
+## 5. Developer & Agent Guidelines
+
+- **Agent Rules:** Adhere strictly to the definitions of done, startup workflows, and tech stack constraints in [`AGENTS.md`](https://github.com/LABEIM/LAB-EIM/blob/main/AGENTS.md).
+- **Contributing:** Follow conventional commits (`feat:`, `fix:`, `docs:`, `refactor:`) and branch protection rules in [`CONTRIBUTING.md`](https://github.com/LABEIM/LAB-EIM/blob/main/CONTRIBUTING.md).
+- **Security Policy:** Report any vulnerabilities privately per [`SECURITY.md`](https://github.com/LABEIM/LAB-EIM/blob/main/SECURITY.md).

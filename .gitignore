@@ -36,6 +36,9 @@ yarn-error.log*
 # vercel
 .vercel
 
+# cloudflare wrangler local state
+.wrangler/
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts
@@ -47,4 +50,5 @@ dist/
 # Agent scratch and planning artifacts
 _artifacts/
 _tasks/
+.claude/.cc-writes/
 

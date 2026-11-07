@@ -77,7 +77,7 @@ Before ending a session, the agent must perform these tasks:
 - **API Endpoints**: Astro server endpoint `src/pages/api/save-recruitment-results.ts` (Cloudflare adapter server output).
 - **Registration Form**: Posts payloads client-side to Google Apps Script (`code.gs`).
 - **Recruitment Pipeline**: Configured through Keystatic CMS singletons (`keystatic.config.ts`) and loaded via `src/utils/registration-config.ts`.
-- **Deployment**: Cloudflare Pages (primary) with Vercel as a backup host; CI/CD in `.github/workflows/ci-cd.yml`.
+- **Deployment**: Cloudflare Pages (primary) with Vercel as a backup host; `.github/workflows/ci-cd.yml` is a caller for the organization-wide `LABEIM/Shared-CICD` reusable workflow (`deploy-app.yml@v1`). Vercel deploys when `VERCEL_PROJECT_ID` and `VERCEL_ORG_ID` are set as repository variables.
 
 ---
 

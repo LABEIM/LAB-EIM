@@ -107,7 +107,7 @@ Content entries marked with `audit: true` (e.g. `src/content/news/audit-benchmar
 **Zero Manual Dashboard Creation Required**:
 You do **not** need to manually create the project in the Cloudflare Dashboard. 
 
-Our GitHub Actions pipeline (`.github/workflows/ci-cd.yml`) automatically creates the Cloudflare Pages project (`lab-eim`) via `npx wrangler pages project create` on its initial run using your `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID`.
+The Shared-CICD deploy action used by `.github/workflows/ci-cd.yml` automatically creates the Cloudflare Pages project (`lab-eim`) via `npx wrangler pages project create` on its initial run using your `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID`.
 
 ### 2.2 Obtaining Cloudflare Credentials
 
@@ -211,31 +211,41 @@ Because Vercel automatically triggers builds on git pushes by default, you must 
 
 ---
 
-## 5. Unified CI/CD Pipeline & Operational Procedures
+## 5. CI/CD Pipeline & Operational Procedures
 
-The repository includes a unified GitHub Actions workflow ([`.github/workflows/ci-cd.yml`](file:///.github/workflows/ci-cd.yml)) with automated quality gates, deployment retry logic, and performance auditing.
+The repository's workflow ([`.github/workflows/ci-cd.yml`](file:///.github/workflows/ci-cd.yml)) is a thin caller for the organization-wide [Shared-CICD](https://github.com/LABEIM/Shared-CICD) reusable pipeline (`deploy-app.yml@v1`). Quality gates, build, deployment retry logic, preview comments, and Lighthouse auditing all live in that shared workflow; this repository only supplies its inputs and secrets.
 
-### 5.1 Repository Secrets Setup
+### 5.1 Repository Secrets & Variables
 
-In GitHub go to **Settings** > **Secrets and variables** > **Actions** and add:
+In GitHub go to **Settings** > **Secrets and variables** > **Actions**.
+
+**Secrets:**
 
 - `CLOUDFLARE_API_TOKEN`: Created in Section 2.2B.
 - `CLOUDFLARE_ACCOUNT_ID`: Created in Section 2.2A.
 - `VERCEL_TOKEN`: Vercel Personal Access Token ([Vercel Account Settings > Tokens](https://vercel.com/account/tokens)).
-- `VERCEL_ORG_ID`: Found in `.vercel/project.json` or Vercel Team Settings.
-- `VERCEL_PROJECT_ID`: Found in `.vercel/project.json` or Vercel Project Settings.
 - `PUBLIC_GOOGLE_SHEET_SCRIPT_URL`: Google Apps Script Web App URL.
 - `PUBLIC_RECRUITMENT_SECRET`: Passphrase for form signature verification.
 - `PUBLIC_KEYSTATIC_GITHUB_APP_SLUG`: `eim-lab-cms`
 
-> **Note:** The Cloudflare Pages project name (`lab-eim`) is set as the `CF_PAGES_PROJECT` **env var** in the workflow file — **not** as a repository secret. This is intentional: GitHub Actions masks any job output containing a secret substring, which would silently strip deployment URLs from PR preview comments. If you need to change the project name, edit the `CF_PAGES_PROJECT` value in `ci-cd.yml` directly.
+Any inherited secret whose name starts with `PUBLIC_` is exported to the build environment by the shared workflow, so Vite/Astro can inline it into the static output.
+
+**Variables:**
+
+- `VERCEL_ORG_ID`: Found in `.vercel/project.json` or Vercel Team Settings.
+- `VERCEL_PROJECT_ID`: Found in `.vercel/project.json` or Vercel Project Settings.
+
+The Vercel backup deployment is enabled automatically when both variables are present. They must be **variables**, not secrets, because reusable-workflow `with:` inputs cannot read the `secrets` context.
+
+> **Note:** The Cloudflare Pages project name (`lab-eim`) is set as the `cloudflare_project_name` input in `ci-cd.yml`. Change it there if the Pages project is renamed.
 
 ### 5.2 Pipeline Stages (`ci-cd.yml`)
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│ validate (15 min timeout)                                       │
+│ validate-and-build (15 min timeout, Shared-CICD)                │
 │ ├─ npm ci (cached)                                              │
+│ ├─ Export PUBLIC_* secrets to the build environment             │
 │ ├─ npx astro check                                              │
 │ ├─ npm run build + SHA256 hash                                  │
 │ └─ Upload dist/ artifact                                        │
@@ -244,7 +254,7 @@ In GitHub go to **Settings** > **Secrets and variables** > **Actions** and add:
               ┌────────────┴────────────┐
               ▼                         ▼
 ┌──────────────────────────┐  ┌──────────────────────────┐
-│ deploy-cloudflare        │  │ deploy-vercel             │
+│ deploy-cloudflare        │  │ deploy-vercel (optional) │
 │ (10 min, 3x retry)      │  │ (10 min, 3x retry)       │
 │ Primary + GH Environment│  │ Backup + GH Environment  │
 └────────────┬─────────────┘  └────────────┬─────────────┘
@@ -257,40 +267,37 @@ In GitHub go to **Settings** > **Secrets and variables** > **Actions** and add:
               └─────────────────────┘     └───────────────────┘
 ```
 
-1. **`validate` (CI Validation)**: Installs dependencies with npm cache, runs `npx astro check` and `npm run build`, generates a SHA256 integrity hash, uploads the compiled `dist/` static artifact, and posts a build summary (duration, artifact size, commit) to the job summary.
-2. **`deploy-cloudflare` & `deploy-vercel`**: Deploys the `dist/` artifact to Cloudflare Pages (Primary) and Vercel (Backup) **in parallel** with **retry logic** (3 attempts, exponential backoff). `deploy-cloudflare` resolves the canonical Production URL (`https://lab-eim.pages.dev`) when running on `main` branch, and branch alias URLs (`https://<branch>.lab-eim.pages.dev`) on feature branches, ignoring temporary preview commit hashes. Both jobs register proper GitHub Deployment environments for deploy tracking.
-3. **`comment-pr` (Post PR Preview Comment)**: Posts a formatted table with live Cloudflare and Vercel preview deployment URLs (with `cf-deploy-url` and `vercel-deploy-url` artifact fallbacks), commit SHA, and workflow run link back to the Pull Request.
-4. **`lighthouse`**: Audits performance with **3 runs** (representative median score). Downloads the `dist-static-build` artifact to ensure `./dist` is present, resolves the live Cloudflare URL (with `cf-deploy-url` artifact fallback), and audits the live site (or local `./dist` static fallback). Parsed scores (Performance, Accessibility, Best Practices, SEO) are formatted into a rich Markdown table published to `$GITHUB_STEP_SUMMARY` with interactive report links, and appended directly to the PR preview comment on Pull Requests. On **Pull Requests**, a failing Lighthouse score marks the PR with a failed status check, preventing merge to `main`. On **push to main**, Lighthouse serves as post-deploy monitoring — failures generate alerts but the code is already live. Score thresholds:
+1. **`validate-and-build`**: Installs dependencies with `npm ci`, exports inherited `PUBLIC_*` secrets to the build environment, runs `npx astro check` and `npm run build`, and uploads the compiled `dist/` artifact. The built output includes `dist/_worker.js` and `dist/_routes.json`, so Cloudflare Pages serves `/keystatic` and `/api/keystatic/*` through the worker.
+2. **`deploy-cloudflare` & `deploy-vercel`**: Deploys the `dist/` artifact to Cloudflare Pages (Primary) and, when the Vercel variables are configured, Vercel (Backup) **in parallel** with **retry logic** (3 attempts, exponential backoff). `deploy-cloudflare` resolves the canonical Production URL (`https://lab-eim.pages.dev`) on `main` and branch alias URLs (`https://<branch>.lab-eim.pages.dev`) on feature branches. Both jobs register GitHub Deployment environments for deploy tracking.
+3. **`comment-pr` (Post PR Preview Comment)**: Posts or updates a formatted table with the live Cloudflare and Vercel preview deployment URLs, commit SHA, and workflow run link on Pull Requests.
+4. **`lighthouse`**: Audits the routes listed in `lighthouse_routes` with **3 runs** each (representative median score), resolves the live Cloudflare URL first (or the static build as a fallback), and appends parsed scores to `$GITHUB_STEP_SUMMARY` and the PR preview comment. On **Pull Requests**, a failing Lighthouse score marks the PR check failed. On **push to `main`**, it serves as post-deploy monitoring. Score thresholds:
    - Performance: ≥ 80% (warn only)
    - Accessibility: ≥ 90% (error — blocks PR merge)
    - Best Practices: ≥ 90% (error — blocks PR merge)
-   - SEO: ≥ 90% (error — blocks PR merge; `is-crawlable` check turned off so platform `X-Robots-Tag: noindex` headers on preview builds do not skew score calculations)
+   - SEO: ≥ 90% (error on `main`, warn on pull requests; `is-crawlable` check turned off so platform `X-Robots-Tag: noindex` headers on preview builds do not skew score calculations)
 
 ### 5.3 Pipeline Security & Reliability Features
 
-- **Action SHA Pinning**: All GitHub Actions are pinned to full 40-character commit SHAs for supply chain security (protecting against tag mutation attacks). Dependabot automatically monitors and opens PRs for SHA version updates.
-- **Principle of Least Privilege**: Top-level `permissions: {}` block restricts default `GITHUB_TOKEN` access. Each job explicitly declares minimum required permissions.
+- **Shared Workflow Pinning**: This repository pins the Shared-CICD reusable workflow to the floating `v1` major tag. Action SHA pinning and dependency updates are maintained inside Shared-CICD.
+- **Principle of Least Privilege**: The caller grants only `contents: read`, `pull-requests: write`, and `deployments: write`; the shared workflow cannot exceed those permissions.
+- **Scoped Credentials**: `secrets: inherit` passes the repository secrets into the shared workflow. Only inherited `PUBLIC_*` secrets are exported to the build environment; deployment tokens stay scoped to the deploy steps.
 - **Path Filtering (`paths-ignore`)**: Push events to `main` ignore root documentation updates (`README.md`, `DEPLOYMENT.md`, etc.), saving CI runner minutes while preserving full verification for content (`src/content/`) and source code. PR events always run full verification.
 - **Centralized `.npmrc`**: Configures `legacy-peer-deps=true` at repository level for consistent dependency installation across CI and local environments.
-- **Job Timeouts**: All jobs have explicit timeouts (5–15 minutes) to prevent hung pipelines.
-- **Deployment Retry**: Both Cloudflare and Vercel deployments retry up to 3 times with exponential backoff (10s → 20s → 40s) to handle transient API failures.
+- **Job Timeouts & Retries**: The shared workflow applies explicit job timeouts (5–15 minutes) and retries Cloudflare/Vercel deployments up to 3 times with exponential backoff (10s → 20s → 40s).
 - **Concurrency Control**: Duplicate runs on the same branch are automatically cancelled.
-- **Artifact Integrity**: Build artifacts include a SHA256 hash for integrity verification between build and deploy stages.
+- **Artifact Integrity**: The shared workflow generates a SHA256 hash for the build artifact before deployment.
 
 ### 5.4 Manual Dispatch Triggers
 
 To manually deploy from GitHub Actions:
-1. Go to GitHub Actions tab > **Unified CI/CD Pipeline** > **Run workflow**.
-2. Select `deploy_target`:
-   - `primary`: Deploy strictly to Cloudflare Pages.
-   - `backup`: Force deploy to Vercel Backup.
-   - `both`: Deploy to Cloudflare Pages and Vercel simultaneously.
+1. Go to GitHub Actions tab > **CI/CD Pipeline** > **Run workflow**.
+2. Choose the branch and run. The workflow deploys to Cloudflare Pages, plus Vercel when `VERCEL_PROJECT_ID` and `VERCEL_ORG_ID` are configured as repository variables. There is no per-run target selector; enable or disable Vercel by adding or removing those variables.
 
 ### 5.5 Emergency Manual Failover Procedures
 
 If Cloudflare Pages experiences an outage:
 
-- **Option A (GitHub Actions)**: Navigate to GitHub Actions > **Unified CI/CD Pipeline** > **Run workflow** > select `deploy_target: backup`.
+- **Option A (GitHub Actions)**: Ensure `VERCEL_PROJECT_ID` and `VERCEL_ORG_ID` are set as repository variables, then run the **CI/CD Pipeline** workflow. Vercel deploys in parallel with Cloudflare.
 - **Option B (DNS Switch)**: In Cloudflare DNS management, update your main domain (`eim-lab.org`) CNAME target from `lab-eim.pages.dev` to `cname.vercel-dns.com` (or Vercel CNAME IP).
 
 ---

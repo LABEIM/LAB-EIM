@@ -44,3 +44,7 @@ next-env.d.ts
 .astro/
 dist/
 
+# Agent scratch and planning artifacts
+_artifacts/
+_tasks/
+

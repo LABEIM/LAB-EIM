@@ -63,6 +63,7 @@ The EIM Research Lab Website is the official public site of the Enterprise Infra
 │   └── .well-known/           # RFC 9116 security.txt
 ├── AGENTS.md                  # AI coding agent workflow and rules
 ├── CLAUDE.md                  # Claude Code operational instructions
+├── GEMINI.md                  # Gemini CLI / Antigravity pointer to AGENTS.md
 ├── CONTRIBUTING.md            # Git branch strategy & PR guidelines
 ├── SECURITY.md                # Vulnerability reporting SLOs
 └── README.md                  # Main repository README

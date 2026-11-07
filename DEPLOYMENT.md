@@ -325,24 +325,17 @@ Triggered via `pull_request_target` (runs in base branch context with secret acc
 - **Minor & patch** updates: Auto-approved and auto-merged after CI passes.
 - **Major** updates: Labeled `major-update` + `needs-review` for manual review.
 
-### 6.3 Stale Cleanup ([`.github/workflows/stale.yml`](file:///.github/workflows/stale.yml))
+### 6.3 CodeQL Security Analysis ([`.github/workflows/codeql.yml`](file:///.github/workflows/codeql.yml))
 
-Automatically marks and closes inactive issues and PRs:
-- **Issues**: Stale after 30 days, closed after 7 more days.
-- **PRs**: Stale after 30 days, closed after 14 more days.
-- **Exempt labels**: `pinned`, `security`, `bug`, `work-in-progress`.
+Delegates to `LABEIM/Shared-CICD/.github/workflows/codeql-scan.yml@v1`. Runs automated static application security testing (SAST) for JavaScript/TypeScript on every push to `main`, on PRs, and weekly (Monday 04:30 UTC).
 
-### 6.4 CodeQL Security Analysis ([`.github/workflows/codeql.yml`](file:///.github/workflows/codeql.yml))
+### 6.4 Dependency Review ([`.github/workflows/dependency-review.yml`](file:///.github/workflows/dependency-review.yml))
 
-Runs automated static application security testing (SAST) for JavaScript/TypeScript on every push to `main`, on PRs, and weekly (Monday 04:30 UTC).
-
-### 6.5 Dependency Review ([`.github/workflows/dependency-review.yml`](file:///.github/workflows/dependency-review.yml))
-
-Scans pull requests for newly introduced vulnerable dependencies or invalid licenses before code is merged into `main`. Fails on vulnerabilities with `high` or `critical` severity.
+Delegates to `LABEIM/Shared-CICD/.github/workflows/dependency-review.yml@v1`. Scans pull requests for newly introduced vulnerable dependencies or invalid licenses before code is merged into `main`. Fails on vulnerabilities with `high` or `critical` severity.
 
 > **Requirement**: Requires **Dependency graph** enabled in GitHub repository settings (**Settings** > **Advanced Security** / **Code security and analysis**).
 
-### 6.6 Recommended GitHub Repository Security Settings Guide
+### 6.5 Recommended GitHub Repository Security Settings Guide
 
 To maximize security and ensure all CI/CD security workflows operate smoothly, enable the following settings in your repository on GitHub (**Settings** > **Advanced Security** or **Code security and analysis**):
 

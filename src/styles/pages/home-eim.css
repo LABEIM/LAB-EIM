@@ -40,6 +40,14 @@
   color: var(--color-foreground);
 }
 
+/* Native scrollbar, restrained: thin + brand thumb where the platform allows
+   it (Firefox, Chromium 121+). Overlay-scrollbar platforms (macOS) keep their
+   native behavior; no ::-webkit-scrollbar tricks. */
+html {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-brand) var(--color-background);
+}
+
 /* Reveal contract — elements are fully visible by default.
    Scroll-driven entrance exists only where the browser supports it. */
 @supports (animation-timeline: view()) {

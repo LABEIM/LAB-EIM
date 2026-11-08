@@ -55,6 +55,7 @@ export const uiTranslations: Record<Locale, Record<string, string>> = {
     'footer.location': 'Gedung TULT Lantai 8, Ruang TULT.08.09',
     'footer.university': 'Telkom University, Bandung, Indonesia',
     'footer.rights': 'Hak Cipta Dilindungi Undang-Undang.',
+    'footer.backToTop': 'Kembali ke atas',
 
     // Registration & Selection Main
     'reg.title': 'Pendaftaran Asisten',

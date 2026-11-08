@@ -7,7 +7,9 @@
 }
 
 html {
-    overflow-x: hidden;
+    /* clip, not hidden: hidden makes the viewport a scroll container and
+       breaks every position: sticky descendant (homepage media reveal). */
+    overflow-x: clip;
     width: 100%;
 }
 
@@ -16,7 +18,7 @@ body {
     color: var(--text-primary);
     font-family: var(--font-body);
     line-height: 1.6;
-    overflow-x: hidden;
+    overflow-x: clip;
     width: 100%;
     position: relative;
 }

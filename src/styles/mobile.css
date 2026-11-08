@@ -121,7 +121,7 @@
 /* This rule only applies to mobile screens (maximum width 767px) */
 @media (max-width: 767px) {
     html, body {
-        overflow-x: hidden;
+        overflow-x: clip;
     }
 
     body {

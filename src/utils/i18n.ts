@@ -177,7 +177,7 @@ export const uiTranslations: Record<Locale, Record<string, string>> = {
     'news.date': 'Tanggal',
 
     // Home Page v2 [PLACEHOLDER — draft]
-    'home.heroKicker': 'Telkom University · Bandung',
+    'home.heroKicker': 'EIM Research Lab',
     'home.heroTitle': 'Riset infrastruktur\nuntuk dunia nyata.',
     'home.heroDesc': 'Laboratorium Enterprise Infrastructure Management Telkom University — jaringan, cloud, sistem operasi, keamanan siber.',
     'home.heroSecondary': 'Lihat Fokus Riset',

@@ -97,9 +97,31 @@
   width: 100%;
   height: 100%;
   pointer-events: none;
-  /* Feather the digits into the section below instead of ending on a hard line. */
-  -webkit-mask-image: linear-gradient(to bottom, #000 60%, transparent 100%);
-  mask-image: linear-gradient(to bottom, #000 60%, transparent 100%);
+  /* Keep the copy area clean: digits fade out in a soft ellipse behind the
+     headline and actions, so text contrast never depends on the animation. */
+  -webkit-mask-image: radial-gradient(
+    ellipse 58% 52% at 50% 46%,
+    transparent 0%,
+    transparent 30%,
+    #000 100%
+  );
+  mask-image: radial-gradient(
+    ellipse 58% 52% at 50% 46%,
+    transparent 0%,
+    transparent 30%,
+    #000 100%
+  );
+}
+
+/* Feather the digits into the section below instead of ending on a hard line. */
+.eim-hero::after {
+  content: '';
+  position: absolute;
+  inset: auto 0 0;
+  z-index: 0;
+  height: clamp(6rem, 22vh, 14rem);
+  background: linear-gradient(to bottom, transparent, var(--color-background));
+  pointer-events: none;
 }
 
 .eim-hero-inner {

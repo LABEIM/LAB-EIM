@@ -196,6 +196,8 @@ export const uiTranslations: Record<Locale, Record<string, string>> = {
     'home.vmTitle': 'Visi & Misi',
     'home.divIntro': 'Enam divisi — dari riset sampai pelayanan — tempat berkembangnya anggota EIM.',
     'home.memberCount': '{n} anggota',
+    'home.divisionPhoto': 'Foto kegiatan {name}',
+    'home.divisionLink': 'Lihat divisi',
     'home.newsIntro': 'Tulisan riset dan catatan terbaru dari lab.',
     'home.eventsTitle': 'Kegiatan Terkini',
     'home.eventsIntro': 'Workshop, seminar, kompetisi, dan pengabdian yang kami jalankan.',

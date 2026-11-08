@@ -1,0 +1,61 @@
+---
+import { t } from '../../utils/i18n';
+
+const rows = [
+  { title: t('home.focus1Title'), description: t('home.focus1Desc') },
+  { title: t('home.focus2Title'), description: t('home.focus2Desc') },
+  { title: t('home.focus3Title'), description: t('home.focus3Desc') },
+  { title: t('home.focus4Title'), description: t('home.focus4Desc') },
+];
+---
+
+<section id="fokus" class="pt-[clamp(4.5rem,10vh,8.75rem)]" aria-labelledby="eim-focus-title">
+  <div class="mx-auto max-w-[1280px] px-[clamp(1.25rem,4vw,4rem)]">
+    <h2
+      id="eim-focus-title"
+      class="e-reveal font-display text-[clamp(2rem,4vw,3.5rem)] leading-[1.05] tracking-[-0.01em]"
+    >
+      {t('home.focusTitle')}
+    </h2>
+    <p class="e-reveal mt-4 max-w-[65ch] text-[17px] leading-[1.55] text-muted-ink">
+      {t('home.focusIntro')}
+    </p>
+  </div>
+
+  <div class="e-reveal-group mt-[clamp(2.5rem,6vh,5rem)] border-b border-line">
+    {rows.map((row, index) => (
+      <a
+        href="/about"
+        class:list={[
+          'focus-row group block border-t border-line hover:bg-surface-strong',
+          index % 2 === 0 ? 'bg-background' : 'bg-surface',
+        ]}
+        style={`--i:${index}`}
+      >
+        <span
+          class="mx-auto grid max-w-[1280px] grid-cols-[2.5rem_minmax(0,1fr)] items-baseline gap-x-4 gap-y-2 px-[clamp(1.25rem,4vw,4rem)] py-[clamp(1.5rem,3.5vw,2.75rem)] md:grid-cols-[4rem_minmax(0,1.35fr)_minmax(0,1fr)_2rem] md:items-center md:gap-x-10"
+        >
+          <span class="font-mono text-xs tracking-[0.08em] text-muted-ink" aria-hidden="true">
+            {String(index + 1).padStart(2, '0')}
+          </span>
+          <span
+            class="font-display text-[clamp(2.25rem,5.5vw,4.5rem)] leading-[0.95] tracking-[-0.01em] group-hover:text-brand"
+          >
+            {row.title}
+          </span>
+          <span class="col-start-2 max-w-[52ch] text-[15px] leading-[1.55] text-muted-ink md:col-start-auto">
+            {row.description}
+          </span>
+          <span class="hidden font-mono text-lg text-brand md:block" aria-hidden="true">→</span>
+        </span>
+      </a>
+    ))}
+  </div>
+</section>
+
+<style>
+  .focus-row:focus-visible {
+    outline: 2px solid var(--color-brand);
+    outline-offset: -2px;
+  }
+</style>

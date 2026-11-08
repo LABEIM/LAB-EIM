@@ -1,0 +1,125 @@
+---
+import { Image } from 'astro:assets';
+import type { CollectionEntry } from 'astro:content';
+import type { Locale } from '../../utils/i18n';
+import { getCleanSlug, getLocalizedPath, t } from '../../utils/i18n';
+import { formatGlobalDate } from '../../utils/date';
+
+interface Props {
+  events: CollectionEntry<'events'>[];
+  locale: Locale;
+}
+
+const { events = [], locale } = Astro.props;
+
+const featured: CollectionEntry<'events'> | undefined = events[0];
+const secondary = events.slice(1, 3);
+
+const eventsIndexHref = getLocalizedPath('/event', locale);
+const featuredHref = featured ? getLocalizedPath(`/event/${getCleanSlug(featured.id)}`, locale) : '';
+const featuredPoster = featured ? featured.data.poster || featured.data.image?.[0] : undefined;
+---
+
+<section id="kegiatan" class="py-[clamp(4.5rem,10vh,8.75rem)]" aria-labelledby="eim-events-title">
+  <div class="mx-auto max-w-[1280px] px-[clamp(1.25rem,4vw,4rem)]">
+    <div class="grid gap-6 lg:grid-cols-2 lg:items-end">
+      <h2
+        id="eim-events-title"
+        class="e-reveal font-display text-[clamp(2rem,4vw,3.5rem)] leading-[1.05] tracking-[-0.01em]"
+      >
+        {t('home.eventsTitle', locale)}
+      </h2>
+      <div class="e-reveal lg:justify-self-end lg:text-right">
+        <p class="max-w-[52ch] text-[15px] leading-[1.55] text-muted-ink">
+          {t('home.eventsIntro', locale)}
+        </p>
+        {featured && (
+          <a href={eventsIndexHref} class="mt-4 inline-flex items-center gap-2 font-mono text-xs uppercase tracking-[0.08em]">
+            <span class="text-brand">{t('home.viewAllEvents', locale)}</span>
+            <span class="text-brand" aria-hidden="true">→</span>
+          </a>
+        )}
+      </div>
+    </div>
+
+    {featured ? (
+      <div class="mt-[clamp(2.5rem,6vh,4.5rem)]">
+        <a
+          href={featuredHref}
+          class:list={[
+            'event-featured group grid gap-8 rounded-card border border-line bg-surface p-6 md:p-8',
+            featuredPoster && 'md:grid-cols-[minmax(0,2fr)_minmax(0,3fr)] md:items-center md:gap-12',
+          ]}
+        >
+          {featuredPoster && (
+            <span class="block overflow-hidden rounded-card border border-line bg-background">
+              <Image
+                src={featuredPoster}
+                alt={`Poster kegiatan ${featured.data.category}`}
+                width={800}
+                height={1000}
+                loading="lazy"
+                decoding="async"
+                class="aspect-[4/5] w-full object-contain"
+              />
+            </span>
+          )}
+
+          <span class="flex flex-col">
+            <span class="font-mono text-xs tracking-[0.08em] text-brand">
+              {formatGlobalDate(featured.data.event_date)}
+            </span>
+            <span
+              class="mt-3 block font-display text-[clamp(1.75rem,3vw,2.75rem)] leading-[1.1] tracking-[-0.01em] group-hover:text-brand"
+            >
+              {featured.data.title}
+            </span>
+            <span class="mt-4 block max-w-[52ch] text-[15px] leading-[1.55] text-muted-ink">
+              {featured.data.description}
+            </span>
+            <span class="mt-6 inline-flex items-center gap-2 text-brand" aria-hidden="true">→</span>
+          </span>
+        </a>
+
+        {secondary.length > 0 && (
+          <ul class="e-reveal-group list-none mt-8 border-t border-line">
+            {secondary.map((item, index) => (
+              <li style={`--i:${index}`}>
+                <a
+                  href={getLocalizedPath(`/event/${getCleanSlug(item.id)}`, locale)}
+                  class="event-row group grid gap-2 border-b border-line py-5 md:grid-cols-[8.5rem_minmax(0,1fr)_1.25rem] md:items-baseline md:gap-6"
+                >
+                  <span class="font-mono text-xs tracking-[0.08em] text-muted-ink">
+                    {formatGlobalDate(item.data.event_date)}
+                  </span>
+                  <span class="font-display text-[clamp(1.375rem,2vw,1.75rem)] leading-[1.15] group-hover:text-brand">
+                    {item.data.title}
+                  </span>
+                  <span class="hidden font-mono text-brand md:block" aria-hidden="true">→</span>
+                </a>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+    ) : (
+      <div class="e-reveal mt-[clamp(2.5rem,6vh,4.5rem)] border-t border-line pt-10">
+        <p class="font-display text-[clamp(1.5rem,2.2vw,2rem)] leading-[1.2] text-muted-ink">
+          {t('home.eventsEmpty', locale)}
+        </p>
+        <a href={eventsIndexHref} class="mt-5 inline-flex items-center gap-2 font-mono text-xs uppercase tracking-[0.08em]">
+          <span class="text-brand">{t('home.viewAllEvents', locale)}</span>
+          <span class="text-brand" aria-hidden="true">→</span>
+        </a>
+      </div>
+    )}
+  </div>
+</section>
+
+<style>
+  .event-featured:focus-visible,
+  .event-row:focus-visible {
+    outline: 2px solid var(--color-brand);
+    outline-offset: -2px;
+  }
+</style>

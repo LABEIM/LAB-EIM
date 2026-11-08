@@ -1,4 +1,5 @@
-import type { DivisionConfig } from './types';
+import type { DivisionConfig, DivisionPanel, Member } from './types';
+import { getLocalizedPath } from './i18n';
 
 export type { DivisionConfig };
 
@@ -137,4 +138,33 @@ export function parseDivisions(divisionsData: unknown): DivisionConfig[] {
     return (divisionsData as Record<string, unknown>).list as DivisionConfig[];
   }
   return [];
+}
+
+/**
+ * Builds homepage division panels from configured divisions and lab members.
+ * Member division values are normalized through the division map (so legacy
+ * values like `core` or `research` resolve to their canonical division id),
+ * the first matching coordinator becomes the panel coordinator, and the
+ * source division order is preserved.
+ */
+export function toDivisionPanels(divisions: DivisionConfig[], members: Member[]): DivisionPanel[] {
+  const map = buildDivisionMap(divisions);
+  const memberList = Array.isArray(members) ? members : [];
+
+  return divisions.map((div) => {
+    const canonicalId = div.id.trim().toLowerCase();
+    const divisionMembers = memberList.filter((member) => {
+      const info = getDivisionInfo(member.division, map);
+      return info !== undefined && info.id.trim().toLowerCase() === canonicalId;
+    });
+
+    return {
+      id: div.id,
+      displayName: div.displayName,
+      description: div.description,
+      memberCount: divisionMembers.length,
+      coordinator: divisionMembers.find((member) => /coordinator/i.test(member.role)) ?? null,
+      href: getLocalizedPath(`/structure?div=${div.id}`),
+    };
+  });
 }

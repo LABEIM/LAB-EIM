@@ -1,0 +1,44 @@
+---
+import BinaryField from './BinaryField';
+import { STAGE_LABELS } from '../../utils/constants';
+import { getLocaleFromUrl, t } from '../../utils/i18n';
+
+interface Props {
+  primaryLabel: string;
+  primaryHref: string;
+}
+
+const { primaryLabel, primaryHref } = Astro.props;
+const locale = getLocaleFromUrl(Astro.url);
+const titleLines = t('home.heroTitle', locale).split('\n');
+---
+
+<section id="hero" class="eim-hero" aria-labelledby="eim-hero-title">
+  <BinaryField client:idle />
+
+  <div class="eim-hero-inner">
+    <p class="eim-hero-kicker">{t('home.heroKicker', locale)}</p>
+
+    <h1 id="eim-hero-title" class="eim-hero-title">
+      {titleLines.map((line) => <span class="eim-hero-title-line">{line}</span>)}
+    </h1>
+
+    <p class="eim-hero-desc">{t('home.heroDesc', locale)}</p>
+
+    <div class="eim-hero-actions">
+      <a
+        id="hero-recruitment-btn"
+        class="eim-hero-cta"
+        href={primaryHref}
+        data-join-href={primaryHref}
+        data-stage-labels={JSON.stringify(STAGE_LABELS)}
+      ><span class="hero-btn-text">{primaryLabel}</span></a>
+
+      <a class="eim-hero-secondary" href="#fokus">
+        {t('home.heroSecondary', locale)} <span aria-hidden="true">→</span>
+      </a>
+    </div>
+  </div>
+
+  <span class="eim-hero-scroll" aria-hidden="true"></span>
+</section>

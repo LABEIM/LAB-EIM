@@ -1,0 +1,122 @@
+---
+import { Image } from 'astro:assets';
+import type { CollectionEntry } from 'astro:content';
+import type { Locale } from '../../utils/i18n';
+import { getCleanSlug, getLocalizedPath, t } from '../../utils/i18n';
+import { formatGlobalDate } from '../../utils/date';
+
+interface Props {
+  news: CollectionEntry<'news'>[];
+  locale: Locale;
+}
+
+const { news = [], locale } = Astro.props;
+
+const featured: CollectionEntry<'news'> | undefined = news[0];
+const secondary = news.slice(1, 3);
+
+const newsIndexHref = getLocalizedPath('/news', locale);
+const featuredHref = featured ? getLocalizedPath(`/news/${getCleanSlug(featured.id)}`, locale) : '';
+const featuredImage = featured?.data.image?.[0];
+---
+
+<section id="berita" class="py-[clamp(4.5rem,10vh,8.75rem)]" aria-labelledby="eim-news-title">
+  <div class="mx-auto max-w-[1280px] px-[clamp(1.25rem,4vw,4rem)]">
+    <div class="grid gap-6 lg:grid-cols-2 lg:items-end">
+      <h2
+        id="eim-news-title"
+        class="e-reveal font-display text-[clamp(2rem,4vw,3.5rem)] leading-[1.05] tracking-[-0.01em]"
+      >
+        {t('home.latestNews', locale)}
+      </h2>
+      <div class="e-reveal lg:justify-self-end lg:text-right">
+        <p class="max-w-[52ch] text-[15px] leading-[1.55] text-muted-ink">
+          {t('home.newsIntro', locale)}
+        </p>
+        {featured && (
+          <a href={newsIndexHref} class="mt-4 inline-flex items-center gap-2 font-mono text-xs uppercase tracking-[0.08em]">
+            <span class="text-brand">{t('home.viewAllNews', locale)}</span>
+            <span class="text-brand" aria-hidden="true">→</span>
+          </a>
+        )}
+      </div>
+    </div>
+
+    {featured ? (
+      <div
+        class:list={[
+          'mt-[clamp(2.5rem,6vh,4.5rem)] grid gap-10 lg:gap-14',
+          secondary.length > 0 && 'lg:grid-cols-[minmax(0,7fr)_minmax(0,5fr)]',
+        ]}
+      >
+        <a href={featuredHref} class="news-featured group block">
+          {featuredImage && (
+            <span class="block overflow-hidden rounded-card border border-line bg-surface">
+              <Image
+                src={featuredImage}
+                alt=""
+                width={1200}
+                height={750}
+                loading="lazy"
+                decoding="async"
+                class="aspect-[16/10] w-full object-cover"
+              />
+            </span>
+          )}
+          <span class="mt-6 block font-mono text-xs tracking-[0.08em] text-muted-ink">
+            {formatGlobalDate(featured.data.news_date)}
+          </span>
+          <span
+            class="mt-3 block font-display text-[clamp(1.75rem,3vw,2.75rem)] leading-[1.1] tracking-[-0.01em] group-hover:text-brand"
+          >
+            {featured.data.title}
+          </span>
+          {featured.data.excerpt && (
+            <span class="mt-4 block max-w-[60ch] text-[15px] leading-[1.55] text-muted-ink">
+              {featured.data.excerpt}
+            </span>
+          )}
+        </a>
+
+        {secondary.length > 0 && (
+          <ul class="e-reveal-group list-none self-start border-t border-line">
+            {secondary.map((item, index) => (
+              <li style={`--i:${index}`}>
+                <a
+                  href={getLocalizedPath(`/news/${getCleanSlug(item.id)}`, locale)}
+                  class="news-row group grid gap-2 border-b border-line py-6 md:grid-cols-[8.5rem_minmax(0,1fr)_1.25rem] md:items-baseline md:gap-6"
+                >
+                  <span class="font-mono text-xs tracking-[0.08em] text-muted-ink">
+                    {formatGlobalDate(item.data.news_date)}
+                  </span>
+                  <span class="font-display text-[clamp(1.375rem,2vw,1.75rem)] leading-[1.15] group-hover:text-brand">
+                    {item.data.title}
+                  </span>
+                  <span class="hidden font-mono text-brand md:block" aria-hidden="true">→</span>
+                </a>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+    ) : (
+      <div class="e-reveal mt-[clamp(2.5rem,6vh,4.5rem)] border-t border-line pt-10">
+        <p class="font-display text-[clamp(1.5rem,2.2vw,2rem)] leading-[1.2] text-muted-ink">
+          {t('home.noNews', locale)}
+        </p>
+        <a href={newsIndexHref} class="mt-5 inline-flex items-center gap-2 font-mono text-xs uppercase tracking-[0.08em]">
+          <span class="text-brand">{t('home.viewAllNews', locale)}</span>
+          <span class="text-brand" aria-hidden="true">→</span>
+        </a>
+      </div>
+    )}
+  </div>
+</section>
+
+<style>
+  .news-featured:focus-visible,
+  .news-row:focus-visible {
+    outline: 2px solid var(--color-brand);
+    outline-offset: -2px;
+  }
+</style>

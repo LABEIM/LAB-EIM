@@ -144,8 +144,6 @@ export const uiTranslations: Record<Locale, Record<string, string>> = {
 
     // Home Page
     'home.heroTag': 'Enterprise Infrastructure Management',
-    'home.heroTitle': 'Pusat Riset & Pengembangan Infrastruktur Digital',
-    'home.heroDesc': 'Mengembangkan talenta digital di bidang Jaringan Komputer, Cloud Computing, Sistem Operasi, dan Keamanan Siber.',
     'home.latestNews': 'Berita Terkini',
     'home.upcomingEvents': 'Kegiatan Lab',
     'home.viewAllNews': 'Lihat Semua Berita',
@@ -177,6 +175,31 @@ export const uiTranslations: Record<Locale, Record<string, string>> = {
     'news.subtitle': 'Informasi terbaru seputar kegiatan riset, prestasi, dan rekruitmen EIM Research Lab.',
     'news.author': 'Penulis',
     'news.date': 'Tanggal',
+
+    // Home Page v2 [PLACEHOLDER — draft]
+    'home.heroKicker': 'Telkom University · Bandung',
+    'home.heroTitle': 'Riset infrastruktur\nuntuk dunia nyata.',
+    'home.heroDesc': 'Laboratorium Enterprise Infrastructure Management Telkom University — jaringan, cloud, sistem operasi, keamanan siber.',
+    'home.heroSecondary': 'Lihat Fokus Riset',
+    'home.revealCaption': 'Lebih dekat dengan EIM.',
+    'home.revealPending': 'Video pengantar akan segera hadir.',
+    'home.focusTitle': 'Fokus Riset & Laboratorium',
+    'home.focusIntro': 'Empat penguasaan inti yang kami asah lewat riset dan praktik.',
+    'home.focus1Title': 'Jaringan',
+    'home.focus1Desc': 'Arsitektur, protokol routing & switching, dan optimasi infrastruktur komunikasi data skala enterprise.',
+    'home.focus2Title': 'Cloud Computing',
+    'home.focus2Desc': 'Layanan cloud, kontainerisasi (Docker, Kubernetes), virtualisasi server & jaringan, dan data center hibrida.',
+    'home.focus3Title': 'Sistem Operasi',
+    'home.focus3Desc': 'Linux, administrasi server, otomasi sistem, dan pengelolaan infrastruktur berbasis OS.',
+    'home.focus4Title': 'Keamanan Siber',
+    'home.focus4Desc': 'Keamanan jaringan, analisis kerentanan, pengujian penetrasi, dan perlindungan aset informasi digital.',
+    'home.vmTitle': 'Visi & Misi',
+    'home.divIntro': 'Enam divisi — dari riset sampai pelayanan — tempat berkembangnya anggota EIM.',
+    'home.memberCount': '{n} anggota',
+    'home.newsIntro': 'Catatan terbaru dari lab.',
+    'home.eventsTitle': 'Kegiatan Terkini',
+    'home.eventsIntro': 'Workshop, seminar, kompetisi, dan pengabdian yang kami jalankan.',
+    'home.eventsEmpty': 'Belum ada kegiatan yang dipublikasikan.',
   },
 };
 

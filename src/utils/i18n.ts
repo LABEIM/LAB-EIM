@@ -32,7 +32,7 @@ export const uiTranslations: Record<Locale, Record<string, string>> = {
     'nav.about': 'Tentang Kami',
     'nav.structure': 'Struktur',
     'nav.event': 'Kegiatan',
-    'nav.news': 'Berita',
+    'nav.news': 'Artikel',
     'nav.register': 'Pendaftaran',
     'nav.contact': 'Kontak',
     'nav.joinUs': 'Join Us',
@@ -144,11 +144,11 @@ export const uiTranslations: Record<Locale, Record<string, string>> = {
 
     // Home Page
     'home.heroTag': 'Enterprise Infrastructure Management',
-    'home.latestNews': 'Berita Terkini',
+    'home.latestNews': 'Artikel Terkini',
     'home.upcomingEvents': 'Kegiatan Lab',
-    'home.viewAllNews': 'Lihat Semua Berita',
+    'home.viewAllNews': 'Lihat Semua Artikel',
     'home.viewAllEvents': 'Lihat Semua Kegiatan',
-    'home.noNews': 'Belum ada berita terkini.',
+    'home.noNews': 'Belum ada artikel terkini.',
 
     // Structure Page
     'struct.title': 'Struktur Organisasi Lab',
@@ -171,8 +171,8 @@ export const uiTranslations: Record<Locale, Record<string, string>> = {
     'events.date': 'Tanggal Pelaksanaan',
 
     // News Page
-    'news.title': 'Berita & Pengumuman',
-    'news.subtitle': 'Informasi terbaru seputar kegiatan riset, prestasi, dan rekruitmen EIM Research Lab.',
+    'news.title': 'Artikel',
+    'news.subtitle': 'Tulisan riset, publikasi, dan pengumuman dari EIM Research Lab.',
     'news.author': 'Penulis',
     'news.date': 'Tanggal',
 
@@ -196,7 +196,7 @@ export const uiTranslations: Record<Locale, Record<string, string>> = {
     'home.vmTitle': 'Visi & Misi',
     'home.divIntro': 'Enam divisi — dari riset sampai pelayanan — tempat berkembangnya anggota EIM.',
     'home.memberCount': '{n} anggota',
-    'home.newsIntro': 'Catatan terbaru dari lab.',
+    'home.newsIntro': 'Tulisan riset dan catatan terbaru dari lab.',
     'home.eventsTitle': 'Kegiatan Terkini',
     'home.eventsIntro': 'Workshop, seminar, kompetisi, dan pengabdian yang kami jalankan.',
     'home.eventsEmpty': 'Belum ada kegiatan yang dipublikasikan.',

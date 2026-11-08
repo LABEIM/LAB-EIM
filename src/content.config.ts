@@ -32,7 +32,6 @@ const eventsCollection = defineCollection({
     organizer: z.string().optional(),
     benefits: z.array(z.string()).optional(),
     requirements: z.array(z.string()).optional(),
-    show_register: z.boolean().optional().default(true),
     audit: z.boolean().optional().default(false),
   }),
 });

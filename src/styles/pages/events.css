@@ -307,15 +307,6 @@
     font-size: 0.95rem;
 }
 
-.register-btn {
-    width: 100%;
-    justify-content: center;
-    padding: 14px;
-    font-size: 1rem;
-    border-radius: 8px;
-    margin-bottom: 16px;
-}
-
 .register-notice {
     font-size: 0.75rem;
     color: var(--text-muted);

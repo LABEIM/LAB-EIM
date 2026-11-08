@@ -157,7 +157,6 @@ Events are stored as Markdown (`.md`) files in `src/content/events/`.
 * **`organizer`** (String, Optional): Name of the organizer (defaults to EIM).
 * **`benefits`** (Array of Strings, Optional): List of benefits for participants.
 * **`requirements`** (Array of Strings, Optional): List of requirements/criteria for participants.
-* **`show_register`** (Boolean, Optional): Whether to display a register button (defaults to `true`).
 
 ### Event Template
 A helper template is located at [src/content/events/_template.md](file:///home/arukast/Projects/website-eim/src/content/events/_template.md).
@@ -180,7 +179,6 @@ benefits:
 requirements:
   - "Requirement 1"
   - "Requirement 2"
-show_register: true
 ---
 Write the main event details, schedule, or extra information here in Markdown format.
 ```

@@ -45,7 +45,7 @@ const latestNews = filterAuditContent(localizedNews)
   })
   .slice(0, 3);
 
-// Events: upcoming first, then most recent — the section shows featured + 2 rows.
+// Events: upcoming first, then most recent — the section shows the latest three as poster tiles.
 const rawEvents = await getCollection('events');
 const events = filterAuditContent(rawEvents)
   .slice()

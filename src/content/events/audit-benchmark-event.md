@@ -18,7 +18,6 @@ requirements:
   - "Mahasiswa aktif program studi terkait (Teknik Elektro, Informatika, atau sejenisnya)"
   - "Memiliki dasar pemrograman (Python, C/C++, atau JavaScript)"
   - "Bersedia mengikuti jadwal kegiatan yang telah ditentukan"
-show_register: false
 audit: true
 ---
 

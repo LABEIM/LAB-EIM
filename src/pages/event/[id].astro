@@ -155,13 +155,6 @@ const statusLabel = isCompleted ? t('badge.completed', locale) : (isOngoing ? t(
             </div>
           </div>
 
-          {event.data.show_register && event.data.status !== 'completed' && (
-            <>
-              <a href={getLocalizedPath('/registration', locale)} class="btn btn-primary register-btn">
-                {t('btn.register', locale)}
-              </a>
-            </>
-          )}
         </div>
       </div>
     </section>

@@ -35,22 +35,22 @@ const sortedNews = news.sort((a: any, b: any) => {
       <!-- Filter Control Bar -->
       <FilterControlBar
         categories={categories}
-        searchPlaceholder="Cari judul berita, penulis, atau kata kunci..."
+        searchPlaceholder="Cari judul artikel, penulis, atau kata kunci..."
         totalCount={sortedNews.length}
       />
 
       <!-- Empty State Notice for Filters -->
       <div class="news-empty-state glass-panel empty-state-box" id="empty-state-notice" style="display: none;">
         <i class="fa-regular fa-newspaper empty-state-icon"></i>
-        <h3>Berita Tidak Ditemukan</h3>
-        <p>Tidak ada berita yang cocok dengan kriteria pencarian atau filter Anda.</p>
+        <h3>Artikel Tidak Ditemukan</h3>
+        <p>Tidak ada artikel yang cocok dengan kriteria pencarian atau filter Anda.</p>
       </div>
 
       {sortedNews.length === 0 ? (
         <div class="news-empty-state glass-panel empty-state-box">
           <i class="fa-regular fa-newspaper empty-state-icon"></i>
-          <h3>Belum Ada Berita</h3>
-          <p>Belum ada artikel atau berita yang dipublikasikan.</p>
+          <h3>Belum Ada Artikel</h3>
+          <p>Belum ada artikel yang dipublikasikan.</p>
         </div>
       ) : (
         <>
@@ -75,6 +75,6 @@ const sortedNews = news.sort((a: any, b: any) => {
     cardClass: 'grid-card-item',
     itemsPerPage: 6,
     emptyStateId: 'empty-state-notice',
-    itemName: 'Berita',
+    itemName: 'Artikel',
   });
 </script>

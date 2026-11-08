@@ -394,7 +394,6 @@ export default config({
           label: 'Requirements',
           itemLabel: props => props.value,
         }),
-        show_register: fields.checkbox({ label: 'Show Register Button', defaultValue: true }),
       },
     }),
   },

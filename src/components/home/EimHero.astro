@@ -1,5 +1,4 @@
 ---
-import { STAGE_LABELS } from '../../utils/constants';
 import { getLocaleFromUrl, t } from '../../utils/i18n';
 
 interface Props {
@@ -37,7 +36,6 @@ const titleLines = t('home.heroTitle', locale).split('\n');
         class="eim-hero-cta"
         href={primaryHref}
         data-join-href={primaryHref}
-        data-stage-labels={JSON.stringify(STAGE_LABELS)}
       ><span class="hero-btn-text">{primaryLabel}</span></a>
 
       <a class="eim-hero-secondary" href="#fokus">

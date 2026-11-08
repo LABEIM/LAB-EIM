@@ -49,6 +49,7 @@ const isActive = (rawHref: string) => {
 <nav
   class="navbar"
   id="navbar"
+  aria-label="Navigasi utama"
   data-status={registrationData?.status || 'auto'}
   data-auto-close-after-deadline={String(registrationData?.autoCloseAfterDeadline ?? true)}
   data-timezone-offset={registrationData?.timezoneOffset || '+07:00'}
@@ -69,18 +70,21 @@ const isActive = (rawHref: string) => {
         <Image src={logoImg} alt={`${siteData.name} Logo`} width={62} height={70} />
       </div>
       <div class="logo-text">
-        <span class="text-gradient-dual">{siteData.name}</span>
+        <span class="logo-name">{siteData.name}</span>
         <span class="logo-sub">{siteData.subName}</span>
       </div>
     </a>
 
     <ul class="nav-links" id="nav-links">
-      {links.map((link) => (
-        <li class={isActive(link.rawHref) ? 'active' : ''}>
-          <a href={link.href}>{link.label}</a>
+      {links.map((link, index) => (
+        <li class={isActive(link.rawHref) ? 'active' : ''} style={`--i:${index}`}>
+          <a
+            href={link.href}
+            aria-current={isActive(link.rawHref) ? 'page' : undefined}
+          >{link.label}</a>
         </li>
       ))}
-      <li class="nav-cta-item">
+      <li class="nav-cta-item" style={`--i:${links.length}`}>
         <a
           href={ctaConfig.href}
           class={`nav-cta ${ctaConfig.isJoinUs ? 'nav-cta-join' : 'nav-cta-contact'} ${isActive(ctaConfig.rawHref) ? 'active' : ''}`}
@@ -90,11 +94,17 @@ const isActive = (rawHref: string) => {
       </li>
     </ul>
 
-    <div class="nav-toggle" id="nav-toggle">
+    <button
+      type="button"
+      class="nav-toggle"
+      id="nav-toggle"
+      aria-label="Buka menu"
+      aria-expanded="false"
+      aria-controls="nav-links"
+    >
       <span></span>
       <span></span>
-      <span></span>
-    </div>
+    </button>
   </div>
 </nav>
 

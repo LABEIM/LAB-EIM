@@ -24,7 +24,9 @@ export function initSectionNav(): void {
     queued = false;
     const marker = window.innerHeight * 0.45;
 
-    let current = entries[0];
+    // None yet while the visitor is still on the hero: leave every dot
+    // inactive instead of falsely claiming the first section.
+    let current: { link: HTMLAnchorElement; el: HTMLElement } | null = null;
     for (const entry of entries) {
       if (entry.el.getBoundingClientRect().top <= marker) current = entry;
     }
@@ -32,7 +34,7 @@ export function initSectionNav(): void {
     for (const entry of entries) {
       const active = entry === current;
       entry.link.classList.toggle('is-active', active);
-      if (active) entry.link.setAttribute('aria-current', 'true');
+      if (active) entry.link.setAttribute('aria-current', 'location');
       else entry.link.removeAttribute('aria-current');
     }
   }

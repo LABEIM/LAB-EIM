@@ -51,10 +51,13 @@ const rawEvents = await getCollection('events');
 const events = filterAuditContent(rawEvents)
   .slice()
   .sort((a, b) => {
-    const aUpcoming = a.data.status === 'upcoming' ? 0 : 1;
-    const bUpcoming = b.data.status === 'upcoming' ? 0 : 1;
-    if (aUpcoming !== bUpcoming) return aUpcoming - bUpcoming;
-    return new Date(b.data.event_date).getTime() - new Date(a.data.event_date).getTime();
+    const aUpcoming = a.data.status === 'upcoming';
+    const bUpcoming = b.data.status === 'upcoming';
+    if (aUpcoming !== bUpcoming) return aUpcoming ? -1 : 1;
+    const dateDiff =
+      new Date(a.data.event_date).getTime() - new Date(b.data.event_date).getTime();
+    // Upcoming: soonest first. Past: most recent first.
+    return aUpcoming ? dateDiff : -dateDiff;
   });
 
 const upcomingEvents = events.filter((event) => event.data.status === 'upcoming');
@@ -69,9 +72,10 @@ const primaryLabel = stageEntry?.label ?? 'Gabung EIM';
 const primaryHref = stageEntry?.href ?? '/registration';
 ---
 
-<Layout title={`EIM Research Lab - ${t('home.heroTag', locale)}`} homeSkin>
+<Layout title={`EIM Research Lab - ${t('home.heroTag', locale)}`} homeSkin skipLink>
   <EventPosterModal upcomingEvents={upcomingEvents} locale={locale} />
-  <main id="main-content">
+  <main id="main-content" tabindex="-1">
+    <EimSectionNav />
     <EimHero primaryLabel={primaryLabel} primaryHref={primaryHref} />
     <EimReveal />
     <EimFocus />
@@ -79,7 +83,6 @@ const primaryHref = stageEntry?.href ?? '/registration';
     <EimDivisions panels={divisionPanels} />
     <EimEvents events={events} locale={locale} />
     <EimNews news={latestNews} locale={locale} />
-    <EimSectionNav />
   </main>
 </Layout>
 

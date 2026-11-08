@@ -20,9 +20,12 @@ export function initNavbar(): void {
   requestAnimationFrame(updateScrolled);
   window.addEventListener('scroll', onScroll, { passive: true });
 
-  const toggle = document.getElementById('nav-toggle') as HTMLButtonElement | null;
-  const links = document.getElementById('nav-links');
-  if (!toggle || !links) return;
+  const toggleQuery = document.getElementById('nav-toggle') as HTMLButtonElement | null;
+  const linksQuery = document.getElementById('nav-links');
+  if (!toggleQuery || !linksQuery) return;
+  // Non-nullable aliases for the hoisted closures below.
+  const toggle: HTMLButtonElement = toggleQuery;
+  const links: HTMLElement = linksQuery;
 
   const isOpen = (): boolean => toggle.getAttribute('aria-expanded') === 'true';
 

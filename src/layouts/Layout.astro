@@ -4,12 +4,15 @@ import Navbar from '../components/Navbar.astro';
 import Footer from '../components/Footer.astro';
 import AnnouncementBanner from '../components/common/AnnouncementBanner.astro';
 import { getLocaleFromUrl, getLocalizedJsonData } from '../utils/i18n';
+import { getCurrentRecruitmentStage } from '../utils/recruitment';
+import { applySimulationToConfig } from '../utils/simulation';
 
 interface Props {
   title?: string;
   description?: string;
   keywords?: string;
   homeSkin?: boolean;
+  skipLink?: boolean;
 }
 
 const locale = getLocaleFromUrl(Astro.url);
@@ -20,11 +23,32 @@ const {
   description = siteData.defaultDescription,
   keywords = siteData.defaultKeywords,
   homeSkin = false,
+  skipLink = false,
 } = Astro.props;
 let hasAnnouncement = false;
 try {
   const announcementConfig = await getLocalizedJsonData<any>('announcement', locale);
-  hasAnnouncement = announcementConfig?.enabled !== false;
+  if (announcementConfig?.enabled !== false) {
+    if (announcementConfig?.mode === 'auto_recruitment') {
+      // Mirror AnnouncementBanner: a closed recruitment stage suppresses the
+      // banner, so the body class (and its 122px header offset) must follow.
+      let registrationConfig = await getLocalizedJsonData<any>('registration', locale);
+      const simQueryParam = Astro.url.searchParams.get('sim');
+      const stageQueryParam =
+        Astro.url.searchParams.get('stage') || Astro.url.searchParams.get('sim_stage');
+      if ((simQueryParam || stageQueryParam) && registrationConfig) {
+        registrationConfig = applySimulationToConfig(
+          registrationConfig,
+          simQueryParam ? parseInt(simQueryParam, 10) || 30 : 30,
+          Date.now(),
+          stageQueryParam
+        );
+      }
+      hasAnnouncement = getCurrentRecruitmentStage(registrationConfig) !== 'closed';
+    } else {
+      hasAnnouncement = true;
+    }
+  }
 } catch (e) {}
 ---
 
@@ -55,7 +79,11 @@ try {
       import '../styles/icons.css';
     </script>
   </head>
-  <body class:list={[hasAnnouncement && 'has-announcement-banner', homeSkin && 'home-skin']}>
+  <body
+    id="top"
+    class:list={[hasAnnouncement && 'has-announcement-banner', homeSkin && 'home-skin']}
+  >
+    {skipLink && <a class="skip-link" href="#main-content">Lewati ke konten</a>}
     <header class="site-header" id="site-header">
       <AnnouncementBanner />
       <Navbar />

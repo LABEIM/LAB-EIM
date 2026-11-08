@@ -13,13 +13,9 @@ const items = [
 
 <nav class="eim-section-nav" aria-label={t('home.sectionNavLabel')}>
   <ul class="list-none">
-    {items.map((item, index) => (
+    {items.map((item) => (
       <li>
-        <a
-          href={`#${item.id}`}
-          data-section={item.id}
-          class:list={[index === 0 && 'is-active']}
-        >
+        <a href={`#${item.id}`} data-section={item.id}>
           <span class="eim-dot" aria-hidden="true"></span>
           <span class="eim-dot-label">{t(item.key)}</span>
         </a>

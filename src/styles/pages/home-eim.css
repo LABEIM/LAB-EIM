@@ -139,7 +139,7 @@ html {
   flex-direction: column;
   align-items: center;
   width: 100%;
-  max-width: 1280px;
+  max-width: 1200px;
 }
 
 .eim-hero-logo {
@@ -225,7 +225,7 @@ html {
 
 .eim-hero-cta:focus-visible,
 .eim-hero-secondary:focus-visible {
-  outline: 2px solid var(--color-brand-bright);
+  outline: 2px solid var(--color-brand);
   outline-offset: 2px;
 }
 
@@ -245,13 +245,8 @@ html {
   pointer-events: none;
 }
 
-@media (max-width: 767px) {
-  /* mobile.css pins every h1 to 2.2rem with !important; the hero keeps its display scale. */
-  h1.eim-hero-title {
-    font-size: clamp(2.75rem, 7.5vw, 6rem) !important;
-    letter-spacing: -0.01em !important;
-  }
-}
+/* The legacy mobile h1 pin now excludes body.home-skin (mobile.css), so the
+   hero keeps its own clamp without an !important reclaim. */
 
 /* == Reveal == */
 
@@ -268,7 +263,7 @@ html {
   /* Never tuck under the fixed header (it grows with the announcement bar). */
   top: max(12vh, calc(var(--site-header-height, 5rem) + 0.75rem));
   height: 76vh;
-  max-width: 1280px;
+  max-width: 1200px;
   margin: 0 auto;
   overflow: hidden;
   border-radius: var(--radius-media);
@@ -423,17 +418,13 @@ body.home-skin #global-announcement-banner .announcement-close-btn:hover {
 }
 
 body.home-skin :is(a, button):focus-visible {
-  outline: 2px solid var(--color-brand-bright);
+  /* Bright cyan is 2.46:1 on the ground; the deep brand teal is 8.46:1. */
+  outline: 2px solid var(--color-brand);
   outline-offset: 2px;
 }
 
-@media (max-width: 767px) {
-  /* mobile.css pins every h2 to 1.7rem via !important; the homepage
-     reclaims the section H2 clamp with an equally scoped !important. */
-  body.home-skin main :is(h2) {
-    font-size: clamp(2rem, 4vw, 3.5rem) !important;
-  }
-}
+/* The legacy mobile h2/h3 pins now exclude body.home-skin (mobile.css), so
+   section headings and division names keep their component clamps. */
 
 /* == Section nav == */
 
@@ -457,14 +448,16 @@ body.home-skin :is(a, button):focus-visible {
   display: flex;
   flex-direction: column;
   align-items: flex-end;
-  gap: 0.85rem;
+  gap: 0.35rem;
 }
 
 .eim-section-nav a {
   position: relative;
   display: flex;
   align-items: center;
-  padding: 0.2rem 0;
+  justify-content: flex-end;
+  /* 24x24 minimum target (WCAG 2.2); the visual dot stays 8px. */
+  padding: 0.5rem;
 }
 
 .eim-dot {

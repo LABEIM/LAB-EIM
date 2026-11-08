@@ -87,17 +87,19 @@
         margin-bottom: 15px;
     }
 
-    /* Fix global font & padding for mobile */
-    h1 {
+    /* Fix global font & padding for mobile.
+       Scoped away from .home-skin: the homepage ships its own fluid heading
+       clamps and should not need !important reclaims for every level. */
+    body:not(.home-skin) h1 {
         font-size: 2.2rem !important;
         letter-spacing: -0.5px !important;
     }
 
-    h2 {
+    body:not(.home-skin) h2 {
         font-size: 1.7rem !important;
     }
 
-    h3 {
+    body:not(.home-skin) h3 {
         font-size: 1.3rem !important;
     }
 

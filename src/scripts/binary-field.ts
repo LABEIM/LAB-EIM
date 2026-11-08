@@ -51,10 +51,14 @@ function readPalette(canvas: HTMLCanvasElement): Palette {
 }
 
 export function initBinaryField(): void {
-  const canvas = document.querySelector<HTMLCanvasElement>('.eim-hero-canvas');
-  if (!canvas) return;
-  const ctx = canvas.getContext('2d');
-  if (!ctx) return;
+  const canvasQuery = document.querySelector<HTMLCanvasElement>('.eim-hero-canvas');
+  if (!canvasQuery) return;
+  // Typed aliases: TS does not narrow captured variables inside hoisted
+  // function declarations, so give the closures non-nullable bindings.
+  const canvas: HTMLCanvasElement = canvasQuery;
+  const ctxQuery = canvas.getContext('2d');
+  if (!ctxQuery) return;
+  const ctx: CanvasRenderingContext2D = ctxQuery;
 
   const reduceQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
   const followQuery = window.matchMedia('(hover: hover) and (pointer: fine)');

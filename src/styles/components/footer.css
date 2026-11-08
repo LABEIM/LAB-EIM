@@ -1,5 +1,9 @@
 /* --- FOOTER --- */
 .footer {
+    /* Legacy muted #718096 measured 3.81:1 on this band, below AA for the
+       9.6-12px microcopy. #52686B gives 5.61:1. */
+    --text-muted: #52686B;
+
     border-top: 1px solid var(--border-color);
     padding: clamp(3.5rem, 8vh, 5.5rem) 0 2rem;
     background: var(--bg-dark-secondary);
@@ -51,7 +55,7 @@
 
 .footer .logo-sub-sm {
     font-family: var(--font-ui);
-    font-size: 0.6rem;
+    font-size: 0.75rem;
     font-weight: 500;
     letter-spacing: 0.18em;
     text-transform: uppercase;
@@ -70,7 +74,7 @@
 /* Column headings */
 .footer-title {
     font-family: var(--font-ui);
-    font-size: 0.6875rem;
+    font-size: 0.75rem;
     font-weight: 500;
     letter-spacing: 0.18em;
     text-transform: uppercase;
@@ -192,7 +196,8 @@
 }
 
 .footer a:focus-visible {
-    outline: 2px solid var(--brand-cyan);
+    /* #11B4BD was 2.4:1 on the footer band; the deep teal clears 3:1. */
+    outline: 2px solid var(--brand-dark-azure);
     outline-offset: 2px;
 }
 

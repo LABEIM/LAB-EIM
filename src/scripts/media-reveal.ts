@@ -15,9 +15,12 @@ const START_RATIO = 0.65;
 const END_RATIO = 0.3;
 
 export function initMediaReveal(): void {
-  const stage = document.querySelector<HTMLElement>('.e-reveal-stage');
-  const figure = document.querySelector<HTMLElement>('.e-reveal-stage-figure');
-  if (!stage || !figure) return;
+  const stageQuery = document.querySelector<HTMLElement>('.e-reveal-stage');
+  const figureQuery = document.querySelector<HTMLElement>('.e-reveal-stage-figure');
+  if (!stageQuery || !figureQuery) return;
+  // Non-nullable aliases for the hoisted closures below.
+  const stage: HTMLElement = stageQuery;
+  const figure: HTMLElement = figureQuery;
 
   const reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
   let queued = false;

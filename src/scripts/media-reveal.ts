@@ -8,8 +8,11 @@
  */
 
 const MIN_SCALE = 0.62;
-const RANGE_START = 0.1;
-const RANGE_END = 0.9;
+/* Growth window measured against the viewport: starts when the stage top is
+   65% down the screen and completes when it is 30% down — the media is at full
+   size before the section has finished sliding in. */
+const START_RATIO = 0.65;
+const END_RATIO = 0.3;
 
 export function initMediaReveal(): void {
   const stage = document.querySelector<HTMLElement>('.e-reveal-stage');
@@ -25,17 +28,11 @@ export function initMediaReveal(): void {
       figure.style.transform = '';
       return;
     }
+    const vh = window.innerHeight;
     const rect = stage.getBoundingClientRect();
-    const travel = rect.height - window.innerHeight;
-    if (travel <= 0) {
-      figure.style.transform = '';
-      return;
-    }
-    const raw = Math.min(1, Math.max(0, -rect.top / travel));
-    const progress = Math.min(
-      1,
-      Math.max(0, (raw - RANGE_START) / (RANGE_END - RANGE_START))
-    );
+    const start = vh * START_RATIO;
+    const end = vh * END_RATIO;
+    const progress = Math.min(1, Math.max(0, (start - rect.top) / (start - end)));
     const scale = MIN_SCALE + (1 - MIN_SCALE) * progress;
     figure.style.transform = `scale(${scale.toFixed(3)})`;
   }

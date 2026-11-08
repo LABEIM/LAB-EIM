@@ -227,8 +227,9 @@
 
 .e-reveal-stage {
   position: relative;
-  /* Scroll room for the JS-driven grow (src/scripts/media-reveal.ts). */
-  height: 260vh;
+  /* Kept short: the grow completes while the section slides in
+     (src/scripts/media-reveal.ts), so only a little pinned scroll remains. */
+  height: 110vh;
   padding-inline: clamp(1.25rem, 4vw, 4rem);
 }
 

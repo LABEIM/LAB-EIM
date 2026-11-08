@@ -45,7 +45,7 @@ const latestNews = filterAuditContent(localizedNews)
   })
   .slice(0, 3);
 
-// Events: upcoming first, then most recent — the section shows the latest three as poster tiles.
+// Events: upcoming first, then most recent — the section shows the next two as large poster tiles.
 const rawEvents = await getCollection('events');
 const events = filterAuditContent(rawEvents)
   .slice()
@@ -76,8 +76,8 @@ const primaryHref = stageEntry?.href ?? '/registration';
     <EimFocus />
     <EimVisiMisi about={about} />
     <EimDivisions panels={divisionPanels} />
-    <EimNews news={latestNews} locale={locale} />
     <EimEvents events={events} locale={locale} />
+    <EimNews news={latestNews} locale={locale} />
   </main>
 </Layout>
 

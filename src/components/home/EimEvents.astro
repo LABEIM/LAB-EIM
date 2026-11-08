@@ -96,6 +96,10 @@ const eventsIndexHref = getLocalizedPath('/event', locale);
 </section>
 
 <style>
+  .event-tile {
+    transition: transform var(--dur-control) var(--ease);
+  }
+
   .event-tile:focus-visible {
     outline: 2px solid var(--color-brand);
     outline-offset: -2px;
@@ -106,6 +110,11 @@ const eventsIndexHref = getLocalizedPath('/event', locale);
   }
 
   @media (prefers-reduced-motion: no-preference) {
+    .event-tile:hover,
+    .event-tile:focus-visible {
+      transform: translateY(-2px);
+    }
+
     .event-tile:hover img,
     .event-tile:focus-visible img {
       transform: scale(1.03);

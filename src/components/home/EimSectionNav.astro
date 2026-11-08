@@ -1,0 +1,35 @@
+---
+import { t } from '../../utils/i18n';
+
+const items = [
+  { id: 'reveal', key: 'home.navDotMedia' },
+  { id: 'fokus', key: 'home.navDotFocus' },
+  { id: 'visi-misi', key: 'home.navDotVision' },
+  { id: 'divisi', key: 'home.navDotDivisions' },
+  { id: 'kegiatan', key: 'home.navDotEvents' },
+  { id: 'berita', key: 'home.navDotArticles' },
+];
+---
+
+<nav class="eim-section-nav" aria-label={t('home.sectionNavLabel')}>
+  <ul class="list-none">
+    {items.map((item, index) => (
+      <li>
+        <a
+          href={`#${item.id}`}
+          data-section={item.id}
+          class:list={[index === 0 && 'is-active']}
+        >
+          <span class="eim-dot" aria-hidden="true"></span>
+          <span class="eim-dot-label">{t(item.key)}</span>
+        </a>
+      </li>
+    ))}
+  </ul>
+</nav>
+
+<script>
+  import { initSectionNav } from '../../scripts/section-nav';
+
+  initSectionNav();
+</script>

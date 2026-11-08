@@ -119,4 +119,15 @@ const featuredImage = featured?.data.image?.[0];
     outline: 2px solid var(--color-brand);
     outline-offset: -2px;
   }
+
+  .news-featured img {
+    transition: transform var(--dur-reveal) var(--ease);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .news-featured:hover img,
+    .news-featured:focus-visible img {
+      transform: scale(1.02);
+    }
+  }
 </style>

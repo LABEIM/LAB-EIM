@@ -14,6 +14,7 @@ import EimVisiMisi from '../components/home/EimVisiMisi.astro';
 import EimDivisions from '../components/home/EimDivisions.astro';
 import EimNews from '../components/home/EimNews.astro';
 import EimEvents from '../components/home/EimEvents.astro';
+import EimSectionNav from '../components/home/EimSectionNav.astro';
 import {
   getLocaleFromUrl,
   getLocalizedJsonData,
@@ -78,6 +79,7 @@ const primaryHref = stageEntry?.href ?? '/registration';
     <EimDivisions panels={divisionPanels} />
     <EimEvents events={events} locale={locale} />
     <EimNews news={latestNews} locale={locale} />
+    <EimSectionNav />
   </main>
 </Layout>
 

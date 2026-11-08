@@ -363,6 +363,37 @@ body.home-skin .navbar.scrolled {
   border-bottom-color: var(--color-line);
 }
 
+/* Reading progress: a hairline under the header, driven by the scroll timeline
+   (zero JS; falls away silently where scroll timelines are unsupported). */
+body.home-skin .navbar::after {
+  content: '';
+  position: absolute;
+  inset: auto 0 0;
+  height: 2px;
+  background: var(--color-brand-bright);
+  transform: scaleX(0);
+  transform-origin: left center;
+  pointer-events: none;
+}
+
+@keyframes e-scroll-progress {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  @supports (animation-timeline: scroll()) {
+    body.home-skin .navbar::after {
+      animation: e-scroll-progress linear both;
+      animation-timeline: scroll(root block);
+    }
+  }
+}
+
 body.home-skin .nav-links a {
   font-family: var(--font-body);
   font-weight: 500;
@@ -499,7 +530,105 @@ body.home-skin :is(a, button):focus-visible {
   }
 }
 
+/* == Section nav == */
+
+/* Desktop-only right rail: jump links that also show the reading position. */
+.eim-section-nav {
+  position: fixed;
+  top: 50%;
+  right: clamp(0.75rem, 1.6vw, 1.75rem);
+  z-index: 30;
+  display: none;
+  transform: translateY(-50%);
+}
+
+@media (min-width: 1025px) {
+  .eim-section-nav {
+    display: block;
+  }
+}
+
+.eim-section-nav ul {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.85rem;
+}
+
+.eim-section-nav a {
+  position: relative;
+  display: flex;
+  align-items: center;
+  padding: 0.2rem 0;
+}
+
+.eim-dot {
+  display: block;
+  width: 8px;
+  height: 8px;
+  border: 1px solid var(--color-muted-ink);
+  border-radius: var(--radius-pill);
+  background-color: transparent;
+  transition:
+    background-color var(--dur-control) var(--ease),
+    border-color var(--dur-control) var(--ease),
+    transform var(--dur-control) var(--ease);
+}
+
+.eim-section-nav a:hover .eim-dot,
+.eim-section-nav a:focus-visible .eim-dot {
+  border-color: var(--color-brand);
+  background-color: var(--color-brand-soft);
+}
+
+.eim-section-nav a.is-active .eim-dot {
+  border-color: var(--color-brand);
+  background-color: var(--color-brand);
+  transform: scale(1.3);
+}
+
+.eim-dot-label {
+  position: absolute;
+  top: 50%;
+  right: calc(100% + 0.6rem);
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: var(--color-muted-ink);
+  opacity: 0;
+  transform: translateY(-50%) translateX(4px);
+  transition:
+    opacity var(--dur-control) var(--ease),
+    transform var(--dur-control) var(--ease);
+  pointer-events: none;
+}
+
+.eim-section-nav a:hover .eim-dot-label,
+.eim-section-nav a:focus-visible .eim-dot-label {
+  opacity: 1;
+  transform: translateY(-50%) translateX(0);
+}
+
 /* == Motion == */
+
+/* Media: images settle in as they enter the viewport. Opacity only, so the
+   existing hover transforms on the same images keep working. */
+@supports (animation-timeline: view()) {
+  @keyframes e-media-in {
+    from {
+      opacity: 0.4;
+    }
+  }
+
+  body.home-skin .event-tile img,
+  body.home-skin .news-featured img {
+    animation: e-media-in var(--dur-reveal) var(--ease) both;
+    animation-timeline: view();
+    animation-range: 0% 25%;
+  }
+}
 
 /* Hero entrance: one choreographed stagger on load, shared tokens.
    Disabled entirely under reduced motion. */
@@ -539,7 +668,9 @@ body.home-skin :is(a, button):focus-visible {
   .eim-hero-logo,
   .eim-hero-title,
   .eim-hero-desc,
-  .eim-hero-actions {
+  .eim-hero-actions,
+  body.home-skin .event-tile img,
+  body.home-skin .news-featured img {
     animation: none;
   }
 

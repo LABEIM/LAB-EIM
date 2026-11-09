@@ -189,6 +189,11 @@ export const uiTranslations: Record<Locale, Record<string, string>> = {
     'about.ctaDesc': 'Pendaftaran asisten dibuka setiap periode. Untuk kolaborasi riset, kunjungan, atau pertanyaan lain, kami terbuka.',
     'about.ctaJoin': 'Gabung EIM',
     'about.ctaContact': 'Hubungi kami',
+    'about.sectionNavLabel': 'Navigasi bagian halaman',
+    'about.navDotProfile': 'Profil',
+    'about.navDotStats': 'Angka',
+    'about.navDotTeam': 'Koordinator',
+    'about.navDotCta': 'Gabung',
 
     // Events Page
     'events.title': 'Kegiatan & Acara',

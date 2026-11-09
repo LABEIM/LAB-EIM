@@ -11,6 +11,7 @@ import AboutStats from '../components/about/AboutStats.astro';
 import EimVisiMisi from '../components/home/EimVisiMisi.astro';
 import AboutTeam from '../components/about/AboutTeam.astro';
 import AboutCTA from '../components/about/AboutCTA.astro';
+import EimSectionNav from '../components/home/EimSectionNav.astro';
 
 const locale = getLocaleFromUrl(Astro.url);
 const aboutData = getLocalizedJsonData<AboutData>('about', locale);
@@ -23,10 +24,19 @@ const members: Member[] = membersData?.list ?? [];
 const coordinators: Member[] = members
   .filter((member) => member.division === 'core' || member.role.includes('Coordinator'))
   .sort((a, b) => a.id - b.id);
+
+const sectionItems = [
+  { id: 'profil', label: t('about.navDotProfile', locale) },
+  { id: 'angka', label: t('about.navDotStats', locale) },
+  { id: 'visi-misi', label: t('home.navDotVision', locale) },
+  { id: 'koordinator', label: t('about.navDotTeam', locale) },
+  { id: 'gabung', label: t('about.navDotCta', locale) },
+];
 ---
 
 <Layout title={`${t('nav.about', locale)} - EIM Research Lab`} description={aboutData.description} homeSkin skipLink>
   <main id="main-content" tabindex="-1">
+    <EimSectionNav items={sectionItems} label={t('about.sectionNavLabel', locale)} />
     <AboutHero />
     <AboutProfile about={aboutData} site={siteData} />
     <AboutStats membersCount={members.length} divisionsCount={divisions.length} focusCount={4} />

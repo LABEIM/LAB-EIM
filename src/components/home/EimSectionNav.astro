@@ -1,23 +1,35 @@
 ---
 import { t } from '../../utils/i18n';
 
-const items = [
-  { id: 'reveal', key: 'home.navDotMedia' },
-  { id: 'fokus', key: 'home.navDotFocus' },
-  { id: 'visi-misi', key: 'home.navDotVision' },
-  { id: 'divisi', key: 'home.navDotDivisions' },
-  { id: 'kegiatan', key: 'home.navDotEvents' },
-  { id: 'berita', key: 'home.navDotArticles' },
+interface NavItem {
+  id: string;
+  label: string;
+}
+
+interface Props {
+  items?: NavItem[];
+  label?: string;
+}
+
+const defaultItems: NavItem[] = [
+  { id: 'reveal', label: t('home.navDotMedia') },
+  { id: 'fokus', label: t('home.navDotFocus') },
+  { id: 'visi-misi', label: t('home.navDotVision') },
+  { id: 'divisi', label: t('home.navDotDivisions') },
+  { id: 'kegiatan', label: t('home.navDotEvents') },
+  { id: 'berita', label: t('home.navDotArticles') },
 ];
+
+const { items = defaultItems, label = t('home.sectionNavLabel') } = Astro.props;
 ---
 
-<nav class="eim-section-nav" aria-label={t('home.sectionNavLabel')}>
+<nav class="eim-section-nav" aria-label={label}>
   <ul class="list-none">
     {items.map((item) => (
       <li>
         <a href={`#${item.id}`} data-section={item.id}>
           <span class="eim-dot" aria-hidden="true"></span>
-          <span class="eim-dot-label">{t(item.key)}</span>
+          <span class="eim-dot-label">{item.label}</span>
         </a>
       </li>
     ))}

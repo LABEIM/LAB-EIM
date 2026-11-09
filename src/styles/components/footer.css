@@ -176,10 +176,6 @@
     gap: 1.5rem;
 }
 
-.footer-credit i {
-    color: var(--brand-dark-azure);
-}
-
 .footer-top-link {
     display: inline-flex;
     align-items: center;

@@ -50,7 +50,7 @@ export const uiTranslations: Record<Locale, Record<string, string>> = {
 
     // Footer
     'footer.description': 'Laboratorium Riset Enterprise Infrastructure Management Telkom University.',
-    'footer.quickLinks': 'Tautan Cepat',
+    'footer.quickLinks': 'Jelajahi',
     'footer.contact': 'Kontak',
     'footer.location': 'Gedung TULT Lantai 8, Ruang TULT.08.09',
     'footer.university': 'Telkom University, Bandung, Indonesia',

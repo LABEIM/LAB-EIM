@@ -37,7 +37,9 @@
     inset: auto 0 0;
     height: 2px;
     background: var(--brand-dark-azure);
-    transform: scaleX(0);
+    /* JS-driven fallback (navbar.ts); the scroll-timeline animation below
+       overrides this where the browser supports it. */
+    transform: scaleX(var(--nav-progress, 0));
     transform-origin: left center;
     pointer-events: none;
 }

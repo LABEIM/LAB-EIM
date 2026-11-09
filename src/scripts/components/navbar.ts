@@ -9,6 +9,15 @@ export function initNavbar(): void {
   function updateScrolled(): void {
     ticking = false;
     navbar?.classList.toggle('scrolled', window.scrollY > 24);
+
+    // Progress hairline. Chromium drives it with a CSS scroll timeline; this
+    // custom property is the fallback for browsers without one (Safari < 26,
+    // Firefox), and the animation simply overrides it where supported.
+    if (navbar) {
+      const scrollable = document.documentElement.scrollHeight - window.innerHeight;
+      const progress = scrollable > 0 ? Math.min(1, Math.max(0, window.scrollY / scrollable)) : 0;
+      navbar.style.setProperty('--nav-progress', progress.toFixed(4));
+    }
   }
 
   function onScroll(): void {

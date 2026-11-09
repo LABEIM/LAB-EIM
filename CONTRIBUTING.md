@@ -100,7 +100,7 @@ Whether you are fixing a bug or adding a new feature, follow the git workflow de
 
 Ensure you have the required runtimes and tools installed on your development machine:
 - **Git** (latest stable)
-- **Runtime / Package Manager**: Node.js `>=22.12.0` with `pnpm` (via Corepack; pinned in `package.json`).
+- **Runtime / Package Manager**: Node.js `>=22.12.0` with `pnpm` (12.x; `pnpm-lock.yaml` pins resolutions).
 - **Editor**: VS Code, Cursor, or your preferred IDE
 
 ### Installation & Development Server

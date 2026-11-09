@@ -46,7 +46,7 @@ Follow these steps to set up and run the website locally on your machine.
 ### Prerequisites
 
 - **Node.js**: Version `>=22.12.0` (required by Astro 7+ runtime constraints).
-- **pnpm**: Package manager via Corepack (pinned in `package.json`).
+- **pnpm**: Package manager (the shared CI installs `latest`; `pnpm-lock.yaml` pins resolutions).
 
 ### 1.1 Install Dependencies
 

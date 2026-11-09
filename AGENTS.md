@@ -53,7 +53,7 @@ Before ending a session, the agent must perform these tasks:
 - **Database / CMS**: Keystatic CMS (`@keystatic/astro` v5.0.0, `@keystatic/core` v0.6.0) backed by Markdown collections (`src/content/`) and JSON data files (`src/data/`); no database.
 - **Internationalization (i18n)**: Single-locale (`id`) translation and UI dictionary utilities (`src/utils/i18n.ts`).
 - **Typography & Icons**: `@fontsource/inter`, `@fontsource/montserrat`, `@fontsource/poppins`; icon styles in `src/styles/icons.css`.
-- **Runtime & Build Tools**: Node.js `>=22.12.0`, pnpm (pinned via Corepack in `package.json`).
+- **Runtime & Build Tools**: Node.js `>=22.12.0`, pnpm (the shared CI installs `latest`; `pnpm-lock.yaml` pins resolutions).
 
 ### 2.2 Directory Layout & Component Roles
 - `astro.config.mjs`: Astro configuration for the Cloudflare adapter, integrations, Vite alias (`@/`), SSR externalized modules (`sharp`, `detect-libc`), and chunk size limits.

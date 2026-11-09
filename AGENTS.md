@@ -45,15 +45,15 @@ Before ending a session, the agent must perform these tasks:
 ## Section 2: Tech Stack & Architecture
 
 ### 2.1 Framework & Core Stack
-- **Framework**: Astro v7.1.6 (static site generation with the `@astrojs/cloudflare` adapter).
+- **Framework**: Astro v7.4.7 (static site generation with the `@astrojs/cloudflare` adapter).
 - **Language**: TypeScript v6.0.3, HTML5, and Vanilla CSS.
-- **UI Components**: React v19.2.8 (`@astrojs/react`) combined with Astro components.
-- **Styling**: Tailwind CSS v4.3.3 (via `@tailwindcss/vite`) combined with a modular Vanilla CSS architecture (`src/styles/`).
+- **UI Components**: React v19.3.1 (`@astrojs/react`) combined with Astro components.
+- **Styling**: Tailwind CSS v4.3.5 (via `@tailwindcss/vite`) combined with a modular Vanilla CSS architecture (`src/styles/`).
 - **State Management**: React component state and native browser APIs; client JavaScript is kept minimal through Astro islands.
-- **Database / CMS**: Keystatic CMS (`@keystatic/astro` v5.0.0, `@keystatic/core` v0.6.0) backed by Markdown collections (`src/content/`) and JSON data files (`src/data/`); no database.
+- **Database / CMS**: Keystatic CMS (`@keystatic/astro` v5.2.0, `@keystatic/core` v0.6.9) backed by Markdown collections (`src/content/`) and JSON data files (`src/data/`); no database.
 - **Internationalization (i18n)**: Single-locale (`id`) translation and UI dictionary utilities (`src/utils/i18n.ts`).
 - **Typography & Icons**: `@fontsource/inter`, `@fontsource/montserrat`, `@fontsource/poppins`; icon styles in `src/styles/icons.css`.
-- **Runtime & Build Tools**: Node.js `>=22.12.0`, pnpm (the shared CI installs `latest`; `pnpm-lock.yaml` pins resolutions).
+- **Runtime & Build Tools**: Node.js `>=22.12.0`, pnpm (the shared CI installs `latest`; `pnpm-lock.yaml` pins resolutions). Project-level pnpm settings — peer/security overrides and the install-script allowlist — live in `pnpm-workspace.yaml`.
 
 ### 2.2 Directory Layout & Component Roles
 - `astro.config.mjs`: Astro configuration for the Cloudflare adapter, integrations, Vite alias (`@/`), SSR externalized modules (`sharp`, `detect-libc`), and chunk size limits.

@@ -5,11 +5,11 @@ const locale = getLocaleFromUrl(Astro.url);
 const titleLines = t('about.heroTitle', locale).split('\n');
 ---
 
-<section class="eim-hero about-hero" aria-labelledby="about-hero-title">
+<section class="eim-hero eim-subhero" aria-labelledby="eim-subhero-title">
   <canvas class="eim-hero-canvas" aria-hidden="true"></canvas>
-  <div class="eim-hero-inner about-hero-inner">
-    <p class="about-eyebrow">{t('about.heroEyebrow', locale)}</p>
-    <h1 id="about-hero-title" class="eim-hero-title about-hero-title">
+  <div class="eim-hero-inner">
+    <p class="eim-eyebrow">{t('about.heroEyebrow', locale)}</p>
+    <h1 id="eim-subhero-title" class="eim-hero-title">
       {titleLines.map((line) => <span class="eim-hero-title-line">{line}</span>)}
     </h1>
     <p class="eim-hero-desc">{t('about.heroDesc', locale)}</p>
@@ -19,7 +19,7 @@ const titleLines = t('about.heroTitle', locale).split('\n');
         {t('about.heroSecondary', locale)} <span aria-hidden="true">→</span>
       </a>
     </div>
-    <p class="about-hero-meta">{t('about.heroMeta', locale)}</p>
+    <p class="eim-subhero-meta">{t('about.heroMeta', locale)}</p>
   </div>
 </section>
 

@@ -245,6 +245,118 @@ html {
   pointer-events: none;
 }
 
+/* == Sub-hero (About / Structure) == */
+
+.eim-subhero {
+  min-height: clamp(34rem, 78svh, 60rem);
+  align-items: flex-end;
+  justify-content: flex-start;
+  padding-bottom: clamp(4rem, 10vh, 7rem);
+  text-align: left;
+}
+
+.eim-subhero .eim-hero-inner {
+  align-items: flex-start;
+}
+
+.eim-subhero .eim-hero-canvas {
+  /* Clear the copy on the left instead of the homepage's centred ellipse. */
+  -webkit-mask-image: radial-gradient(
+    ellipse 62% 58% at 32% 58%,
+    transparent 0%,
+    transparent 34%,
+    #000 100%
+  );
+  mask-image: radial-gradient(
+    ellipse 62% 58% at 32% 58%,
+    transparent 0%,
+    transparent 34%,
+    #000 100%
+  );
+}
+
+.eim-subhero .eim-hero-title {
+  max-width: 20ch;
+}
+
+.eim-subhero .eim-hero-desc {
+  max-width: 56ch;
+}
+
+.eim-subhero .eim-hero-actions {
+  justify-content: flex-start;
+}
+
+.eim-eyebrow {
+  margin-bottom: clamp(1rem, 2.5vh, 1.5rem);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-brand);
+}
+
+.eim-subhero-meta {
+  width: 100%;
+  margin-top: clamp(2.5rem, 7vh, 4rem);
+  padding-top: 1rem;
+  border-top: 1px solid var(--color-line);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-muted-ink);
+}
+
+/* == CTA (About / Structure) == */
+
+.eim-cta {
+  background: var(--color-black);
+  color: var(--color-background);
+}
+
+.eim-cta-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.95rem 1.9rem;
+  border-radius: var(--radius-pill);
+  background: var(--color-brand-bright);
+  color: var(--color-black);
+  font-family: var(--font-body);
+  font-size: 1rem;
+  font-weight: 500;
+  line-height: 1;
+  text-decoration: none;
+  transition: background-color var(--dur-control) var(--ease), transform var(--dur-control) var(--ease);
+}
+
+.eim-cta-primary:hover {
+  background: var(--color-background);
+  transform: translateY(-2px);
+}
+
+.eim-cta-secondary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4em;
+  padding: 0.5rem 0.25rem;
+  font-family: var(--font-body);
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--color-background);
+  text-decoration: underline;
+  text-decoration-color: var(--color-brand-bright);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.3em;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .eim-cta-primary:hover {
+    transform: none;
+  }
+}
+
 /* The legacy mobile h1 pin now excludes body.home-skin (mobile.css), so the
    hero keeps its own clamp without an !important reclaim. */
 

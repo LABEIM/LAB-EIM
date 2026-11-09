@@ -1,7 +1,6 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import '../styles/pages/home-eim.css';
-import '../styles/pages/about-eim.css';
 import { getLocaleFromUrl, getLocalizedJsonData, t } from '../utils/i18n';
 import { parseDivisions } from '../utils/division-mapper';
 import type { AboutData, DivisionConfig, Member } from '../utils/types';
@@ -10,7 +9,7 @@ import AboutProfile from '../components/about/AboutProfile.astro';
 import AboutStats from '../components/about/AboutStats.astro';
 import EimVisiMisi from '../components/home/EimVisiMisi.astro';
 import AboutTeam from '../components/about/AboutTeam.astro';
-import AboutCTA from '../components/about/AboutCTA.astro';
+import EimCTA from '../components/home/EimCTA.astro';
 import EimSectionNav from '../components/home/EimSectionNav.astro';
 
 const locale = getLocaleFromUrl(Astro.url);
@@ -42,6 +41,6 @@ const sectionItems = [
     <AboutStats membersCount={members.length} divisionsCount={divisions.length} focusCount={4} />
     <EimVisiMisi about={aboutData} />
     <AboutTeam coordinators={coordinators} divisions={divisions} />
-    <AboutCTA site={siteData} />
+    <EimCTA site={siteData} />
   </main>
 </Layout>

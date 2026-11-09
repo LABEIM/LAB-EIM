@@ -284,6 +284,12 @@ export interface DivisionPanel {
   href: string;
 }
 
+export interface DivisionSection {
+  division: DivisionConfig;
+  coordinator: Member | null;
+  staff: Member[];
+}
+
 export interface AboutData {
   title: string;
   description: string;

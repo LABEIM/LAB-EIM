@@ -1,0 +1,116 @@
+---
+import type { DivisionSection, Member } from '../../utils/types';
+import type { Locale } from '../../utils/i18n';
+import { t } from '../../utils/i18n';
+
+interface Props {
+  core: Member[];
+  divisionSections: DivisionSection[];
+  locale: Locale;
+  startIndex?: number;
+}
+
+const { core, divisionSections, locale, startIndex = 3 } = Astro.props;
+
+const labCoordinator =
+  core.find((member) => /lab coordinator/i.test(member.role)) ?? core[0] ?? null;
+const secretary = core.find((member) => /secretary/i.test(member.role)) ?? null;
+const treasurer = core.find((member) => /treasurer/i.test(member.role)) ?? null;
+const hasPair = Boolean(secretary || treasurer);
+---
+
+<section
+  id="struktur"
+  class="pt-[clamp(2rem,5vh,3.5rem)] pb-[clamp(4.5rem,10vh,8.75rem)]"
+  aria-labelledby="struct-chart-title"
+>
+  <div class="mx-auto max-w-[1200px] px-[clamp(1.25rem,4vw,4rem)]">
+    <div class="grid gap-6 lg:grid-cols-2 lg:items-end">
+      <h2
+        id="struct-chart-title"
+        class="e-reveal font-display text-[clamp(2rem,4vw,3.5rem)] leading-[1.05] tracking-[-0.01em]"
+      >
+        {t('struct.chartTitle', locale)}
+      </h2>
+      <p class="e-reveal max-w-[52ch] text-[15px] leading-[1.55] text-muted-ink lg:justify-self-end">
+        {t('struct.chartIntro', locale)}
+      </p>
+    </div>
+
+    <div
+      class="mt-[clamp(2.5rem,6vh,4rem)] rounded-media border border-line bg-surface p-[clamp(1.25rem,4vw,3rem)]"
+    >
+      <nav class="org-tree e-reveal" aria-label={t('struct.chartLabel', locale)}>
+        <div class="org-tier">
+          <a class="org-node org-node--single" href="#pembina">
+            <span class="org-node-kicker">{t('struct.tierPembina', locale)}</span>
+            <span class="org-node-title">{t('struct.dosenCoordinator', locale)}</span>
+          </a>
+        </div>
+
+        <span class="org-stem" aria-hidden="true"></span>
+
+        <div class="org-tier">
+          <a class="org-node org-node--single" href="#pembina">
+            <span class="org-node-kicker">{t('struct.tierPembina', locale)}</span>
+            <span class="org-node-title">{t('struct.dosenLab', locale)}</span>
+          </a>
+        </div>
+
+        {labCoordinator && (
+          <>
+            <span class="org-stem" aria-hidden="true"></span>
+            <div class="org-tier">
+              <a class="org-node org-node--single" href="#inti">
+                <span class="org-node-kicker">{t('struct.tierCore', locale)}</span>
+                <span class="org-node-title">{labCoordinator.name}</span>
+                <span class="org-node-role">{labCoordinator.role}</span>
+              </a>
+            </div>
+          </>
+        )}
+
+        {hasPair && (
+          <>
+            <span class="org-stem" aria-hidden="true"></span>
+            <div class="org-branch--pair" aria-hidden="true"></div>
+            <div class="org-tier org-tier--pair">
+              {secretary && (
+                <a class="org-node org-node--pair" href="#inti">
+                  <span class="org-node-kicker">{t('struct.tierCore', locale)}</span>
+                  <span class="org-node-title">{secretary.name}</span>
+                  <span class="org-node-role">{secretary.role}</span>
+                </a>
+              )}
+              {treasurer && (
+                <a class="org-node org-node--pair" href="#inti">
+                  <span class="org-node-kicker">{t('struct.tierCore', locale)}</span>
+                  <span class="org-node-title">{treasurer.name}</span>
+                  <span class="org-node-role">{treasurer.role}</span>
+                </a>
+              )}
+            </div>
+          </>
+        )}
+
+        <span class="org-stem" aria-hidden="true"></span>
+        <p class="org-tier-label">{t('struct.tierDivisions', locale)}</p>
+        <div class="org-branch--divisions" aria-hidden="true"></div>
+        <div class="org-tier org-tier--divisions">
+          {divisionSections.map(({ division, coordinator, staff }, index) => (
+            <a
+              class="org-node org-node--division"
+              href={`#divisi-${division.id}`}
+            >
+              <span class="org-node-index">{String(startIndex + index).padStart(2, '0')}</span>
+              <span class="org-node-title">{division.displayName}</span>
+              <span class="org-node-count">
+                {t('struct.divisionCount', locale, { n: String(staff.length + (coordinator ? 1 : 0)) })}
+              </span>
+            </a>
+          ))}
+        </div>
+      </nav>
+    </div>
+  </div>
+</section>

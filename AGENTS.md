@@ -61,7 +61,7 @@ Before ending a session, the agent must perform these tasks:
 - `src/content.config.ts`: Collection loaders and Zod schemas (`news`, `events`).
 - `src/content/`: Static Markdown content files (`news/`, `events/`).
 - `src/data/`: JSON configuration (`site.json`, `members.json`, `divisions.json`, `registration.json`) and `CONFIG_GUIDE.md`.
-- `src/components/`: Reusable Astro and React UI components (Navbar, Footer, cards, forms).
+- `src/components/`: Reusable Astro and React UI components (Navbar, Footer, cards, forms, plus homepage and about-page sections under `home/` and `about/`).
 - `src/pages/`: File-system routes, the `/keystatic` admin, and API endpoints.
 - `src/layouts/Layout.astro`: Base wrapper page layout.
 - `src/styles/`: Modular design system and stylesheets (`variables.css`, `base.css`, `globals.css`, `mobile.css`, `icons.css`, plus `components/` and `pages/`).

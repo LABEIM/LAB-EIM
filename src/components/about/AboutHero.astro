@@ -1,0 +1,30 @@
+---
+import { getLocaleFromUrl, t } from '../../utils/i18n';
+
+const locale = getLocaleFromUrl(Astro.url);
+const titleLines = t('about.heroTitle', locale).split('\n');
+---
+
+<section class="eim-hero about-hero" aria-labelledby="about-hero-title">
+  <canvas class="eim-hero-canvas" aria-hidden="true"></canvas>
+  <div class="eim-hero-inner about-hero-inner">
+    <p class="about-eyebrow">{t('about.heroEyebrow', locale)}</p>
+    <h1 id="about-hero-title" class="eim-hero-title about-hero-title">
+      {titleLines.map((line) => <span class="eim-hero-title-line">{line}</span>)}
+    </h1>
+    <p class="eim-hero-desc">{t('about.heroDesc', locale)}</p>
+    <div class="eim-hero-actions">
+      <a class="eim-hero-cta" href="/registration">{t('about.heroPrimary', locale)}</a>
+      <a class="eim-hero-secondary" href="/structure">
+        {t('about.heroSecondary', locale)} <span aria-hidden="true">→</span>
+      </a>
+    </div>
+    <p class="about-hero-meta">{t('about.heroMeta', locale)}</p>
+  </div>
+  <span class="eim-hero-scroll" aria-hidden="true"></span>
+</section>
+
+<script>
+  import { initTopologyField } from '../../scripts/topology-field';
+  initTopologyField();
+</script>

@@ -32,8 +32,8 @@
     "@fontsource/inter": "^5.1.0",
     "@fontsource/montserrat": "^5.1.0",
     "@fontsource/poppins": "^5.1.0",
-    "@keystatic/astro": "^5.0.0",
-    "@keystatic/core": "^0.6.0",
+    "@keystatic/astro": "^6.0.0",
+    "@keystatic/core": "^0.6.9",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
     "typescript": "^6.0.3"

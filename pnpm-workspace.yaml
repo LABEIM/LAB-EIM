@@ -1,0 +1,14 @@
+# pnpm 12 reads project settings from this file (not package.json's `pnpm` field).
+# @napi-rs/wasm-runtime auto-installs @emnapi/runtime 2.0.0-beta as its peer,
+# which crashes @emnapi/core 1.11.x at startup ("bridge.setLastError is not a
+# function"). Pin the 1.x line that matches the core version.
+overrides:
+  '@emnapi/runtime': 1.11.3
+
+# pnpm 12 blocks install scripts by default. esbuild and workerd need theirs;
+# sharp ships working prebuilt binaries (verified), and its install script
+# fails on the miniflare copy, so it is explicitly denied.
+allowBuilds:
+  esbuild: true
+  sharp: false
+  workerd: true

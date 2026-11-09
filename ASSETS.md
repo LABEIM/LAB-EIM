@@ -141,5 +141,5 @@ header: {
 If there are updates to the master logo images, all assets can be automatically regenerated with a single command:
 
 ```bash
-npm run generate:assets
+pnpm run generate:assets
 ```

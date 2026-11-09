@@ -7,7 +7,7 @@ Before writing any code, the agent must complete these steps:
 1. Confirm the working directory using `pwd`.
 2. Inspect the repository structure and key configuration files (`package.json`, `astro.config.mjs`, `keystatic.config.ts`, `src/content.config.ts`, `src/`) to understand the current architecture and state.
 3. Review recent repository history by checking the last 5 commits using `git log --oneline -5`.
-4. Run baseline build/verification using `npm run build` and `npx astro check` before starting new work. If baseline verification fails, fix that issue first before stacking new feature work on top of a broken starting state.
+4. Run baseline build/verification using `pnpm run build` and `pnpm exec astro check` before starting new work. If baseline verification fails, fix that issue first before stacking new feature work on top of a broken starting state.
 
 ### 1.2 Working Rules
 1. Focus entirely on one feature or task at a time.
@@ -28,9 +28,9 @@ Before writing any code, the agent must complete these steps:
 ### 1.4 Definition Of Done
 A feature achieves the status of completed only when all of the following conditions are met:
 1. The target behavior is fully implemented and satisfies requirements.
-2. The project compiles/builds successfully locally using `npm run build`.
-3. Diagnostics, linter, and type checks run successfully with zero errors using `npx astro check`.
-4. Automated tests pass using `npm test`.
+2. The project compiles/builds successfully locally using `pnpm run build`.
+3. Diagnostics, linter, and type checks run successfully with zero errors using `pnpm exec astro check`.
+4. Automated tests pass using `pnpm test`.
 5. If testing dynamic logic, client UI, or API endpoints, manually verify correct DOM rendering, HTTP status codes, and fallback states.
 6. Web audit compliance: Client UI pages meet Google Lighthouse / PageSpeed audit benchmarks (Target: >= 90 across Performance, Accessibility, Best Practices, and SEO).
 
@@ -53,7 +53,7 @@ Before ending a session, the agent must perform these tasks:
 - **Database / CMS**: Keystatic CMS (`@keystatic/astro` v5.0.0, `@keystatic/core` v0.6.0) backed by Markdown collections (`src/content/`) and JSON data files (`src/data/`); no database.
 - **Internationalization (i18n)**: Single-locale (`id`) translation and UI dictionary utilities (`src/utils/i18n.ts`).
 - **Typography & Icons**: `@fontsource/inter`, `@fontsource/montserrat`, `@fontsource/poppins`; icon styles in `src/styles/icons.css`.
-- **Runtime & Build Tools**: Node.js `>=22.12.0`, npm.
+- **Runtime & Build Tools**: Node.js `>=22.12.0`, pnpm (pinned via Corepack in `package.json`).
 
 ### 2.2 Directory Layout & Component Roles
 - `astro.config.mjs`: Astro configuration for the Cloudflare adapter, integrations, Vite alias (`@/`), SSR externalized modules (`sharp`, `detect-libc`), and chunk size limits.
@@ -125,9 +125,9 @@ Before ending a session, the agent must perform these tasks:
 
 ### 4.2 Testing & Portability
 1. **Verification**:
-   - Type checks and diagnostics: `npx astro check`
-   - Test suite: `npm test`
-   - Production compilation: `npm run build`
+   - Type checks and diagnostics: `pnpm exec astro check`
+   - Test suite: `pnpm test`
+   - Production compilation: `pnpm run build`
 2. **Test Isolation**: The static site modifies no database state. Run the local dev server on `http://localhost:4321`.
 
 ### 4.3 Containerization & Ports

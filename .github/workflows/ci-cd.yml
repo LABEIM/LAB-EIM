@@ -36,8 +36,8 @@ jobs:
       # Runtime & Build
       node_version: '22'
       package_manager: 'auto'
-      check_command: 'npx astro check'
-      build_command: 'npm run build'
+      check_command: 'pnpm exec astro check'
+      build_command: 'pnpm run build'
       dist_dir: 'dist'
 
       # Platforms

@@ -252,9 +252,9 @@ When a candidate searches their Student ID (NIM), the result note message is aut
    * **Where it comes from**: Automatic system default polite pass/fail announcement message.
 
 ### Useful Sync & Reset Commands:
-* `npm run sync:results` : Merges `bulkImportText` into existing candidate cards.
-* `npm run sync:results:replace` : Replaces candidate cards with ONLY what is in `bulkImportText` (deletes cards removed from spreadsheet).
-* `npm run clear:results` : Completely clears both `bulkImportText` and all candidate cards in `Candidate List`.
+* `pnpm run sync:results` : Merges `bulkImportText` into existing candidate cards.
+* `pnpm run sync:results:replace` : Replaces candidate cards with ONLY what is in `bulkImportText` (deletes cards removed from spreadsheet).
+* `pnpm run clear:results` : Completely clears both `bulkImportText` and all candidate cards in `Candidate List`.
 
 
 ---
@@ -265,10 +265,10 @@ Before going live, execute these commands to ensure everything is valid:
 
 ```bash
 # 1. Framework diagnostics & type checks
-npx astro check
+pnpm exec astro check
 
 # 2. Production build check
-npm run build
+pnpm run build
 ```
 
 ### End-to-End Test Procedure:

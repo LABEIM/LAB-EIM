@@ -33,8 +33,8 @@ This guide provides step-by-step instructions for local development, deploying t
              lab-eim.pages.dev)                      or lab-eim.vercel.app)
 ```
 
-- **Build Export**: Pure static SSG HTML/CSS/JS export in `dist/` (`npm run build`).
-- **Primary Hosting**: Cloudflare Pages (`npx wrangler pages deploy`).
+- **Build Export**: Pure static SSG HTML/CSS/JS export in `dist/` (`pnpm run build`).
+- **Primary Hosting**: Cloudflare Pages (`pnpm dlx wrangler pages deploy`).
 - **Backup Hosting**: Vercel Static Deployment (`vercel deploy dist --prod`).
 
 ---
@@ -46,13 +46,13 @@ Follow these steps to set up and run the website locally on your machine.
 ### Prerequisites
 
 - **Node.js**: Version `>=22.12.0` (required by Astro 7+ runtime constraints).
-- **npm**: Standard Node package manager.
+- **pnpm**: Package manager via Corepack (pinned in `package.json`).
 
 ### 1.1 Install Dependencies
 
 In the root directory, run:
 ```bash
-npm install
+pnpm install
 ```
 
 ### 1.2 Environment Configuration
@@ -67,7 +67,7 @@ Fill in the appropriate values for your local environment (see Section 3.3 for e
 
 To start the local development server:
 ```bash
-npm run dev
+pnpm run dev
 ```
 Once started, access the site at [http://localhost:4321](http://localhost:4321).
 
@@ -75,14 +75,14 @@ Once started, access the site at [http://localhost:4321](http://localhost:4321).
 
 To run Astro type checks and framework diagnostics:
 ```bash
-npx astro check
+pnpm exec astro check
 ```
 
 ### 1.5 Local Production Build
 
 To test compiling the production static build locally:
 ```bash
-npm run build
+pnpm run build
 ```
 The compiled static HTML/CSS/JS files will be exported to the `dist/` directory.
 
@@ -244,10 +244,10 @@ The Vercel backup deployment is enabled automatically when both variables are pr
 ```
 ┌─────────────────────────────────────────────────────────────────┐
 │ validate-and-build (15 min timeout, Shared-CICD)                │
-│ ├─ npm ci (cached)                                              │
+│ ├─ pnpm install --frozen-lockfile (cached)                      │
 │ ├─ Export PUBLIC_* secrets to the build environment             │
-│ ├─ npx astro check                                              │
-│ ├─ npm run build + SHA256 hash                                  │
+│ ├─ pnpm exec astro check                                        │
+│ ├─ pnpm run build + SHA256 hash                                 │
 │ └─ Upload dist/ artifact                                        │
 └──────────────────────────┬──────────────────────────────────────┘
                            │
@@ -267,7 +267,7 @@ The Vercel backup deployment is enabled automatically when both variables are pr
               └─────────────────────┘     └───────────────────┘
 ```
 
-1. **`validate-and-build`**: Installs dependencies with `npm ci`, exports inherited `PUBLIC_*` secrets to the build environment, runs `npx astro check` and `npm run build`, and uploads the compiled `dist/` artifact. The built output includes `dist/_worker.js` and `dist/_routes.json`, so Cloudflare Pages serves `/keystatic` and `/api/keystatic/*` through the worker.
+1. **`validate-and-build`**: Installs dependencies with `pnpm install --frozen-lockfile`, exports inherited `PUBLIC_*` secrets to the build environment, runs `pnpm exec astro check` and `pnpm run build`, and uploads the compiled `dist/` artifact. The built output includes `dist/_worker.js` and `dist/_routes.json`, so Cloudflare Pages serves `/keystatic` and `/api/keystatic/*` through the worker.
 2. **`deploy-cloudflare` & `deploy-vercel`**: Deploys the `dist/` artifact to Cloudflare Pages (Primary) and, when the Vercel variables are configured, Vercel (Backup) **in parallel** with **retry logic** (3 attempts, exponential backoff). `deploy-cloudflare` resolves the canonical Production URL (`https://lab-eim.pages.dev`) on `main` and branch alias URLs (`https://<branch>.lab-eim.pages.dev`) on feature branches. Both jobs register GitHub Deployment environments for deploy tracking.
 3. **`comment-pr` (Post PR Preview Comment)**: Posts or updates a formatted table with the live Cloudflare and Vercel preview deployment URLs, commit SHA, and workflow run link on Pull Requests.
 4. **`lighthouse`**: Audits the routes listed in `lighthouse_routes` with **3 runs** each (representative median score), resolves the live Cloudflare URL first (or the static build as a fallback), and appends parsed scores to `$GITHUB_STEP_SUMMARY` and the PR preview comment. On **Pull Requests**, a failing Lighthouse score marks the PR check failed. On **push to `main`**, it serves as post-deploy monitoring. Score thresholds:
@@ -282,7 +282,7 @@ The Vercel backup deployment is enabled automatically when both variables are pr
 - **Principle of Least Privilege**: The caller grants only `contents: read`, `pull-requests: write`, and `deployments: write`; the shared workflow cannot exceed those permissions.
 - **Scoped Credentials**: `secrets: inherit` passes the repository secrets into the shared workflow. Only inherited `PUBLIC_*` secrets are exported to the build environment; deployment tokens stay scoped to the deploy steps.
 - **Path Filtering (`paths-ignore`)**: Push events to `main` ignore root documentation updates (`README.md`, `DEPLOYMENT.md`, etc.), saving CI runner minutes while preserving full verification for content (`src/content/`) and source code. PR events always run full verification.
-- **Centralized `.npmrc`**: Configures `legacy-peer-deps=true` at repository level for consistent dependency installation across CI and local environments.
+- **Centralized pnpm settings**: `pnpm-workspace.yaml` carries the `@emnapi/runtime` override (peer-resolution workaround for `@napi-rs/wasm-runtime`) and the `allowBuilds` list for esbuild/workerd install scripts.
 - **Job Timeouts & Retries**: The shared workflow applies explicit job timeouts (5–15 minutes) and retries Cloudflare/Vercel deployments up to 3 times with exponential backoff (10s → 20s → 40s).
 - **Concurrency Control**: Duplicate runs on the same branch are automatically cancelled.
 - **Artifact Integrity**: The shared workflow generates a SHA256 hash for the build artifact before deployment.
@@ -317,7 +317,7 @@ Dependabot automatically creates PRs for outdated dependencies every Monday. Dep
 | `fonts` | `@fontsource/*` |
 | `github-actions` | All workflow action updates |
 
-All PRs are labeled (`dependencies`, `automated`) and use Conventional Commits prefixes (`chore(deps):` for npm, `ci(deps):` for actions).
+All PRs are labeled (`dependencies`, `automated`) and use Conventional Commits prefixes (`chore(deps):` for dependency updates, `ci(deps):` for actions).
 
 ### 6.2 Dependabot Auto-Merge ([`.github/workflows/dependabot-auto-merge.yml`](file:///.github/workflows/dependabot-auto-merge.yml))
 

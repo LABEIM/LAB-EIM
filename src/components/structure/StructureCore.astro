@@ -35,7 +35,7 @@ const { members, locale } = Astro.props;
       </p>
     </div>
 
-    <div class="e-reveal-group mt-[clamp(2.5rem,6vh,4rem)] grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-3">
+    <div class="e-reveal-group mt-[clamp(2.5rem,6vh,4rem)] grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
       {members.map((member, index) => <MemberTile member={member} index={index} />)}
     </div>
   </div>

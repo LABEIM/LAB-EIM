@@ -270,6 +270,15 @@ export interface Member {
   position?: string;
 }
 
+export interface Lecturer {
+  id: string;
+  name: string;
+  role: string;
+  image: string;
+  scale?: string;
+  position?: string;
+}
+
 export interface HeroPortrait {
   name: string;
   image: string;

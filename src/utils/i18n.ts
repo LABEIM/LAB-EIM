@@ -187,7 +187,9 @@ export const uiTranslations: Record<Locale, Record<string, string>> = {
     'struct.coreIntro': 'Koordinator laboratorium, sekretaris, dan bendahara yang menjaga operasional EIM tetap berjalan.',
     'struct.divisionLabel': 'Divisi',
     'struct.divisionCount': '{n} anggota',
+    'struct.lecturerCount': '{n} dosen',
     'struct.coordinatorLabel': 'Koordinator',
+    'struct.staffLabel': 'Anggota',
 
     // About Page
     'about.vision': 'Visi',

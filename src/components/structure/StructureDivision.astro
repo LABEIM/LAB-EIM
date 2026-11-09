@@ -3,6 +3,7 @@ import type { DivisionSection } from '../../utils/types';
 import type { Locale } from '../../utils/i18n';
 import { t } from '../../utils/i18n';
 import MemberTile from './MemberTile.astro';
+import StaffList from './StaffList.astro';
 
 interface Props {
   section: DivisionSection;
@@ -32,6 +33,9 @@ const sectionId = `divisi-${division.id}`;
         >
           {division.displayName}
         </h2>
+        <p class="e-reveal mt-3 font-mono text-xs uppercase tracking-[0.08em] text-muted-ink">
+          {t('struct.divisionCount', locale, { n: String(staff.length + (coordinator ? 1 : 0)) })}
+        </p>
       </div>
       <p class="e-reveal max-w-[52ch] text-[15px] leading-[1.55] text-muted-ink lg:justify-self-end">
         {division.description}
@@ -47,10 +51,6 @@ const sectionId = `divisi-${division.id}`;
       </div>
     )}
 
-    {staff.length > 0 && (
-      <div class="e-reveal-group mt-[clamp(2.5rem,6vh,4rem)] grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 lg:grid-cols-4">
-        {staff.map((member, staffIndex) => <MemberTile member={member} index={staffIndex} />)}
-      </div>
-    )}
+    <StaffList members={staff} locale={locale} />
   </div>
 </section>

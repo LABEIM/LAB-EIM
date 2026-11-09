@@ -11,12 +11,19 @@ import StructureCore from '../components/structure/StructureCore.astro';
 import StructureDivision from '../components/structure/StructureDivision.astro';
 import { buildDivisionMap, getDivisionInfo, parseDivisions } from '../utils/division-mapper';
 import { getLocaleFromUrl, getLocalizedJsonData, t } from '../utils/i18n';
-import type { DivisionConfig, DivisionSection, Member } from '../utils/types';
+import type { DivisionConfig, DivisionSection, Lecturer, Member } from '../utils/types';
 
 const locale = getLocaleFromUrl(Astro.url);
 const membersData = getLocalizedJsonData<{ list: Member[] }>('members', locale);
 const divisionsData = getLocalizedJsonData<any>('divisions', locale);
 const siteData = getLocalizedJsonData<any>('site', locale);
+const lecturersData = getLocalizedJsonData<{ list: Lecturer[] }>('lecturers', locale);
+
+const fallbackLecturers: Lecturer[] = [
+  { id: 'dosen-koordinator', name: '', role: t('struct.dosenCoordinator', locale), image: '' },
+  { id: 'dosen-lab-1', name: '', role: t('struct.dosenLab', locale), image: '' },
+];
+const lecturers = lecturersData?.list?.length ? lecturersData.list : fallbackLecturers;
 
 const divisions = parseDivisions(divisionsData);
 const members = membersData?.list ?? [];
@@ -71,10 +78,11 @@ const sectionItems = [
     <StructureChart
       core={coreMembers}
       divisionSections={divisionSections}
+      lecturers={lecturers}
       locale={locale}
       startIndex={3}
     />
-    <StructurePembina locale={locale} />
+    <StructurePembina lecturers={lecturers} locale={locale} />
     <StructureCore members={coreMembers} locale={locale} />
     {divisionSections.map((section, index) => (
       <StructureDivision section={section} index={index + 3} locale={locale} />

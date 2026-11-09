@@ -60,7 +60,7 @@ Before ending a session, the agent must perform these tasks:
 - `keystatic.config.ts`: Keystatic CMS singletons (e.g. recruitment settings) and collections.
 - `src/content.config.ts`: Collection loaders and Zod schemas (`news`, `events`).
 - `src/content/`: Static Markdown content files (`news/`, `events/`).
-- `src/data/`: JSON configuration (`site.json`, `members.json`, `divisions.json`, `registration.json`) and `CONFIG_GUIDE.md`.
+- `src/data/`: JSON configuration (`site.json`, `members.json`, `lecturers.json`, `divisions.json`, `registration.json`) and `CONFIG_GUIDE.md`.
 - `src/components/`: Reusable Astro and React UI components (Navbar, Footer, cards, forms, plus homepage, about-page, and structure-page sections under `home/`, `about/`, and `structure/`).
 - `src/pages/`: File-system routes, the `/keystatic` admin, and API endpoints.
 - `src/layouts/Layout.astro`: Base wrapper page layout.

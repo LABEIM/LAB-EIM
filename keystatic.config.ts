@@ -474,6 +474,27 @@ export default config({
         ),
       },
     }),
+    lecturers: singleton({
+      label: 'Lecturers',
+      path: 'src/data/lecturers',
+      format: { data: 'json' },
+      schema: {
+        list: fields.array(
+          fields.object({
+            id: fields.text({ label: 'ID' }),
+            name: fields.text({ label: 'Name' }),
+            role: fields.text({ label: 'Role' }),
+            image: fields.text({ label: 'Image Path' }),
+            scale: fields.text({ label: 'Scale Factor' }),
+            position: fields.text({ label: 'Position' }),
+          }),
+          {
+            label: 'Lecturers List',
+            itemLabel: props => props.fields.name.value || props.fields.role.value || 'Lecturer',
+          }
+        ),
+      },
+    }),
     about: singleton({
       label: 'About Page',
       path: 'src/data/about',

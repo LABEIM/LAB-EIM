@@ -4,15 +4,20 @@
 
 .member-tile {
   display: flex;
-  flex-direction: column;
-  gap: 0.9rem;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-card);
+  background: var(--color-background);
 }
 
 .member-tile-media {
-  position: relative;
-  aspect-ratio: 1;
+  flex: 0 0 6rem;
+  width: 6rem;
+  height: 6rem;
   overflow: hidden;
-  border-radius: var(--radius-media);
+  border-radius: var(--radius-card);
   background: var(--color-surface-strong);
 }
 
@@ -29,19 +34,25 @@
   width: 100%;
   height: 100%;
   font-family: var(--font-display);
-  font-size: clamp(1.5rem, 4vw, 2.5rem);
+  font-size: 1.5rem;
   color: var(--color-muted-ink);
+}
+
+.member-tile-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  min-width: 0;
 }
 
 .member-tile-name {
   font-family: var(--font-display);
-  font-size: clamp(1.1rem, 1.5vw, 1.4rem);
+  font-size: 1.25rem;
   line-height: 1.2;
   overflow-wrap: break-word;
 }
 
 .member-tile-role {
-  margin-top: 0.35rem;
   font-family: var(--font-mono);
   font-size: 0.6875rem;
   letter-spacing: 0.08em;
@@ -50,27 +61,104 @@
 }
 
 .member-tile--featured {
-  display: grid;
-  grid-template-columns: 10rem minmax(0, 1fr);
-  align-items: center;
-  gap: 1.5rem;
-  padding: 1.25rem;
-  border: 1px solid var(--color-line);
-  border-radius: var(--radius-media);
   background: var(--color-surface);
 }
 
-.member-tile--featured .member-tile-media {
-  border-radius: var(--radius-card);
+/* == Lecturer card == */
+
+.lecturer-list {
+  display: grid;
+  gap: 0.75rem;
+  margin-top: 1.5rem;
+  padding: 0;
+  list-style: none;
 }
 
-@media (max-width: 639px) {
-  .member-tile--featured {
-    grid-template-columns: 1fr;
+.lecturer-card {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.75rem;
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-card);
+  background: var(--color-background);
+}
+
+.lecturer-card-media {
+  flex: 0 0 7rem;
+  width: 7rem;
+  height: 7rem;
+  overflow: hidden;
+  border-radius: var(--radius-card);
+  background: var(--color-surface-strong);
+}
+
+.lecturer-card-media img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.lecturer-card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  min-width: 0;
+}
+
+.lecturer-card-name {
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  line-height: 1.2;
+  overflow-wrap: break-word;
+}
+
+.lecturer-card-role {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-muted-ink);
+}
+
+/* Pembina columns share the role/description/card rows so both lecturer cards
+   start at the same height, regardless of description length. */
+.pembina-grid {
+  display: grid;
+}
+
+@media (min-width: 640px) {
+  .pembina-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-rows: auto auto auto;
   }
 
-  .member-tile--featured .member-tile-media {
-    max-width: 10rem;
+  .pembina-col {
+    display: grid;
+    grid-row: span 3;
+    grid-template-rows: subgrid;
+  }
+}
+
+/* == Staff list == */
+
+.staff-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.75rem;
+  margin: 1rem 0 0;
+}
+
+@media (min-width: 640px) {
+  .staff-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1024px) {
+  .staff-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
 
@@ -133,18 +221,113 @@
   font-family: var(--font-display);
   font-size: clamp(1.1rem, 1.5vw, 1.35rem);
   line-height: 1.15;
+  overflow-wrap: break-word;
+}
+
+.org-node--single,
+.org-node--pair,
+.org-node--lead,
+.org-node--lab-group {
+  flex-direction: row;
+  align-items: center;
+  gap: 0.75rem;
+  text-align: left;
 }
 
 .org-node--single {
   width: min(100%, 22rem);
-  align-items: center;
-  text-align: center;
 }
 
 .org-node--pair {
   width: 16rem;
+}
+
+.org-node--lead {
+  grid-column: 2;
+  width: min(100%, 22rem);
+}
+
+.org-node--lab-group {
+  position: relative;
+  grid-column: 3;
+  justify-self: start;
+  width: 16rem;
+  margin-left: 2rem;
+}
+
+.org-node--lab-group::before {
+  content: '';
+  position: absolute;
+  left: -2rem;
+  top: 50%;
+  width: 2rem;
+  height: 1px;
+  background: var(--color-line);
+}
+
+.org-top {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
   align-items: center;
-  text-align: center;
+  width: 100%;
+}
+
+.org-node-avatar-stack {
+  display: flex;
+  align-items: center;
+  padding-left: 0.5rem;
+}
+
+.org-node-avatar.org-node-avatar--stack {
+  flex: 0 0 3rem;
+  width: 3rem;
+  height: 3rem;
+  margin-left: -0.5rem;
+  border: 2px solid var(--color-background);
+  border-radius: var(--radius-card);
+}
+
+.org-node-avatar-more {
+  display: grid;
+  place-items: center;
+  width: 3rem;
+  height: 3rem;
+  margin-left: -0.5rem;
+  border: 2px solid var(--color-background);
+  border-radius: var(--radius-card);
+  background: var(--color-surface-strong);
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  color: var(--color-muted-ink);
+}
+
+.org-node-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  min-width: 0;
+}
+
+.org-node-avatar {
+  flex: 0 0 3.5rem;
+  width: 3.5rem;
+  height: 3.5rem;
+  overflow: hidden;
+  border-radius: var(--radius-card);
+  background: var(--color-surface-strong);
+}
+
+.org-node-avatar img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.org-node-avatar--sm {
+  flex-basis: 3rem;
+  width: 3rem;
+  height: 3rem;
 }
 
 .org-node--division {
@@ -157,6 +340,13 @@
 
 .org-node--division .org-node-count {
   margin-top: auto;
+}
+
+.org-node-div-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
 }
 
 .org-node-index {
@@ -214,7 +404,7 @@
   background: var(--color-line);
 }
 
-/* Division branch: stem -> bus spanning first-to-last card centres (6 equal columns). */
+/* Division branch: stem -> bus spanning first-to-last card centres (5 equal columns). */
 .org-branch--divisions {
   position: relative;
   width: 100%;
@@ -235,17 +425,17 @@
   content: '';
   position: absolute;
   top: 50%;
-  /* Centre of the first/last of six equal columns:
-     100% / 12 minus half a gap, spread across the two outer gaps. */
-  left: calc(100% / 12 - 5 * var(--org-gap) / 12);
-  right: calc(100% / 12 - 5 * var(--org-gap) / 12);
+  /* Centre of the first/last of five equal columns:
+     100% / 10 minus half a gap, spread across the four outer gaps. */
+  left: calc(100% / 10 - 4 * var(--org-gap) / 10);
+  right: calc(100% / 10 - 4 * var(--org-gap) / 10);
   height: 1px;
   background: var(--color-line);
 }
 
 .org-tier--divisions {
   display: grid;
-  grid-template-columns: repeat(6, minmax(0, 1fr));
+  grid-template-columns: repeat(5, minmax(0, 1fr));
   gap: var(--org-gap);
   width: 100%;
 }
@@ -287,6 +477,28 @@
 
   .org-branch--divisions::before {
     height: 100%;
+  }
+}
+
+@media (max-width: 1099px) {
+  .org-top {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .org-node--lead {
+    width: min(100%, 22rem);
+  }
+
+  .org-node--lab-group {
+    width: min(100%, 22rem);
+    margin-left: 0;
+  }
+
+  .org-node--lab-group::before {
+    display: none;
   }
 }
 

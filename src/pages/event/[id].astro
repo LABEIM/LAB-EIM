@@ -3,18 +3,21 @@ import { getCollection, render } from 'astro:content';
 import Layout from '../../layouts/Layout.astro';
 import '../../styles/pages/home-eim.css';
 import '../../styles/pages/kegiatan-eim.css';
-import EimCTA from '../../components/home/EimCTA.astro';
-import KegiatanDetailHero from '../../components/kegiatan/KegiatanDetailHero.astro';
-import KegiatanDetailBody from '../../components/kegiatan/KegiatanDetailBody.astro';
+import KegiatanRecapHero from '../../components/kegiatan/KegiatanRecapHero.astro';
+import KegiatanStory from '../../components/kegiatan/KegiatanStory.astro';
+import KegiatanGallery from '../../components/kegiatan/KegiatanGallery.astro';
 import KegiatanRelated from '../../components/kegiatan/KegiatanRelated.astro';
 import {
   getCleanSlug,
   getCollectionEntriesForLocale,
   getLocaleFromUrl,
-  getLocalizedJsonData,
+  t,
 } from '../../utils/i18n';
 import { filterAuditContent } from '../../utils/content-helpers';
-import { compareEventDates } from '../../utils/event-helpers';
+import {
+  compareEventDates,
+  getEventStoryGallery,
+} from '../../utils/event-helpers';
 import type { EventEntry } from '../../utils/event-helpers';
 
 export async function getStaticPaths() {
@@ -33,17 +36,15 @@ interface Props {
 const locale = getLocaleFromUrl(Astro.url);
 const { event } = Astro.props;
 const { Content } = await render(event);
-const siteData = getLocalizedJsonData<any>('site', locale);
 
 const all = filterAuditContent(getCollectionEntriesForLocale(await getCollection('events'), locale));
-const pool = all.filter((item) => item.id !== event.id);
+// Sort once, then keep same-category entries first (filters preserve order).
+const pool = all
+  .filter((item) => item.id !== event.id)
+  .sort((a, b) => compareEventDates(a, b, 'desc'));
 const related = [
-  ...pool
-    .filter((item) => item.data.category === event.data.category)
-    .sort((a, b) => compareEventDates(a, b, 'desc')),
-  ...pool
-    .filter((item) => item.data.category !== event.data.category)
-    .sort((a, b) => compareEventDates(a, b, 'desc')),
+  ...pool.filter((item) => item.data.category === event.data.category),
+  ...pool.filter((item) => item.data.category !== event.data.category),
 ].slice(0, 3);
 ---
 
@@ -54,12 +55,18 @@ const related = [
   skipLink
 >
   <main id="main-content" tabindex="-1">
-    <KegiatanDetailHero event={event} locale={locale} />
-    <KegiatanDetailBody event={event} locale={locale}>
+    <KegiatanRecapHero event={event} locale={locale} />
+    <KegiatanStory event={event}>
       <Content />
-    </KegiatanDetailBody>
+    </KegiatanStory>
+    <KegiatanGallery event={event} locale={locale} />
+    {!event.body?.trim() && getEventStoryGallery(event).length === 0 && (
+      <p class="kegiatan-recap-empty">{t('events.recapEmpty', locale)}</p>
+    )}
     <KegiatanRelated events={related} locale={locale} />
-    <EimCTA site={siteData} />
+    <div class="kegiatan-recap-end">
+      <a class="kegiatan-back" href="/event">{t('events.backToIndex', locale)}</a>
+    </div>
   </main>
 </Layout>
 

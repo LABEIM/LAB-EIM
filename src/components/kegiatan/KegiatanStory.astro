@@ -1,0 +1,19 @@
+---
+import type { EventEntry } from '../../utils/event-helpers';
+
+interface Props {
+  event: EventEntry;
+}
+
+const { event } = Astro.props;
+---
+
+{
+  event.body?.trim() && (
+    <article id="cerita" class="kegiatan-story">
+      <div class="kegiatan-story-inner kegiatan-prose">
+        <slot />
+      </div>
+    </article>
+  )
+}

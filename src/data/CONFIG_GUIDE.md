@@ -151,13 +151,13 @@ Events are stored as Markdown (`.md`) files in `src/content/events/`.
 * **`status`** (String): Must be one of `"upcoming"`, `"ongoing"`, or `"completed"`.
 * **`event_date`** (String): Date of the event in `YYYY-MM-DD` format.
 * **`description`** (String): A short summary of the event shown in lists and as the detail lead.
-* **`link`** (String, Optional): Registration or external link. When present, the detail page renders a registration CTA.
-* **`poster`** (String, Optional): Poster/cover image URL. Falls back to the first `image` when empty.
-* **`image`** (Array of Strings, Optional): Optional image URLs/paths. The first image is used as the cover when `poster` is empty; the cover is excluded from the documentation gallery.
+* **`link`** (String, Optional): Registration or external link kept for reference; the detail page does not render a registration CTA.
+* **`poster`** (String, Optional): Poster image URL. Used as the list card cover, and on the detail page only as the cover fallback when `image` is empty.
+* **`image`** (Array of Strings, Optional): Optional image URLs/paths. The first non-blank image is used as the detail page cover; the remaining images render as the documentation gallery.
 * **`icon`** (String, Optional): FontAwesome icon class name (e.g., `"fa-building-columns"`, `"fa-solid fa-calendar-days"`).
 * **`organizer`** (String, Optional): Name of the organizer (defaults to `"EIM Research Lab"`).
-* **`benefits`** (Array of Strings, Optional): List of benefits for participants.
-* **`requirements`** (Array of Strings, Optional): List of requirements/criteria for participants.
+* **`benefits`** (Array of Strings, Optional): Accepted by the schema but not rendered on the detail page.
+* **`requirements`** (Array of Strings, Optional): Accepted by the schema but not rendered on the detail page.
 * **`audit`** (Boolean, Optional): Marks benchmark-only content. Audit entries are reachable by direct URL but hidden from production listings and related-event pools.
 
 ### Event Template

@@ -6,7 +6,11 @@ event_date: "2024-01-01"
 description: "Kegiatan ini digunakan sebagai konten tetap untuk pengujian performa Lighthouse CI. Tidak ditampilkan di halaman daftar kegiatan."
 link: ""
 image:
-  - "https://images.unsplash.com/photo-1541701494587-cb58502866ab?auto=format&fit=crop&q=80&w=1200"
+  - "/image/eim/EIM.png"
+  - "/assets/brand/eim-logo-horizontal.png"
+  - "/assets/brand/eim-logo-vertical.png"
+  - "/assets/brand/eim-emblem.png"
+poster: "/assets/brand/eim-logo.png"
 icon: "fa-solid fa-flask"
 organizer: "EIM Research Lab"
 benefits:

@@ -17,10 +17,23 @@ export function getEventCover(event: EventEntry): string | null {
   return getEventImages(event)[0] ?? null;
 }
 
-/** Gallery images, excluding the image already used as the cover. */
-export function getEventGallery(event: EventEntry): string[] {
-  const cover = getEventCover(event);
-  return getEventImages(event).filter((src) => src !== cover);
+/** Trimmed, deduped documentation images for the event story (poster excluded). */
+function getStoryImages(event: EventEntry): string[] {
+  const images = (event.data.image ?? []).map((src) => src.trim()).filter(Boolean);
+  return Array.from(new Set(images));
+}
+
+/** Story cover: first documentation image, then the poster, then null. */
+export function getEventStoryCover(event: EventEntry): string | null {
+  const first = getStoryImages(event)[0];
+  if (first) return first;
+  return (event.data.poster ?? '').trim() || null;
+}
+
+/** Story gallery: documentation images, excluding the exact story cover. */
+export function getEventStoryGallery(event: EventEntry): string[] {
+  const cover = getEventStoryCover(event);
+  return getStoryImages(event).filter((src) => src !== cover);
 }
 
 export function getEventHref(event: EventEntry, locale: Locale): string {

@@ -2,7 +2,7 @@
 import type { EventEntry } from '../../utils/event-helpers';
 import type { Locale } from '../../utils/i18n';
 import { t } from '../../utils/i18n';
-import KegiatanCard from './KegiatanCard.astro';
+import { getEventDateLabel, getEventDateMs, getEventHref } from '../../utils/event-helpers';
 
 interface Props {
   events: EventEntry[];
@@ -32,10 +32,27 @@ const { events, locale } = Astro.props;
         {t('events.relatedIntro', locale)}
       </p>
 
-      <ul class="kegiatan-related-grid e-reveal-group">
-        {events.map((event, index) => (
-          <KegiatanCard event={event} locale={locale} index={index} />
-        ))}
+      <ul class="kegiatan-related-list e-reveal-group">
+        {events.map((event, index) => {
+          const dateLabel = getEventDateLabel(event, locale);
+          return (
+            <li class="kegiatan-related-row" style={`--i:${index}`}>
+              <a href={getEventHref(event, locale)}>
+                <span class="kegiatan-related-meta">
+                  {getEventDateMs(event) > 0 ? (
+                    <time datetime={event.data.event_date}>{dateLabel}</time>
+                  ) : (
+                    <span>{dateLabel}</span>
+                  )}
+                  <span aria-hidden="true">·</span>
+                  <span>{event.data.category}</span>
+                </span>
+                <h3 class="kegiatan-related-title">{event.data.title}</h3>
+                <span class="kegiatan-related-arrow" aria-hidden="true">→</span>
+              </a>
+            </li>
+          );
+        })}
       </ul>
     </div>
   </section>

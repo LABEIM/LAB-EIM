@@ -16,32 +16,32 @@ const categories = [...new Set(events.map((event) => event.data.category).filter
 ---
 
 <section
-  id="arsip"
-  class="border-t border-line py-[clamp(4.5rem,10vh,8.75rem)]"
-  aria-labelledby="kegiatan-archive-title"
+  id="daftar"
+  class="py-[clamp(4.5rem,10vh,8.75rem)]"
+  aria-labelledby="kegiatan-list-title"
 >
   <div class="mx-auto max-w-[1200px] px-[clamp(1.25rem,4vw,4rem)]">
     <div class="grid gap-6 lg:grid-cols-2 lg:items-end">
       <div>
         <p class="e-reveal font-mono text-xs uppercase tracking-[0.08em] text-brand">
-          01 — {t('events.archiveEyebrow', locale)}
+          01 — {t('events.listEyebrow', locale)}
         </p>
         <h2
-          id="kegiatan-archive-title"
+          id="kegiatan-list-title"
           class="e-reveal mt-4 font-display text-[clamp(2rem,4vw,3.5rem)] leading-[1.05] tracking-[-0.01em]"
         >
-          {t('events.archiveTitle', locale)}
+          {t('events.listTitle', locale)}
         </h2>
       </div>
       <p class="e-reveal max-w-[52ch] text-[15px] leading-[1.55] text-muted-ink lg:justify-self-end">
-        {t('events.archiveIntro', locale)}
+        {t('events.listIntro', locale)}
       </p>
     </div>
 
     {events.length === 0 ? (
       <div class="kegiatan-empty e-reveal mt-[clamp(2.5rem,6vh,4rem)]">
-        <p class="kegiatan-empty-title">{t('events.archiveEmptyTitle', locale)}</p>
-        <p class="kegiatan-empty-desc">{t('events.archiveEmptyDesc', locale)}</p>
+        <p class="kegiatan-empty-title">{t('events.listEmptyTitle', locale)}</p>
+        <p class="kegiatan-empty-desc">{t('events.listEmptyDesc', locale)}</p>
         <div class="kegiatan-empty-actions">
           <a class="eim-hero-cta" href="/registration">{t('events.heroSecondary', locale)}</a>
           <a class="eim-hero-secondary" href="/contact">
@@ -50,19 +50,19 @@ const categories = [...new Set(events.map((event) => event.data.category).filter
         </div>
       </div>
     ) : (
-      <div class="kegiatan-archive-filter">
+      <div class="kegiatan-list-filter">
         <FilterControlBar
           categories={categories}
           searchPlaceholder={t('events.searchPlaceholder', locale)}
           totalCount={events.length}
         />
 
-        <div id="kegiatan-archive-empty" class="kegiatan-archive-empty" style="display: none;">
-          <p class="kegiatan-empty-title">{t('events.archiveNoMatchTitle', locale)}</p>
-          <p class="kegiatan-empty-desc">{t('events.archiveNoMatchDesc', locale)}</p>
+        <div id="kegiatan-list-empty" class="kegiatan-list-empty" style="display: none;">
+          <p class="kegiatan-empty-title">{t('events.listNoMatchTitle', locale)}</p>
+          <p class="kegiatan-empty-desc">{t('events.listNoMatchDesc', locale)}</p>
         </div>
 
-        <ul id="kegiatan-archive-grid" class="kegiatan-archive-grid e-reveal-group">
+        <ul id="kegiatan-list-grid" class="kegiatan-list-grid e-reveal-group">
           {events.map((event, index) => (
             <KegiatanCard event={event} locale={locale} filterable index={index} />
           ))}
@@ -78,10 +78,10 @@ const categories = [...new Set(events.map((event) => event.data.category).filter
   import { initContentFilter } from '../../scripts/content-filter';
 
   initContentFilter({
-    gridId: 'kegiatan-archive-grid',
+    gridId: 'kegiatan-list-grid',
     cardClass: 'grid-card-item',
     itemsPerPage: 6,
-    emptyStateId: 'kegiatan-archive-empty',
+    emptyStateId: 'kegiatan-list-empty',
     itemName: 'Kegiatan',
   });
 </script>

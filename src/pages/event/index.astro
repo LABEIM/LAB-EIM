@@ -6,7 +6,7 @@ import '../../styles/pages/kegiatan-eim.css';
 import EimCTA from '../../components/home/EimCTA.astro';
 import EimSectionNav from '../../components/home/EimSectionNav.astro';
 import KegiatanHero from '../../components/kegiatan/KegiatanHero.astro';
-import KegiatanArchive from '../../components/kegiatan/KegiatanArchive.astro';
+import KegiatanList from '../../components/kegiatan/KegiatanList.astro';
 import {
   getCollectionEntriesForLocale,
   getLocaleFromUrl,
@@ -35,7 +35,7 @@ const latestYear =
 
 const sectionItems = [
   { id: 'kegiatan', label: t('nav.event', locale) },
-  { id: 'arsip', label: t('events.navDotArchive', locale) },
+  { id: 'daftar', label: t('events.navDotList', locale) },
   { id: 'gabung', label: t('events.navDotJoin', locale) },
 ];
 ---
@@ -53,7 +53,7 @@ const sectionItems = [
       categoryCount={categories.length}
       latestYear={latestYear}
     />
-    <KegiatanArchive events={events} locale={locale} />
+    <KegiatanList events={events} locale={locale} />
     <EimCTA site={siteData} />
   </main>
 </Layout>

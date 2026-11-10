@@ -1,12 +1,12 @@
 /* Kegiatan pages — Antigravity Light variants. Import AFTER home-eim.css. */
 
-/* == Archive == */
+/* == Event list == */
 
-.kegiatan-archive-filter {
+.kegiatan-list-filter {
   margin-top: clamp(2.5rem, 6vh, 4rem);
 }
 
-.kegiatan-archive-grid {
+.kegiatan-list-grid {
   display: grid;
   grid-template-columns: 1fr;
   gap: 1.25rem;
@@ -16,13 +16,13 @@
 }
 
 @media (min-width: 640px) {
-  .kegiatan-archive-grid {
+  .kegiatan-list-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
 @media (min-width: 1024px) {
-  .kegiatan-archive-grid {
+  .kegiatan-list-grid {
     grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 1.5rem;
   }
@@ -176,12 +176,12 @@
 /* == Empty states == */
 
 .kegiatan-empty,
-.kegiatan-archive-empty {
+.kegiatan-list-empty {
   padding-top: 2.5rem;
   border-top: 1px solid var(--color-line);
 }
 
-.kegiatan-archive-empty {
+.kegiatan-list-empty {
   margin-bottom: clamp(2rem, 5vh, 3rem);
 }
 
@@ -210,9 +210,9 @@
 }
 
 /* == Shared filter bar / pagination overrides ==
-   Scoped to the archive so /news keeps the legacy treatment. */
+   Scoped to the event list so /news keeps the legacy treatment. */
 
-.kegiatan-archive-filter .content-filter-bar {
+.kegiatan-list-filter .content-filter-bar {
   margin-bottom: 0;
   padding: 1.25rem;
   border: 1px solid var(--color-line);
@@ -223,12 +223,12 @@
   -webkit-backdrop-filter: none;
 }
 
-.kegiatan-archive-filter .search-icon {
+.kegiatan-list-filter .search-icon {
   color: var(--color-muted-ink);
 }
 
-.kegiatan-archive-filter .filter-search-input,
-.kegiatan-archive-filter .filter-sort-select {
+.kegiatan-list-filter .filter-search-input,
+.kegiatan-list-filter .filter-sort-select {
   min-height: 44px;
   border: 1px solid var(--color-line);
   border-radius: var(--radius-pill);
@@ -238,24 +238,24 @@
   box-shadow: none;
 }
 
-.kegiatan-archive-filter .filter-sort-select {
+.kegiatan-list-filter .filter-sort-select {
   border-radius: var(--radius-card);
 }
 
-.kegiatan-archive-filter .filter-search-input::placeholder {
+.kegiatan-list-filter .filter-search-input::placeholder {
   color: var(--color-muted-ink);
   opacity: 1;
 }
 
-.kegiatan-archive-filter .filter-search-input:focus-visible,
-.kegiatan-archive-filter .filter-sort-select:focus-visible {
+.kegiatan-list-filter .filter-search-input:focus-visible,
+.kegiatan-list-filter .filter-sort-select:focus-visible {
   outline: 2px solid var(--color-brand);
   outline-offset: 2px;
   border-color: var(--color-brand);
   box-shadow: none;
 }
 
-.kegiatan-archive-filter .search-clear-btn {
+.kegiatan-list-filter .search-clear-btn {
   align-items: center;
   justify-content: center;
   width: 44px;
@@ -265,17 +265,17 @@
   color: var(--color-muted-ink);
 }
 
-.kegiatan-archive-filter .search-clear-btn:hover {
+.kegiatan-list-filter .search-clear-btn:hover {
   color: var(--color-brand);
 }
 
-.kegiatan-archive-filter .search-clear-btn:focus-visible {
+.kegiatan-list-filter .search-clear-btn:focus-visible {
   outline: 2px solid var(--color-brand);
   outline-offset: 2px;
   border-radius: var(--radius-pill);
 }
 
-.kegiatan-archive-filter .sort-label {
+.kegiatan-list-filter .sort-label {
   font-family: var(--font-mono);
   font-size: 0.6875rem;
   letter-spacing: 0.08em;
@@ -283,7 +283,7 @@
   color: var(--color-muted-ink);
 }
 
-.kegiatan-archive-filter .filter-pill {
+.kegiatan-list-filter .filter-pill {
   min-height: 44px;
   padding: 0.55rem 1rem;
   border: 1px solid var(--color-line);
@@ -295,25 +295,25 @@
   font-weight: 500;
 }
 
-.kegiatan-archive-filter .filter-pill:hover {
+.kegiatan-list-filter .filter-pill:hover {
   border-color: var(--color-brand);
   background: var(--color-brand-soft);
   color: var(--color-brand);
 }
 
-.kegiatan-archive-filter .filter-pill.active {
+.kegiatan-list-filter .filter-pill.active {
   border-color: var(--color-brand);
   background: var(--color-brand);
   color: var(--color-background);
   font-weight: 500;
 }
 
-.kegiatan-archive-filter .filter-pill:focus-visible {
+.kegiatan-list-filter .filter-pill:focus-visible {
   outline: 2px solid var(--color-brand);
   outline-offset: 2px;
 }
 
-.kegiatan-archive-filter .filter-summary-row {
+.kegiatan-list-filter .filter-summary-row {
   padding-top: 0.85rem;
   border-top: 1px solid var(--color-line);
   font-family: var(--font-mono);
@@ -322,7 +322,7 @@
   color: var(--color-muted-ink);
 }
 
-.kegiatan-archive-filter .filter-reset-btn {
+.kegiatan-list-filter .filter-reset-btn {
   min-height: 44px;
   padding: 0 0.75rem;
   color: var(--color-brand);
@@ -331,16 +331,16 @@
   letter-spacing: 0.04em;
 }
 
-.kegiatan-archive-filter .filter-reset-btn:hover {
+.kegiatan-list-filter .filter-reset-btn:hover {
   background: var(--color-brand-soft);
 }
 
-.kegiatan-archive-filter .filter-reset-btn:focus-visible {
+.kegiatan-list-filter .filter-reset-btn:focus-visible {
   outline: 2px solid var(--color-brand);
   outline-offset: 2px;
 }
 
-.kegiatan-archive-filter .pagination-btn {
+.kegiatan-list-filter .pagination-btn {
   min-width: 44px;
   height: 44px;
   border: 1px solid var(--color-line);
@@ -351,29 +351,29 @@
   box-shadow: none;
 }
 
-.kegiatan-archive-filter .pagination-btn:hover:not(:disabled) {
+.kegiatan-list-filter .pagination-btn:hover:not(:disabled) {
   border-color: var(--color-brand);
   background: var(--color-brand-soft);
   color: var(--color-brand);
 }
 
-.kegiatan-archive-filter .pagination-btn.active {
+.kegiatan-list-filter .pagination-btn.active {
   border-color: var(--color-brand);
   background: var(--color-brand);
   color: var(--color-background);
   font-weight: 500;
 }
 
-.kegiatan-archive-filter .pagination-btn:focus-visible {
+.kegiatan-list-filter .pagination-btn:focus-visible {
   outline: 2px solid var(--color-brand);
   outline-offset: 2px;
 }
 
-.kegiatan-archive-filter .pagination-btn:disabled {
+.kegiatan-list-filter .pagination-btn:disabled {
   opacity: 0.4;
 }
 
-.kegiatan-archive-filter .pagination-info {
+.kegiatan-list-filter .pagination-info {
   font-family: var(--font-mono);
   font-size: 0.6875rem;
   letter-spacing: 0.04em;
@@ -381,13 +381,13 @@
 }
 
 @media (max-width: 639px) {
-  .kegiatan-archive-filter .search-box-wrapper,
-  .kegiatan-archive-filter .sort-select-wrapper {
+  .kegiatan-list-filter .search-box-wrapper,
+  .kegiatan-list-filter .sort-select-wrapper {
     width: 100%;
     min-width: 0;
   }
 
-  .kegiatan-archive-filter .filter-sort-select {
+  .kegiatan-list-filter .filter-sort-select {
     flex: 1;
     width: 100%;
   }

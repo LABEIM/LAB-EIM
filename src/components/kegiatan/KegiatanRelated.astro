@@ -1,0 +1,42 @@
+---
+import type { EventEntry } from '../../utils/event-helpers';
+import type { Locale } from '../../utils/i18n';
+import { t } from '../../utils/i18n';
+import KegiatanCard from './KegiatanCard.astro';
+
+interface Props {
+  events: EventEntry[];
+  locale: Locale;
+}
+
+const { events, locale } = Astro.props;
+---
+
+{events.length > 0 && (
+  <section
+    id="kegiatan-terkait"
+    class="border-t border-line py-[clamp(4.5rem,10vh,8.75rem)]"
+    aria-labelledby="kegiatan-related-title"
+  >
+    <div class="mx-auto max-w-[1200px] px-[clamp(1.25rem,4vw,4rem)]">
+      <p class="e-reveal font-mono text-xs uppercase tracking-[0.08em] text-brand">
+        {t('events.relatedEyebrow', locale)}
+      </p>
+      <h2
+        id="kegiatan-related-title"
+        class="e-reveal mt-4 font-display text-[clamp(2rem,4vw,3.5rem)] leading-[1.05] tracking-[-0.01em]"
+      >
+        {t('events.relatedTitle', locale)}
+      </h2>
+      <p class="e-reveal mt-4 max-w-[52ch] text-[15px] leading-[1.55] text-muted-ink">
+        {t('events.relatedIntro', locale)}
+      </p>
+
+      <ul class="kegiatan-related-grid e-reveal-group">
+        {events.map((event, index) => (
+          <KegiatanCard event={event} locale={locale} index={index} />
+        ))}
+      </ul>
+    </div>
+  </section>
+)}

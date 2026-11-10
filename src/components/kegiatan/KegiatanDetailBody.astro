@@ -1,0 +1,154 @@
+---
+import type { EventEntry } from '../../utils/event-helpers';
+import type { Locale } from '../../utils/i18n';
+import { t } from '../../utils/i18n';
+import {
+  getEventDateLabel,
+  getEventGallery,
+  getEventStatusLabel,
+} from '../../utils/event-helpers';
+
+interface Props {
+  event: EventEntry;
+  locale: Locale;
+}
+
+const { event, locale } = Astro.props;
+
+const benefits = event.data.benefits ?? [];
+const requirements = event.data.requirements ?? [];
+const gallery = getEventGallery(event);
+const hasBody = Boolean(event.body?.trim());
+const hasContent = hasBody || benefits.length > 0 || requirements.length > 0 || gallery.length > 0;
+
+const dateLabel = getEventDateLabel(event, locale);
+const statusLabel = getEventStatusLabel(event, locale);
+const statusClass = `kegiatan-status kegiatan-status--${event.data.status}`;
+const organizer = (event.data.organizer ?? '').trim() || t('events.organizerFallback', locale);
+
+const link = (event.data.link ?? '').trim();
+const isExternal = /^https?:\/\//i.test(link);
+---
+
+<section
+  id="detail-kegiatan"
+  class="border-t border-line py-[clamp(4.5rem,10vh,8.75rem)]"
+  aria-labelledby="kegiatan-detail-body-title"
+>
+  <div class="mx-auto max-w-[1200px] px-[clamp(1.25rem,4vw,4rem)]">
+    <h2
+      id="kegiatan-detail-body-title"
+      class="e-reveal font-display text-[clamp(2rem,4vw,3.5rem)] leading-[1.05] tracking-[-0.01em]"
+    >
+      {t('events.detailTitle', locale)}
+    </h2>
+
+    <div class="kegiatan-detail-body-grid">
+      <div class="kegiatan-detail-main">
+        {hasContent ? (
+          <>
+            {hasBody && (
+              <div class="kegiatan-prose">
+                <slot />
+              </div>
+            )}
+
+            {benefits.length > 0 && (
+              <div class="kegiatan-detail-block">
+                <h3 class="font-display text-[clamp(1.35rem,2vw,1.75rem)] leading-[1.2]">
+                  {t('events.benefits', locale)}
+                </h3>
+                <ol class="kegiatan-list">
+                  {benefits.map((benefit, index) => (
+                    <li>
+                      <span class="kegiatan-list-index" aria-hidden="true">
+                        {String(index + 1).padStart(2, '0')}
+                      </span>
+                      <span>{benefit}</span>
+                    </li>
+                  ))}
+                </ol>
+              </div>
+            )}
+
+            {requirements.length > 0 && (
+              <div class="kegiatan-detail-block">
+                <h3 class="font-display text-[clamp(1.35rem,2vw,1.75rem)] leading-[1.2]">
+                  {t('events.requirements', locale)}
+                </h3>
+                <ul class="kegiatan-list kegiatan-list--checks">
+                  {requirements.map((requirement) => (
+                    <li>
+                      <span>{requirement}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
+            {gallery.length > 0 && (
+              <div class="kegiatan-detail-block">
+                <h3 class="font-display text-[clamp(1.35rem,2vw,1.75rem)] leading-[1.2]">
+                  {t('events.documentation', locale)}
+                </h3>
+                <div class="kegiatan-doc-grid">
+                  {gallery.map((src, index) => (
+                    <img
+                      src={src}
+                      alt={t('events.docAlt', locale, { n: String(index + 1) })}
+                      width="800"
+                      height="600"
+                      loading="lazy"
+                      decoding="async"
+                    />
+                  ))}
+                </div>
+              </div>
+            )}
+          </>
+        ) : (
+          <p class="kegiatan-detail-empty">{t('events.detailEmpty', locale)}</p>
+        )}
+      </div>
+
+      <aside class="kegiatan-info-card" aria-labelledby="kegiatan-info-title">
+        <h3
+          id="kegiatan-info-title"
+          class="font-display text-[clamp(1.35rem,2vw,1.75rem)] leading-[1.2]"
+        >
+          {t('events.infoTitle', locale)}
+        </h3>
+
+        <dl class="kegiatan-info-list">
+          <div>
+            <dt>{t('events.date', locale)}</dt>
+            <dd>{dateLabel}</dd>
+          </div>
+          <div>
+            <dt>{t('events.statusLabel', locale)}</dt>
+            <dd><span class={statusClass}>{statusLabel}</span></dd>
+          </div>
+          <div>
+            <dt>{t('events.categoryLabel', locale)}</dt>
+            <dd>{event.data.category}</dd>
+          </div>
+          <div>
+            <dt>{t('events.organizer', locale)}</dt>
+            <dd>{organizer}</dd>
+          </div>
+        </dl>
+
+        {link && (
+          <a
+            class="eim-hero-cta"
+            href={link}
+            target={isExternal ? '_blank' : undefined}
+            rel={isExternal ? 'noopener noreferrer' : undefined}
+          >
+            {t('btn.register', locale)}
+          </a>
+        )}
+      </aside>
+    </div>
+  </div>
+</section>

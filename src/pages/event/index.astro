@@ -1,87 +1,59 @@
 ---
 import { getCollection } from 'astro:content';
 import Layout from '../../layouts/Layout.astro';
-import EventCard from '../../components/cards/EventCard.astro';
-import FilterControlBar from '../../components/common/FilterControlBar.astro';
-import Pagination from '../../components/common/Pagination.astro';
-import { getLocaleFromUrl, getCollectionEntriesForLocale, t } from '../../utils/i18n';
+import '../../styles/pages/home-eim.css';
+import '../../styles/pages/kegiatan-eim.css';
+import EimCTA from '../../components/home/EimCTA.astro';
+import EimSectionNav from '../../components/home/EimSectionNav.astro';
+import KegiatanHero from '../../components/kegiatan/KegiatanHero.astro';
+import KegiatanArchive from '../../components/kegiatan/KegiatanArchive.astro';
+import {
+  getCollectionEntriesForLocale,
+  getLocaleFromUrl,
+  getLocalizedJsonData,
+  t,
+} from '../../utils/i18n';
 import { filterAuditContent } from '../../utils/content-helpers';
+import { compareEventDates, getEventDateMs } from '../../utils/event-helpers';
 
 const locale = getLocaleFromUrl(Astro.url);
+const siteData = getLocalizedJsonData<any>('site', locale);
+
 const rawEvents = await getCollection('events');
-const events = filterAuditContent(getCollectionEntriesForLocale(rawEvents, locale));
+const events = filterAuditContent(getCollectionEntriesForLocale(rawEvents, locale))
+  .slice()
+  .sort((a, b) => compareEventDates(a, b, 'desc'));
 
-const categories = Array.from(new Set(events.map((item: any) => item.data.category).filter(Boolean))).sort();
+const categories = [...new Set(events.map((event) => event.data.category).filter(Boolean))].sort();
 
-const statuses = [
-  { value: 'upcoming', label: t('badge.upcoming', locale) },
-  { value: 'ongoing', label: t('badge.ongoing', locale) },
-  { value: 'completed', label: t('badge.completed', locale) },
+const latestYear =
+  events
+    .map(getEventDateMs)
+    .filter(Boolean)
+    .map((ms) => String(new Date(ms).getUTCFullYear()))
+    .sort((a, b) => b.localeCompare(a))[0] ?? null;
+
+const sectionItems = [
+  { id: 'kegiatan', label: t('nav.event', locale) },
+  { id: 'arsip', label: t('events.navDotArchive', locale) },
+  { id: 'gabung', label: t('events.navDotJoin', locale) },
 ];
-
-const sortedEvents = events.sort((a: any, b: any) => {
-  const timeA = new Date(a.data.event_date).getTime();
-  const timeB = new Date(b.data.event_date).getTime();
-  return isNaN(timeA) || isNaN(timeB) ? 0 : timeB - timeA;
-});
 ---
 
-<Layout title={`${t('events.title', locale)} - EIM Research Lab`}>
-  <section class="page-header event-page-header">
-    <div class="container">
-      <div class="page-header-content">
-        <h1>{t('events.title', locale)}</h1>
-        <p class="event-page-subtitle">{t('events.subtitle', locale)}</p>
-      </div>
-    </div>
-  </section>
-
-  <section class="section-padding event-section-main">
-    <div class="container">
-      <!-- Filter Control Bar -->
-      <FilterControlBar
-        categories={categories}
-        statuses={statuses}
-        searchPlaceholder="Cari nama kegiatan, penyelenggara, atau deskripsi..."
-        totalCount={sortedEvents.length}
-      />
-
-      <!-- Empty State Notice for Filters -->
-      <div class="news-empty-state glass-panel empty-state-box" id="empty-state-notice" style="display: none;">
-        <i class="fa-regular fa-folder-open empty-state-icon"></i>
-        <h3>Kegiatan Tidak Ditemukan</h3>
-        <p>Tidak ada kegiatan yang cocok dengan kriteria pencarian atau filter Anda.</p>
-      </div>
-
-      {sortedEvents.length === 0 ? (
-        <div class="news-empty-state glass-panel empty-state-box">
-          <i class="fa-regular fa-folder-open empty-state-icon"></i>
-          <h3>Belum Ada Kegiatan</h3>
-          <p>Belum ada agenda atau kegiatan yang dipublikasikan.</p>
-        </div>
-      ) : (
-        <>
-          <div class="news-grid" id="events-grid">
-            {sortedEvents.map(event => (
-              <EventCard event={event} />
-            ))}
-          </div>
-
-          <!-- Pagination -->
-          <Pagination />
-        </>
-      )}
-    </div>
-  </section>
+<Layout
+  title={`${t('nav.event', locale)} - EIM Research Lab`}
+  description={t('events.metaDescription', locale)}
+  homeSkin
+  skipLink
+>
+  <main id="main-content" tabindex="-1">
+    <EimSectionNav items={sectionItems} label={t('events.sectionNavLabel', locale)} />
+    <KegiatanHero
+      totalCount={events.length}
+      categoryCount={categories.length}
+      latestYear={latestYear}
+    />
+    <KegiatanArchive events={events} locale={locale} />
+    <EimCTA site={siteData} />
+  </main>
 </Layout>
-
-<script>
-  import { initContentFilter } from '../../scripts/content-filter';
-  initContentFilter({
-    gridId: 'events-grid',
-    cardClass: 'grid-card-item',
-    itemsPerPage: 6,
-    emptyStateId: 'empty-state-notice',
-    itemName: 'Kegiatan',
-  });
-</script>

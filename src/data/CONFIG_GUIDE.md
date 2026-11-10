@@ -150,13 +150,15 @@ Events are stored as Markdown (`.md`) files in `src/content/events/`.
 * **`category`** (String): The type/category of the event (e.g., `"Company Visit"`, `"Workshop"`, `"Webinar"`).
 * **`status`** (String): Must be one of `"upcoming"`, `"ongoing"`, or `"completed"`.
 * **`event_date`** (String): Date of the event in `YYYY-MM-DD` format.
-* **`description`** (String): A short summary of the event shown in lists.
-* **`link`** (String, Optional): Registration or external link.
-* **`image`** (Array of Strings, Optional): Optional image URLs/paths.
+* **`description`** (String): A short summary of the event shown in lists and as the detail lead.
+* **`link`** (String, Optional): Registration or external link. When present, the detail page renders a registration CTA.
+* **`poster`** (String, Optional): Poster/cover image URL. Falls back to the first `image` when empty.
+* **`image`** (Array of Strings, Optional): Optional image URLs/paths. The first image is used as the cover when `poster` is empty; the cover is excluded from the documentation gallery.
 * **`icon`** (String, Optional): FontAwesome icon class name (e.g., `"fa-building-columns"`, `"fa-solid fa-calendar-days"`).
-* **`organizer`** (String, Optional): Name of the organizer (defaults to EIM).
+* **`organizer`** (String, Optional): Name of the organizer (defaults to `"EIM Research Lab"`).
 * **`benefits`** (Array of Strings, Optional): List of benefits for participants.
 * **`requirements`** (Array of Strings, Optional): List of requirements/criteria for participants.
+* **`audit`** (Boolean, Optional): Marks benchmark-only content. Audit entries are reachable by direct URL but hidden from production listings and related-event pools.
 
 ### Event Template
 A helper template is located at [src/content/events/_template.md](file:///home/arukast/Projects/website-eim/src/content/events/_template.md).
@@ -182,6 +184,8 @@ requirements:
 ---
 Write the main event details, schedule, or extra information here in Markdown format.
 ```
+
+The Markdown body is rendered on `/event/[id]`. Start body sections at `##` — the event title is the page's only `h1`. Dates are formatted for the site timezone on the redesigned pages; sort/filter state is held in the archive's URL query.
 
 ---
 

@@ -360,7 +360,7 @@ export default config({
       label: 'Events',
       slugField: 'title',
       path: 'src/content/events/*',
-      format: { contentField: 'description' },
+      format: { contentField: 'content' },
       schema: {
         title: fields.slug({ name: { label: 'Title' } }),
         category: fields.text({ label: 'Category' }),
@@ -374,8 +374,9 @@ export default config({
           defaultValue: 'upcoming',
         }),
         event_date: fields.date({ label: 'Event Date' }),
-        description: fields.markdoc({
-          label: 'Description/Content',
+        description: fields.text({ label: 'Short Description', multiline: true }),
+        content: fields.markdoc({
+          label: 'Content',
           extension: 'md',
         }),
         link: fields.text({ label: 'Link (Optional)' }),

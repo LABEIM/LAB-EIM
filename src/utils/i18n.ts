@@ -300,6 +300,23 @@ export const uiTranslations: Record<Locale, Record<string, string>> = {
     'news.listNoMatchDesc': 'Tidak ada artikel yang cocok dengan pencarian atau filter Anda. Coba kata kunci lain atau reset filter.',
     'news.contact': 'Hubungi kami',
 
+    // Contact Page
+    'contact.heroEyebrow': 'Kontak',
+    'contact.heroPrimary': 'Email kami',
+    'contact.heroSecondary': 'Buka Google Maps',
+    'contact.sectionNavLabel': 'Navigasi bagian halaman',
+    'contact.navDotDetail': 'Detail',
+    'contact.navDotMap': 'Lokasi',
+    'contact.navDotSocial': 'Sosial',
+    'contact.detailsEyebrow': 'Detail kontak',
+    'contact.detailsTitle': 'Kanal komunikasi.',
+    'contact.detailsIntro': 'Pertanyaan riset, kolaborasi, kunjungan, atau informasi rekrutmen — mulai dari salah satu kanal berikut.',
+    'contact.mapsAction': 'Buka di Google Maps',
+    'contact.emailAction': 'Kirim email',
+    'contact.socialsEyebrow': 'Media sosial',
+    'contact.socialsTitle': 'Ikuti kami.',
+    'contact.socialsIntro': 'Perkembangan kegiatan riset, pelatihan, dan pengumuman rekrutmen terbaru di media sosial EIM.',
+
     // Home Page v2 [PLACEHOLDER — draft]
     'home.heroKicker': 'EIM Research Lab',
     'home.heroTitle': 'Riset infrastruktur\nuntuk dunia nyata.',

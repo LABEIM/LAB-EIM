@@ -2,7 +2,6 @@
    Shared by the registration and contact pages. */
 
 .cp-box {
-  position: relative;
   margin-top: clamp(2rem, 5vh, 3rem);
   padding: clamp(1.5rem, 4vw, 2.25rem);
   border: 1px solid var(--color-line);
@@ -97,10 +96,6 @@
   background: var(--color-brand-soft);
   color: var(--color-brand);
   font-size: 0.95rem;
-}
-
-.cp-card-body {
-  margin-bottom: 0;
 }
 
 .cp-name {

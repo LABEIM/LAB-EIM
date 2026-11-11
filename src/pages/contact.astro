@@ -147,14 +147,12 @@ const sectionItems = [
               </div>
             </dl>
 
-            {contactPersons.length > 0 && (
-              <ContactPersonBox
-                contactPersons={contactPersons}
-                compact
-                title={t('contact.picsTitle', locale)}
-                subtitle={t('contact.picsSubtitle', locale)}
-              />
-            )}
+            <ContactPersonBox
+              contactPersons={contactPersons}
+              compact
+              title={t('contact.picsTitle', locale)}
+              subtitle={t('contact.picsSubtitle', locale)}
+            />
           </div>
         </div>
       </div>
@@ -251,9 +249,9 @@ const sectionItems = [
     if (seq !== copySeq) return;
 
     clearTimeout(copyTimer);
-    copyEmailBtn.textContent = (copied ? copyEmailBtn.dataset.copied : copyEmailBtn.dataset.failed) || (copied ? 'Tersalin!' : 'Gagal menyalin');
+    copyEmailBtn.textContent = (copied ? copyEmailBtn.dataset.copied : copyEmailBtn.dataset.failed) ?? '';
     if (copyStatus) {
-      copyStatus.textContent = (copied ? copyEmailBtn.dataset.statusCopied : copyEmailBtn.dataset.statusFailed) || '';
+      copyStatus.textContent = (copied ? copyEmailBtn.dataset.statusCopied : copyEmailBtn.dataset.statusFailed) ?? '';
     }
 
     copyTimer = setTimeout(() => {

@@ -5,33 +5,33 @@
 @import 'tailwindcss/utilities.css';
 
 @theme static {
-  /* Palette */
-  --color-background: #FAFCFC;
-  --color-foreground: #0B1F22;
-  --color-surface: #F0F4F4;
-  --color-surface-strong: #E4EDED;
-  --color-line: #D9E3E4;
-  --color-muted-ink: #52686B;
-  --color-brand: #0C535D;
-  --color-brand-bright: #11B4BD;
-  --color-brand-soft: #E2F3F4;
-  --color-black: #050B0D;
+  /* Palette — canonical values live in variables.css (--eim-*). */
+  --color-background: var(--eim-background);
+  --color-foreground: var(--eim-foreground);
+  --color-surface: var(--eim-surface);
+  --color-surface-strong: var(--eim-surface-strong);
+  --color-line: var(--eim-line);
+  --color-muted-ink: var(--eim-muted-ink);
+  --color-brand: var(--eim-brand);
+  --color-brand-bright: var(--eim-brand-bright);
+  --color-brand-soft: var(--eim-brand-soft);
+  --color-black: var(--eim-black);
 
   /* Type */
-  --font-display: 'Instrument Serif', Georgia, serif;
-  --font-body: 'IBM Plex Sans', system-ui, -apple-system, sans-serif;
-  --font-mono: 'IBM Plex Mono', ui-monospace, SFMono-Regular, monospace;
+  --font-display: var(--eim-font-display);
+  --font-body: var(--eim-font-body);
+  --font-mono: var(--eim-font-mono);
 
   /* Motion */
-  --ease: cubic-bezier(0.22, 1, 0.36, 1);
-  --ease-inout: cubic-bezier(0.65, 0, 0.35, 1);
-  --dur-control: 220ms;
-  --dur-reveal: 700ms;
+  --ease: var(--eim-ease);
+  --ease-inout: var(--eim-ease-inout);
+  --dur-control: var(--eim-dur-control);
+  --dur-reveal: var(--eim-dur-reveal);
 
   /* Radius */
-  --radius-pill: 999px;
-  --radius-card: 16px;
-  --radius-media: 24px;
+  --radius-pill: var(--eim-radius-pill);
+  --radius-card: var(--eim-radius-card);
+  --radius-media: var(--eim-radius-media);
 }
 
 .home-skin {

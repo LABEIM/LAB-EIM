@@ -7,6 +7,7 @@ import {
   validateRegistrationForm
 } from './registration/validation';
 import { calculateStageFromDates } from './registration/stage';
+import { safeLink } from '../utils/safe-link';
 
 function assert(condition: boolean, testName: string) {
   if (condition) {
@@ -552,6 +553,16 @@ assert(calculateStageFromDates(mockExtendedConfig, tAfterDeadline) === 'extended
 // 9.5: Selection Step Active Stage (when selection step startDate arrives)
 const tSelectionStep = new Date('2026-08-24T10:00:00+07:00').getTime();
 assert(calculateStageFromDates(mockStageConfig, tSelectionStep) === 'selection', 'Timestamp during selection step window should return "selection"');
+
+// 10. Contact Link Sanitizer
+console.log('\n🔟 Testing Contact Link Sanitizer:');
+assert(safeLink('https://wa.me/6281234567890') === 'https://wa.me/6281234567890', 'HTTPS link should pass');
+assert(safeLink('  mailto:lab@eimlab.org ') === 'mailto:lab@eimlab.org', 'mailto link should be trimmed and pass');
+assert(safeLink('tel:+6281234567890') === 'tel:+6281234567890', 'tel link should pass');
+assert(safeLink('javascript:alert(1)') === undefined, 'javascript: scheme should be rejected');
+assert(safeLink('data:text/html,<script>alert(1)</script>') === undefined, 'data: scheme should be rejected');
+assert(safeLink('wa.me/6281234567890') === undefined, 'Bare host without scheme should be rejected');
+assert(safeLink('') === undefined, 'Empty link should be rejected');
 
 console.log('\n✨ All Automated Registration Unit Tests Execution Completed Successfully!');
 

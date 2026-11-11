@@ -302,6 +302,40 @@ This file configures the Pembina tier of the `/structure` org chart and the `#pe
   }
 ```
 
+---
+
+## 10. Contact Page (`src/data/contact.json`)
+
+Configures the `/contact` page. Manage it via **Keystatic Admin > Singletons > Contact Page**.
+
+### Fields Explanation
+* **`title`** / **`heroDescription`**: Hero heading and description.
+* **`locationTitle`**, **`location`**, **`university`**: Location row and its label.
+* **`mapsUrl`**, **`mapsEmbedUrl`**: External maps link and the map iframe URL.
+* **`emailTitle`**, **`email`**: Email row label and address.
+* **`hoursTitle`**, **`hoursText`**, **`hoursSubtext`**: Operating-hours row.
+* **`mapSectionTitle`**, **`mapSectionSubtitle`**: Map section heading and intro.
+* **`contactPersons`** (Array): Narahubung cards shown inside "Kanal komunikasi".
+  These are independent of the recruitment PICs in **Registration Settings** (`src/data/registration.json`); update both if the same people appear on both pages.
+  * **`name`**: PIC name.
+  * **`role`**: Differentiator shown on the card (e.g. `"CP Rekrutmen"`, `"CP Riset"`). Keep it short so the badge stays on one line.
+  * **`platform`**: `whatsapp`, `line`, `email`, or `phone` (selects the icon).
+  * **`contactId`**: Phone number or handle shown on the card.
+  * **`link`**: Direct clickable link (must start with `https://`, `mailto:`, or `tel:`, e.g. `https://wa.me/6281234567890`). Leave empty to render a non-clickable card.
+
+> Entries in the repository currently use placeholder numbers (`08xx-xxxx-xxxx`). Replace them with real PIC data before publishing.
+
+### Contact Person Template
+```json
+{
+  "name": "Nama PIC",
+  "role": "CP Rekrutmen",
+  "platform": "whatsapp",
+  "contactId": "081234567890",
+  "link": "https://wa.me/6281234567890"
+}
+```
+
 
 
 

@@ -1,9 +1,12 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import '../styles/pages/home-eim.css';
+import '../styles/pages/registration-eim.css';
 import { getCurrentRecruitmentStage } from '../utils/recruitment';
 import { parseDivisions } from '../utils/division-mapper';
 import { getRegistrationPageConfigs } from '../utils/registration-config';
 import { getLocaleFromUrl, getLocalizedJsonData, t } from '../utils/i18n';
+import { formatGlobalDate } from '../utils/date';
 import { DEFAULT_RECRUITMENT_DATES } from '../utils/constants';
 
 import ViewUpcoming from '../components/registration/ViewUpcoming.astro';
@@ -69,22 +72,38 @@ acceptedCandidates.forEach((candidate: any) => {
   }
   candidatesByDivision[divisionKey].push(candidate);
 });
+
+const heroTitle = registrationConfig.heroTitle || t('reg.title', locale);
+const heroDescription = registrationConfig.heroDescription || 'Join us and become a part of EIM Research Lab.';
+const heroEyebrow = registrationConfig.heroTag || t('reg.title', locale);
+const registrationPeriod = t('reg.period', locale, {
+  start: formatGlobalDate(openDateStr),
+  end: formatGlobalDate(deadlineStr),
+});
 ---
 
-<Layout title={`${registrationConfig.heroTitle || t('reg.title', locale)} - EIM Research Lab`}>
-  <section class="page-header registration-page-header">
-    <div class="container">
-      <div class="page-header-content">
-        <h1 id="page-hero-title">{registrationConfig.heroTitle || t('reg.title', locale)}</h1>
-        <p class="hero-desc" id="page-hero-desc">{registrationConfig.heroDescription || 'Join us and become a part of EIM Research Lab.'}</p>
+<Layout title={`${heroTitle} - EIM Research Lab`} description={heroDescription} homeSkin skipLink>
+  <main id="main-content" class="registration-page" tabindex="-1">
+    <section id="registration-hero" class="eim-hero eim-subhero" aria-labelledby="registration-hero-title">
+      <canvas class="eim-hero-canvas" aria-hidden="true"></canvas>
+      <div class="eim-hero-inner">
+        <p class="eim-eyebrow">{heroEyebrow}</p>
+        <h1 id="registration-hero-title" class="eim-hero-title">{heroTitle}</h1>
+        <p class="eim-hero-desc">{heroDescription}</p>
+        <div class="eim-hero-actions">
+          <a class="eim-hero-cta" href="#registration">{t('reg.heroPrimary', locale)}</a>
+          <a class="eim-hero-secondary" href="/contact">
+            {t('reg.heroSecondary', locale)} <span aria-hidden="true">→</span>
+          </a>
+        </div>
+        <p class="eim-subhero-meta">{registrationPeriod}</p>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <section class="section-padding" id="registration">
-    <div class="container">
-      <div 
-        class="registration-form-container glass-panel" 
+    <section class="py-[clamp(3rem,8vh,6rem)]" id="registration">
+      <div class="mx-auto max-w-[900px] px-[clamp(1.25rem,4vw,4rem)]">
+        <div 
+        class="registration-form-container"
         id="registration-container" 
         data-stage={initialStage}
         data-status={registrationConfig.status || 'auto'}
@@ -278,6 +297,7 @@ acceptedCandidates.forEach((candidate: any) => {
     </div>
 
   </section>
+  </main>
 
   {(import.meta.env.DEV || simQueryParam || stageQueryParam) && (
     <SimulationToolbar />
@@ -286,5 +306,8 @@ acceptedCandidates.forEach((candidate: any) => {
 
 <script>
   import { initRegistrationScript } from '../scripts/registration';
+  import { initTopologyField } from '../scripts/topology-field';
+
   initRegistrationScript();
+  initTopologyField();
 </script>

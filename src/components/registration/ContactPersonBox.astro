@@ -1,13 +1,7 @@
 ---
 import { getLocaleFromUrl, t } from '../../utils/i18n';
-
-export interface ContactPerson {
-  name: string;
-  role?: string;
-  platform?: 'whatsapp' | 'line' | 'email' | 'phone' | string;
-  contactId?: string;
-  link?: string;
-}
+import type { ContactPerson } from '../../utils/types';
+import { safeLink } from '../../utils/safe-link';
 
 interface Props {
   title?: string;
@@ -19,79 +13,70 @@ interface Props {
 const locale = getLocaleFromUrl(Astro.url);
 
 const {
-  title = "Butuh Bantuan atau Memiliki Pertanyaan?",
-  subtitle = "Hubungi langsung narahubung rekrutmen kami untuk pertanyaan apapun selama proses rekrutmen.",
+  title = 'Butuh Bantuan atau Memiliki Pertanyaan?',
+  subtitle = 'Hubungi langsung narahubung rekrutmen kami untuk pertanyaan apapun selama proses rekrutmen.',
   contactPersons = [],
   compact = false
 } = Astro.props;
 
 // Platform style mappings
-const platformConfig: Record<string, { label: string; iconClass: string; color: string; bgColor: string }> = {
+const platformConfig: Record<string, { label: string; iconClass: string }> = {
   whatsapp: {
     label: 'WhatsApp',
-    iconClass: 'fa-brands fa-whatsapp',
-    color: '#25D366',
-    bgColor: 'rgba(37, 211, 102, 0.12)'
+    iconClass: 'fa-brands fa-whatsapp'
   },
   line: {
     label: 'LINE',
-    iconClass: 'fa-brands fa-line',
-    color: '#00C300',
-    bgColor: 'rgba(0, 195, 0, 0.12)'
+    iconClass: 'fa-brands fa-line'
   },
   email: {
     label: 'Email',
-    iconClass: 'fa-solid fa-envelope',
-    color: '#EA4335',
-    bgColor: 'rgba(234, 67, 53, 0.12)'
+    iconClass: 'fa-solid fa-envelope'
   },
   phone: {
     label: 'Phone',
-    iconClass: 'fa-solid fa-phone',
-    color: '#34A853',
-    bgColor: 'rgba(52, 168, 83, 0.12)'
+    iconClass: 'fa-solid fa-phone'
   }
 };
 ---
 
-{contactPersons && contactPersons.length > 0 && (
-  <div class={`cp-box ${compact ? 'compact' : ''}`}>
-    <div class="cp-header">
-      <div class="cp-badge">
-        <i class="fa-solid fa-headset"></i> {t('reg.contactPerson', locale)}
-      </div>
-      <h3 class="cp-title">{title}</h3>
-      {subtitle && <p class="cp-subtitle">{subtitle}</p>}
+{contactPersons.length > 0 && (
+  <div class={compact ? 'cp-box compact' : 'cp-box'}>
+    <div class="cp-badge">
+      <i class="fa-solid fa-headset" aria-hidden="true"></i> {t('reg.contactPerson', locale)}
     </div>
+    <h3 class="cp-title">{title}</h3>
+    {subtitle && <p class="cp-subtitle">{subtitle}</p>}
 
     <div class="cp-cards-grid">
       {contactPersons.map((cp) => {
         const platKey = (cp.platform || 'whatsapp').toLowerCase();
         const platInfo = platformConfig[platKey] || platformConfig.whatsapp;
+        const link = safeLink(cp.link);
+        const external = link ? /^https?:/i.test(link) : false;
 
         return (
-          <div class={`cp-card cp-${platKey}`}>
+          <div class={`cp-card${link ? ' cp-card--linked' : ''}`}>
             <div class="cp-card-header">
               <span class="cp-role-badge">{cp.role || t('reg.contactPerson', locale)}</span>
               <div class="cp-plat-icon">
-                <i class={platInfo.iconClass}></i>
+                <i class={platInfo.iconClass} aria-hidden="true"></i>
               </div>
+              <span class="sr-only">{platInfo.label}</span>
             </div>
 
-            <div class="cp-card-body">
-              <h4 class="cp-name">{cp.name}</h4>
-              <p class="cp-id">{cp.contactId}</p>
-            </div>
+            <h4 class="cp-name">{cp.name}</h4>
+            <p class="cp-id">{cp.contactId}</p>
 
-            {cp.link && (
+            {link && (
               <a
-                href={cp.link}
-                target="_blank"
-                rel="noopener noreferrer"
+                href={link}
+                target={external ? '_blank' : undefined}
+                rel={external ? 'noopener noreferrer' : undefined}
                 class="cp-action-btn"
               >
                 <span>{`Hubungi via ${platInfo.label}`}</span>
-                <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                <i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i>
               </a>
             )}
           </div>

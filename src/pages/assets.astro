@@ -1,6 +1,8 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import '../styles/pages/assets.css';
+import '../styles/pages/home-eim.css';
+import '../styles/pages/assets-eim.css';
+import EimSectionNav from '../components/home/EimSectionNav.astro';
 
 const assetsData = [
   // Email Optimized Assets
@@ -237,165 +239,219 @@ const assetsData = [
     recommendedWidth: 32,
   },
 ];
+
+const assetCount = assetsData.length;
+const categoryCount = new Set(assetsData.map((asset) => asset.category)).size;
+const filters = [
+  { value: 'all', label: 'Semua aset' },
+  { value: 'email', label: 'Email' },
+  { value: 'icons', label: 'Ikon' },
+  { value: 'brand', label: 'Brand' },
+];
+const sectionItems = [
+  { id: 'katalog', label: 'Katalog' },
+  { id: 'daftar', label: 'Aset' },
+  { id: 'panduan', label: 'Panduan' },
+];
 ---
 
 <Layout
   title="EIM Brand & Email Assets CDN | EIM Research Lab"
   description="Koleksi asset resmi logo dan icon EIM Research Lab yang dioptimalkan untuk email template, website, dan media online."
+  homeSkin
+  skipLink
 >
-  <main class="assets-page-container">
-    <section class="assets-hero">
-      <div class="assets-badge">
-        <span>⚡ CDN & Brand Assets Hub</span>
+  <main id="main-content" tabindex="-1">
+    <EimSectionNav items={sectionItems} label="Navigasi bagian halaman" />
+
+    <section id="katalog" class="eim-hero eim-subhero" aria-labelledby="assets-hero-title">
+      <canvas class="eim-hero-canvas" aria-hidden="true"></canvas>
+      <div class="eim-hero-inner">
+        <p class="eim-eyebrow">Brand &amp; email assets</p>
+        <h1 id="assets-hero-title" class="eim-hero-title">Aset resmi EIM.</h1>
+        <p class="eim-hero-desc">
+          Logo dan ikon resmi EIM Research Lab untuk template email, situs web, dan media digital —
+          di-host publik dan siap dipakai lewat URL.
+        </p>
+        <div class="eim-hero-actions">
+          <a class="eim-hero-cta" href="#daftar">Jelajahi aset</a>
+          <a class="eim-hero-secondary" href="#panduan">Panduan pakai <span aria-hidden="true">→</span></a>
+        </div>
+        <p class="eim-subhero-meta">{assetCount} aset · {categoryCount} kategori · PNG</p>
       </div>
-      <h1 class="assets-title">
-        Official <span class="assets-title-highlight">Brand & Email Assets</span>
-      </h1>
-      <p class="assets-subtitle">
-        Asset visual resmi EIM Research Lab yang di-host secara publik dan dioptimalkan khusus untuk 
-        template email, integrasi API, Google Apps Script, dan media digital.
-      </p>
     </section>
 
-    <!-- Filters -->
-    <div class="assets-filters" id="assets-filters">
-      <button class="filter-tab-btn active" data-filter="all">Semua Asset ({assetsData.length})</button>
-      <button class="filter-tab-btn" data-filter="email">Email Optimized ({assetsData.filter(a => a.category === 'email').length})</button>
-      <button class="filter-tab-btn" data-filter="icons">Social & UI Icons ({assetsData.filter(a => a.category === 'icons').length})</button>
-      <button class="filter-tab-btn" data-filter="brand">Brand Master ({assetsData.filter(a => a.category === 'brand').length})</button>
-    </div>
-
-    <!-- Assets Grid -->
-    <div class="assets-grid" id="assets-grid">
-      {assetsData.map((asset) => (
-        <article class="asset-card" data-category={asset.category} id={`card-${asset.id}`}>
-          <div class={`asset-preview-stage bg-${asset.recommendedBg}`} id={`stage-${asset.id}`}>
-            <img 
-              src={asset.path} 
-              alt={asset.name} 
-              class="asset-preview-img" 
-              loading="lazy" 
-            />
-            <button 
-              class="asset-bg-toggle-btn" 
-              data-target={`stage-${asset.id}`} 
-              title="Ganti Latar Preview (Gelap / Terang)"
+    <section id="daftar" class="border-t border-line py-[clamp(4.5rem,10vh,8.75rem)]" aria-labelledby="assets-list-title">
+      <div class="mx-auto max-w-[1200px] px-[clamp(1.25rem,4vw,4rem)]">
+        <div class="grid gap-6 lg:grid-cols-2 lg:items-end">
+          <div>
+            <p class="e-reveal font-mono text-xs uppercase tracking-[0.08em] text-brand">01 — Katalog</p>
+            <h2
+              id="assets-list-title"
+              class="e-reveal mt-4 font-display text-[clamp(2rem,4vw,3.5rem)] leading-[1.05] tracking-[-0.01em]"
             >
-              🌓 Mode
-            </button>
+              Katalog aset.
+            </h2>
           </div>
+          <p class="e-reveal max-w-[52ch] text-[15px] leading-[1.55] text-muted-ink lg:justify-self-end">
+            Pilih kategori, ganti latar pratinjau untuk mengecek kontras, lalu salin URL atau tag gambar yang siap tempel.
+          </p>
+        </div>
 
-          <div class="asset-card-content">
-            <div class="asset-meta-tags">
-              <span class="meta-pill meta-pill-format">{asset.format}</span>
-              <span class="meta-pill meta-pill-size">{asset.dimensions}</span>
-              <span class="meta-pill meta-pill-use">{asset.size}</span>
-            </div>
+        <div class="assets-filters" id="assets-filters" role="group" aria-label="Filter kategori aset">
+          {filters.map((filter) => (
+            <button
+              type="button"
+              class:list={['filter-tab-btn', filter.value === 'all' && 'active']}
+              data-filter={filter.value}
+              aria-pressed={filter.value === 'all' ? 'true' : 'false'}
+            >
+              {filter.label}
+              {filter.value === 'all'
+                ? ` (${assetCount})`
+                : ` (${assetsData.filter((asset) => asset.category === filter.value).length})`}
+            </button>
+          ))}
+        </div>
 
-            <h2 class="asset-card-title">{asset.name}</h2>
-            <p class="asset-card-desc">{asset.description}</p>
-
-            <div class="asset-actions">
-              <div class="asset-action-btn-row">
-                <button 
-                  class="asset-btn asset-btn-primary copy-url-btn" 
-                  data-path={asset.path}
+        <div class="assets-grid" id="assets-grid">
+          {assetsData.map((asset) => (
+            <article class="asset-card" data-category={asset.category} id={`card-${asset.id}`}>
+              <div class={`asset-preview-stage bg-${asset.recommendedBg}`} id={`stage-${asset.id}`}>
+                <img
+                  src={asset.path}
+                  alt={asset.name}
+                  class="asset-preview-img"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <button
+                  type="button"
+                  class="asset-bg-toggle-btn"
+                  data-target={`stage-${asset.id}`}
+                  title="Ganti latar pratinjau (gelap / terang)"
                 >
-                  🔗 Salin URL
-                </button>
-                <button 
-                  class="asset-btn asset-btn-secondary copy-html-btn" 
-                  data-path={asset.path} 
-                  data-name={asset.name} 
-                  data-width={asset.recommendedWidth}
-                >
-                  📄 Salin &lt;img&gt;
+                  <i class="fa-solid fa-eye" aria-hidden="true"></i> Latar
                 </button>
               </div>
-              <a 
-                href={asset.path} 
-                download 
-                class="asset-btn asset-btn-outline"
-              >
-                ⬇️ Unduh File ({asset.format})
-              </a>
-            </div>
+
+              <div class="asset-card-content">
+                <div class="asset-meta-tags">
+                  <span class="meta-pill meta-pill-format">{asset.format}</span>
+                  <span class="meta-pill meta-pill-size">{asset.dimensions}</span>
+                  <span class="meta-pill meta-pill-use">{asset.size}</span>
+                </div>
+
+                <h3 class="asset-card-title">{asset.name}</h3>
+                <p class="asset-card-desc">{asset.description}</p>
+
+                <div class="asset-actions">
+                  <div class="asset-action-btn-row">
+                    <button type="button" class="asset-btn asset-btn-primary copy-url-btn" data-path={asset.path}>
+                      <i class="fa-solid fa-share-nodes" aria-hidden="true"></i> Salin URL
+                    </button>
+                    <button
+                      type="button"
+                      class="asset-btn asset-btn-secondary copy-html-btn"
+                      data-path={asset.path}
+                      data-name={asset.name}
+                      data-width={asset.recommendedWidth}
+                    >
+                      <i class="fa-solid fa-image" aria-hidden="true"></i> Salin &lt;img&gt;
+                    </button>
+                  </div>
+                  <a href={asset.path} download class="asset-btn asset-btn-outline">
+                    <i class="fa-solid fa-folder-open" aria-hidden="true"></i> Unduh file ({asset.format})
+                  </a>
+                </div>
+              </div>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <section id="panduan" class="border-t border-line py-[clamp(4.5rem,10vh,8.75rem)]" aria-labelledby="assets-guide-title">
+      <div class="mx-auto max-w-[1200px] px-[clamp(1.25rem,4vw,4rem)]">
+        <div class="guidelines-header">
+          <p class="e-reveal font-mono text-xs uppercase tracking-[0.08em] text-brand">02 — Panduan</p>
+          <h2 id="assets-guide-title" class="guidelines-title e-reveal mt-4">Panduan penggunaan aset.</h2>
+          <p class="guidelines-desc e-reveal">
+            Tips teknis agar logo dan gambar tampil optimal, tajam, dan tidak diblokir oleh klien email
+            (Gmail, Outlook, Apple Mail).
+          </p>
+        </div>
+
+        <div class="guidelines-grid e-reveal-group">
+          <div class="guideline-box">
+            <div class="guideline-box-icon"><i class="fa-solid fa-network-wired" aria-hidden="true"></i></div>
+            <h3 class="guideline-box-title">Gunakan public HTTPS URL</h3>
+            <p class="guideline-box-text">
+              Klien email tidak dapat membaca file lokal komputer atau format Base64 secara konsisten.
+              Selalu gunakan URL absolut HTTPS yang di-host di domain ini.
+            </p>
           </div>
-        </article>
-      ))}
-    </div>
 
-    <!-- Guidelines Section -->
-    <section class="assets-guidelines">
-      <div class="guidelines-header">
-        <h2 class="guidelines-title">Panduan Penggunaan Asset pada Email</h2>
-        <p class="guidelines-desc">
-          Tips teknis agar logo dan gambar tampil optimal, tajam, dan tidak diblokir oleh klien email (Gmail, Outlook, Apple Mail).
-        </p>
-      </div>
+          <div class="guideline-box">
+            <div class="guideline-box-icon"><i class="fa-solid fa-image" aria-hidden="true"></i></div>
+            <h3 class="guideline-box-title">Format PNG &amp; retina 2x</h3>
+            <p class="guideline-box-text">
+              Koleksi aset email ini dibuat dengan resolusi 2x (misal gambar 500px dengan tag width 200px)
+              agar tetap tajam di layar Retina dan monitor 4K.
+            </p>
+          </div>
 
-      <div class="guidelines-grid">
-        <div class="guideline-box">
-          <div class="guideline-box-icon">🌐</div>
-          <h3 class="guideline-box-title">Gunakan Public HTTPS URL</h3>
-          <p class="guideline-box-text">
-            Klien email tidak dapat membaca file lokal komputer atau format Base64 secara konsisten. Selalu gunakan URL absolut HTTPS yang di-host di domain ini.
-          </p>
+          <div class="guideline-box">
+            <div class="guideline-box-icon"><i class="fa-solid fa-cloud" aria-hidden="true"></i></div>
+            <h3 class="guideline-box-title">Ukuran ringan (&lt; 15 KB)</h3>
+            <p class="guideline-box-text">
+              Seluruh aset dikompresi maksimal tanpa mengurangi kualitas, menjamin email terbuka instan
+              tanpa delay dan lolos filter spam.
+            </p>
+          </div>
         </div>
 
-        <div class="guideline-box">
-          <div class="guideline-box-icon">📱</div>
-          <h3 class="guideline-box-title">Format PNG & Retina 2x</h3>
-          <p class="guideline-box-text">
-            Koleksi asset email ini dibuat dengan resolusi 2x (misal gambar 500px dengan tag width 200px) agar sangat tajam di layar Retina smartphone dan monitor 4K.
-          </p>
-        </div>
-
-        <div class="guideline-box">
-          <div class="guideline-box-icon">⚡</div>
-          <h3 class="guideline-box-title">Ukuran Ringan (&lt; 15 KB)</h3>
-          <p class="guideline-box-text">
-            Seluruh asset telah dikompresi maksimal tanpa mengurangi kualitas, menjamin email terbuka instan tanpa delay dan lolos filter spam.
-          </p>
-        </div>
-      </div>
-
-      <div class="snippet-title">Contoh Kode HTML Email:</div>
-      <pre class="snippet-box"><code>&lt;!-- Logo Header Email EIM --&gt;
+        <p class="snippet-title e-reveal">Contoh kode HTML email</p>
+        <pre class="snippet-box e-reveal"><code>&lt;!-- Logo Header Email EIM --&gt;
 &lt;img 
   src="https://eimresearchlab.com/assets/email/logo.png" 
   alt="EIM Research Lab" 
   width="200" 
   style="display: block; width: 200px; max-width: 100%; height: auto; border: 0;" 
 /&gt;</code></pre>
+      </div>
     </section>
   </main>
 </Layout>
 
 <script>
-  // Filter tabs logic
-  const filterButtons = document.querySelectorAll('.filter-tab-btn');
-  const cards = document.querySelectorAll('.asset-card');
+  import { initTopologyField } from '../scripts/topology-field';
+
+  initTopologyField();
+
+  // Filter tabs
+  const filterButtons = document.querySelectorAll<HTMLButtonElement>('.filter-tab-btn');
+  const cards = document.querySelectorAll<HTMLElement>('.asset-card');
 
   filterButtons.forEach((btn) => {
     btn.addEventListener('click', () => {
-      filterButtons.forEach((b) => b.classList.remove('active'));
+      filterButtons.forEach((b) => {
+        b.classList.remove('active');
+        b.setAttribute('aria-pressed', 'false');
+      });
       btn.classList.add('active');
+      btn.setAttribute('aria-pressed', 'true');
 
       const filter = btn.getAttribute('data-filter');
       cards.forEach((card) => {
         const category = card.getAttribute('data-category');
-        if (filter === 'all' || category === filter) {
-          (card as HTMLElement).style.display = 'flex';
-        } else {
-          (card as HTMLElement).style.display = 'none';
-        }
+        card.style.display = filter === 'all' || category === filter ? 'flex' : 'none';
       });
     });
   });
 
-  // Background toggle logic for preview stages
-  const bgToggles = document.querySelectorAll('.asset-bg-toggle-btn');
+  // Preview background toggle
+  const bgToggles = document.querySelectorAll<HTMLButtonElement>('.asset-bg-toggle-btn');
   bgToggles.forEach((btn) => {
     btn.addEventListener('click', () => {
       const targetId = btn.getAttribute('data-target');
@@ -413,23 +469,22 @@ const assetsData = [
     });
   });
 
-  // Copy Public URL
-  const copyUrlBtns = document.querySelectorAll('.copy-url-btn');
+  // Copy public URL
+  const copyUrlBtns = document.querySelectorAll<HTMLButtonElement>('.copy-url-btn');
   copyUrlBtns.forEach((btn) => {
     btn.addEventListener('click', async () => {
       const path = btn.getAttribute('data-path');
       if (!path) return;
 
-      const origin = window.location.origin;
-      const fullUrl = `${origin}${path}`;
+      const fullUrl = `${window.location.origin}${path}`;
 
       try {
         await navigator.clipboard.writeText(fullUrl);
-        const originalText = btn.textContent;
-        btn.textContent = '✓ Tersalin!';
+        const originalHtml = btn.innerHTML;
+        btn.innerHTML = '✓ Tersalin!';
         btn.classList.add('copied');
         setTimeout(() => {
-          btn.textContent = originalText;
+          btn.innerHTML = originalHtml;
           btn.classList.remove('copied');
         }, 2000);
       } catch (err) {
@@ -438,8 +493,8 @@ const assetsData = [
     });
   });
 
-  // Copy HTML Snippet
-  const copyHtmlBtns = document.querySelectorAll('.copy-html-btn');
+  // Copy HTML snippet
+  const copyHtmlBtns = document.querySelectorAll<HTMLButtonElement>('.copy-html-btn');
   copyHtmlBtns.forEach((btn) => {
     btn.addEventListener('click', async () => {
       const path = btn.getAttribute('data-path');
@@ -447,17 +502,16 @@ const assetsData = [
       const width = btn.getAttribute('data-width') || '200';
       if (!path) return;
 
-      const origin = window.location.origin;
-      const fullUrl = `${origin}${path}`;
+      const fullUrl = `${window.location.origin}${path}`;
       const snippet = `<img src="${fullUrl}" alt="${name}" width="${width}" style="display: block; width: ${width}px; max-width: 100%; height: auto; border: 0;" />`;
 
       try {
         await navigator.clipboard.writeText(snippet);
-        const originalText = btn.textContent;
-        btn.textContent = '✓ Tag Tersalin!';
+        const originalHtml = btn.innerHTML;
+        btn.innerHTML = '✓ Tag tersalin!';
         btn.classList.add('copied');
         setTimeout(() => {
-          btn.textContent = originalText;
+          btn.innerHTML = originalHtml;
           btn.classList.remove('copied');
         }, 2000);
       } catch (err) {

@@ -244,14 +244,14 @@ const sectionItems = [
     const email = copyEmailBtn.dataset.email;
     if (!email) return;
 
-    clearTimeout(copyTimer);
     const seq = ++copySeq;
     const copied = await Promise.resolve()
       .then(() => navigator.clipboard.writeText(email))
       .then(() => true, () => false);
     if (seq !== copySeq) return;
 
-    copyEmailBtn.textContent = (copied ? copyEmailBtn.dataset.copied : copyEmailBtn.dataset.failed) || '';
+    clearTimeout(copyTimer);
+    copyEmailBtn.textContent = (copied ? copyEmailBtn.dataset.copied : copyEmailBtn.dataset.failed) || (copied ? 'Tersalin!' : 'Gagal menyalin');
     if (copyStatus) {
       copyStatus.textContent = (copied ? copyEmailBtn.dataset.statusCopied : copyEmailBtn.dataset.statusFailed) || '';
     }

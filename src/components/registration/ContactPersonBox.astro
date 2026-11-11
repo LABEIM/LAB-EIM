@@ -1,6 +1,7 @@
 ---
 import { getLocaleFromUrl, t } from '../../utils/i18n';
 import type { ContactPerson } from '../../utils/types';
+import { safeLink } from '../../utils/safe-link';
 
 interface Props {
   title?: string;
@@ -36,12 +37,6 @@ const platformConfig: Record<string, { label: string; iconClass: string }> = {
     label: 'Phone',
     iconClass: 'fa-solid fa-phone'
   }
-};
-
-// CMS-editable: only allow link schemes that cannot execute script.
-const safeLink = (value?: string): string | undefined => {
-  const link = value?.trim();
-  return link && /^(https?:|mailto:|tel:)/i.test(link) ? link : undefined;
 };
 ---
 

@@ -321,7 +321,7 @@ export const uiTranslations: Record<Locale, Record<string, string>> = {
     'contact.routingNote': 'Rekrutmen, kegiatan, riset & kolaborasi → WhatsApp PIC. Pertanyaan umum & dokumen administrasi → email.',
     'contact.copyEmail': 'Salin email',
     'contact.copied': 'Tersalin!',
-    'contact.copyFailed': 'Gagal menyalin, salin manual.',
+    'contact.copyFailed': 'Gagal menyalin',
     'contact.copySuccessStatus': 'Email disalin ke papan klip.',
     'contact.copyFailedStatus': 'Email gagal disalin.',
     'contact.picsTitle': 'Hubungi PIC kami.',

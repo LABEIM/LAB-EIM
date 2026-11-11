@@ -321,7 +321,7 @@ Configures the `/contact` page. Manage it via **Keystatic Admin > Singletons > C
   * **`role`**: Differentiator shown on the card (e.g. `"CP Rekrutmen"`, `"CP Riset & Kolaborasi"`).
   * **`platform`**: `whatsapp`, `line`, `email`, or `phone` (selects the icon).
   * **`contactId`**: Phone number or handle shown on the card.
-  * **`link`**: Direct clickable link (e.g. `https://wa.me/6281234567890`). Leave empty to render a non-clickable card.
+  * **`link`**: Direct clickable link (must start with `https://`, `mailto:`, or `tel:`, e.g. `https://wa.me/6281234567890`). Leave empty to render a non-clickable card.
 
 > Entries in the repository currently use placeholder numbers (`08xx-xxxx-xxxx`). Replace them with real PIC data before publishing.
 

@@ -12,7 +12,7 @@
 
 .footer-grid {
     display: grid;
-    grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr) minmax(0, 1.2fr);
+    grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr) minmax(0, 1.2fr) minmax(0, 1fr);
     gap: clamp(2rem, 5vw, 4rem);
     margin-bottom: clamp(2.5rem, 6vh, 4rem);
 }
@@ -197,7 +197,7 @@
     outline-offset: 2px;
 }
 
-/* Column dividers only where the three-column layout exists */
+/* Column dividers only where the multi-column layout exists */
 @media (min-width: 1025px) {
     .footer-grid > * + * {
         border-left: 1px solid var(--border-color);

@@ -316,6 +316,7 @@ Configures the `/contact` page. Manage it via **Keystatic Admin > Singletons > C
 * **`hoursTitle`**, **`hoursText`**, **`hoursSubtext`**: Operating-hours row.
 * **`mapSectionTitle`**, **`mapSectionSubtitle`**: Map section heading and intro.
 * **`contactPersons`** (Array): Narahubung cards shown inside "Kanal komunikasi".
+  These are independent of the recruitment PICs in **Registration Settings** (`src/data/registration.json`); update both if the same people appear on both pages.
   * **`name`**: PIC name.
   * **`role`**: Differentiator shown on the card (e.g. `"CP Rekrutmen"`, `"CP Riset & Kolaborasi"`).
   * **`platform`**: `whatsapp`, `line`, `email`, or `phone` (selects the icon).

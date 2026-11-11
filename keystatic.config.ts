@@ -15,7 +15,7 @@ const contactPersonsField = fields.array(
       defaultValue: 'whatsapp',
     }),
     contactId: fields.text({ label: 'Contact ID / Phone Number / Handle (e.g. 081234567890 or @id)' }),
-    link: fields.text({ label: 'Direct Clickable Contact Link (e.g. https://wa.me/6281234567890)' }),
+    link: fields.text({ label: 'Direct Clickable Contact Link (must start with https://, mailto: or tel:, e.g. https://wa.me/6281234567890)' }),
   }),
   {
     label: 'Contact Persons List',

@@ -32,10 +32,6 @@
   color: var(--color-brand);
 }
 
-.cp-badge i {
-  margin-right: 0;
-}
-
 .cp-title {
   font-family: var(--font-display);
   font-size: clamp(1.5rem, 2.6vw, 2rem);

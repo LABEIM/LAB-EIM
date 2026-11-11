@@ -128,6 +128,8 @@ const sectionItems = [
                       data-email={emailText}
                       data-copied={t('contact.copied', locale)}
                       data-failed={t('contact.copyFailed', locale)}
+                      data-status-copied={t('contact.copySuccessStatus', locale)}
+                      data-status-failed={t('contact.copyFailedStatus', locale)}
                     >
                       {t('contact.copyEmail', locale)}
                     </button>
@@ -149,7 +151,6 @@ const sectionItems = [
               <ContactPersonBox
                 contactPersons={contactPersons}
                 compact
-                badge={t('contact.picsLabel', locale)}
                 title={t('contact.picsTitle', locale)}
                 subtitle={t('contact.picsSubtitle', locale)}
               />
@@ -237,19 +238,22 @@ const sectionItems = [
   const copyStatus = document.getElementById('copy-email-status');
   const copyLabel = copyEmailBtn?.textContent ?? '';
   let copyTimer: ReturnType<typeof setTimeout> | undefined;
+  let copySeq = 0;
 
   copyEmailBtn?.addEventListener('click', async () => {
     const email = copyEmailBtn.dataset.email;
     if (!email) return;
 
     clearTimeout(copyTimer);
-    try {
-      await navigator.clipboard.writeText(email);
-      copyEmailBtn.textContent = copyEmailBtn.dataset.copied || 'Tersalin!';
-      if (copyStatus) copyStatus.textContent = copyEmailBtn.dataset.copied || '';
-    } catch {
-      copyEmailBtn.textContent = copyEmailBtn.dataset.failed || 'Gagal menyalin';
-      if (copyStatus) copyStatus.textContent = copyEmailBtn.dataset.failed || '';
+    const seq = ++copySeq;
+    const copied = await Promise.resolve()
+      .then(() => navigator.clipboard.writeText(email))
+      .then(() => true, () => false);
+    if (seq !== copySeq) return;
+
+    copyEmailBtn.textContent = (copied ? copyEmailBtn.dataset.copied : copyEmailBtn.dataset.failed) || '';
+    if (copyStatus) {
+      copyStatus.textContent = (copied ? copyEmailBtn.dataset.statusCopied : copyEmailBtn.dataset.statusFailed) || '';
     }
 
     copyTimer = setTimeout(() => {

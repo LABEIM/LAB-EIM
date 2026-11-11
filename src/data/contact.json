@@ -16,14 +16,14 @@
   "contactPersons": [
     {
       "name": "PIC 1",
-      "role": "CP Rekrutmen & Kegiatan",
+      "role": "CP Rekrutmen",
       "platform": "whatsapp",
       "contactId": "08xx-xxxx-xxxx",
       "link": ""
     },
     {
       "name": "PIC 2",
-      "role": "CP Riset & Kolaborasi",
+      "role": "CP Riset",
       "platform": "whatsapp",
       "contactId": "08xx-xxxx-xxxx",
       "link": ""

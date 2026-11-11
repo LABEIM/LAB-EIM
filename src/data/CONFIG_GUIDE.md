@@ -318,7 +318,7 @@ Configures the `/contact` page. Manage it via **Keystatic Admin > Singletons > C
 * **`contactPersons`** (Array): Narahubung cards shown inside "Kanal komunikasi".
   These are independent of the recruitment PICs in **Registration Settings** (`src/data/registration.json`); update both if the same people appear on both pages.
   * **`name`**: PIC name.
-  * **`role`**: Differentiator shown on the card (e.g. `"CP Rekrutmen"`, `"CP Riset & Kolaborasi"`).
+  * **`role`**: Differentiator shown on the card (e.g. `"CP Rekrutmen"`, `"CP Riset"`). Keep it short so the badge stays on one line.
   * **`platform`**: `whatsapp`, `line`, `email`, or `phone` (selects the icon).
   * **`contactId`**: Phone number or handle shown on the card.
   * **`link`**: Direct clickable link (must start with `https://`, `mailto:`, or `tel:`, e.g. `https://wa.me/6281234567890`). Leave empty to render a non-clickable card.

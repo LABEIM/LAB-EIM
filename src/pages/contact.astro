@@ -13,7 +13,7 @@ const contactPageData = await getLocalizedJsonData<any>('contact', locale);
 
 const contactInfo = siteData.contact || {};
 const socials = siteData.socials || {};
-const contactPersons: ContactPerson[] = contactPageData.contactPersons || [];
+const contactPersons: ContactPerson[] = Array.isArray(contactPageData.contactPersons) ? contactPageData.contactPersons : [];
 
 const title = contactPageData.title || 'Hubungi Kami';
 const heroDescription = contactPageData.heroDescription || 'Laboratorium Riset Enterprise Infrastructure Management Telkom University siap melayani pertanyaan, kolaborasi riset, dan informasi kegiatan.';

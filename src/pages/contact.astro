@@ -4,6 +4,7 @@ import '../styles/pages/home-eim.css';
 import '../styles/pages/contact-eim.css';
 import EimSectionNav from '../components/home/EimSectionNav.astro';
 import { getLocaleFromUrl, getLocalizedJsonData, t } from '../utils/i18n';
+import type { ContactPerson } from '../utils/types';
 
 const locale = getLocaleFromUrl(Astro.url);
 const siteData = await getLocalizedJsonData<any>('site', locale);
@@ -11,6 +12,12 @@ const contactPageData = await getLocalizedJsonData<any>('contact', locale);
 
 const contactInfo = siteData.contact || {};
 const socials = siteData.socials || {};
+
+// Placeholder PICs — replace names, numbers, and links with the real ones.
+const contactPersons: ContactPerson[] = [
+  { name: 'PIC 1', role: 'CP Informasi', contactId: '08xx-xxxx-xxxx', link: '' },
+  { name: 'PIC 2', role: 'CP Informasi', contactId: '08xx-xxxx-xxxx', link: '' },
+];
 
 const title = contactPageData.title || 'Hubungi Kami';
 const heroDescription = contactPageData.heroDescription || 'Laboratorium Riset Enterprise Infrastructure Management Telkom University siap melayani pertanyaan, kolaborasi riset, dan informasi kegiatan.';
@@ -78,7 +85,7 @@ const sectionItems = [
       </div>
     </section>
 
-    <section id="detail" class="border-t border-line py-[clamp(4.5rem,10vh,8.75rem)]" aria-labelledby="contact-detail-title">
+    <section id="detail" class="py-[clamp(4.5rem,10vh,8.75rem)]" aria-labelledby="contact-detail-title">
       <div class="mx-auto max-w-[1200px] px-[clamp(1.25rem,4vw,4rem)]">
         <div class="grid gap-[clamp(2.5rem,5vw,5rem)] lg:grid-cols-[minmax(0,4fr)_minmax(0,7fr)]">
           <div class="e-reveal">
@@ -94,36 +101,73 @@ const sectionItems = [
             </p>
           </div>
 
-          <dl class="border-t border-line">
-            <div class="grid gap-3 border-b border-line py-6 sm:grid-cols-[10rem_minmax(0,1fr)] sm:gap-8">
-              <dt class="font-mono text-[11px] uppercase tracking-[0.08em] text-muted-ink">{locationTitle}</dt>
-              <dd class="text-[15px] leading-[1.6]">
-                <p>{locationText}</p>
-                <p class="mt-1 text-muted-ink">{universityText}</p>
-                <a class="contact-action mt-1" href={mapsUrl} target="_blank" rel="noopener noreferrer">
-                  {t('contact.mapsAction', locale)} <span aria-hidden="true">↗</span>
-                </a>
-              </dd>
-            </div>
+          <div>
+            <dl class="border-t border-line">
+              <div class="grid gap-3 border-b border-line py-6 sm:grid-cols-[10rem_minmax(0,1fr)] sm:gap-8">
+                <dt class="font-mono text-[11px] uppercase tracking-[0.08em] text-muted-ink">{locationTitle}</dt>
+                <dd class="text-[15px] leading-[1.6]">
+                  <p>{locationText}</p>
+                  <p class="mt-1 text-muted-ink">{universityText}</p>
+                  <a class="contact-action mt-1" href={mapsUrl} target="_blank" rel="noopener noreferrer">
+                    {t('contact.mapsAction', locale)} <span aria-hidden="true">↗</span>
+                  </a>
+                </dd>
+              </div>
 
-            <div class="grid gap-3 border-b border-line py-6 sm:grid-cols-[10rem_minmax(0,1fr)] sm:gap-8">
-              <dt class="font-mono text-[11px] uppercase tracking-[0.08em] text-muted-ink">{emailTitle}</dt>
-              <dd class="text-[15px] leading-[1.6]">
-                <a class="text-brand underline underline-offset-4" href={`mailto:${emailText}`}>{emailText}</a>
-                <a class="contact-action mt-1" href={`mailto:${emailText}`}>
-                  {t('contact.emailAction', locale)} <span aria-hidden="true">→</span>
-                </a>
-              </dd>
-            </div>
+              <div class="grid gap-3 border-b border-line py-6 sm:grid-cols-[10rem_minmax(0,1fr)] sm:gap-8">
+                <dt class="font-mono text-[11px] uppercase tracking-[0.08em] text-muted-ink">{emailTitle}</dt>
+                <dd class="text-[15px] leading-[1.6]">
+                  <a class="text-brand underline underline-offset-4" href={`mailto:${emailText}`}>{emailText}</a>
+                  <a class="contact-action mt-1" href={`mailto:${emailText}`}>
+                    {t('contact.emailAction', locale)} <span aria-hidden="true">→</span>
+                  </a>
+                </dd>
+              </div>
 
-            <div class="grid gap-3 border-b border-line py-6 sm:grid-cols-[10rem_minmax(0,1fr)] sm:gap-8">
-              <dt class="font-mono text-[11px] uppercase tracking-[0.08em] text-muted-ink">{hoursTitle}</dt>
-              <dd class="text-[15px] leading-[1.6]">
-                <p>{hoursText}</p>
-                <p class="mt-1 text-muted-ink">{hoursSubtext}</p>
-              </dd>
-            </div>
-          </dl>
+              <div class="grid gap-3 border-b border-line py-6 sm:grid-cols-[10rem_minmax(0,1fr)] sm:gap-8">
+                <dt class="font-mono text-[11px] uppercase tracking-[0.08em] text-muted-ink">{hoursTitle}</dt>
+                <dd class="text-[15px] leading-[1.6]">
+                  <p>{hoursText}</p>
+                  <p class="mt-1 text-muted-ink">{hoursSubtext}</p>
+                </dd>
+              </div>
+            </dl>
+
+            {contactPersons.length > 0 && (
+              <div class="contact-pics">
+                <p class="contact-pics-label">{t('reg.contactPerson', locale)}</p>
+                <ul class="contact-pic-list">
+                  {contactPersons.map((person) => (
+                    <li>
+                      {person.link ? (
+                        <a class="contact-pic" href={person.link} target="_blank" rel="noopener noreferrer">
+                          <span class="contact-pic-icon" aria-hidden="true">
+                            <i class="fa-brands fa-whatsapp"></i>
+                          </span>
+                          <span class="contact-pic-body">
+                            <span class="contact-pic-name">{person.name}</span>
+                            <span class="contact-pic-role">{person.role}</span>
+                          </span>
+                          <span class="contact-pic-number">{person.contactId}</span>
+                        </a>
+                      ) : (
+                        <div class="contact-pic">
+                          <span class="contact-pic-icon" aria-hidden="true">
+                            <i class="fa-brands fa-whatsapp"></i>
+                          </span>
+                          <span class="contact-pic-body">
+                            <span class="contact-pic-name">{person.name}</span>
+                            <span class="contact-pic-role">{person.role}</span>
+                          </span>
+                          <span class="contact-pic-number">{person.contactId}</span>
+                        </div>
+                      )}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </section>

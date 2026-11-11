@@ -68,7 +68,7 @@
   text-align: left;
 }
 
-.cp-card:hover {
+.cp-card--linked:hover {
   border-color: color-mix(in srgb, var(--color-brand) 35%, transparent);
 }
 
@@ -113,6 +113,7 @@
   font-weight: 500;
   line-height: 1.35;
   color: var(--color-foreground);
+  overflow-wrap: anywhere;
 }
 
 .cp-id {
@@ -129,7 +130,7 @@
   align-items: center;
   justify-content: space-between;
   gap: 0.5rem;
-  min-height: 40px;
+  min-height: 44px;
   margin-top: 1rem;
   padding: 0.5rem 0.8rem;
   border: 1px solid var(--color-line);
@@ -154,12 +155,5 @@
 @media (max-width: 640px) {
   .cp-cards-grid {
     grid-template-columns: 1fr;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .cp-card,
-  .cp-action-btn {
-    transition: none;
   }
 }

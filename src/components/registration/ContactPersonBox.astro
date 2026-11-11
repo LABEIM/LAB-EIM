@@ -1,13 +1,6 @@
 ---
 import { getLocaleFromUrl, t } from '../../utils/i18n';
-
-export interface ContactPerson {
-  name: string;
-  role?: string;
-  platform?: 'whatsapp' | 'line' | 'email' | 'phone' | string;
-  contactId?: string;
-  link?: string;
-}
+import type { ContactPerson } from '../../utils/types';
 
 interface Props {
   title?: string;
@@ -20,44 +13,40 @@ interface Props {
 const locale = getLocaleFromUrl(Astro.url);
 
 const {
-  title = "Butuh Bantuan atau Memiliki Pertanyaan?",
-  subtitle = "Hubungi langsung narahubung rekrutmen kami untuk pertanyaan apapun selama proses rekrutmen.",
+  title = 'Butuh Bantuan atau Memiliki Pertanyaan?',
+  subtitle = 'Hubungi langsung narahubung rekrutmen kami untuk pertanyaan apapun selama proses rekrutmen.',
   badge = t('reg.contactPerson', locale),
   contactPersons = [],
   compact = false
 } = Astro.props;
 
 // Platform style mappings
-const platformConfig: Record<string, { label: string; iconClass: string; color: string; bgColor: string }> = {
+const platformConfig: Record<string, { label: string; iconClass: string }> = {
   whatsapp: {
     label: 'WhatsApp',
-    iconClass: 'fa-brands fa-whatsapp',
-    color: '#25D366',
-    bgColor: 'rgba(37, 211, 102, 0.12)'
+    iconClass: 'fa-brands fa-whatsapp'
   },
   line: {
     label: 'LINE',
-    iconClass: 'fa-brands fa-line',
-    color: '#00C300',
-    bgColor: 'rgba(0, 195, 0, 0.12)'
+    iconClass: 'fa-brands fa-line'
   },
   email: {
     label: 'Email',
-    iconClass: 'fa-solid fa-envelope',
-    color: '#EA4335',
-    bgColor: 'rgba(234, 67, 53, 0.12)'
+    iconClass: 'fa-solid fa-envelope'
   },
   phone: {
     label: 'Phone',
-    iconClass: 'fa-solid fa-phone',
-    color: '#34A853',
-    bgColor: 'rgba(52, 168, 83, 0.12)'
+    iconClass: 'fa-solid fa-phone'
   }
 };
+
+// CMS-editable: only allow link schemes that cannot execute script.
+const isSafeLink = (link?: string): link is string =>
+  Boolean(link && /^(https?:|mailto:|tel:)/i.test(link));
 ---
 
-{contactPersons && contactPersons.length > 0 && (
-  <div class={`cp-box ${compact ? 'compact' : ''}`}>
+{contactPersons.length > 0 && (
+  <div class={compact ? 'cp-box compact' : 'cp-box'}>
     <div class="cp-header">
       <div class="cp-badge">
         <i class="fa-solid fa-headset"></i> {badge}
@@ -70,9 +59,10 @@ const platformConfig: Record<string, { label: string; iconClass: string; color: 
       {contactPersons.map((cp) => {
         const platKey = (cp.platform || 'whatsapp').toLowerCase();
         const platInfo = platformConfig[platKey] || platformConfig.whatsapp;
+        const link = isSafeLink(cp.link) ? cp.link : undefined;
 
         return (
-          <div class={`cp-card cp-${platKey}`}>
+          <div class={`cp-card cp-${platKey}${link ? ' cp-card--linked' : ''}`}>
             <div class="cp-card-header">
               <span class="cp-role-badge">{cp.role || t('reg.contactPerson', locale)}</span>
               <div class="cp-plat-icon">
@@ -85,9 +75,9 @@ const platformConfig: Record<string, { label: string; iconClass: string; color: 
               <p class="cp-id">{cp.contactId}</p>
             </div>
 
-            {cp.link && (
+            {link && (
               <a
-                href={cp.link}
+                href={link}
                 target="_blank"
                 rel="noopener noreferrer"
                 class="cp-action-btn"

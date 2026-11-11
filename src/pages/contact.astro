@@ -39,6 +39,8 @@ const socialEntries = [
   { name: 'GitHub', url: socials.github, icon: 'fa-brands fa-github' },
 ].filter((entry) => Boolean(entry.url));
 
+const labName = [siteData.name, siteData.subName].filter(Boolean).join(' ') || siteData.fullName || 'EIM Research Lab';
+
 function getSocialHandle(url: string): string {
   try {
     const parsed = new URL(url);
@@ -47,7 +49,7 @@ function getSocialHandle(url: string): string {
       const segment = parsed.pathname.split('/').filter(Boolean)[0];
       if (segment) return `@${segment}`;
     }
-    if (host === 'linkedin.com') return 'EIM Research Lab';
+    if (host === 'linkedin.com') return labName;
     return host;
   } catch {
     return '';
@@ -85,7 +87,7 @@ const sectionItems = [
     <section id="detail" class="py-[clamp(4.5rem,10vh,8.75rem)]" aria-labelledby="contact-detail-title">
       <div class="mx-auto max-w-[1200px] px-[clamp(1.25rem,4vw,4rem)]">
         <div class="grid gap-[clamp(2.5rem,5vw,5rem)] lg:grid-cols-[minmax(0,4fr)_minmax(0,7fr)]">
-          <div class="e-reveal lg:sticky lg:top-28 lg:self-start">
+          <div class="e-reveal lg:sticky lg:top-[calc(var(--site-header-height)+1.5rem)] lg:self-start">
             <p class="font-mono text-xs uppercase tracking-[0.08em] text-brand">01 — {t('contact.detailsEyebrow', locale)}</p>
             <h2
               id="contact-detail-title"
@@ -125,9 +127,11 @@ const sectionItems = [
                       id="copy-email-btn"
                       data-email={emailText}
                       data-copied={t('contact.copied', locale)}
+                      data-failed={t('contact.copyFailed', locale)}
                     >
                       {t('contact.copyEmail', locale)}
                     </button>
+                    <span id="copy-email-status" class="sr-only" role="status" aria-live="polite"></span>
                   </div>
                 </dd>
               </div>
@@ -230,19 +234,27 @@ const sectionItems = [
   initTopologyField();
 
   const copyEmailBtn = document.getElementById('copy-email-btn') as HTMLButtonElement | null;
+  const copyStatus = document.getElementById('copy-email-status');
+  const copyLabel = copyEmailBtn?.textContent ?? '';
+  let copyTimer: ReturnType<typeof setTimeout> | undefined;
+
   copyEmailBtn?.addEventListener('click', async () => {
     const email = copyEmailBtn.dataset.email;
     if (!email) return;
 
-    const original = copyEmailBtn.innerHTML;
+    clearTimeout(copyTimer);
     try {
       await navigator.clipboard.writeText(email);
       copyEmailBtn.textContent = copyEmailBtn.dataset.copied || 'Tersalin!';
-      setTimeout(() => {
-        copyEmailBtn.innerHTML = original;
-      }, 2000);
-    } catch (err) {
-      console.error('Failed to copy email:', err);
+      if (copyStatus) copyStatus.textContent = copyEmailBtn.dataset.copied || '';
+    } catch {
+      copyEmailBtn.textContent = copyEmailBtn.dataset.failed || 'Gagal menyalin';
+      if (copyStatus) copyStatus.textContent = copyEmailBtn.dataset.failed || '';
     }
+
+    copyTimer = setTimeout(() => {
+      copyEmailBtn.textContent = copyLabel;
+      if (copyStatus) copyStatus.textContent = '';
+    }, 2500);
   });
 </script>

@@ -62,6 +62,7 @@ const platformConfig: Record<string, { label: string; iconClass: string }> = {
               <div class="cp-plat-icon">
                 <i class={platInfo.iconClass} aria-hidden="true"></i>
               </div>
+              <span class="sr-only">{platInfo.label}</span>
             </div>
 
             <h4 class="cp-name">{cp.name}</h4>

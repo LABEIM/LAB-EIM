@@ -1,0 +1,151 @@
+/* Rich Markdown body typography, shared by article and event detail pages.
+   Requires the Antigravity tokens from pages/home-eim.css. */
+
+.eim-prose {
+  font-size: 16px;
+  line-height: 1.7;
+  color: var(--color-muted-ink);
+  overflow-wrap: break-word;
+}
+
+.eim-prose > * + * {
+  margin-top: 1rem;
+}
+
+.eim-prose h2,
+.eim-prose h3 {
+  margin-top: 2rem;
+  font-family: var(--font-display);
+  font-weight: 400;
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+  color: var(--color-foreground);
+}
+
+.eim-prose h2 {
+  font-size: clamp(1.5rem, 2.4vw, 2rem);
+}
+
+.eim-prose h3 {
+  font-size: clamp(1.25rem, 2vw, 1.5rem);
+}
+
+.eim-prose > :first-child {
+  margin-top: 0;
+}
+
+.eim-prose p,
+.eim-prose li {
+  font-size: 16px;
+  line-height: 1.7;
+}
+
+.eim-prose ul,
+.eim-prose ol {
+  padding-left: 1.25rem;
+}
+
+.eim-prose li + li {
+  margin-top: 0.35rem;
+}
+
+.eim-prose strong {
+  color: var(--color-foreground);
+}
+
+.eim-prose a {
+  color: var(--color-brand);
+  text-decoration: underline;
+  text-decoration-color: var(--color-brand-bright);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.25em;
+}
+
+.eim-prose a:hover {
+  text-decoration-color: var(--color-brand);
+}
+
+.eim-prose a:focus-visible {
+  outline: 2px solid var(--color-brand);
+  outline-offset: 2px;
+}
+
+.eim-prose blockquote {
+  margin-block: 2rem;
+  padding-left: clamp(1rem, 2.5vw, 1.5rem);
+  border-left: 3px solid var(--color-brand-bright);
+  font-family: var(--font-display);
+  font-size: clamp(1.35rem, 2.4vw, 1.75rem);
+  line-height: 1.3;
+  color: var(--color-foreground);
+}
+
+.eim-prose blockquote p {
+  font-size: inherit;
+  line-height: inherit;
+}
+
+.eim-prose blockquote p + p {
+  margin-top: 0.75em;
+}
+
+.eim-prose code {
+  font-family: var(--font-mono);
+  font-size: 0.875em;
+}
+
+.eim-prose pre {
+  max-width: 100%;
+  padding: 1rem;
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-card);
+  background: var(--color-surface);
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+}
+
+.eim-prose pre code {
+  font-size: 0.8125rem;
+}
+
+.eim-prose table {
+  display: block;
+  width: max-content;
+  max-width: 100%;
+  border-collapse: collapse;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  font-size: 14px;
+}
+
+.eim-prose th,
+.eim-prose td {
+  padding: 0.6rem 0.75rem;
+  border: 1px solid var(--color-line);
+  text-align: left;
+}
+
+.eim-prose th {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-brand);
+  background: var(--color-surface);
+}
+
+.eim-prose img {
+  display: block;
+  max-width: 100%;
+  width: 100%;
+  height: auto;
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-card);
+}
+
+.eim-prose hr {
+  margin: 2rem 0;
+  border: 0;
+  border-top: 1px solid var(--color-line);
+}

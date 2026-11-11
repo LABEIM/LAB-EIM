@@ -98,6 +98,20 @@ const navLinks = [
           <li><i class="fa-solid fa-envelope" aria-hidden="true"></i><a href={`mailto:${siteData.contact.email}`}>{siteData.contact.email}</a></li>
         </ul>
       </div>
+
+      <nav class="footer-col" aria-label={t('footer.resources', locale)}>
+        <h4 class="footer-title">{t('footer.resources', locale)}</h4>
+        <ul class="footer-links">
+          <li>
+            <a href={getLocalizedPath('/assets', locale)}>{t('footer.assets', locale)}</a>
+          </li>
+          <li>
+            <a href="https://link.eimlab.org" target="_blank" rel="noopener noreferrer">
+              {t('footer.linkHub', locale)} <span aria-hidden="true">↗</span>
+            </a>
+          </li>
+        </ul>
+      </nav>
     </div>
 
     <div class="footer-bottom">

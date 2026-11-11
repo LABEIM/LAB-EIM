@@ -319,6 +319,12 @@ export const uiTranslations: Record<Locale, Record<string, string>> = {
     'contact.socialsEyebrow': 'Media sosial',
     'contact.socialsTitle': 'Ikuti kami.',
     'contact.socialsIntro': 'Perkembangan kegiatan riset, pelatihan, dan pengumuman rekrutmen terbaru di media sosial EIM.',
+    'contact.routingNote': 'Rekrutmen & kegiatan → WhatsApp PIC. Kolaborasi riset & kerja sama → email.',
+    'contact.copyEmail': 'Salin email',
+    'contact.copied': 'Tersalin!',
+    'contact.picsLabel': 'Narahubung',
+    'contact.picsTitle': 'Hubungi PIC kami.',
+    'contact.picsSubtitle': 'Pilih PIC sesuai kebutuhan: rekrutmen dan kegiatan, atau riset dan kolaborasi.',
 
     // Home Page v2 [PLACEHOLDER — draft]
     'home.heroKicker': 'EIM Research Lab',

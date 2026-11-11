@@ -1,174 +1,165 @@
+/* Contact person box — Antigravity Light.
+   Shared by the registration and contact pages. */
+
 .cp-box {
-  margin-top: 35px;
-  padding: 28px 24px;
-  background: rgba(14, 85, 95, 0.03);
-  border: 1px solid rgba(14, 85, 95, 0.1);
-  border-radius: 12px;
-  text-align: center;
   position: relative;
-  overflow: hidden;
+  margin-top: clamp(2rem, 5vh, 3rem);
+  padding: clamp(1.5rem, 4vw, 2.25rem);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-media);
+  background: var(--color-surface);
+  text-align: left;
 }
 
 .cp-box.compact {
-  padding: 20px 16px;
-  margin-top: 20px;
+  margin-top: 1.5rem;
+  padding: clamp(1.25rem, 3vw, 1.75rem);
 }
 
 .cp-badge {
   display: inline-flex;
   align-items: center;
-  background: rgba(17, 180, 189, 0.12);
-  color: var(--brand-cyan, #11B4BD);
-  border: 1px solid rgba(17, 180, 189, 0.3);
-  font-size: 0.78rem;
-  font-weight: 600;
+  gap: 0.35rem;
+  margin-bottom: 0.75rem;
+  padding: 0.3rem 0.65rem;
+  border: 1px solid color-mix(in srgb, var(--color-brand) 25%, transparent);
+  border-radius: var(--radius-pill);
+  background: var(--color-brand-soft);
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
-  padding: 4px 12px;
-  border-radius: 20px;
-  margin-bottom: 12px;
+  color: var(--color-brand);
 }
 
 .cp-badge i {
-  margin-right: 6px;
+  margin-right: 0;
 }
 
 .cp-title {
-  font-size: 1.35rem;
-  font-weight: 700;
-  color: var(--brand-dark-azure, #0E555F);
-  margin-bottom: 8px;
+  font-family: var(--font-display);
+  font-size: clamp(1.5rem, 2.6vw, 2rem);
+  font-weight: 400;
+  line-height: 1.15;
+  color: var(--color-foreground);
 }
 
 .cp-subtitle {
-  font-size: 0.92rem;
-  color: var(--text-secondary, #4a5568);
-  max-width: 540px;
-  margin: 0 auto 22px auto;
-  line-height: 1.5;
+  max-width: 56ch;
+  margin: 0.5rem 0 1.5rem;
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--color-muted-ink);
 }
 
 .cp-cards-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  gap: 16px;
-  max-width: 850px;
-  margin: 0 auto;
+  grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+  gap: 0.75rem;
 }
 
 .cp-card {
   display: flex;
   flex-direction: column;
-  padding: 20px;
-  background: #ffffff;
-  border: 1px solid rgba(14, 85, 95, 0.12);
-  border-radius: 12px;
+  padding: 1rem;
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-card);
+  background: var(--color-background);
   text-align: left;
-  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-  position: relative;
-  box-shadow: 0 4px 12px rgba(14, 85, 95, 0.04);
-  --plat-color: #25D366;
-  --plat-bg: rgba(37, 211, 102, 0.12);
-}
-
-.cp-card.cp-whatsapp {
-  --plat-color: #25D366;
-  --plat-bg: rgba(37, 211, 102, 0.12);
-}
-
-.cp-card.cp-line {
-  --plat-color: #00C300;
-  --plat-bg: rgba(0, 195, 0, 0.12);
-}
-
-.cp-card.cp-email {
-  --plat-color: #EA4335;
-  --plat-bg: rgba(234, 67, 53, 0.12);
-}
-
-.cp-card.cp-phone {
-  --plat-color: #34A853;
-  --plat-bg: rgba(52, 168, 83, 0.12);
 }
 
 .cp-card:hover {
-  transform: translateY(-4px);
-  border-color: var(--plat-color);
-  box-shadow: 0 10px 28px -8px var(--plat-bg);
+  border-color: color-mix(in srgb, var(--color-brand) 35%, transparent);
 }
 
 .cp-card-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 14px;
+  margin-bottom: 0.75rem;
 }
 
 .cp-role-badge {
-  font-size: 0.75rem;
-  font-weight: 600;
-  padding: 3px 10px;
-  border-radius: 6px;
-  background: var(--plat-bg);
-  color: var(--plat-color);
-  border: 1px solid var(--plat-bg);
-  letter-spacing: 0.3px;
+  padding: 0.25rem 0.55rem;
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-pill);
+  background: var(--color-surface);
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-muted-ink);
 }
 
 .cp-plat-icon {
-  width: 34px;
-  height: 34px;
-  border-radius: 8px;
-  background: var(--plat-bg);
-  color: var(--plat-color);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.15rem;
+  display: grid;
   flex-shrink: 0;
+  place-items: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: var(--radius-pill);
+  background: var(--color-brand-soft);
+  color: var(--color-brand);
+  font-size: 0.95rem;
 }
 
 .cp-card-body {
-  margin-bottom: 16px;
+  margin-bottom: 0;
 }
 
 .cp-name {
-  font-size: 1.05rem;
-  font-weight: 700;
-  color: var(--brand-dark-azure, #0E555F);
-  margin-bottom: 4px;
+  margin-bottom: 0.2rem;
+  font-size: 15px;
+  font-weight: 500;
+  line-height: 1.35;
+  color: var(--color-foreground);
 }
 
 .cp-id {
-  font-size: 0.85rem;
-  color: var(--text-secondary, #4a5568);
   margin: 0;
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  letter-spacing: 0.02em;
+  color: var(--color-brand);
+  overflow-wrap: anywhere;
 }
 
 .cp-action-btn {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 10px 14px;
-  background: var(--plat-bg);
-  color: var(--plat-color);
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  border-radius: 8px;
-  font-size: 0.84rem;
-  font-weight: 600;
+  gap: 0.5rem;
+  min-height: 40px;
+  margin-top: 1rem;
+  padding: 0.5rem 0.8rem;
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-pill);
+  background: transparent;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--color-brand);
   text-decoration: none;
-  transition: all 0.2s ease;
-  margin-top: auto;
 }
 
 .cp-action-btn:hover {
-  background: var(--plat-color);
-  color: #ffffff;
-  border-color: var(--plat-color);
+  border-color: var(--color-brand);
+  background: var(--color-brand-soft);
+}
+
+.cp-action-btn:focus-visible {
+  outline: 2px solid var(--color-brand);
+  outline-offset: 2px;
 }
 
 @media (max-width: 640px) {
   .cp-cards-grid {
     grid-template-columns: 1fr;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cp-card,
+  .cp-action-btn {
+    transition: none;
   }
 }

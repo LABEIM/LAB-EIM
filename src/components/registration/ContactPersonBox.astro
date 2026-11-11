@@ -12,6 +12,7 @@ export interface ContactPerson {
 interface Props {
   title?: string;
   subtitle?: string;
+  badge?: string;
   contactPersons?: ContactPerson[];
   compact?: boolean;
 }
@@ -21,6 +22,7 @@ const locale = getLocaleFromUrl(Astro.url);
 const {
   title = "Butuh Bantuan atau Memiliki Pertanyaan?",
   subtitle = "Hubungi langsung narahubung rekrutmen kami untuk pertanyaan apapun selama proses rekrutmen.",
+  badge = t('reg.contactPerson', locale),
   contactPersons = [],
   compact = false
 } = Astro.props;
@@ -58,7 +60,7 @@ const platformConfig: Record<string, { label: string; iconClass: string; color: 
   <div class={`cp-box ${compact ? 'compact' : ''}`}>
     <div class="cp-header">
       <div class="cp-badge">
-        <i class="fa-solid fa-headset"></i> {t('reg.contactPerson', locale)}
+        <i class="fa-solid fa-headset"></i> {badge}
       </div>
       <h3 class="cp-title">{title}</h3>
       {subtitle && <p class="cp-subtitle">{subtitle}</p>}

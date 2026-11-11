@@ -3,6 +3,7 @@ import Layout from '../layouts/Layout.astro';
 import '../styles/pages/home-eim.css';
 import '../styles/pages/contact-eim.css';
 import EimSectionNav from '../components/home/EimSectionNav.astro';
+import ContactPersonBox from '../components/registration/ContactPersonBox.astro';
 import { getLocaleFromUrl, getLocalizedJsonData, t } from '../utils/i18n';
 import type { ContactPerson } from '../utils/types';
 
@@ -12,12 +13,7 @@ const contactPageData = await getLocalizedJsonData<any>('contact', locale);
 
 const contactInfo = siteData.contact || {};
 const socials = siteData.socials || {};
-
-// Placeholder PICs — replace names, numbers, and links with the real ones.
-const contactPersons: ContactPerson[] = [
-  { name: 'PIC 1', role: 'CP Informasi', contactId: '08xx-xxxx-xxxx', link: '' },
-  { name: 'PIC 2', role: 'CP Informasi', contactId: '08xx-xxxx-xxxx', link: '' },
-];
+const contactPersons: ContactPerson[] = contactPageData.contactPersons || [];
 
 const title = contactPageData.title || 'Hubungi Kami';
 const heroDescription = contactPageData.heroDescription || 'Laboratorium Riset Enterprise Infrastructure Management Telkom University siap melayani pertanyaan, kolaborasi riset, dan informasi kegiatan.';
@@ -51,6 +47,7 @@ function getSocialHandle(url: string): string {
       const segment = parsed.pathname.split('/').filter(Boolean)[0];
       if (segment) return `@${segment}`;
     }
+    if (host === 'linkedin.com') return 'EIM Research Lab';
     return host;
   } catch {
     return '';
@@ -88,7 +85,7 @@ const sectionItems = [
     <section id="detail" class="py-[clamp(4.5rem,10vh,8.75rem)]" aria-labelledby="contact-detail-title">
       <div class="mx-auto max-w-[1200px] px-[clamp(1.25rem,4vw,4rem)]">
         <div class="grid gap-[clamp(2.5rem,5vw,5rem)] lg:grid-cols-[minmax(0,4fr)_minmax(0,7fr)]">
-          <div class="e-reveal">
+          <div class="e-reveal lg:sticky lg:top-28 lg:self-start">
             <p class="font-mono text-xs uppercase tracking-[0.08em] text-brand">01 — {t('contact.detailsEyebrow', locale)}</p>
             <h2
               id="contact-detail-title"
@@ -99,6 +96,9 @@ const sectionItems = [
             <p class="mt-6 max-w-[42ch] text-[15px] leading-[1.6] text-muted-ink">
               {t('contact.detailsIntro', locale)}
             </p>
+            <p class="mt-4 max-w-[42ch] text-[14px] leading-[1.6] text-muted-ink">
+              {t('contact.routingNote', locale)}
+            </p>
           </div>
 
           <div>
@@ -108,9 +108,6 @@ const sectionItems = [
                 <dd class="text-[15px] leading-[1.6]">
                   <p>{locationText}</p>
                   <p class="mt-1 text-muted-ink">{universityText}</p>
-                  <a class="contact-action mt-1" href={mapsUrl} target="_blank" rel="noopener noreferrer">
-                    {t('contact.mapsAction', locale)} <span aria-hidden="true">↗</span>
-                  </a>
                 </dd>
               </div>
 
@@ -118,9 +115,20 @@ const sectionItems = [
                 <dt class="font-mono text-[11px] uppercase tracking-[0.08em] text-muted-ink">{emailTitle}</dt>
                 <dd class="text-[15px] leading-[1.6]">
                   <a class="text-brand underline underline-offset-4" href={`mailto:${emailText}`}>{emailText}</a>
-                  <a class="contact-action mt-1" href={`mailto:${emailText}`}>
-                    {t('contact.emailAction', locale)} <span aria-hidden="true">→</span>
-                  </a>
+                  <div class="contact-action-row">
+                    <a class="contact-action" href={`mailto:${emailText}`}>
+                      {t('contact.emailAction', locale)} <span aria-hidden="true">→</span>
+                    </a>
+                    <button
+                      type="button"
+                      class="contact-action"
+                      id="copy-email-btn"
+                      data-email={emailText}
+                      data-copied={t('contact.copied', locale)}
+                    >
+                      {t('contact.copyEmail', locale)}
+                    </button>
+                  </div>
                 </dd>
               </div>
 
@@ -134,38 +142,13 @@ const sectionItems = [
             </dl>
 
             {contactPersons.length > 0 && (
-              <div class="contact-pics">
-                <p class="contact-pics-label">{t('reg.contactPerson', locale)}</p>
-                <ul class="contact-pic-list">
-                  {contactPersons.map((person) => (
-                    <li>
-                      {person.link ? (
-                        <a class="contact-pic" href={person.link} target="_blank" rel="noopener noreferrer">
-                          <span class="contact-pic-icon" aria-hidden="true">
-                            <i class="fa-brands fa-whatsapp"></i>
-                          </span>
-                          <span class="contact-pic-body">
-                            <span class="contact-pic-name">{person.name}</span>
-                            <span class="contact-pic-role">{person.role}</span>
-                          </span>
-                          <span class="contact-pic-number">{person.contactId}</span>
-                        </a>
-                      ) : (
-                        <div class="contact-pic">
-                          <span class="contact-pic-icon" aria-hidden="true">
-                            <i class="fa-brands fa-whatsapp"></i>
-                          </span>
-                          <span class="contact-pic-body">
-                            <span class="contact-pic-name">{person.name}</span>
-                            <span class="contact-pic-role">{person.role}</span>
-                          </span>
-                          <span class="contact-pic-number">{person.contactId}</span>
-                        </div>
-                      )}
-                    </li>
-                  ))}
-                </ul>
-              </div>
+              <ContactPersonBox
+                contactPersons={contactPersons}
+                compact
+                badge={t('contact.picsLabel', locale)}
+                title={t('contact.picsTitle', locale)}
+                subtitle={t('contact.picsSubtitle', locale)}
+              />
             )}
           </div>
         </div>
@@ -245,4 +228,21 @@ const sectionItems = [
   import { initTopologyField } from '../scripts/topology-field';
 
   initTopologyField();
+
+  const copyEmailBtn = document.getElementById('copy-email-btn') as HTMLButtonElement | null;
+  copyEmailBtn?.addEventListener('click', async () => {
+    const email = copyEmailBtn.dataset.email;
+    if (!email) return;
+
+    const original = copyEmailBtn.innerHTML;
+    try {
+      await navigator.clipboard.writeText(email);
+      copyEmailBtn.textContent = copyEmailBtn.dataset.copied || 'Tersalin!';
+      setTimeout(() => {
+        copyEmailBtn.innerHTML = original;
+      }, 2000);
+    } catch (err) {
+      console.error('Failed to copy email:', err);
+    }
+  });
 </script>

@@ -1,5 +1,28 @@
 import { config, fields, collection, singleton } from '@keystatic/core';
 
+const contactPersonsField = fields.array(
+  fields.object({
+    name: fields.text({ label: 'Contact Person Name' }),
+    role: fields.text({ label: 'Role / Division Label (e.g. CP Information & Selection)' }),
+    platform: fields.select({
+      label: 'Contact Platform',
+      options: [
+        { label: 'WhatsApp', value: 'whatsapp' },
+        { label: 'LINE', value: 'line' },
+        { label: 'Email', value: 'email' },
+        { label: 'Phone', value: 'phone' },
+      ],
+      defaultValue: 'whatsapp',
+    }),
+    contactId: fields.text({ label: 'Contact ID / Phone Number / Handle (e.g. 081234567890 or @id)' }),
+    link: fields.text({ label: 'Direct Clickable Contact Link (e.g. https://wa.me/6281234567890)' }),
+  }),
+  {
+    label: 'Contact Persons List',
+    itemLabel: props => `${props.fields.name.value || 'Contact Person'} (${props.fields.role.value || ''})`,
+  }
+);
+
 const registrationSchema = {
   status: fields.text({
     label: 'Recruitment Stage Status Override',
@@ -242,29 +265,7 @@ const registrationSchema = {
       itemLabel: props => `${props.fields.enabled.value ? '✓' : '✗'} ${props.fields.shortLabel.value || 'Step'} (${props.fields.id.value || 'id'})`,
     }
   ),
-  contactPersons: fields.array(
-
-    fields.object({
-      name: fields.text({ label: 'Contact Person Name' }),
-      role: fields.text({ label: 'Role / Division Label (e.g. CP Information & Selection)' }),
-      platform: fields.select({
-        label: 'Contact Platform',
-        options: [
-          { label: 'WhatsApp', value: 'whatsapp' },
-          { label: 'LINE', value: 'line' },
-          { label: 'Email', value: 'email' },
-          { label: 'Phone', value: 'phone' },
-        ],
-        defaultValue: 'whatsapp',
-      }),
-      contactId: fields.text({ label: 'Contact ID / Phone Number / Handle (e.g. 081234567890 or @id)' }),
-      link: fields.text({ label: 'Direct Clickable Contact Link (e.g. https://wa.me/6281234567890)' }),
-    }),
-    {
-      label: 'Contact Persons List',
-      itemLabel: props => `${props.fields.name.value || 'Contact Person'} (${props.fields.role.value || ''})`,
-    }
-  ),
+  contactPersons: contactPersonsField,
 };
 
 const recruitmentResultsSchema = {
@@ -557,6 +558,7 @@ export default config({
         hoursSubtext: fields.text({ label: 'Working Hours Subtext', multiline: true }),
         mapSectionTitle: fields.text({ label: 'Map Section Title' }),
         mapSectionSubtitle: fields.text({ label: 'Map Section Subtitle', multiline: true }),
+        contactPersons: contactPersonsField,
       },
     }),
     announcement: singleton({

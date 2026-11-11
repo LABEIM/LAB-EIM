@@ -12,5 +12,21 @@
   "hoursText": "Senin - Jumat: 08.00 - 17.00 WIB",
   "hoursSubtext": "Kunjungan offline dapat disesuaikan dengan janji perizinan atau jadwal kegiatan laboratorium.",
   "mapSectionTitle": "Peta Lokasi Laboratorium",
-  "mapSectionSubtitle": "Temukan lokasi Gedung Telkom University Landmark Tower (TULT) di kampus Telkom University Bandung."
+  "mapSectionSubtitle": "Temukan lokasi Gedung Telkom University Landmark Tower (TULT) di kampus Telkom University Bandung.",
+  "contactPersons": [
+    {
+      "name": "PIC 1",
+      "role": "CP Rekrutmen",
+      "platform": "whatsapp",
+      "contactId": "08xx-xxxx-xxxx",
+      "link": ""
+    },
+    {
+      "name": "PIC 2",
+      "role": "CP Riset & Kolaborasi",
+      "platform": "whatsapp",
+      "contactId": "08xx-xxxx-xxxx",
+      "link": ""
+    }
+  ]
 }

@@ -1,0 +1,44 @@
+---
+import { getLocaleFromUrl, t } from '../../utils/i18n';
+
+interface Props {
+  totalCount: number;
+  categoryCount: number;
+  latestYear: string | null;
+}
+
+const { totalCount, categoryCount, latestYear } = Astro.props;
+const locale = getLocaleFromUrl(Astro.url);
+const titleLines = t('events.heroTitle', locale).split('\n');
+---
+
+<section id="kegiatan" class="eim-hero eim-subhero" aria-labelledby="kegiatan-hero-title">
+  <canvas class="eim-hero-canvas" aria-hidden="true"></canvas>
+  <div class="eim-hero-inner">
+    <p class="eim-eyebrow">{t('events.heroEyebrow', locale)}</p>
+    <h1 id="kegiatan-hero-title" class="eim-hero-title">
+      {titleLines.map((line) => <span class="eim-hero-title-line">{line}</span>)}
+    </h1>
+    <p class="eim-hero-desc">{t('events.heroDesc', locale)}</p>
+    <div class="eim-hero-actions">
+      <a class="eim-hero-cta" href="#daftar">{t('events.heroPrimary', locale)}</a>
+      <a class="eim-hero-secondary" href="/registration">
+        {t('events.heroSecondary', locale)} <span aria-hidden="true">→</span>
+      </a>
+    </div>
+    <p class="eim-subhero-meta">
+      {totalCount === 0
+        ? t('events.heroMetaEmpty', locale)
+        : t('events.heroMeta', locale, {
+            events: String(totalCount),
+            categories: String(categoryCount),
+            year: latestYear ?? '—',
+          })}
+    </p>
+  </div>
+</section>
+
+<script>
+  import { initTopologyField } from '../../scripts/topology-field';
+  initTopologyField();
+</script>

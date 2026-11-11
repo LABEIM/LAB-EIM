@@ -1,0 +1,695 @@
+/* EIM homepage — Antigravity Light.
+   Tailwind is activated here, scoped to the homepage, WITHOUT Preflight:
+   theme tokens + utilities only, so inner pages are untouched. */
+@import 'tailwindcss/theme.css';
+@import 'tailwindcss/utilities.css';
+
+@theme static {
+  /* Palette — canonical values live in variables.css (--eim-*). */
+  --color-background: var(--eim-background);
+  --color-foreground: var(--eim-foreground);
+  --color-surface: var(--eim-surface);
+  --color-surface-strong: var(--eim-surface-strong);
+  --color-line: var(--eim-line);
+  --color-muted-ink: var(--eim-muted-ink);
+  --color-brand: var(--eim-brand);
+  --color-brand-bright: var(--eim-brand-bright);
+  --color-brand-soft: var(--eim-brand-soft);
+  --color-black: var(--eim-black);
+
+  /* Type */
+  --font-display: var(--eim-font-display);
+  --font-body: var(--eim-font-body);
+  --font-mono: var(--eim-font-mono);
+
+  /* Motion */
+  --ease: var(--eim-ease);
+  --ease-inout: var(--eim-ease-inout);
+  --dur-control: var(--eim-dur-control);
+  --dur-reveal: var(--eim-dur-reveal);
+
+  /* Radius */
+  --radius-pill: var(--eim-radius-pill);
+  --radius-card: var(--eim-radius-card);
+  --radius-media: var(--eim-radius-media);
+}
+
+.home-skin {
+  font-family: var(--font-body);
+  background: var(--color-background);
+  color: var(--color-foreground);
+}
+
+/* Native scrollbar, restrained: thin + brand thumb where the platform allows
+   it (Firefox, Chromium 121+). Overlay-scrollbar platforms (macOS) keep their
+   native behavior; no ::-webkit-scrollbar tricks. */
+html {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-brand) var(--color-background);
+}
+
+/* Reveal contract — elements are fully visible by default.
+   Scroll-driven entrance exists only where the browser supports it. */
+@supports (animation-timeline: view()) {
+  @keyframes e-reveal-up {
+    from {
+      opacity: 0;
+      transform: translateY(24px);
+    }
+  }
+
+  .e-reveal {
+    animation: e-reveal-up var(--dur-reveal) var(--ease) both;
+    animation-timeline: view();
+    animation-range: 5% 22%;
+  }
+
+  .e-reveal-group > * {
+    animation: e-reveal-up var(--dur-reveal) var(--ease) both;
+    animation-timeline: view();
+    animation-range: 5% 22%;
+    animation-delay: calc(var(--reveal-step, 70ms) * var(--i, 0));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .e-reveal,
+  .e-reveal-group > * {
+    animation: none;
+  }
+}
+
+/* == Hero == */
+
+.eim-hero {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  min-height: 100svh;
+  padding:
+    calc(var(--site-header-height) + clamp(2rem, 6vh, 4rem))
+    clamp(1.25rem, 4vw, 4rem)
+    clamp(3rem, 8vh, 5rem);
+  overflow: hidden;
+  text-align: center;
+  background-color: var(--color-background);
+}
+
+.eim-hero-canvas {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  /* Keep the copy area clean: the field fades out in a soft ellipse behind
+     the headline and actions, so text contrast never depends on the animation. */
+  -webkit-mask-image: radial-gradient(
+    ellipse 58% 52% at 50% 46%,
+    transparent 0%,
+    transparent 30%,
+    #000 100%
+  );
+  mask-image: radial-gradient(
+    ellipse 58% 52% at 50% 46%,
+    transparent 0%,
+    transparent 30%,
+    #000 100%
+  );
+}
+
+/* Feather the field into the section below instead of ending on a hard line. */
+.eim-hero::after {
+  content: '';
+  position: absolute;
+  inset: auto 0 0;
+  z-index: 0;
+  height: clamp(6rem, 22vh, 14rem);
+  background: linear-gradient(to bottom, transparent, var(--color-background));
+  pointer-events: none;
+}
+
+.eim-hero-inner {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 1200px;
+}
+
+.eim-hero-logo {
+  display: block;
+  width: auto;
+  height: clamp(1.75rem, 2.6vw, 2.75rem);
+  margin-bottom: clamp(1.25rem, 3vh, 2rem);
+}
+
+.eim-hero-title {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(2.75rem, 7.5vw, 6rem);
+  line-height: 0.98;
+  letter-spacing: -0.01em;
+  color: var(--color-foreground);
+}
+
+.eim-hero-title-line {
+  display: block;
+}
+
+.eim-hero-desc {
+  max-width: 65ch;
+  margin-top: clamp(1.25rem, 3vh, 2rem);
+  font-size: clamp(1rem, 1.2vw, 1.125rem);
+  line-height: 1.55;
+  color: var(--color-muted-ink);
+}
+
+.eim-hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem 1.75rem;
+  margin-top: clamp(2rem, 5vh, 3rem);
+}
+
+.eim-hero-cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.95rem 1.9rem;
+  border-radius: var(--radius-pill);
+  background-color: var(--color-brand);
+  color: var(--color-background);
+  font-family: var(--font-body);
+  font-size: 1rem;
+  font-weight: 500;
+  line-height: 1;
+  text-decoration: none;
+  transition:
+    background-color var(--dur-control) var(--ease),
+    transform var(--dur-control) var(--ease);
+}
+
+.eim-hero-cta:hover {
+  background-color: color-mix(in srgb, var(--color-brand) 88%, black);
+  transform: translateY(-2px);
+}
+
+.eim-hero-secondary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4em;
+  padding: 0.5rem 0.25rem;
+  font-family: var(--font-body);
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--color-brand);
+  text-decoration: underline;
+  text-decoration-color: var(--color-brand-bright);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.3em;
+  transition:
+    color var(--dur-control) var(--ease),
+    background-color var(--dur-control) var(--ease),
+    border-color var(--dur-control) var(--ease),
+    transform var(--dur-control) var(--ease),
+    text-decoration-color var(--dur-control) var(--ease);
+}
+
+.eim-hero-cta:focus-visible,
+.eim-hero-secondary:focus-visible {
+  outline: 2px solid var(--color-brand);
+  outline-offset: 2px;
+}
+
+.eim-hero-secondary:hover {
+  text-decoration-color: var(--color-brand);
+}
+
+.eim-hero-scroll {
+  position: absolute;
+  bottom: clamp(1rem, 3vh, 2rem);
+  left: 50%;
+  z-index: 1;
+  width: 1px;
+  height: clamp(2.5rem, 6vh, 4rem);
+  background: linear-gradient(to bottom, transparent, var(--color-line));
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+
+/* == Sub-hero (About / Structure) == */
+
+.eim-subhero {
+  min-height: clamp(34rem, 78svh, 60rem);
+  align-items: flex-end;
+  justify-content: flex-start;
+  padding-bottom: clamp(4rem, 10vh, 7rem);
+  text-align: left;
+}
+
+.eim-subhero .eim-hero-inner {
+  align-items: flex-start;
+}
+
+.eim-subhero .eim-hero-canvas {
+  /* Clear the copy on the left instead of the homepage's centred ellipse. */
+  -webkit-mask-image: radial-gradient(
+    ellipse 62% 58% at 32% 58%,
+    transparent 0%,
+    transparent 34%,
+    #000 100%
+  );
+  mask-image: radial-gradient(
+    ellipse 62% 58% at 32% 58%,
+    transparent 0%,
+    transparent 34%,
+    #000 100%
+  );
+}
+
+.eim-subhero .eim-hero-title {
+  max-width: 20ch;
+}
+
+.eim-subhero .eim-hero-desc {
+  max-width: 56ch;
+}
+
+.eim-subhero .eim-hero-actions {
+  justify-content: flex-start;
+}
+
+.eim-eyebrow {
+  margin-bottom: clamp(1rem, 2.5vh, 1.5rem);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-brand);
+}
+
+.eim-subhero-meta {
+  width: 100%;
+  margin-top: clamp(2.5rem, 7vh, 4rem);
+  padding-top: 1rem;
+  border-top: 1px solid var(--color-line);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-muted-ink);
+}
+
+/* == CTA (About / Structure) == */
+
+.eim-cta {
+  background: var(--color-black);
+  color: var(--color-background);
+}
+
+.eim-cta-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.95rem 1.9rem;
+  border-radius: var(--radius-pill);
+  background: var(--color-brand-bright);
+  color: var(--color-black);
+  font-family: var(--font-body);
+  font-size: 1rem;
+  font-weight: 500;
+  line-height: 1;
+  text-decoration: none;
+  transition: background-color var(--dur-control) var(--ease), transform var(--dur-control) var(--ease);
+}
+
+.eim-cta-primary:hover {
+  background: var(--color-background);
+  transform: translateY(-2px);
+}
+
+.eim-cta-secondary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4em;
+  padding: 0.5rem 0.25rem;
+  font-family: var(--font-body);
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--color-background);
+  text-decoration: underline;
+  text-decoration-color: var(--color-brand-bright);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.3em;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .eim-cta-primary:hover {
+    transform: none;
+  }
+}
+
+/* The legacy mobile h1 pin now excludes body.home-skin (mobile.css), so the
+   hero keeps its own clamp without an !important reclaim. */
+
+/* == Reveal == */
+
+.e-reveal-stage {
+  position: relative;
+  /* Kept short: the grow completes while the section slides in
+     (src/scripts/media-reveal.ts), so only a little pinned scroll remains. */
+  height: 110vh;
+  padding-inline: clamp(1.25rem, 4vw, 4rem);
+}
+
+.e-reveal-stage-figure {
+  position: sticky;
+  /* Never tuck under the fixed header (it grows with the announcement bar). */
+  top: max(12vh, calc(var(--site-header-height, 5rem) + 0.75rem));
+  height: 76vh;
+  max-width: 1200px;
+  margin: 0 auto;
+  overflow: hidden;
+  border-radius: var(--radius-media);
+  background-color: var(--color-black);
+  /* Pre-script state; the scroll script takes over from here. */
+  transform: scale(0.62);
+  transform-origin: center center;
+}
+
+.e-reveal-stage-media {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.e-reveal-stage-pending {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(1.25rem, 4vh, 2.5rem);
+  padding: clamp(1.5rem, 5vw, 4rem);
+  text-align: center;
+}
+
+.e-reveal-stage-emblem {
+  width: clamp(7rem, 18vh, 11rem);
+  height: auto;
+  /* The emblem artwork ships in brand teal; the pending stage is black, so render it white. */
+  filter: brightness(0) invert(1);
+}
+
+.e-reveal-stage-note {
+  max-width: 32ch;
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: clamp(0.75rem, 1.1vw, 0.875rem);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-surface-strong);
+}
+
+.e-reveal-stage-caption {
+  position: absolute;
+  bottom: clamp(1rem, 3vh, 1.75rem);
+  left: clamp(1.25rem, 3vw, 2rem);
+  z-index: 1;
+  max-width: calc(100% - clamp(2.5rem, 6vw, 4rem));
+  font-family: var(--font-mono);
+  font-size: clamp(0.75rem, 1.1vw, 0.875rem);
+  letter-spacing: 0.08em;
+  color: var(--color-background);
+  text-shadow: 0 1px 2px rgb(0 0 0 / 0.6);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .e-reveal-stage {
+    height: auto;
+  }
+
+  .e-reveal-stage-figure {
+    position: static;
+    transform: none;
+  }
+}
+
+/* == Shell == */
+
+/* Shared header / announcement / footer get a homepage-only face.
+   Markup and scripts of the shared components stay untouched. */
+
+/* In-page anchors (#fokus, #divisi, section targets) must clear the fixed site header. */
+body.home-skin section[id] {
+  scroll-margin-top: calc(var(--site-header-height, 5rem) + 1rem);
+}
+
+body.home-skin main :is(h2, h3, h4) {
+  /* base.css pins headings to 700; Instrument Serif ships 400 only.
+     Scoped to <main>: the shared event modal lives outside it and keeps 700. */
+  font-weight: 400;
+}
+
+/* The homepage starts transparent over the hero; the shared navbar becomes
+   solid once scrolled. Everything else comes from navbar.css. */
+body.home-skin .navbar:not(.scrolled) {
+  background-color: transparent;
+  border-bottom-color: transparent;
+}
+
+body.home-skin .navbar.scrolled {
+  background-color: color-mix(in srgb, var(--color-surface) 92%, transparent);
+  border-bottom-color: var(--color-line);
+}
+
+body.home-skin #global-announcement-banner {
+  background: var(--color-background);
+  border-bottom: 1px solid var(--color-line);
+  color: var(--color-foreground);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.04em;
+}
+
+body.home-skin #global-announcement-banner .announcement-text {
+  color: var(--color-foreground);
+  font-family: var(--font-mono);
+}
+
+body.home-skin #global-announcement-banner .announcement-badge {
+  background: var(--color-brand-soft);
+  box-shadow: none;
+  color: var(--color-brand);
+  font-family: var(--font-mono);
+}
+
+body.home-skin #global-announcement-banner .announcement-cta {
+  background: var(--color-brand);
+  box-shadow: none;
+  color: var(--color-background);
+  font-family: var(--font-mono);
+}
+
+body.home-skin #global-announcement-banner .announcement-cta:hover {
+  background: color-mix(in srgb, var(--color-brand) 88%, black);
+  box-shadow: none;
+}
+
+body.home-skin #global-announcement-banner .announcement-close-btn {
+  background: transparent;
+  border-color: var(--color-line);
+  color: var(--color-muted-ink);
+}
+
+body.home-skin #global-announcement-banner .announcement-close-btn:hover {
+  background: var(--color-brand-soft);
+  border-color: var(--color-brand);
+  color: var(--color-brand);
+}
+
+/* Zero-specificity default: component rules keep their own transition lists. */
+:where(body.home-skin) :where(a, button) {
+  transition:
+    color var(--dur-control) var(--ease),
+    background-color var(--dur-control) var(--ease),
+    border-color var(--dur-control) var(--ease),
+    transform var(--dur-control) var(--ease);
+}
+
+body.home-skin :is(a, button):focus-visible {
+  /* Bright cyan is 2.46:1 on the ground; the deep brand teal is 8.46:1. */
+  outline: 2px solid var(--color-brand);
+  outline-offset: 2px;
+}
+
+/* The legacy mobile h2/h3 pins now exclude body.home-skin (mobile.css), so
+   section headings and division names keep their component clamps. */
+
+/* == Section nav == */
+
+/* Desktop-only right rail: jump links that also show the reading position. */
+.eim-section-nav {
+  position: fixed;
+  top: 50%;
+  right: clamp(0.75rem, 1.6vw, 1.75rem);
+  z-index: 30;
+  display: none;
+  transform: translateY(-50%);
+}
+
+@media (min-width: 1025px) {
+  .eim-section-nav {
+    display: block;
+  }
+}
+
+.eim-section-nav ul {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.35rem;
+}
+
+.eim-section-nav a {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  /* 24x24 minimum target (WCAG 2.2); the visual dot stays 8px. */
+  padding: 0.5rem;
+}
+
+.eim-dot {
+  display: block;
+  width: 8px;
+  height: 8px;
+  border: 1px solid var(--color-muted-ink);
+  border-radius: var(--radius-pill);
+  background-color: transparent;
+  transition:
+    background-color var(--dur-control) var(--ease),
+    border-color var(--dur-control) var(--ease),
+    transform var(--dur-control) var(--ease);
+}
+
+.eim-section-nav a:hover .eim-dot,
+.eim-section-nav a:focus-visible .eim-dot {
+  border-color: var(--color-brand);
+  background-color: var(--color-brand-soft);
+}
+
+.eim-section-nav a.is-active .eim-dot {
+  border-color: var(--color-brand);
+  background-color: var(--color-brand);
+  transform: scale(1.3);
+}
+
+.eim-dot-label {
+  position: absolute;
+  top: 50%;
+  right: calc(100% + 0.6rem);
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: var(--color-muted-ink);
+  opacity: 0;
+  transform: translateY(-50%) translateX(4px);
+  transition:
+    opacity var(--dur-control) var(--ease),
+    transform var(--dur-control) var(--ease);
+  pointer-events: none;
+}
+
+.eim-section-nav a:hover .eim-dot-label,
+.eim-section-nav a:focus-visible .eim-dot-label {
+  opacity: 1;
+  transform: translateY(-50%) translateX(0);
+}
+
+/* == Motion == */
+
+/* Media: images settle in as they enter the viewport. Opacity only, so the
+   existing hover transforms on the same images keep working. */
+@supports (animation-timeline: view()) {
+  @keyframes e-media-in {
+    from {
+      opacity: 0.4;
+    }
+  }
+
+  body.home-skin .event-tile img,
+  body.home-skin .news-featured img {
+    animation: e-media-in var(--dur-reveal) var(--ease) both;
+    animation-timeline: view();
+    animation-range: 0% 25%;
+  }
+}
+
+/* Hero entrance: one choreographed stagger on load, shared tokens.
+   Disabled entirely under reduced motion. */
+@keyframes e-hero-enter {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .eim-hero-logo,
+  .eim-hero-title,
+  .eim-hero-desc,
+  .eim-hero-actions {
+    animation: e-hero-enter var(--dur-reveal) var(--ease) both;
+  }
+
+  .eim-hero-logo {
+    animation-delay: 60ms;
+  }
+
+  .eim-hero-title {
+    animation-delay: 130ms;
+  }
+
+  .eim-hero-desc {
+    animation-delay: 200ms;
+  }
+
+  .eim-hero-actions {
+    animation-delay: 270ms;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .eim-hero-logo,
+  .eim-hero-title,
+  .eim-hero-desc,
+  .eim-hero-actions,
+  body.home-skin .event-tile img,
+  body.home-skin .news-featured img {
+    animation: none;
+  }
+
+  body.home-skin :is(a, button):hover {
+    transform: none;
+  }
+
+  body.home-skin .nav-cta.nav-cta-join:hover,
+  body.home-skin .nav-cta.nav-cta-contact:hover {
+    transform: none;
+  }
+}

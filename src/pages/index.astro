@@ -1,27 +1,37 @@
 ---
 import { getCollection } from 'astro:content';
 import Layout from '../layouts/Layout.astro';
+import '../styles/pages/home-eim.css';
 import { getCurrentRecruitmentStage } from '../utils/recruitment';
-import { parseDivisions } from '../utils/division-mapper';
-import { STAGE_ACTION_CONFIG, DEFAULT_ACTION_BTN } from '../utils/constants';
-import ResearchFocus from '../components/home/ResearchFocus.astro';
-import NewsCard from '../components/cards/NewsCard.astro';
+import { parseDivisions, toDivisionPanels } from '../utils/division-mapper';
+import { STAGE_LABELS } from '../utils/constants';
+import type { AboutData, Member } from '../utils/types';
 import EventPosterModal from '../components/events/EventPosterModal.astro';
+import EimHero from '../components/home/EimHero.astro';
+import EimReveal from '../components/home/EimReveal.astro';
+import EimFocus from '../components/home/EimFocus.astro';
+import EimVisiMisi from '../components/home/EimVisiMisi.astro';
+import EimDivisions from '../components/home/EimDivisions.astro';
+import EimNews from '../components/home/EimNews.astro';
+import EimEvents from '../components/home/EimEvents.astro';
+import EimSectionNav from '../components/home/EimSectionNav.astro';
 import {
   getLocaleFromUrl,
   getLocalizedJsonData,
   getCollectionEntriesForLocale,
-  getLocalizedPath,
   t
 } from '../utils/i18n';
-
 import { filterAuditContent } from '../utils/content-helpers';
 
 const locale = getLocaleFromUrl(Astro.url);
 const divisionsData = await getLocalizedJsonData<any>('divisions', locale);
 const registrationConfig = await getLocalizedJsonData<any>('registration', locale);
+const about = await getLocalizedJsonData<AboutData>('about', locale);
+const membersData = await getLocalizedJsonData<{ list: Member[] }>('members', locale);
 
 const divisions = parseDivisions(divisionsData);
+const members = membersData?.list ?? [];
+const divisionPanels = toDivisionPanels(divisions, members);
 
 // Fetch and filter news for active locale
 const rawNews = await getCollection('news');
@@ -36,166 +46,50 @@ const latestNews = filterAuditContent(localizedNews)
   })
   .slice(0, 3);
 
-// Fetch upcoming events for poster popup
+// Events: upcoming first, then most recent — the section shows the next two as large poster tiles.
 const rawEvents = await getCollection('events');
-const upcomingEvents = filterAuditContent(rawEvents).filter(event => event.data.status === 'upcoming');
+const events = filterAuditContent(rawEvents)
+  .slice()
+  .sort((a, b) => {
+    const aUpcoming = a.data.status === 'upcoming';
+    const bUpcoming = b.data.status === 'upcoming';
+    if (aUpcoming !== bUpcoming) return aUpcoming ? -1 : 1;
+    const dateDiff =
+      new Date(a.data.event_date).getTime() - new Date(b.data.event_date).getTime();
+    // Upcoming: soonest first. Past: most recent first.
+    return aUpcoming ? dateDiff : -dateDiff;
+  });
 
-// Calculate active recruitment stage
+const upcomingEvents = events.filter((event) => event.data.status === 'upcoming');
+
+// Hero CTA: server-rendered Indonesian label; initHomeCTA keeps it fresh at runtime.
 const currentStage = getCurrentRecruitmentStage(registrationConfig);
-let actionBtn = (STAGE_ACTION_CONFIG as Record<string, any>)[currentStage];
-if (!actionBtn) {
-  if (currentStage.endsWith('_results')) {
-    actionBtn = { label: 'Check Selection Results', icon: 'fa-square-poll-vertical' };
-  } else if (currentStage !== 'closed') {
-    actionBtn = { label: 'Check Selection Phase Info', icon: 'fa-info-circle' };
-  } else {
-    actionBtn = DEFAULT_ACTION_BTN;
-  }
-}
+const stageEntry =
+  currentStage === 'closed'
+    ? STAGE_LABELS.closed
+    : STAGE_LABELS[currentStage] ?? STAGE_LABELS.selection;
+const primaryLabel = stageEntry?.label ?? 'Gabung EIM';
+const primaryHref = stageEntry?.href ?? '/registration';
 ---
 
-
-
-<Layout title={`EIM Research Lab - ${t('home.heroTag', locale)}`}>
+<Layout title={`EIM Research Lab - ${t('home.heroTag', locale)}`} homeSkin skipLink>
   <EventPosterModal upcomingEvents={upcomingEvents} locale={locale} />
-  <header class="hero" id="home">
-    <div class="container">
-      <div class="hero-grid">
-        <div class="hero-content">
-          <h1>
-            {t('home.heroTitle', locale)}
-          </h1>
-          <p class="hero-desc">
-            {t('home.heroDesc', locale)}
-          </p>
-          <div class="hero-actions">
-            {currentStage !== 'closed' && actionBtn ? (
-              <>
-                <a
-                  href={getLocalizedPath('/registration', locale)}
-                  class="btn btn-primary hero-action-primary"
-                  id="hero-recruitment-btn"
-                  data-join-href={getLocalizedPath('/registration', locale)}
-                >
-                  <span class="hero-btn-text">{actionBtn.label}</span> <i class={`fa-solid ${actionBtn.icon}`}></i>
-                </a>
-                <a href={getLocalizedPath('/about', locale)} class="btn btn-secondary">
-                  {t('nav.about', locale)} <i class="fa-solid fa-circle-info"></i>
-                </a>
-              </>
-            ) : (
-              <>
-                <a href={getLocalizedPath('/about', locale)} class="btn btn-primary hero-action-primary">
-                  {t('nav.about', locale)} <i class="fa-solid fa-circle-info"></i>
-                </a>
-                <a href={getLocalizedPath('/structure', locale)} class="btn btn-secondary">
-                  {t('nav.structure', locale)} <i class="fa-solid fa-users"></i>
-                </a>
-              </>
-            )}
-          </div>
-          <script is:inline>
-            (function() {
-              try {
-                var btn = document.getElementById('hero-recruitment-btn');
-                var nav = document.getElementById('navbar') || document.getElementById('global-announcement-banner');
-                if (!btn || !nav) return;
-
-                var status = nav.getAttribute('data-status') || 'auto';
-                var openStr = nav.getAttribute('data-open-date');
-                var deadlineStr = nav.getAttribute('data-deadline');
-                var offset = nav.getAttribute('data-timezone-offset') || '+07:00';
-
-                function parseDate(s) {
-                  if (!s) return 0;
-                  var t = s.trim();
-                  if (/^\d{4}-\d{2}-\d{2}[T ]\d{2}:\d{2}:\d{2}$/.test(t)) {
-                    t += offset;
-                  }
-                  var ms = new Date(t).getTime();
-                  return isNaN(ms) ? 0 : ms;
-                }
-
-                var now = Date.now();
-                var openMs = parseDate(openStr);
-                var deadlineMs = parseDate(deadlineStr);
-
-                if (status === 'open' || (status === 'auto' && openMs > 0 && now >= openMs && deadlineMs > 0 && now < deadlineMs)) {
-                  var span = btn.querySelector('.hero-btn-text') || btn.querySelector('span');
-                  var icon = btn.querySelector('i');
-                  if (span) span.textContent = 'Register as Assistant Now';
-                  if (icon) icon.className = 'fa-solid fa-user-plus';
-                }
-              } catch(e) {}
-            })();
-          </script>
-        </div>
-        <div class="hero-visual">
-          <div class="visual-orbit">
-            <div class="visual-core">
-              <i class="fa-solid fa-server fa-3x text-gradient-dual"></i>
-            </div>
-            <div class="visual-node node-1" title="Cloud Computing">
-              <i class="fa-solid fa-cloud"></i>
-            </div>
-            <div class="visual-node node-2" title="Cyber Security">
-              <i class="fa-solid fa-shield-halved"></i>
-            </div>
-            <div class="visual-node node-3" title="Network Infrastructure">
-              <i class="fa-solid fa-network-wired"></i>
-            </div>
-            <div class="visual-node node-4" title="AI & Data Optimization">
-              <i class="fa-solid fa-microchip"></i>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Research Focus */}
-      <ResearchFocus />
-
-      {/* Lab Divisions */}
-      <div class="home-section-wrapper">
-        <div class="section-title">
-          <h2>{t('struct.divisions', locale)}</h2>
-          <p>{t('struct.subtitle', locale)}</p>
-        </div>
-        <div class="divisions-brief-grid">
-          {divisions.map(div => (
-            <a href={getLocalizedPath(`/structure?div=${div.id}`, locale)} class="div-brief-card glass-panel division-card-link">
-              <h4>{div.displayName}</h4>
-              <p>{div.description}</p>
-            </a>
-          ))}
-        </div>
-      </div>
-
-      {/* Latest News */}
-      <div class="home-section-wrapper latest-news-section">
-        <div class="section-title">
-          <h2>{t('home.latestNews', locale)}</h2>
-          <p>{t('news.subtitle', locale)}</p>
-        </div>
-        <div class="news-grid">
-          {latestNews.length === 0 ? (
-            <div class="news-empty-state glass-panel news-empty-full">
-              <i class="fa-regular fa-newspaper"></i>
-              <p class="text-secondary-muted">{t('home.noNews', locale)}</p>
-            </div>
-          ) : (
-            latestNews.map(newsItem => (
-              <NewsCard news={newsItem} showButton={false} />
-            ))
-          )}
-        </div>
-        {latestNews.length > 0 && (
-          <div class="view-all-news-wrapper">
-            <a href={getLocalizedPath('/news', locale)} class="btn btn-secondary">
-              {t('home.viewAllNews', locale)} <i class="fa-solid fa-arrow-right"></i>
-            </a>
-          </div>
-        )}
-      </div>
-    </div>
-  </header>
+  <main id="main-content" tabindex="-1">
+    <EimSectionNav />
+    <EimHero primaryLabel={primaryLabel} primaryHref={primaryHref} />
+    <EimReveal />
+    <EimFocus />
+    <EimVisiMisi about={about} />
+    <EimDivisions panels={divisionPanels} />
+    <EimEvents events={events} locale={locale} />
+    <EimNews news={latestNews} locale={locale} />
+  </main>
 </Layout>
+
+<script>
+  import { initGlobalStageSync } from '../scripts/global-stage-sync';
+  import { initHomeCTA } from '../scripts/home-eim';
+
+  const stage = initGlobalStageSync();
+  initHomeCTA(stage);
+</script>

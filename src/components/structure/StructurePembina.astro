@@ -1,0 +1,74 @@
+---
+import type { Lecturer } from '../../utils/types';
+import type { Locale } from '../../utils/i18n';
+import { t } from '../../utils/i18n';
+import LecturerCard from './LecturerCard.astro';
+
+interface Props {
+  lecturers: Lecturer[];
+  locale: Locale;
+}
+
+const { lecturers, locale } = Astro.props;
+
+const coordinators = lecturers.filter((lecturer) => /koordinator/i.test(lecturer.role));
+const labLecturers = lecturers.filter((lecturer) => !/koordinator/i.test(lecturer.role));
+---
+
+<section
+  id="pembina"
+  class="border-t border-line py-[clamp(4.5rem,10vh,8.75rem)]"
+  aria-labelledby="struct-pembina-title"
+>
+  <div class="mx-auto max-w-[1200px] px-[clamp(1.25rem,4vw,4rem)]">
+    <div class="grid gap-6 lg:grid-cols-2 lg:items-end">
+      <div>
+        <p class="e-reveal font-mono text-xs uppercase tracking-[0.08em] text-brand">
+          01 — {t('struct.pembinaEyebrow', locale)}
+        </p>
+        <h2
+          id="struct-pembina-title"
+          class="e-reveal mt-4 font-display text-[clamp(2rem,4vw,3.5rem)] leading-[1.05] tracking-[-0.01em]"
+        >
+          {t('struct.pembinaTitle', locale)}
+        </h2>
+      </div>
+      <p class="e-reveal max-w-[52ch] text-[15px] leading-[1.55] text-muted-ink lg:justify-self-end">
+        {t('struct.pembinaIntro', locale)}
+      </p>
+    </div>
+
+    <div class="pembina-grid e-reveal-group mt-[clamp(2.5rem,6vh,4rem)] grid border-t border-line sm:grid-cols-2">
+      <div class="pembina-col border-b border-line py-8 sm:border-b-0 sm:border-r sm:pr-8" style="--i:0">
+        <p class="font-mono text-xs uppercase tracking-[0.08em] text-brand">
+          {t('struct.dosenCoordinator', locale)}
+        </p>
+        <p class="mt-4 max-w-[40ch] font-display text-[clamp(1.35rem,2vw,1.75rem)] leading-[1.3]">
+          {t('struct.dosenCoordinatorDesc', locale)}
+        </p>
+        {coordinators.length > 0 && (
+          <ul class="lecturer-list">
+            {coordinators.map((lecturer) => (
+              <li><LecturerCard lecturer={lecturer} /></li>
+            ))}
+          </ul>
+        )}
+      </div>
+      <div class="pembina-col py-8 sm:pl-8" style="--i:1">
+        <p class="font-mono text-xs uppercase tracking-[0.08em] text-brand">
+          {t('struct.dosenLab', locale)}
+        </p>
+        <p class="mt-4 max-w-[40ch] font-display text-[clamp(1.35rem,2vw,1.75rem)] leading-[1.3]">
+          {t('struct.dosenLabDesc', locale)}
+        </p>
+        {labLecturers.length > 0 && (
+          <ul class="lecturer-list">
+            {labLecturers.map((lecturer) => (
+              <li><LecturerCard lecturer={lecturer} /></li>
+            ))}
+          </ul>
+        )}
+      </div>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,60 @@
+---
+import type { EventEntry } from '../../utils/event-helpers';
+import type { Locale } from '../../utils/i18n';
+import {
+  getEventCover,
+  getEventDateLabel,
+  getEventDateMs,
+  getEventHref,
+  getEventSearchText,
+  getEventStatusLabel,
+} from '../../utils/event-helpers';
+
+interface Props {
+  event: EventEntry;
+  locale: Locale;
+  filterable?: boolean;
+  index?: number;
+}
+
+const { event, locale, filterable = false, index = 0 } = Astro.props;
+
+const cover = getEventCover(event);
+const dateMs = getEventDateMs(event);
+const dateLabel = getEventDateLabel(event, locale);
+const statusLabel = getEventStatusLabel(event, locale);
+const showStatus = event.data.status !== 'completed';
+const href = getEventHref(event, locale);
+---
+
+<li
+  class:list={['kegiatan-card-item', filterable && 'grid-card-item']}
+  style={`--i:${index}`}
+  data-category={filterable ? event.data.category : undefined}
+  data-status={filterable ? event.data.status : undefined}
+  data-date={filterable ? event.data.event_date : undefined}
+  data-search-text={filterable ? getEventSearchText(event) : undefined}
+  data-audit={filterable && event.data.audit ? 'true' : undefined}
+>
+  <a class="kegiatan-card" href={href}>
+    <span class="kegiatan-card-media">
+      {cover ? (
+        <img src={cover} alt="" width="800" height="1000" loading="lazy" decoding="async" />
+      ) : (
+        <span class="kegiatan-media-fallback">
+          <span class="kegiatan-media-fallback-category">{event.data.category}</span>
+          <span class="kegiatan-media-fallback-date">{dateLabel}</span>
+        </span>
+      )}
+    </span>
+    <span class="kegiatan-card-meta">
+      {dateMs > 0 ? <time datetime={event.data.event_date}>{dateLabel}</time> : <span>{dateLabel}</span>}
+      <span aria-hidden="true">·</span>
+      <span>{event.data.category}</span>
+      {showStatus && (
+        <span class={`kegiatan-status kegiatan-status--${event.data.status}`}>{statusLabel}</span>
+      )}
+    </span>
+    <h3 class="kegiatan-card-title">{event.data.title}</h3>
+  </a>
+</li>

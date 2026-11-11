@@ -1,174 +1,76 @@
 ---
-import { getCollection } from 'astro:content';
+import { getCollection, render } from 'astro:content';
 import Layout from '../../layouts/Layout.astro';
-import { getLocaleFromUrl, getCleanSlug, getLocalizedPath, t } from '../../utils/i18n';
+import '../../styles/pages/home-eim.css';
+import '../../styles/pages/kegiatan-eim.css';
+import KegiatanRecapHero from '../../components/kegiatan/KegiatanRecapHero.astro';
+import KegiatanStory from '../../components/kegiatan/KegiatanStory.astro';
+import KegiatanGallery from '../../components/kegiatan/KegiatanGallery.astro';
+import KegiatanRelated from '../../components/kegiatan/KegiatanRelated.astro';
+import {
+  getCleanSlug,
+  getCollectionEntriesForLocale,
+  getLocaleFromUrl,
+  t,
+} from '../../utils/i18n';
+import { filterAuditContent } from '../../utils/content-helpers';
+import {
+  compareEventDates,
+  getEventStoryGallery,
+} from '../../utils/event-helpers';
+import type { EventEntry } from '../../utils/event-helpers';
 
 export async function getStaticPaths() {
   const events = await getCollection('events');
-  return events.map((event: any) => {
-    const slug = getCleanSlug(event.id);
-    return {
-      params: { id: slug },
-      props: { event },
-    };
-  });
+  // Intentionally includes audit content: CI benchmarks this route.
+  return events.map((event) => ({
+    params: { id: getCleanSlug(event.id) },
+    props: { event },
+  }));
+}
+
+interface Props {
+  event: EventEntry;
 }
 
 const locale = getLocaleFromUrl(Astro.url);
 const { event } = Astro.props;
-const images = event.data.image || [];
-const benefits = event.data.benefits || [];
-const requirements = event.data.requirements || [];
+const { Content } = await render(event);
 
-const isOngoing = event.data.status === 'ongoing';
-const isCompleted = event.data.status === 'completed';
-const statusColor = isOngoing ? '#ff9800' : '#11B4BD';
-const statusIcon = isCompleted ? 'fa-circle-check' : (isOngoing ? 'fa-spinner fa-spin' : 'fa-clock');
-const statusLabel = isCompleted ? t('badge.completed', locale) : (isOngoing ? t('badge.ongoing', locale) : t('badge.upcoming', locale));
+const all = filterAuditContent(getCollectionEntriesForLocale(await getCollection('events'), locale));
+// Sort once, then keep same-category entries first (filters preserve order).
+const pool = all
+  .filter((item) => item.id !== event.id)
+  .sort((a, b) => compareEventDates(a, b, 'desc'));
+const related = [
+  ...pool.filter((item) => item.data.category === event.data.category),
+  ...pool.filter((item) => item.data.category !== event.data.category),
+].slice(0, 3);
 ---
 
-<Layout title={`${event.data.title} - EIM Research Lab`}>
-  <div class="page-min-height">
-    {/* Top Section */}
-    <section class="detail-header-section">
-      <div class="container">
-        <a href={getLocalizedPath('/event', locale)} class="hover-text-primary back-link">
-          <i class="fa-solid fa-arrow-left"></i> {t('btn.back', locale)}
-        </a>
-        
-        <div class="header-title-row">
-          <div>
-            <h1 class="event-title">{event.data.title}</h1>
-            <div class="organizer-badge">
-              <i class="fa-solid fa-users"></i> EIM Research Lab
-            </div>
-          </div>
-          
-          <button class="hover-bg-light share-btn action-share-btn">
-            <i class="fa-solid fa-share-nodes"></i> Share
-          </button>
-        </div>
-      </div>
-    </section>
-
-    {/* Main Content Section */}
-    <section class="content-section">
-      <div class="container responsive-grid">
-        
-        {/* Left Column */}
-        <div class="main-column">
-          
-          {/* Description */}
-          <div>
-            <h3 class="section-subheading">
-              <i class="fa-solid fa-circle-info"></i> Deskripsi Kegiatan
-            </h3>
-            <p class="section-body-text">
-              {event.data.description}
-            </p>
-          </div>
-
-          {/* Benefits */}
-          {benefits.length > 0 && (
-            <div>
-              <h3 class="section-subheading">
-                <i class="fa-solid fa-gift"></i> {t('events.benefits', locale)}
-              </h3>
-              <ul class="section-list">
-                {benefits.map((b: string) => (
-                  <li>{b}</li>
-                ))}
-              </ul>
-            </div>
-          )}
-
-          {/* Requirements */}
-          {requirements.length > 0 && (
-            <div>
-              <h3 class="section-subheading">
-                <i class="fa-solid fa-circle-check"></i> {t('events.requirements', locale)}
-              </h3>
-              <ul class="section-list">
-                {requirements.map((r: string) => (
-                  <li>{r}</li>
-                ))}
-              </ul>
-            </div>
-          )}
-
-          {/* Documentation */}
-          {images.length > 0 && (
-            <div>
-              <h3 class="section-subheading">
-                <i class="fa-solid fa-image"></i> Dokumentasi
-              </h3>
-              <div class="doc-images-grid">
-                {images.map((img: string, idx: number) => (
-                  <div class="doc-img-wrapper">
-                    <img src={img} alt={`Documentation ${idx + 1}`} class="hover-scale doc-img" />
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-
-        </div>
-
-        {/* Right Column (Sidebar) */}
-        <div class="glass-panel sidebar-card">
-          <h3 class="sidebar-title">
-            Informasi Utama
-          </h3>
-          
-          <div class="sidebar-info-group">
-            {/* Date */}
-            <div class="info-item">
-              <div class="info-icon-box">
-                <i class="fa-regular fa-calendar"></i>
-              </div>
-              <div>
-                <div class="info-label">{t('events.date', locale)}</div>
-                <div class="info-val">{event.data.event_date || "-"}</div>
-              </div>
-            </div>
-
-            {/* Status */}
-            <div class="info-item">
-              <div class="info-icon-box" style={`color: ${statusColor};`}>
-                <i class={`fa-solid ${statusIcon}`}></i>
-              </div>
-              <div>
-                <div class="info-label">Status</div>
-                <div class="info-val">{statusLabel}</div>
-              </div>
-            </div>
-
-            {/* Category */}
-            <div class="info-item">
-              <div class="info-icon-box">
-                <i class="fa-solid fa-tag"></i>
-              </div>
-              <div>
-                <div class="info-label">Kategori</div>
-                <div class="info-val">{event.data.category || "-"}</div>
-              </div>
-            </div>
-          </div>
-
-          {event.data.show_register && event.data.status !== 'completed' && (
-            <>
-              <a href={getLocalizedPath('/registration', locale)} class="btn btn-primary register-btn">
-                {t('btn.register', locale)}
-              </a>
-            </>
-          )}
-        </div>
-      </div>
-    </section>
-  </div>
+<Layout
+  title={`${event.data.title} - EIM Research Lab`}
+  description={event.data.description}
+  homeSkin
+  skipLink
+>
+  <main id="main-content" tabindex="-1">
+    <KegiatanRecapHero event={event} locale={locale} />
+    <KegiatanStory event={event}>
+      <Content />
+    </KegiatanStory>
+    <KegiatanGallery event={event} locale={locale} />
+    {!event.body?.trim() && getEventStoryGallery(event).length === 0 && (
+      <p class="kegiatan-recap-empty">{t('events.recapEmpty', locale)}</p>
+    )}
+    <KegiatanRelated events={related} locale={locale} />
+    <div class="kegiatan-recap-end">
+      <a class="kegiatan-back" href="/event">{t('events.backToIndex', locale)}</a>
+    </div>
+  </main>
 </Layout>
 
 <script>
   import { initShareButtons } from '../../scripts/share';
-  initShareButtons('Event');
+  initShareButtons('Kegiatan');
 </script>

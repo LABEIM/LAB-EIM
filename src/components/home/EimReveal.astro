@@ -1,0 +1,73 @@
+---
+import { Image } from 'astro:assets';
+import emblem from '../../../public/assets/brand/eim-emblem.png';
+import { t } from '../../utils/i18n';
+
+/**
+ * Asset swap point — the only thing to edit when the intro media arrives.
+ *
+ *   kind: 'video' → set `src` (video file) and `poster` (poster image)
+ *   kind: 'image' → set `src` (public URL path, e.g. `/assets/...`) and `alt` (image description)
+ *   kind: 'pending' → the placeholder below, no other edits
+ *
+ * Set those values and change nothing else in this file.
+ */
+const MEDIA: { kind: 'pending' | 'image' | 'video'; src: string; poster?: string; caption: string; alt: string } = {
+  kind: 'pending',
+  src: '',
+  caption: t('home.revealCaption'),
+  alt: '',
+};
+---
+
+<section id="reveal" class="e-reveal-stage" aria-label="Media pengantar">
+  <figure class="e-reveal-stage-figure">
+    {MEDIA.kind === 'video' && (
+      <video
+        class="e-reveal-stage-media"
+        src={MEDIA.src}
+        poster={MEDIA.poster}
+        muted
+        loop
+        playsinline
+        autoplay
+        preload="metadata"
+      ></video>
+    )}
+
+    {MEDIA.kind === 'image' && (
+      <Image
+        class="e-reveal-stage-media"
+        src={MEDIA.src}
+        alt={MEDIA.alt}
+        width={1600}
+        height={900}
+        loading="lazy"
+        decoding="async"
+      />
+    )}
+
+    {MEDIA.kind === 'pending' && (
+      <div class="e-reveal-stage-pending">
+        <Image
+          class="e-reveal-stage-emblem"
+          src={emblem}
+          alt=""
+          width={220}
+          height={252}
+          loading="lazy"
+          decoding="async"
+        />
+        <p class="e-reveal-stage-note">{t('home.revealPending')}</p>
+      </div>
+    )}
+
+    <figcaption class="e-reveal-stage-caption">{MEDIA.caption}</figcaption>
+  </figure>
+</section>
+
+<script>
+  import { initMediaReveal } from '../../scripts/media-reveal';
+
+  initMediaReveal();
+</script>

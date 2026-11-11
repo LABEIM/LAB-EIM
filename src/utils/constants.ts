@@ -48,3 +48,21 @@ export const DEFAULT_ACTION_BTN: StageActionConfig = {
   label: 'Recruitment Information',
   icon: 'fa-info-circle',
 };
+
+/**
+ * Homepage v2 hero CTA copy per recruitment stage.
+ * Single source shared by `EimHero` (rendered as `data-stage-labels`) and the
+ * homepage stage sync (`initHomeCTA`). Unknown stage ids fall back to `selection`.
+ */
+export const STAGE_LABELS: Record<string, { label: string; href: string }> = {
+  open: { label: 'Gabung EIM', href: '/registration' },
+  extended: { label: 'Gabung EIM', href: '/registration' },
+  upcoming: { label: 'Lihat Persyaratan', href: '/registration' },
+  announcement: { label: 'Lihat Pengumuman', href: '/registration' },
+  selection: { label: 'Cek Status Seleksi', href: '/registration' },
+  selection_results: { label: 'Cek Status Seleksi', href: '/registration' },
+  technical_test: { label: 'Cek Status Seleksi', href: '/registration' },
+  technical_test_results: { label: 'Cek Status Seleksi', href: '/registration' },
+  interview: { label: 'Cek Status Seleksi', href: '/registration' },
+  closed: { label: 'Hubungi Kami', href: '/contact' },
+};

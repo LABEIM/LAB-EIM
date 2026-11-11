@@ -13,7 +13,7 @@ export function initShareButtons(itemType: string = 'Link') {
         }
       } else {
         await navigator.clipboard.writeText(window.location.href);
-        alert(`${itemType} link copied to clipboard!`);
+        alert(`Tautan ${itemType.toLowerCase()} disalin ke clipboard!`);
       }
     });
   });

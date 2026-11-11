@@ -1,0 +1,64 @@
+---
+import type { AboutData } from '../../utils/types';
+import { t } from '../../utils/i18n';
+
+interface Props {
+  about: AboutData;
+}
+
+const { about } = Astro.props;
+---
+
+<section id="visi-misi" class="py-[clamp(4.5rem,10vh,8.75rem)]" aria-labelledby="eim-vm-title">
+  <div class="mx-auto max-w-[1200px] px-[clamp(1.25rem,4vw,4rem)]">
+    <h2
+      id="eim-vm-title"
+      class="e-reveal font-display text-[clamp(2rem,4vw,3.5rem)] leading-[1.05] tracking-[-0.01em]"
+    >
+      {t('home.vmTitle')}
+    </h2>
+
+    <div
+      class="mt-[clamp(2.5rem,6vh,5rem)] grid gap-[clamp(2rem,4vw,4rem)] lg:grid-cols-[minmax(0,5fr)_minmax(0,6fr)]"
+    >
+      <div class="e-reveal lg:sticky lg:top-28 lg:self-start">
+        <p class="font-mono text-xs uppercase tracking-[0.08em] text-brand">{t('about.vision')}</p>
+        <p class="mt-6 max-w-[34ch] font-display text-[clamp(1.75rem,2.6vw,2.75rem)] leading-[1.18] tracking-[-0.01em]">
+          {about.vision}
+        </p>
+      </div>
+
+      <div>
+        <p class="font-mono text-xs uppercase tracking-[0.08em] text-brand">{t('about.mission')}</p>
+        <ol class="e-reveal-group mt-6 list-none border-t border-line">
+          {about.missions.map((mission, index) => (
+            <li
+              class="grid grid-cols-[3rem_minmax(0,1fr)] gap-x-6 border-b border-line py-6"
+              style={`--i:${index}`}
+            >
+              <span class="font-mono text-sm text-brand" aria-hidden="true">
+                {String(index + 1).padStart(2, '0')}
+              </span>
+              <p class="max-w-[58ch] text-[15px] leading-[1.55]">{mission}</p>
+            </li>
+          ))}
+        </ol>
+      </div>
+    </div>
+
+    <div class="mt-[clamp(3rem,7vh,5.5rem)]">
+      <p class="font-mono text-xs uppercase tracking-[0.08em] text-brand">{t('about.values')}</p>
+      <div class="e-reveal-group mt-6 grid grid-cols-1 border-t border-line sm:grid-cols-2 lg:grid-cols-4">
+        {about.values.map((value, index) => (
+          <div
+            class="border-b border-line py-6 sm:pr-6 lg:border-r lg:border-b-0 lg:px-6 lg:first:pl-0 lg:last:border-r-0 lg:last:pr-0"
+            style={`--i:${index}`}
+          >
+            <h3 class="font-display text-xl leading-[1.2]">{value.title}</h3>
+            <p class="mt-2 text-sm leading-[1.55] text-muted-ink">{value.description}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </div>
+</section>

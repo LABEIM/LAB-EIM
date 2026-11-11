@@ -1,5 +1,28 @@
 import { config, fields, collection, singleton } from '@keystatic/core';
 
+const contactPersonsField = fields.array(
+  fields.object({
+    name: fields.text({ label: 'Contact Person Name' }),
+    role: fields.text({ label: 'Role / Division Label (e.g. CP Information & Selection)' }),
+    platform: fields.select({
+      label: 'Contact Platform',
+      options: [
+        { label: 'WhatsApp', value: 'whatsapp' },
+        { label: 'LINE', value: 'line' },
+        { label: 'Email', value: 'email' },
+        { label: 'Phone', value: 'phone' },
+      ],
+      defaultValue: 'whatsapp',
+    }),
+    contactId: fields.text({ label: 'Contact ID / Phone Number / Handle (e.g. 081234567890 or @id)' }),
+    link: fields.text({ label: 'Direct Clickable Contact Link (must start with https://, mailto: or tel:, e.g. https://wa.me/6281234567890)' }),
+  }),
+  {
+    label: 'Contact Persons List',
+    itemLabel: props => `${props.fields.name.value || 'Contact Person'} (${props.fields.role.value || ''})`,
+  }
+);
+
 const registrationSchema = {
   status: fields.text({
     label: 'Recruitment Stage Status Override',
@@ -242,29 +265,7 @@ const registrationSchema = {
       itemLabel: props => `${props.fields.enabled.value ? '✓' : '✗'} ${props.fields.shortLabel.value || 'Step'} (${props.fields.id.value || 'id'})`,
     }
   ),
-  contactPersons: fields.array(
-
-    fields.object({
-      name: fields.text({ label: 'Contact Person Name' }),
-      role: fields.text({ label: 'Role / Division Label (e.g. CP Information & Selection)' }),
-      platform: fields.select({
-        label: 'Contact Platform',
-        options: [
-          { label: 'WhatsApp', value: 'whatsapp' },
-          { label: 'LINE', value: 'line' },
-          { label: 'Email', value: 'email' },
-          { label: 'Phone', value: 'phone' },
-        ],
-        defaultValue: 'whatsapp',
-      }),
-      contactId: fields.text({ label: 'Contact ID / Phone Number / Handle (e.g. 081234567890 or @id)' }),
-      link: fields.text({ label: 'Direct Clickable Contact Link (e.g. https://wa.me/6281234567890)' }),
-    }),
-    {
-      label: 'Contact Persons List',
-      itemLabel: props => `${props.fields.name.value || 'Contact Person'} (${props.fields.role.value || ''})`,
-    }
-  ),
+  contactPersons: contactPersonsField,
 };
 
 const recruitmentResultsSchema = {
@@ -360,7 +361,7 @@ export default config({
       label: 'Events',
       slugField: 'title',
       path: 'src/content/events/*',
-      format: { contentField: 'description' },
+      format: { contentField: 'content' },
       schema: {
         title: fields.slug({ name: { label: 'Title' } }),
         category: fields.text({ label: 'Category' }),
@@ -374,8 +375,9 @@ export default config({
           defaultValue: 'upcoming',
         }),
         event_date: fields.date({ label: 'Event Date' }),
-        description: fields.markdoc({
-          label: 'Description/Content',
+        description: fields.text({ label: 'Short Description', multiline: true }),
+        content: fields.markdoc({
+          label: 'Content',
           extension: 'md',
         }),
         link: fields.text({ label: 'Link (Optional)' }),
@@ -394,7 +396,6 @@ export default config({
           label: 'Requirements',
           itemLabel: props => props.value,
         }),
-        show_register: fields.checkbox({ label: 'Show Register Button', defaultValue: true }),
       },
     }),
   },
@@ -475,6 +476,27 @@ export default config({
         ),
       },
     }),
+    lecturers: singleton({
+      label: 'Lecturers',
+      path: 'src/data/lecturers',
+      format: { data: 'json' },
+      schema: {
+        list: fields.array(
+          fields.object({
+            id: fields.text({ label: 'ID' }),
+            name: fields.text({ label: 'Name' }),
+            role: fields.text({ label: 'Role' }),
+            image: fields.text({ label: 'Image Path' }),
+            scale: fields.text({ label: 'Scale Factor' }),
+            position: fields.text({ label: 'Position' }),
+          }),
+          {
+            label: 'Lecturers List',
+            itemLabel: props => props.fields.name.value || props.fields.role.value || 'Lecturer',
+          }
+        ),
+      },
+    }),
     about: singleton({
       label: 'About Page',
       path: 'src/data/about',
@@ -536,6 +558,7 @@ export default config({
         hoursSubtext: fields.text({ label: 'Working Hours Subtext', multiline: true }),
         mapSectionTitle: fields.text({ label: 'Map Section Title' }),
         mapSectionSubtitle: fields.text({ label: 'Map Section Subtitle', multiline: true }),
+        contactPersons: contactPersonsField,
       },
     }),
     announcement: singleton({

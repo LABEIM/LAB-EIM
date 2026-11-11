@@ -1,0 +1,26 @@
+---
+import type { Member } from '../../utils/types';
+import type { Locale } from '../../utils/i18n';
+import { t } from '../../utils/i18n';
+import MemberTile from './MemberTile.astro';
+
+interface Props {
+  members: Member[];
+  locale: Locale;
+}
+
+const { members, locale } = Astro.props;
+---
+
+{members.length > 0 && (
+  <div class="mt-[clamp(2.5rem,6vh,4rem)]">
+    <p class="font-mono text-xs uppercase tracking-[0.08em] text-brand">
+      {t('struct.staffLabel', locale)} · {members.length}
+    </p>
+    <div class="staff-grid e-reveal-group mt-4">
+      {members.map((member, index) => (
+        <MemberTile member={member} index={index} />
+      ))}
+    </div>
+  </div>
+)}

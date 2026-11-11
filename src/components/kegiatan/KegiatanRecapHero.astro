@@ -1,0 +1,79 @@
+---
+import type { EventEntry } from '../../utils/event-helpers';
+import type { Locale } from '../../utils/i18n';
+import { t } from '../../utils/i18n';
+import { getEventDateLabel, getEventDateMs, getEventStoryCover } from '../../utils/event-helpers';
+
+interface Props {
+  event: EventEntry;
+  locale: Locale;
+}
+
+const { event, locale } = Astro.props;
+
+const cover = getEventStoryCover(event);
+const dateMs = getEventDateMs(event);
+const dateLabel = getEventDateLabel(event, locale).trim();
+const category = event.data.category.trim();
+const organizer = (event.data.organizer ?? '').trim() || t('events.organizerFallback', locale);
+const hasStandfirst = event.data.description.trim().length > 0;
+const metaParts = [dateLabel, category, organizer].filter(Boolean);
+---
+
+<section id="kegiatan-detail" class="kegiatan-recap-hero" aria-labelledby="kegiatan-detail-title">
+  <div class="mx-auto max-w-[1200px] px-[clamp(1.25rem,4vw,4rem)]">
+    <div class="kegiatan-recap-top">
+      <a class="kegiatan-back" href="/event">
+        <span aria-hidden="true">←</span> {t('events.backToList', locale)}
+      </a>
+      <button type="button" class="share-btn kegiatan-share">{t('events.share', locale)}</button>
+    </div>
+
+    <div class="kegiatan-recap-eyebrow e-reveal">
+      {category && (
+        <>
+          <span>{category}</span>
+          {dateLabel && <span aria-hidden="true">·</span>}
+        </>
+      )}
+      {dateLabel &&
+        (dateMs > 0 ? (
+          <time datetime={event.data.event_date}>{dateLabel}</time>
+        ) : (
+          <span>{dateLabel}</span>
+        ))}
+    </div>
+
+    <h1 id="kegiatan-detail-title" class="kegiatan-recap-title e-reveal">{event.data.title}</h1>
+
+    {hasStandfirst && <p class="kegiatan-recap-standfirst e-reveal">{event.data.description}</p>}
+
+    <p class="kegiatan-recap-meta e-reveal">
+      {metaParts.map((part, index) => (
+        <>
+          {index > 0 && <span aria-hidden="true">·</span>}
+          <span>{part}</span>
+        </>
+      ))}
+    </p>
+
+    <div class="kegiatan-recap-cover e-reveal">
+      {cover ? (
+        <img
+          src={cover}
+          alt=""
+          width="1600"
+          height="900"
+          loading="eager"
+          fetchpriority="high"
+          decoding="async"
+        />
+      ) : (
+        <span class="kegiatan-recap-fallback">
+          {category && <span class="kegiatan-media-fallback-category">{category}</span>}
+          {dateLabel && <span class="kegiatan-media-fallback-date">{dateLabel}</span>}
+        </span>
+      )}
+    </div>
+  </div>
+</section>

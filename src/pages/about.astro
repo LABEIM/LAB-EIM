@@ -1,88 +1,46 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import '../styles/pages/home-eim.css';
 import { getLocaleFromUrl, getLocalizedJsonData, t } from '../utils/i18n';
-
-interface ValueItem {
-  title: string;
-  description: string;
-  icon: string;
-  isAccent?: boolean;
-}
+import { parseDivisions } from '../utils/division-mapper';
+import type { AboutData, DivisionConfig, Member } from '../utils/types';
+import AboutHero from '../components/about/AboutHero.astro';
+import AboutProfile from '../components/about/AboutProfile.astro';
+import AboutStats from '../components/about/AboutStats.astro';
+import EimVisiMisi from '../components/home/EimVisiMisi.astro';
+import AboutTeam from '../components/about/AboutTeam.astro';
+import EimCTA from '../components/home/EimCTA.astro';
+import EimSectionNav from '../components/home/EimSectionNav.astro';
 
 const locale = getLocaleFromUrl(Astro.url);
-const aboutData = await getLocalizedJsonData<any>('about', locale);
+const aboutData = getLocalizedJsonData<AboutData>('about', locale);
+const siteData = getLocalizedJsonData<any>('site', locale);
+const membersData = getLocalizedJsonData<{ list: Member[] }>('members', locale);
+const divisionsData = getLocalizedJsonData<any>('divisions', locale);
 
-const values: ValueItem[] = aboutData.values || [];
+const divisions: DivisionConfig[] = parseDivisions(divisionsData);
+const members: Member[] = membersData?.list ?? [];
+const coordinators: Member[] = members
+  .filter((member) => member.division === 'core' || member.role.includes('Coordinator'))
+  .sort((a, b) => a.id - b.id);
+
+const sectionItems = [
+  { id: 'profil', label: t('about.navDotProfile', locale) },
+  { id: 'angka', label: t('about.navDotStats', locale) },
+  { id: 'visi-misi', label: t('home.navDotVision', locale) },
+  { id: 'koordinator', label: t('about.navDotTeam', locale) },
+  { id: 'gabung', label: t('about.navDotCta', locale) },
+];
 ---
 
-<Layout title={`${aboutData.title || t('nav.about', locale)} - EIM Research Lab`}>
-  <section class="page-header">
-    <div class="container">
-      <div class="page-header-content">
-        <h1>{aboutData.title}</h1>
-        <p class="hero-desc">{aboutData.description}</p>
-      </div>
-    </div>
-  </section>
-
-  <section class="section-padding" id="about">
-    <div class="container">
-      <div class="about-overview-grid mb-80">
-        <div class="about-content">
-          <h2 class="overview-heading">{aboutData.overviewTitle}</h2>
-          <p class="hero-desc mb-20 max-w-full">
-            {aboutData.overviewContent1}
-          </p>
-          <p class="text-secondary mb-20">
-            {aboutData.overviewContent2}
-          </p>
-        </div>
-        <div class="about-image flex-center">
-          <img src={aboutData.overviewImage} alt="EIM Lab" />
-        </div>
-      </div>
-
-      <div class="about-visionmission-grid glass-panel mb-80">
-        <div class="vm-grid">
-          <div>
-            <h3 class="vision-heading">
-              <i class="fa-solid fa-eye"></i> {t('about.vision', locale)}
-            </h3>
-            <p class="vm-text">
-              {aboutData.vision}
-            </p>
-          </div>
-          <div>
-            <h3 class="mission-heading">
-              <i class="fa-solid fa-bullseye"></i> {t('about.mission', locale)}
-            </h3>
-            <ul class="mission-list">
-              {aboutData.missions?.map((mission: string) => (
-                <li class="mission-item">{mission}</li>
-              ))}
-            </ul>
-          </div>
-        </div>
-      </div>
-
-      <div>
-        <div class="section-title">
-          <h2>{t('about.values', locale)}</h2>
-          <p>Nilai-nilai utama yang menjadi pilar dan budaya kerja di EIM Lab.</p>
-        </div>
-
-        <div class="focus-grid">
-          {values.map((val) => (
-            <div class="focus-card glass-panel">
-              <div class={`focus-icon ${val.isAccent ? 'text-accent-red' : ''}`}>
-                <i class={`fa-solid ${val.icon}`}></i>
-              </div>
-              <h3>{val.title}</h3>
-              <p>{val.description}</p>
-            </div>
-          ))}
-        </div>
-      </div>
-    </div>
-  </section>
+<Layout title={`${t('nav.about', locale)} - EIM Research Lab`} description={aboutData.description} homeSkin skipLink>
+  <main id="main-content" tabindex="-1">
+    <EimSectionNav items={sectionItems} label={t('about.sectionNavLabel', locale)} />
+    <AboutHero />
+    <AboutProfile about={aboutData} site={siteData} />
+    <AboutStats membersCount={members.length} divisionsCount={divisions.length} focusCount={4} />
+    <EimVisiMisi about={aboutData} />
+    <AboutTeam coordinators={coordinators} divisions={divisions} />
+    <EimCTA site={siteData} />
+  </main>
 </Layout>

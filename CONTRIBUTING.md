@@ -100,7 +100,7 @@ Whether you are fixing a bug or adding a new feature, follow the git workflow de
 
 Ensure you have the required runtimes and tools installed on your development machine:
 - **Git** (latest stable)
-- **Runtime / Package Manager**: Node.js `>=22.12.0` with `npm`.
+- **Runtime / Package Manager**: Node.js `>=22.12.0` with `pnpm` (12.x; `pnpm-lock.yaml` pins resolutions).
 - **Editor**: VS Code, Cursor, or your preferred IDE
 
 ### Installation & Development Server
@@ -113,19 +113,19 @@ Ensure you have the required runtimes and tools installed on your development ma
 
 2. **Install dependencies:**
    ```bash
-   npm install
+   pnpm install
    ```
 
 3. **Start the local development server:**
    ```bash
-   npm run dev
+   pnpm run dev
    ```
 
 4. **Verify baseline build and tests:**
    ```bash
-   npx astro check
-   npm test
-   npm run build
+   pnpm exec astro check
+   pnpm test
+   pnpm run build
    ```
 
 ---
@@ -193,8 +193,8 @@ git commit -S -m "feat(telemetry): add batch metrics processor"
 ### PR Submission Checklist
 
 Before submitting your Pull Request, ensure:
-- [ ] Code compiles and passes all checks (`npx astro check`, `npm run build`).
-- [ ] Automated tests pass successfully (`npm test`).
+- [ ] Code compiles and passes all checks (`pnpm exec astro check`, `pnpm run build`).
+- [ ] Automated tests pass successfully (`pnpm test`).
 - [ ] New functionality includes corresponding unit or integration tests.
 - [ ] Documentation (`README.md`, API specs, comments) is updated to reflect changes.
 - [ ] Commit history is clean, signed, and adheres to Conventional Commits.

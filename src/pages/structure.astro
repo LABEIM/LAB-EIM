@@ -1,110 +1,92 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import { getDivisionInfo, parseDivisions } from '../utils/division-mapper';
+import '../styles/pages/home-eim.css';
+import '../styles/pages/structure-eim.css';
+import EimSectionNav from '../components/home/EimSectionNav.astro';
+import EimCTA from '../components/home/EimCTA.astro';
+import StructureHero from '../components/structure/StructureHero.astro';
+import StructureChart from '../components/structure/StructureChart.astro';
+import StructurePembina from '../components/structure/StructurePembina.astro';
+import StructureCore from '../components/structure/StructureCore.astro';
+import StructureDivision from '../components/structure/StructureDivision.astro';
+import { buildDivisionMap, getDivisionInfo, parseDivisions } from '../utils/division-mapper';
 import { getLocaleFromUrl, getLocalizedJsonData, t } from '../utils/i18n';
+import type { DivisionConfig, DivisionSection, Lecturer, Member } from '../utils/types';
 
 const locale = getLocaleFromUrl(Astro.url);
-const membersData = await getLocalizedJsonData<any>('members', locale);
-const divisionsData = await getLocalizedJsonData<any>('divisions', locale);
+const membersData = getLocalizedJsonData<{ list: Member[] }>('members', locale);
+const divisionsData = getLocalizedJsonData<any>('divisions', locale);
+const siteData = getLocalizedJsonData<any>('site', locale);
+const lecturersData = getLocalizedJsonData<{ list: Lecturer[] }>('lecturers', locale);
 
-const initialMembers = membersData.list || [];
+const fallbackLecturers: Lecturer[] = [
+  { id: 'dosen-koordinator', name: '', role: t('struct.dosenCoordinator', locale), image: '' },
+  { id: 'dosen-lab-1', name: '', role: t('struct.dosenLab', locale), image: '' },
+];
+const lecturers = lecturersData?.list?.length ? lecturersData.list : fallbackLecturers;
+
 const divisions = parseDivisions(divisionsData);
+const members = membersData?.list ?? [];
+const divisionMap = buildDivisionMap(divisions);
+
+const divisionMembers = (division: DivisionConfig): Member[] =>
+  members.filter((member) => {
+    const info = getDivisionInfo(member.division, divisionMap);
+    return info?.id.trim().toLowerCase() === division.id.trim().toLowerCase();
+  });
+
+const coreDivision =
+  divisions.find((division) => {
+    const info = getDivisionInfo(division.id, divisionMap);
+    return info?.id === 'inti' || division.aliases?.some((a) => ['core', 'inti'].includes(a.toLowerCase()));
+  }) ?? divisions[0] ?? null;
+
+const coreMembers = coreDivision ? divisionMembers(coreDivision) : [];
+
+const divisionSections: DivisionSection[] = divisions
+  .filter((division) => division.id !== coreDivision?.id)
+  .map((division) => {
+    const list = divisionMembers(division);
+    const coordinator = list.find((member) => /coordinator/i.test(member.role)) ?? null;
+    return { division, coordinator, staff: list.filter((member) => member !== coordinator) };
+  });
+
+const leaderCount = coreMembers.length + divisionSections.filter((s) => s.coordinator).length;
+
+const sectionItems = [
+  { id: 'struktur', label: t('struct.navDotChart', locale) },
+  { id: 'pembina', label: t('struct.navDotPembina', locale) },
+  { id: 'inti', label: t('struct.navDotCore', locale) },
+  ...divisionSections.map(({ division }) => ({ id: `divisi-${division.id}`, label: division.displayName })),
+  { id: 'gabung', label: t('struct.navDotJoin', locale) },
+];
 ---
 
-<Layout title={`${t('struct.title', locale)} - EIM Research Lab`}>
-  <section class="page-header structure-page-header">
-    <div class="container">
-      <div class="page-header-content">
-        <h1>{t('struct.title', locale)}</h1>
-        <p class="structure-page-subtitle">{t('struct.subtitle', locale)}</p>
-      </div>
-    </div>
-  </section>
-
-  <section class="section-padding" id="structure">
-    <div class="container">
-      <div class="filter-container" id="filter-tabs" data-divisions={JSON.stringify(divisions)}>
-        <button class="filter-tab active" data-filter="all">{t('struct.allDivisions', locale)}</button>
-        {divisions.map(div => (
-          <button class="filter-tab" data-filter={div.id}>{div.displayName || div.name}</button>
-        ))}
-      </div>
-
-      <!-- Division Summary Banner -->
-      <div class="division-banner-panel" id="division-banner">
-        <div class="banner-header-row">
-          <div class="banner-title-group">
-            <h2 id="banner-title">{t('struct.allDivisions', locale)}</h2>
-            <span class="division-badge-tag" id="banner-badge">OVERVIEW</span>
-          </div>
-          <span class="banner-member-count" id="banner-count">{initialMembers.length} {t('struct.members', locale)}</span>
-        </div>
-        <p class="banner-description" id="banner-desc">
-          Mengenal asisten laboratorium kami yang berdedikasi dalam bidang riset, jaringan, media & humas, kompetisi, dan pengabdian masyarakat.
-        </p>
-      </div>
-
-      <!-- Empty State Notice (hidden by default) -->
-      <div class="empty-state-panel" id="empty-state-notice">
-        <div class="empty-state-icon">
-          <i class="fa-solid fa-users-slash"></i>
-        </div>
-        <h4>Anggota Tidak Ditemukan</h4>
-        <p>Belum ada anggota yang terdaftar di divisi ini.</p>
-      </div>
-
-      <div class="member-grid" id="member-grid">
-        {initialMembers.map((member: any, idx: number) => {
-          const divInfo = getDivisionInfo(member.division, divisions);
-          const borderColor = divInfo?.borderColor || 'rgba(255, 255, 255, 0.1)';
-          const roleColor = divInfo?.roleColor || 'var(--text-secondary)';
-          // Build comprehensive division data attribute (combines member.division, canonical id, and aliases)
-          const matchedAliases = divInfo?.aliases ? divInfo.aliases.join(' ') : '';
-          const canonicalId = divInfo?.id || member.division;
-          const divisionDataAttr = Array.from(new Set([member.division, canonicalId, ...matchedAliases.split(' ')]))
-            .filter(Boolean)
-            .join(' ');
-
-          const avatarBgStyle = member.image ? 'background: transparent;' : '';
-          const imageTransformStyle = member.scale ? `transform: scale(${member.scale});` : '';
-          const imageOriginStyle = member.position ? `transform-origin: ${member.position};` : '';
-
-          return (
-            <div 
-              class={`member-card glass-panel member-card-item div-${canonicalId}`} 
-              data-division={divisionDataAttr}
-              style={`animation-delay: ${idx * 0.04}s; border-color: ${borderColor};`}
-            >
-              <div class="member-avatar-wrapper">
-                <div class="member-avatar" style={avatarBgStyle}>
-                  {member.image ? (
-                    <img
-                      src={member.image}
-                      alt={member.name}
-                      class="member-avatar-img"
-                      style={`${imageTransformStyle} ${imageOriginStyle}`}
-                    />
-                  ) : (
-                    <i class="fa-solid fa-user default-avatar-icon"></i>
-                  )}
-                </div>
-              </div>
-              <div class="member-info">
-                <h3>{member.name}</h3>
-                <div class="member-role" style={`color: ${roleColor};`}>{member.role}</div>
-                <span class="member-div">
-                  {(divInfo?.name || member.division).toUpperCase()}
-                </span>
-              </div>
-            </div>
-          );
-        })}
-      </div>
-    </div>
-  </section>
+<Layout
+  title={`${t('nav.structure', locale)} - EIM Research Lab`}
+  description={t('struct.metaDescription', locale)}
+  homeSkin
+  skipLink
+>
+  <main id="main-content" tabindex="-1">
+    <EimSectionNav items={sectionItems} label={t('struct.sectionNavLabel', locale)} />
+    <StructureHero
+      memberCount={members.length}
+      divisionCount={divisions.length}
+      leaderCount={leaderCount}
+    />
+    <StructureChart
+      core={coreMembers}
+      divisionSections={divisionSections}
+      lecturers={lecturers}
+      locale={locale}
+      startIndex={3}
+    />
+    <StructurePembina lecturers={lecturers} locale={locale} />
+    <StructureCore members={coreMembers} locale={locale} />
+    {divisionSections.map((section, index) => (
+      <StructureDivision section={section} index={index + 3} locale={locale} />
+    ))}
+    <EimCTA site={siteData} />
+  </main>
 </Layout>
-
-<script>
-  import { initStructureFilter } from '../scripts/structure-filter';
-  initStructureFilter();
-</script>

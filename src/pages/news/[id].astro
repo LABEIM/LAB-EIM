@@ -2,10 +2,12 @@
 import { getCollection, render } from 'astro:content';
 import { Image } from 'astro:assets';
 import Layout from '../../layouts/Layout.astro';
-import NewsCard from '../../components/cards/NewsCard.astro';
+import '../../styles/pages/home-eim.css';
+import '../../styles/pages/news-eim.css';
 import { getLocaleFromUrl, getCleanSlug, getLocalizedPath, getCollectionEntriesForLocale, t } from '../../utils/i18n';
 import { calculateReadingTime, getRelatedNews } from '../../utils/news-helpers';
 import { filterAuditContent } from '../../utils/content-helpers';
+import { formatGlobalDate } from '../../utils/date';
 
 export async function getStaticPaths() {
   const news = await getCollection('news');
@@ -28,169 +30,117 @@ const rawAllNews = await getCollection('news');
 const allNews = filterAuditContent(getCollectionEntriesForLocale(rawAllNews, locale));
 const relatedNews = getRelatedNews(item.id, allNews, 3);
 
-const formattedDate = new Date(item.data.news_date).toLocaleDateString('id-ID', {
-  day: 'numeric',
-  month: 'long',
-  year: 'numeric'
-});
-
+const formattedDate = formatGlobalDate(item.data.news_date);
 const readTime = calculateReadingTime(item.body);
 const metaDesc = item.data.excerpt || `${item.data.title} - EIM Research Lab`;
+const newsIndexHref = getLocalizedPath('/news', locale);
 ---
 
-<Layout title={`${item.data.title} - EIM Research Lab`} description={metaDesc}>
-  <div class="page-min-height">
-    {/* Top Section */}
-    <section class="detail-header-section">
-      <div class="container">
-        <a href={getLocalizedPath('/news', locale)} class="hover-text-primary back-link">
-          <i class="fa-solid fa-arrow-left"></i> {t('btn.back', locale)}
-        </a>
-        
-        <div class="header-title-row">
-          <div>
-            {item.data.featured && (
-              <span class="detail-featured-badge">
-                <i class="fa-solid fa-thumbtack"></i> Berita Utama
-              </span>
-            )}
-            <h1 class="news-title">{item.data.title}</h1>
-            <div class="author-badge-row">
-              <span class="author-badge">
-                <i class="fa-regular fa-building"></i> {item.data.author}
-              </span>
-              <span class="meta-dot">•</span>
-              <span class="read-time-badge">
-                <i class="fa-regular fa-clock"></i> {readTime}
-              </span>
-            </div>
-          </div>
-          
-          <button class="hover-bg-light share-btn action-share-btn">
-            <i class="fa-solid fa-share-nodes"></i> Share
-          </button>
+<Layout title={`${item.data.title} - EIM Research Lab`} description={metaDesc} homeSkin skipLink>
+  <main id="main-content" tabindex="-1">
+    <section class="article-detail-hero" aria-labelledby="article-title">
+      <div class="mx-auto max-w-[1200px] px-[clamp(1.25rem,4vw,4rem)]">
+        <div class="article-detail-top">
+          <a class="article-back" href={newsIndexHref}>
+            <span aria-hidden="true">←</span> {t('news.backToList', locale)}
+          </a>
+          <button type="button" class="article-share share-btn">{t('news.share', locale)}</button>
         </div>
+
+        <div class="article-eyebrow e-reveal">
+          {item.data.featured && <span class="article-featured">{t('news.featured', locale)}</span>}
+          <span>{item.data.category}</span>
+          <span aria-hidden="true">·</span>
+          <time datetime={item.data.news_date}>{formattedDate}</time>
+        </div>
+
+        <h1 id="article-title" class="article-title e-reveal">{item.data.title}</h1>
+
+        {item.data.excerpt && <p class="article-standfirst e-reveal">{item.data.excerpt}</p>}
+
+        <p class="article-meta e-reveal">
+          <span>{t('news.author', locale)}: {item.data.author}</span>
+          <span aria-hidden="true">·</span>
+          <span>{readTime}</span>
+        </p>
+
+        {images.length > 0 && (
+          <div class="article-cover e-reveal">
+            <Image
+              src={images[0]}
+              alt=""
+              width={1600}
+              height={900}
+              loading="eager"
+              fetchpriority="high"
+              decoding="async"
+            />
+          </div>
+        )}
       </div>
     </section>
 
-    {/* Main Content Section */}
-    <section class="content-section">
-      <div class="container responsive-grid">
-        
-        {/* Left Column */}
-        <div class="main-column">
-          
-          {/* Cover Image */}
-          {images.length > 0 && (
-            <div class="cover-image-wrapper">
-              <Image src={images[0]} alt={item.data.title} width={800} height={450} class="cover-image" />
-            </div>
-          )}
-
-          {/* Excerpt Lead Box */}
-          {item.data.excerpt && (
-            <div class="news-lead-box glass-panel">
-              <p>{item.data.excerpt}</p>
-            </div>
-          )}
-
-          {/* Content */}
-          <div class="news-content-body">
-            <Content />
-          </div>
-
-          {/* Article Tags */}
-          {tags.length > 0 && (
-            <div class="article-tags-section">
-              <span class="tags-label"><i class="fa-solid fa-tags"></i> Topik:</span>
-              <div class="article-tags-list">
-                {tags.map((tag: string) => (
-                  <span class="article-tag-chip">#{tag}</span>
-                ))}
-              </div>
-            </div>
-          )}
+    <article class="article-story">
+      <div class="article-story-inner">
+        <div class="eim-prose">
+          <Content />
         </div>
 
-        {/* Right Column (Sidebar) */}
-        <div class="glass-panel sidebar-card">
-          <h3 class="sidebar-title">
-            Informasi Berita
-          </h3>
-          
-          <div class="sidebar-info-group">
-            {/* Date */}
-            <div class="info-item">
-              <div class="info-icon-box">
-                <i class="fa-regular fa-calendar-days"></i>
-              </div>
-              <div>
-                <div class="info-label">{t('news.date', locale)}</div>
-                <div class="info-val">{formattedDate}</div>
-              </div>
-            </div>
-
-            {/* Reading Time */}
-            <div class="info-item">
-              <div class="info-icon-box">
-                <i class="fa-regular fa-clock"></i>
-              </div>
-              <div>
-                <div class="info-label">Waktu Baca</div>
-                <div class="info-val">{readTime}</div>
-              </div>
-            </div>
-
-            {/* Category */}
-            <div class="info-item">
-              <div class="info-icon-box">
-                <i class="fa-solid fa-tag"></i>
-              </div>
-              <div>
-                <div class="info-label">Kategori</div>
-                <div class="info-val">{item.data.category || "-"}</div>
-              </div>
-            </div>
-
-            {/* Author */}
-            <div class="info-item">
-              <div class="info-icon-box">
-                <i class="fa-solid fa-pen-nib"></i>
-              </div>
-              <div>
-                <div class="info-label">{t('news.author', locale)}</div>
-                <div class="info-val">{item.data.author || "-"}</div>
-              </div>
-            </div>
+        {tags.length > 0 && (
+          <div class="article-tags">
+            <span class="article-tags-label">{t('news.topics', locale)}</span>
+            <ul class="article-tag-list">
+              {tags.map((tag: string) => <li class="article-tag">#{tag}</li>)}
+            </ul>
           </div>
-
-          <button class="btn btn-secondary share-btn share-sidebar-btn">
-            <i class="fa-solid fa-share-nodes"></i> Share News
-          </button>
-        </div>
+        )}
       </div>
-    </section>
+    </article>
 
-    {/* Related News Section */}
     {relatedNews.length > 0 && (
-      <section class="section-padding related-news-section">
-        <div class="container">
-          <div class="section-title">
-            <h2>Berita Terkait</h2>
-            <p>Baca juga artikel dan pengumuman menarik lainnya dari EIM Research Lab.</p>
-          </div>
-          <div class="news-grid">
-            {relatedNews.map(relItem => (
-              <NewsCard news={relItem} showButton={true} />
+      <section class="article-related" aria-labelledby="article-related-title">
+        <div class="mx-auto max-w-[1200px] px-[clamp(1.25rem,4vw,4rem)]">
+          <p class="e-reveal font-mono text-xs uppercase tracking-[0.08em] text-brand">
+            {t('news.relatedEyebrow', locale)}
+          </p>
+          <h2
+            id="article-related-title"
+            class="e-reveal mt-4 font-display text-[clamp(2rem,4vw,3.5rem)] leading-[1.05] tracking-[-0.01em]"
+          >
+            {t('news.relatedTitle', locale)}
+          </h2>
+          <p class="e-reveal mt-4 max-w-[52ch] text-[15px] leading-[1.55] text-muted-ink">
+            {t('news.relatedIntro', locale)}
+          </p>
+
+          <ul class="article-related-list e-reveal-group">
+            {relatedNews.map((related, index) => (
+              <li class="article-related-row" style={`--i:${index}`}>
+                <a href={getLocalizedPath(`/news/${getCleanSlug(related.id)}`, locale)}>
+                  <span class="article-related-meta">
+                    <time datetime={related.data.news_date}>{formatGlobalDate(related.data.news_date)}</time>
+                    <span aria-hidden="true">·</span>
+                    <span>{related.data.category}</span>
+                  </span>
+                  <h3 class="article-related-title">{related.data.title}</h3>
+                  <span class="article-related-arrow" aria-hidden="true">→</span>
+                </a>
+              </li>
             ))}
-          </div>
+          </ul>
         </div>
       </section>
     )}
-  </div>
+
+    <div class="article-end">
+      <a class="article-back" href={newsIndexHref}>
+        <span aria-hidden="true">←</span> {t('news.backToIndex', locale)}
+      </a>
+    </div>
+  </main>
 </Layout>
 
 <script>
   import { initShareButtons } from '../../scripts/share';
-  initShareButtons('News');
+  initShareButtons('Berita');
 </script>

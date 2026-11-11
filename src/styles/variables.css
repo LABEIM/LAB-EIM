@@ -44,6 +44,51 @@
     /* Typography */
     --font-heading: 'Poppins', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     --font-body: 'Montserrat', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    --font-display: 'Instrument Serif', Georgia, serif;
+    --font-ui: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+
+    /* Antigravity (EIM) tokens.
+       Canonical values live here so globally imported components work without
+       loading a page stylesheet. home-eim.css maps its Tailwind theme onto these. */
+    --eim-background: #FAFCFC;
+    --eim-foreground: #0B1F22;
+    --eim-surface: #F0F4F4;
+    --eim-surface-strong: #E4EDED;
+    --eim-line: #D9E3E4;
+    --eim-muted-ink: #52686B;
+    --eim-brand: #0C535D;
+    --eim-brand-bright: #11B4BD;
+    --eim-brand-soft: #E2F3F4;
+    --eim-black: #050B0D;
+    --eim-font-display: 'Instrument Serif', Georgia, serif;
+    --eim-font-body: 'IBM Plex Sans', system-ui, -apple-system, sans-serif;
+    --eim-font-mono: 'IBM Plex Mono', ui-monospace, SFMono-Regular, monospace;
+    --eim-ease: cubic-bezier(0.22, 1, 0.36, 1);
+    --eim-ease-inout: cubic-bezier(0.65, 0, 0.35, 1);
+    --eim-dur-control: 220ms;
+    --eim-dur-reveal: 700ms;
+    --eim-radius-pill: 999px;
+    --eim-radius-card: 16px;
+    --eim-radius-media: 24px;
+
+    /* Global aliases consumed by shared component styles. */
+    --color-background: var(--eim-background);
+    --color-foreground: var(--eim-foreground);
+    --color-surface: var(--eim-surface);
+    --color-surface-strong: var(--eim-surface-strong);
+    --color-line: var(--eim-line);
+    --color-muted-ink: var(--eim-muted-ink);
+    --color-brand: var(--eim-brand);
+    --color-brand-bright: var(--eim-brand-bright);
+    --color-brand-soft: var(--eim-brand-soft);
+    --font-mono: var(--eim-font-mono);
+    --ease: var(--eim-ease);
+    --ease-inout: var(--eim-ease-inout);
+    --dur-control: var(--eim-dur-control);
+    --dur-reveal: var(--eim-dur-reveal);
+    --radius-pill: var(--eim-radius-pill);
+    --radius-card: var(--eim-radius-card);
+    --radius-media: var(--eim-radius-media);
     
     /* Layout & Spacing */
     --max-width: 1200px;

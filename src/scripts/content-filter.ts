@@ -53,11 +53,16 @@ export function initContentFilter(options: ContentFilterOptions) {
     currentSearch = params.get('q') || params.get('search') || '';
     currentCategory = params.get('category') || params.get('cat') || 'all';
     currentStatus = params.get('status') || 'all';
-    currentSort = params.get('sort') || 'desc';
+    currentSort = params.get('sort') === 'asc' ? 'asc' : 'desc';
     currentAuditParam = params.get('audit') || params.get('show_audit');
     currentEmptyParam = params.get('empty') || params.get('mock_empty');
     const pageParam = parseInt(params.get('page') || '1', 10);
     currentPage = isNaN(pageParam) || pageParam < 1 ? 1 : pageParam;
+  }
+
+  function scrollToGrid() {
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    gridEl?.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' });
   }
 
   function syncURLState() {
@@ -79,7 +84,7 @@ export function initContentFilter(options: ContentFilterOptions) {
     if (searchInput) {
       searchInput.value = currentSearch;
       if (searchClearBtn) {
-        searchClearBtn.style.display = currentSearch.trim() ? 'block' : 'none';
+        searchClearBtn.style.display = currentSearch.trim() ? 'flex' : 'none';
       }
     }
 
@@ -89,20 +94,16 @@ export function initContentFilter(options: ContentFilterOptions) {
 
     categoryPills.forEach(pill => {
       const cat = pill.getAttribute('data-category') || 'all';
-      if (cat.toLowerCase() === currentCategory.toLowerCase()) {
-        pill.classList.add('active');
-      } else {
-        pill.classList.remove('active');
-      }
+      const isActive = cat.toLowerCase() === currentCategory.toLowerCase();
+      pill.classList.toggle('active', isActive);
+      pill.setAttribute('aria-pressed', isActive ? 'true' : 'false');
     });
 
     statusPills.forEach(pill => {
       const st = pill.getAttribute('data-status') || 'all';
-      if (st.toLowerCase() === currentStatus.toLowerCase()) {
-        pill.classList.add('active');
-      } else {
-        pill.classList.remove('active');
-      }
+      const isActive = st.toLowerCase() === currentStatus.toLowerCase();
+      pill.classList.toggle('active', isActive);
+      pill.setAttribute('aria-pressed', isActive ? 'true' : 'false');
     });
 
     const isFiltered = currentSearch.trim() !== '' || currentCategory !== 'all' || currentStatus !== 'all' || currentSort !== 'desc' || currentAuditParam !== null || currentEmptyParam !== null;
@@ -212,11 +213,14 @@ export function initContentFilter(options: ContentFilterOptions) {
             btn.type = 'button';
             btn.className = `pagination-btn ${p === currentPage ? 'active' : ''}`;
             btn.textContent = p.toString();
+            if (p === currentPage) {
+              btn.setAttribute('aria-current', 'page');
+            }
             btn.addEventListener('click', () => {
               currentPage = p;
               syncURLState();
               render();
-              gridEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+              scrollToGrid();
             });
             paginationNumbers.appendChild(btn);
           }
@@ -231,7 +235,7 @@ export function initContentFilter(options: ContentFilterOptions) {
       currentSearch = searchInput.value;
       currentPage = 1;
       if (searchClearBtn) {
-        searchClearBtn.style.display = currentSearch.trim() ? 'block' : 'none';
+        searchClearBtn.style.display = currentSearch.trim() ? 'flex' : 'none';
       }
       syncURLState();
       render();
@@ -251,7 +255,7 @@ export function initContentFilter(options: ContentFilterOptions) {
 
   if (sortSelect) {
     sortSelect.addEventListener('change', () => {
-      currentSort = sortSelect.value;
+      currentSort = sortSelect.value === 'asc' ? 'asc' : 'desc';
       currentPage = 1;
       syncURLState();
       render();
@@ -283,6 +287,8 @@ export function initContentFilter(options: ContentFilterOptions) {
       currentStatus = 'all';
       currentSort = 'desc';
       currentPage = 1;
+      currentAuditParam = null;
+      currentEmptyParam = null;
       syncURLState();
       render();
     });
@@ -294,7 +300,7 @@ export function initContentFilter(options: ContentFilterOptions) {
         currentPage--;
         syncURLState();
         render();
-        gridEl?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        scrollToGrid();
       }
     });
   }
@@ -304,7 +310,7 @@ export function initContentFilter(options: ContentFilterOptions) {
       currentPage++;
       syncURLState();
       render();
-      gridEl?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      scrollToGrid();
     });
   }
 

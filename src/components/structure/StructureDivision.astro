@@ -1,0 +1,56 @@
+---
+import type { DivisionSection } from '../../utils/types';
+import type { Locale } from '../../utils/i18n';
+import { t } from '../../utils/i18n';
+import MemberTile from './MemberTile.astro';
+import StaffList from './StaffList.astro';
+
+interface Props {
+  section: DivisionSection;
+  index: number;
+  locale: Locale;
+}
+
+const { section, index, locale } = Astro.props;
+const { division, coordinator, staff } = section;
+const sectionId = `divisi-${division.id}`;
+---
+
+<section
+  id={sectionId}
+  class="border-t border-line py-[clamp(4.5rem,10vh,8.75rem)]"
+  aria-labelledby={`${sectionId}-title`}
+>
+  <div class="mx-auto max-w-[1200px] px-[clamp(1.25rem,4vw,4rem)]">
+    <div class="grid gap-6 lg:grid-cols-2 lg:items-end">
+      <div>
+        <p class="e-reveal font-mono text-xs uppercase tracking-[0.08em] text-brand">
+          {String(index).padStart(2, '0')} — {t('struct.divisionLabel', locale)}
+        </p>
+        <h2
+          id={`${sectionId}-title`}
+          class="e-reveal mt-4 font-display text-[clamp(2rem,4vw,3.5rem)] leading-[1.05] tracking-[-0.01em]"
+        >
+          {division.displayName}
+        </h2>
+        <p class="e-reveal mt-3 font-mono text-xs uppercase tracking-[0.08em] text-muted-ink">
+          {t('struct.divisionCount', locale, { n: String(staff.length + (coordinator ? 1 : 0)) })}
+        </p>
+      </div>
+      <p class="e-reveal max-w-[52ch] text-[15px] leading-[1.55] text-muted-ink lg:justify-self-end">
+        {division.description}
+      </p>
+    </div>
+
+    {coordinator && (
+      <div class="mt-[clamp(2.5rem,6vh,4rem)] max-w-[44rem]">
+        <p class="mb-4 font-mono text-xs uppercase tracking-[0.08em] text-brand">
+          {t('struct.coordinatorLabel', locale)}
+        </p>
+        <MemberTile member={coordinator} variant="featured" />
+      </div>
+    )}
+
+    <StaffList members={staff} locale={locale} />
+  </div>
+</section>

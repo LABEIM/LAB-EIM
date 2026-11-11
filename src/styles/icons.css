@@ -111,6 +111,8 @@
 .fa-location-dot::before { content: "\f3c5"; }
 .fa-university::before { content: "\f19c"; }
 .fa-envelope::before { content: "\f0e0"; }
+.fa-phone::before { content: "\f095"; }
+.fa-arrow-up-right-from-square::before { content: "\f08e"; }
 .fa-instagram::before { content: "\f16d"; }
 .fa-linkedin::before, .fa-linkedin-in::before { content: "\f0e1"; }
 .fa-github::before { content: "\f09b"; }

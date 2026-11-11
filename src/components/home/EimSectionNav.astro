@@ -1,0 +1,43 @@
+---
+import { t } from '../../utils/i18n';
+
+interface NavItem {
+  id: string;
+  label: string;
+}
+
+interface Props {
+  items?: NavItem[];
+  label?: string;
+}
+
+const defaultItems: NavItem[] = [
+  { id: 'reveal', label: t('home.navDotMedia') },
+  { id: 'fokus', label: t('home.navDotFocus') },
+  { id: 'visi-misi', label: t('home.navDotVision') },
+  { id: 'divisi', label: t('home.navDotDivisions') },
+  { id: 'kegiatan', label: t('home.navDotEvents') },
+  { id: 'berita', label: t('home.navDotArticles') },
+];
+
+const { items = defaultItems, label = t('home.sectionNavLabel') } = Astro.props;
+---
+
+<nav class="eim-section-nav" aria-label={label}>
+  <ul class="list-none">
+    {items.map((item) => (
+      <li>
+        <a href={`#${item.id}`} data-section={item.id}>
+          <span class="eim-dot" aria-hidden="true"></span>
+          <span class="eim-dot-label">{item.label}</span>
+        </a>
+      </li>
+    ))}
+  </ul>
+</nav>
+
+<script>
+  import { initSectionNav } from '../../scripts/section-nav';
+
+  initSectionNav();
+</script>

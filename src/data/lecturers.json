@@ -1,0 +1,20 @@
+{
+  "list": [
+    {
+      "id": "dosen-koordinator",
+      "name": "",
+      "role": "Dosen Koordinator",
+      "image": "",
+      "scale": "",
+      "position": ""
+    },
+    {
+      "id": "dosen-lab-1",
+      "name": "",
+      "role": "Dosen Lab",
+      "image": "",
+      "scale": "",
+      "position": ""
+    }
+  ]
+}

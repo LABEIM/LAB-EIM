@@ -5,72 +5,79 @@
 ### 1.1 Startup Workflow
 Before writing any code, the agent must complete these steps:
 1. Confirm the working directory using `pwd`.
-2. Check content collection files in `src/content/events/` and `src/content/news/` to understand current configuration states.
+2. Inspect the repository structure and key configuration files (`package.json`, `astro.config.mjs`, `keystatic.config.ts`, `src/content.config.ts`, `src/`) to understand the current architecture and state.
 3. Review recent repository history by checking the last 5 commits using `git log --oneline -5`.
-4. Run the required build verification using `npm run build` or `npx astro check` before starting new work. If baseline verification fails, fix that issue first before stacking new feature work on top of a broken starting state.
+4. Run baseline build/verification using `pnpm run build` and `pnpm exec astro check` before starting new work. If baseline verification fails, fix that issue first before stacking new feature work on top of a broken starting state.
 
 ### 1.2 Working Rules
 1. Focus entirely on one feature or task at a time.
-2. Do not mark a task or feature complete just because code was added. Ensure it compiles and is verified.
-3. Keep all changes within the selected task scope unless a critical blocker forces a narrow supporting fix.
-4. Do not silently alter verification rules during implementation.
-5. Prefer durable repository artifacts over transient chat summaries.
-6. When making structural updates, dependency version bumps, framework configuration changes, schema updates, or directory layout shifts, the agent must update corresponding repository documentation (`AGENTS.md`, `README.md`, `DEPLOYMENT.md`, `REGISTRATION_SETUP.md`) and TypeScript interfaces (`src/utils/types.ts`) to reflect the new state.
+2. Do not mark a task or feature complete just because code was added. Ensure it compiles, passes linting/tests, and is verified.
+3. Adhere to `.editorconfig` and project linter/formatter conventions.
+4. Keep all changes within the selected task scope unless a critical blocker forces a narrow supporting fix.
+5. Do not silently alter verification rules or relax tests during implementation.
+6. Prefer durable repository artifacts and updated documentation over transient chat summaries.
+7. When making structural updates, dependency version bumps, framework configuration changes, schema updates, or directory layout shifts, the agent must update corresponding repository documentation (`AGENTS.md`, `README.md`, `DEPLOYMENT.md`, `REGISTRATION_SETUP.md`) and TypeScript interfaces / data models (`src/utils/types.ts`) to reflect the new state.
 
-### 1.3 Required Artifacts
-1. `src/content.config.ts`: Defines Zod schemas and loaders for static content collections (`news`, `events`).
-2. `keystatic.config.ts`: Defines Keystatic CMS schemas, singletons, and content collections.
-3. `astro.config.mjs`: Central Astro configuration including i18n routing, Cloudflare adapter, integrations, and Vite plugins.
-4. `src/content/`: Contains Markdown entries representing news articles and laboratory events.
-5. `package.json`: Main repository dependencies, runtime constraints, and script targets.
+### 1.3 Required Artifacts & Key Files
+1. `package.json`: Main repository dependencies, runtime constraints (`node >=22.12.0`), and script targets.
+2. `astro.config.mjs`: Central Astro configuration (Cloudflare adapter, React integration, Tailwind Vite plugin, i18n, `@/` alias, chunk limits).
+3. `src/content.config.ts`: Collection loaders and Zod schemas for the `news` and `events` content collections.
+4. `keystatic.config.ts`: Keystatic CMS singletons, collections, and content schemas.
+5. `src/pages/`: Core entry point and file-system routing root, including the `/keystatic` admin and `src/pages/api/save-recruitment-results.ts`.
 
 ### 1.4 Definition Of Done
 A feature achieves the status of completed only when all of the following conditions are met:
-1. The target behavior is fully implemented.
-2. The site compiles successfully locally using `npm run build`.
-3. Astro diagnostics run successfully using `npx astro check` with zero errors.
-4. If testing dynamic logic (like client-side forms), manually verify correct DOM rendering and network/simulation fallbacks.
+1. The target behavior is fully implemented and satisfies requirements.
+2. The project compiles/builds successfully locally using `pnpm run build`.
+3. Diagnostics, linter, and type checks run successfully with zero errors using `pnpm exec astro check`.
+4. Automated tests pass using `pnpm test`.
+5. If testing dynamic logic, client UI, or API endpoints, manually verify correct DOM rendering, HTTP status codes, and fallback states.
+6. Web audit compliance: Client UI pages meet Google Lighthouse / PageSpeed audit benchmarks (Target: >= 90 across Performance, Accessibility, Best Practices, and SEO).
 
 ### 1.5 End Of Session Workflow
 Before ending a session, the agent must perform these tasks:
-1. Confirm no trailing linter or type errors remain by running validation tasks.
+1. Confirm no trailing linter, compiler, or type errors remain by running validation tasks.
 2. Explicitly record any unresolved risk, technical debt, or workflow blocker in the session handoff.
-3. Commit the changes with a descriptive message adhering to the Conventional Commits specification once the work is in a safe state.
+3. Commit the changes with a descriptive message adhering to the Conventional Commits specification once the work is in a safe state. All commits must be signed (`git commit -S`).
 
 ---
 
 ## Section 2: Tech Stack & Architecture
 
 ### 2.1 Framework & Core Stack
-- **Framework**: Astro v7.1.6 (configured as a static site generator / SSG with `@astrojs/cloudflare` adapter).
-- **CMS**: Keystatic CMS (`@keystatic/astro` v5.0.0, `@keystatic/core` v0.6.0).
-- **UI Components**: React v19.2.8 (`@astrojs/react` v6.0.0) combined with Astro components.
-- **Styling**: Tailwind CSS v4.3.3 (integrated via `@tailwindcss/vite` plugin) combined with a modular Vanilla CSS architecture (`src/styles/`).
-- **Internationalization (i18n)**: Single-locale ('id') translation & UI dictionary utilities (`src/utils/i18n.ts`).
-- **Typography**: `@fontsource/inter`, `@fontsource/montserrat`, `@fontsource/poppins`.
-- **Languages**: TypeScript (v6.0.3), HTML5, Vanilla CSS.
-- **Runtime & Build Tools**: Node.js `>=22.12.0`, npm.
+- **Framework**: Astro v7.4.7 (static site generation with the `@astrojs/cloudflare` adapter).
+- **Language**: TypeScript v6.0.3, HTML5, and Vanilla CSS.
+- **UI Components**: React v19.3.1 (`@astrojs/react`) combined with Astro components.
+- **Styling**: Tailwind CSS v4.3.5 (via `@tailwindcss/vite`) combined with a modular Vanilla CSS architecture (`src/styles/`).
+- **State Management**: React component state and native browser APIs; client JavaScript is kept minimal through Astro islands.
+- **Database / CMS**: Keystatic CMS (`@keystatic/astro` v5.2.0, `@keystatic/core` v0.6.9) backed by Markdown collections (`src/content/`) and JSON data files (`src/data/`); no database.
+- **Internationalization (i18n)**: Single-locale (`id`) translation and UI dictionary utilities (`src/utils/i18n.ts`).
+- **Typography & Icons**: `@fontsource/inter`, `@fontsource/montserrat`, `@fontsource/poppins`; icon styles in `src/styles/icons.css`.
+- **Runtime & Build Tools**: Node.js `>=22.12.0`, pnpm (the shared CI installs `latest`; `pnpm-lock.yaml` pins resolutions). Project-level pnpm settings — peer/security overrides and the install-script allowlist — live in `pnpm-workspace.yaml`.
 
 ### 2.2 Directory Layout & Component Roles
-- `astro.config.mjs`: Astro configuration for Cloudflare adapter, integrations, Vite alias (`@/`), SSR externalized modules (`sharp`, `detect-libc`), and chunk size limits.
+- `astro.config.mjs`: Astro configuration for the Cloudflare adapter, integrations, Vite alias (`@/`), SSR externalized modules (`sharp`, `detect-libc`), and chunk size limits.
 - `keystatic.config.ts`: Keystatic CMS singletons (e.g. recruitment settings) and collections.
 - `src/content.config.ts`: Collection loaders and Zod schemas (`news`, `events`).
-- `src/content/`: Static Markdown and MDX content files (`news/`, `events/`).
-- `src/styles/`: Modular design system and stylesheets:
-  - `variables.css`, `base.css`, `globals.css`, `mobile.css`, `icons.css`.
-  - `src/styles/components/`: Dedicated stylesheets for UI components (`navbar.css`, `footer.css`, `event-card.css`, `news-card.css`, `contact-person.css`).
-  - `src/styles/pages/`: Page-specific stylesheets.
+- `src/content/`: Static Markdown content files (`news/`, `events/`).
+- `src/data/`: JSON configuration (`site.json`, `contact.json`, `members.json`, `lecturers.json`, `divisions.json`, `registration.json`) and `CONFIG_GUIDE.md`.
+- `src/components/`: Reusable Astro and React UI components (Navbar, Footer, cards, forms, plus homepage, about-page, structure-page, and event-page sections under `home/`, `about/`, `structure/`, and `kegiatan/`).
+- `src/pages/`: File-system routes, the `/keystatic` admin, and API endpoints.
 - `src/layouts/Layout.astro`: Base wrapper page layout.
-- `src/components/`: Reusable Astro and React UI components (Navbar, Footer, etc.).
-- `src/pages/`: File-system routing directories, including localized routes and Keystatic admin (`/keystatic`).
-- `src/utils/`: Business logic, i18n helpers, content filtering, registration logic, and TypeScript interfaces (`i18n.ts`, `content-helpers.ts`, `registration-config.ts`, `recruitment.ts`, `division-mapper.ts`, `types.ts`, `constants.ts`).
+- `src/styles/`: Modular design system and stylesheets (`variables.css`, `base.css`, `globals.css`, `mobile.css`, `icons.css`, plus `components/` and `pages/`).
+- `src/utils/`: Business logic, i18n helpers, content filtering, event helpers, registration logic, and interfaces (`i18n.ts`, `content-helpers.ts`, `event-helpers.ts`, `registration-config.ts`, `recruitment.ts`, `division-mapper.ts`, `safe-link.ts`, `types.ts`, `constants.ts`).
+- `public/`: Static assets, `robots.txt`, `sitemap.xml`, `manifest.webmanifest`, `llms.txt`, `llms-full.txt`, and `.well-known/security.txt`.
 
-### 2.3 Role-Based Access Control & Scoping (If Applicable)
-- **Not Applicable**: The EIM Research Lab website is a fully public-facing static application. Keystatic CMS operates locally or via GitHub integration without a database backend or authentication schemas.
+### 2.3 Role-Based Access Control & Scoping
+- **Authentication**: None. The EIM Research Lab website is a fully public, static application.
+- **Authorization / RBAC**: Public read-only access. Keystatic CMS operates locally or through its GitHub integration; there is no database-backed auth layer.
+- **Protected Routes**: None. `/keystatic` is the CMS admin surface, not an authenticated application route.
 
 ### 2.4 Service & Business Logic Layer
-- **Pendaftaran Form**: Posts payload client-side to Google Apps Script (`code.gs`).
-- **Recruitment Pipeline**: Configured dynamically via Keystatic CMS singletons (`keystatic.config.ts`) and loaded through `src/utils/registration-config.ts`.
+- **API Endpoints**: Astro server endpoint `src/pages/api/save-recruitment-results.ts` (Cloudflare adapter server output).
+- **Registration Form**: Posts payloads client-side to Google Apps Script (`code.gs`).
+- **Recruitment Pipeline**: Configured through Keystatic CMS singletons (`keystatic.config.ts`) and loaded via `src/utils/registration-config.ts`.
+- **Deployment**: Cloudflare Pages (primary) with Vercel as a backup host; `.github/workflows/ci-cd.yml` is a caller for the organization-wide `LABEIM/Shared-CICD` reusable workflow (`deploy-app.yml@v1`). Vercel deploys when `VERCEL_PROJECT_ID` and `VERCEL_ORG_ID` are set as repository variables.
 
 ---
 
@@ -78,13 +85,16 @@ Before ending a session, the agent must perform these tasks:
 
 ### 3.1 Privacy & Environment Safety
 1. Do not hardcode personal user data in the source code, comments, or documentation. Keep emails and generic references public.
-2. Secrets management: Do not commit active variables or access keys. Keep `.env` and `creds.json` files out of source control using `.gitignore`.
+2. Secrets management: Do not commit active variables or access keys. Keep `.env` and `creds.json` files out of source control using `.gitignore`; document required variables in `.env.example`.
 
 ### 3.2 Security Rules
-1. XSS: Escape dynamic inputs and query params. Utilize Astro's standard HTML escaping.
+1. **Input Sanitization**: Escape dynamic inputs and query parameters; rely on Astro's standard HTML escaping and validate payloads with Zod where applicable.
+2. **CORS & Headers**: Apply restrictive security headers and CORS policies on any server endpoint.
+3. **Session & Token Storage**: Not applicable — the site has no authenticated sessions or tokens.
+4. **Dependency Hygiene**: Keep dependencies patched; review Dependabot and CodeQL findings.
 
-### 3.3 Database Status & State Codes (If Applicable)
-- **Not Applicable**: Moved from MySQL database to static markdown collections and Keystatic CMS.
+### 3.3 Database Status & State Codes
+- **Not Applicable**: Content lives in static Markdown collections and JSON data files. There are no database migrations, transactions, or state codes.
 
 ---
 
@@ -92,32 +102,34 @@ Before ending a session, the agent must perform these tasks:
 
 ### 4.1 Best Coding Practices & Standards
 1. **TypeScript & Type Safety**:
-   - Strict typing: Avoid `any` types; use explicit TypeScript interfaces, strict type annotations, and proper Zod schemas.
+   - Strict typing: Avoid `any` types; use explicit TypeScript interfaces, strict annotations, and Zod schemas.
    - Data contracts: Reuse existing interfaces in `src/utils/types.ts` rather than redefining data structures locally.
 2. **Clean Code & Maintainability**:
-   - DRY & Single Responsibility: Keep Astro/React components and helper functions modular, readable, and focused on a single responsibility.
-   - Clear naming: Use descriptive, self-documenting names for variables, functions, and components.
-   - Defensive coding & error handling: Handle edge cases and missing dynamic data gracefully. Never swallow exceptions or use silent fallbacks without logging or fallback UI.
+   - DRY & Single Responsibility: Keep Astro/React components and helper functions modular, readable, and focused.
+   - Clear naming: Use descriptive, self-documenting names.
+   - Defensive coding: Handle edge cases and missing dynamic data gracefully. Never swallow exceptions or use silent fallbacks without logging or fallback UI.
 3. **Performance & Resource Optimization**:
    - Asset optimization: Lazy-load heavy non-critical assets and leverage Astro build optimization.
-   - Island architecture: Keep client JavaScript minimal. Prefer static Astro components unless client-side interactivity (React islands) is explicitly required.
+   - Island architecture: Keep client JavaScript minimal; prefer static Astro components unless React islands are explicitly required.
 4. **Accessibility (a11y) & SEO**:
-   - Semantic HTML: Enforce HTML5 semantic tags (`<main>`, `<header>`, `<footer>`, `<nav>`, `<article>`, `<section>`).
-   - Accessible UI: Ensure all interactive elements have accessible label attributes, proper keyboard navigation, and meaningful `alt` text for images.
-   - Heading hierarchy: Maintain a single `<h1>` per page and structured heading levels (`<h2>` -> `<h3>`).
+   - Semantic HTML: Enforce `<main>`, `<header>`, `<footer>`, `<nav>`, `<article>`, and `<section>`.
+   - Accessible UI: Ensure accessible labels, keyboard navigation, and meaningful `alt` text.
+   - Heading hierarchy: One `<h1>` per page and structured levels (`<h2>` -> `<h3>`).
 5. **Modular CSS & Styling**:
-   - Component styles: Place styles in `src/styles/components/` (e.g. `src/styles/components/navbar.css`) and import cleanly into the respective component or layout.
-   - Design system tokens: Use CSS variables from `src/styles/variables.css` instead of hardcoding raw color hex codes or magic values. Avoid inline styles unless dynamically calculated.
+   - Component styles: Place styles in `src/styles/components/` and import them cleanly.
+   - Design tokens: Use CSS variables from `src/styles/variables.css` instead of raw hex values. Avoid inline styles unless dynamically calculated.
 6. **Formatting & Commit Conventions**:
-   - Indentation: 2 spaces for HTML, CSS, JS, TS, Astro, JSON, and YAML configurations.
-   - Formatting: Enforced using standard Astro framework standards and strict TypeScript compiler settings.
-   - Commit conventions: All commits must follow the Conventional Commits specification.
+   - Indentation: 2 spaces for HTML, CSS, JS, TS, Astro, JSON, and YAML.
+   - Formatting: Enforced via `.editorconfig` and standard Astro/TypeScript settings.
+   - Commits: Follow the Conventional Commits specification and sign every commit (`git commit -S`).
 
 ### 4.2 Testing & Portability
-1. Verification: 
-   - Run type checks and framework linting: `npx astro check`
-   - Run production compilation test: `npm run build`
-2. Test Isolation: Since this is a static site without database state modification, assure local web dev environments run on isolated local host ports (default: `http://localhost:4321`).
+1. **Verification**:
+   - Type checks and diagnostics: `pnpm exec astro check`
+   - Test suite: `pnpm test`
+   - Production compilation: `pnpm run build`
+2. **Test Isolation**: The static site modifies no database state. Run the local dev server on `http://localhost:4321`.
 
-### 4.3 Containerization & Ports (If Applicable)
-- **Dev Server**: Standard local host port `http://localhost:4321`.
+### 4.3 Containerization & Ports
+- **Dev Server**: `http://localhost:4321`
+- **Production / Deployment Target**: Cloudflare Pages (primary), Vercel (backup).

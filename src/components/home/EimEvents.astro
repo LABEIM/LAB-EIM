@@ -1,0 +1,123 @@
+---
+import { Image } from 'astro:assets';
+import type { CollectionEntry } from 'astro:content';
+import type { Locale } from '../../utils/i18n';
+import { getCleanSlug, getLocalizedPath, t } from '../../utils/i18n';
+import { formatGlobalDate } from '../../utils/date';
+
+interface Props {
+  events: CollectionEntry<'events'>[];
+  locale: Locale;
+}
+
+const { events = [], locale } = Astro.props;
+
+const items = events.slice(0, 2);
+const eventsIndexHref = getLocalizedPath('/event', locale);
+---
+
+<section id="kegiatan" class="py-[clamp(4.5rem,10vh,8.75rem)]" aria-labelledby="eim-events-title">
+  <div class="mx-auto max-w-[1200px] px-[clamp(1.25rem,4vw,4rem)]">
+    <div class="grid gap-6 lg:grid-cols-2 lg:items-end">
+      <h2
+        id="eim-events-title"
+        class="e-reveal font-display text-[clamp(2rem,4vw,3.5rem)] leading-[1.05] tracking-[-0.01em]"
+      >
+        {t('home.eventsTitle', locale)}
+      </h2>
+      <div class="e-reveal lg:justify-self-end lg:text-right">
+        <p class="max-w-[52ch] text-[15px] leading-[1.55] text-muted-ink">
+          {t('home.eventsIntro', locale)}
+        </p>
+        {items.length > 0 && (
+          <a href={eventsIndexHref} class="mt-4 inline-flex items-center gap-2 font-mono text-xs uppercase tracking-[0.08em]">
+            <span class="text-brand">{t('home.viewAllEvents', locale)}</span>
+            <span class="text-brand" aria-hidden="true">→</span>
+          </a>
+        )}
+      </div>
+    </div>
+
+    {items.length > 0 ? (
+      <ul class="e-reveal-group list-none mt-[clamp(2.5rem,6vh,4.5rem)] grid gap-6 sm:grid-cols-2 lg:gap-10">
+        {items.map((item, index) => {
+          const cover = item.data.poster || item.data.image?.[0];
+          return (
+            <li style={`--i:${index}`}>
+              <a
+                href={getLocalizedPath(`/event/${getCleanSlug(item.id)}`, locale)}
+                class="event-tile group block"
+              >
+                <span class="block overflow-hidden rounded-card border border-line bg-surface">
+                  {cover ? (
+                    <Image
+                      src={cover}
+                      alt={`Poster kegiatan ${item.data.title}`}
+                      width={800}
+                      height={1000}
+                      loading="lazy"
+                      decoding="async"
+                      class="aspect-[4/5] w-full object-cover"
+                    />
+                  ) : (
+                    <span class="flex aspect-[4/5] w-full flex-col justify-between bg-surface-strong p-5">
+                      <span class="font-mono text-xs uppercase tracking-[0.08em] text-brand">
+                        {item.data.category}
+                      </span>
+                      <span class="font-mono text-xs uppercase tracking-[0.08em] text-muted-ink">
+                        {formatGlobalDate(item.data.event_date)}
+                      </span>
+                    </span>
+                  )}
+                </span>
+                <span class="mt-4 block font-mono text-xs tracking-[0.08em] text-muted-ink">
+                  {formatGlobalDate(item.data.event_date)} · {item.data.category}
+                </span>
+                <span class="mt-2 block font-display text-[clamp(1.375rem,2vw,1.75rem)] leading-[1.15] tracking-[-0.01em] group-hover:text-brand">
+                  {item.data.title}
+                </span>
+              </a>
+            </li>
+          );
+        })}
+      </ul>
+    ) : (
+      <div class="e-reveal mt-[clamp(2.5rem,6vh,4.5rem)] border-t border-line pt-10">
+        <p class="font-display text-[clamp(1.5rem,2.2vw,2rem)] leading-[1.2] text-muted-ink">
+          {t('home.eventsEmpty', locale)}
+        </p>
+        <a href={eventsIndexHref} class="mt-5 inline-flex items-center gap-2 font-mono text-xs uppercase tracking-[0.08em]">
+          <span class="text-brand">{t('home.viewAllEvents', locale)}</span>
+          <span class="text-brand" aria-hidden="true">→</span>
+        </a>
+      </div>
+    )}
+  </div>
+</section>
+
+<style>
+  .event-tile {
+    transition: transform var(--dur-control) var(--ease);
+  }
+
+  .event-tile:focus-visible {
+    outline: 2px solid var(--color-brand);
+    outline-offset: -2px;
+  }
+
+  .event-tile img {
+    transition: transform var(--dur-reveal) var(--ease);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .event-tile:hover,
+    .event-tile:focus-visible {
+      transform: translateY(-2px);
+    }
+
+    .event-tile:hover img,
+    .event-tile:focus-visible img {
+      transform: scale(1.03);
+    }
+  }
+</style>

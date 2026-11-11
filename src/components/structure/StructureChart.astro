@@ -1,0 +1,208 @@
+---
+import type { DivisionSection, Lecturer, Member } from '../../utils/types';
+import type { Locale } from '../../utils/i18n';
+import { t } from '../../utils/i18n';
+
+interface Props {
+  core: Member[];
+  divisionSections: DivisionSection[];
+  lecturers: Lecturer[];
+  locale: Locale;
+  startIndex?: number;
+}
+
+const { core, divisionSections, lecturers, locale, startIndex = 3 } = Astro.props;
+
+const labCoordinator =
+  core.find((member) => /lab coordinator/i.test(member.role)) ?? core[0] ?? null;
+const secretary = core.find((member) => /secretary/i.test(member.role)) ?? null;
+const treasurer = core.find((member) => /treasurer/i.test(member.role)) ?? null;
+const hasPair = Boolean(secretary || treasurer);
+
+const coordinators = lecturers.filter((lecturer) => /koordinator/i.test(lecturer.role));
+const labLecturers = lecturers.filter((lecturer) => !/koordinator/i.test(lecturer.role));
+const leadCoordinator = coordinators[0] ?? null;
+
+const avatarSrc = (lecturer: Lecturer): string =>
+  lecturer.image.trim() || '/image/placeholder-avatar.svg';
+const avatarStyle = (lecturer: Lecturer): string | undefined =>
+  lecturer.image.trim()
+    ? `transform: scale(${lecturer.scale || '1'}); transform-origin: ${lecturer.position || 'center'};`
+    : undefined;
+---
+
+<section
+  id="struktur"
+  class="pt-[clamp(2rem,5vh,3.5rem)] pb-[clamp(4.5rem,10vh,8.75rem)]"
+  aria-labelledby="struct-chart-title"
+>
+  <div class="mx-auto max-w-[1200px] px-[clamp(1.25rem,4vw,4rem)]">
+    <div class="grid gap-6 lg:grid-cols-2 lg:items-end">
+      <h2
+        id="struct-chart-title"
+        class="e-reveal font-display text-[clamp(2rem,4vw,3.5rem)] leading-[1.05] tracking-[-0.01em]"
+      >
+        {t('struct.chartTitle', locale)}
+      </h2>
+      <p class="e-reveal max-w-[52ch] text-[15px] leading-[1.55] text-muted-ink lg:justify-self-end">
+        {t('struct.chartIntro', locale)}
+      </p>
+    </div>
+
+    <div
+      class="mt-[clamp(2.5rem,6vh,4rem)] rounded-media border border-line bg-surface p-[clamp(1.25rem,4vw,3rem)]"
+    >
+      <nav class="org-tree e-reveal" aria-label={t('struct.chartLabel', locale)}>
+        <div class="org-top">
+          {leadCoordinator && (
+            <a class="org-node org-node--lead" href="#pembina">
+              <span class="org-node-avatar">
+                <img
+                  src={avatarSrc(leadCoordinator)}
+                  alt=""
+                  loading="lazy"
+                  decoding="async"
+                  style={avatarStyle(leadCoordinator)}
+                />
+              </span>
+              <span class="org-node-body">
+                <span class="org-node-kicker">{t('struct.tierPembina', locale)}</span>
+                <span class="org-node-title">
+                  {leadCoordinator.name.trim() || leadCoordinator.role}
+                </span>
+                {leadCoordinator.name.trim() && (
+                  <span class="org-node-role">{leadCoordinator.role}</span>
+                )}
+              </span>
+            </a>
+          )}
+
+          {labLecturers.length > 0 && (
+            <a class="org-node org-node--lab-group" href="#pembina">
+              <span class="org-node-avatar-stack" aria-hidden="true">
+                {labLecturers.slice(0, 3).map((lecturer) => (
+                  <span class="org-node-avatar org-node-avatar--stack">
+                    <img
+                      src={avatarSrc(lecturer)}
+                      alt=""
+                      loading="lazy"
+                      decoding="async"
+                      style={avatarStyle(lecturer)}
+                    />
+                  </span>
+                ))}
+                {labLecturers.length > 3 && (
+                  <span class="org-node-avatar-more">+{labLecturers.length - 3}</span>
+                )}
+              </span>
+              <span class="org-node-body">
+                <span class="org-node-kicker">{t('struct.tierPembina', locale)}</span>
+                <span class="org-node-title">{t('struct.dosenLab', locale)}</span>
+                <span class="org-node-role">
+                  {t('struct.lecturerCount', locale, { n: String(labLecturers.length) })}
+                </span>
+              </span>
+            </a>
+          )}
+        </div>
+
+        {labCoordinator && (
+          <>
+            <span class="org-stem" aria-hidden="true"></span>
+            <div class="org-tier">
+              <a class="org-node org-node--single" href="#inti">
+                <span class="org-node-avatar">
+                  <img
+                    src={labCoordinator.image}
+                    alt=""
+                    loading="lazy"
+                    decoding="async"
+                    style={`transform: scale(${labCoordinator.scale ?? '1'}); transform-origin: ${labCoordinator.position ?? 'center'};`}
+                  />
+                </span>
+                <span class="org-node-body">
+                  <span class="org-node-kicker">{t('struct.tierCore', locale)}</span>
+                  <span class="org-node-title">{labCoordinator.name}</span>
+                  <span class="org-node-role">{labCoordinator.role}</span>
+                </span>
+              </a>
+            </div>
+          </>
+        )}
+
+        {hasPair && (
+          <>
+            <span class="org-stem" aria-hidden="true"></span>
+            <div class="org-branch--pair" aria-hidden="true"></div>
+            <div class="org-tier org-tier--pair">
+              {secretary && (
+                <a class="org-node org-node--pair" href="#inti">
+                  <span class="org-node-avatar">
+                    <img
+                      src={secretary.image}
+                      alt=""
+                      loading="lazy"
+                      decoding="async"
+                      style={`transform: scale(${secretary.scale ?? '1'}); transform-origin: ${secretary.position ?? 'center'};`}
+                    />
+                  </span>
+                  <span class="org-node-body">
+                    <span class="org-node-kicker">{t('struct.tierCore', locale)}</span>
+                    <span class="org-node-title">{secretary.name}</span>
+                    <span class="org-node-role">{secretary.role}</span>
+                  </span>
+                </a>
+              )}
+              {treasurer && (
+                <a class="org-node org-node--pair" href="#inti">
+                  <span class="org-node-avatar">
+                    <img
+                      src={treasurer.image}
+                      alt=""
+                      loading="lazy"
+                      decoding="async"
+                      style={`transform: scale(${treasurer.scale ?? '1'}); transform-origin: ${treasurer.position ?? 'center'};`}
+                    />
+                  </span>
+                  <span class="org-node-body">
+                    <span class="org-node-kicker">{t('struct.tierCore', locale)}</span>
+                    <span class="org-node-title">{treasurer.name}</span>
+                    <span class="org-node-role">{treasurer.role}</span>
+                  </span>
+                </a>
+              )}
+            </div>
+          </>
+        )}
+
+        <span class="org-stem" aria-hidden="true"></span>
+        <p class="org-tier-label">{t('struct.tierDivisions', locale)}</p>
+        <div class="org-branch--divisions" aria-hidden="true"></div>
+        <div class="org-tier org-tier--divisions">
+          {divisionSections.map(({ division, coordinator, staff }, index) => (
+            <a class="org-node org-node--division" href={`#divisi-${division.id}`}>
+              <span class="org-node-div-top">
+                <span class="org-node-index">{String(startIndex + index).padStart(2, '0')}</span>
+                {coordinator && (
+                  <span class="org-node-avatar org-node-avatar--sm">
+                    <img
+                      src={coordinator.image}
+                      alt=""
+                      loading="lazy"
+                      decoding="async"
+                      style={`transform: scale(${coordinator.scale ?? '1'}); transform-origin: ${coordinator.position ?? 'center'};`}
+                    />
+                  </span>
+                )}
+              </span>
+              <span class="org-node-title">{division.displayName}</span>
+              <span class="org-node-count">
+                {t('struct.divisionCount', locale, { n: String(staff.length + (coordinator ? 1 : 0)) })}
+              </span>
+            </a>
+          ))}
+        </div>
+      </nav>
+    </div>
+  </div>
+</section>

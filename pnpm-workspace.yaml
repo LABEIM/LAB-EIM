@@ -1,0 +1,22 @@
+# pnpm 12 reads project settings from this file (not package.json's `pnpm` field).
+# @napi-rs/wasm-runtime auto-installs @emnapi/runtime 2.0.0-beta as its peer,
+# which crashes @emnapi/core 1.11.x at startup ("bridge.setLastError is not a
+# function"). Pin the 1.x line that matches the core version.
+overrides:
+  '@emnapi/runtime': 1.11.3
+  # GHSA-9wv6-86v2-598j: @vercel/routing-utils accepts ^6, so 6.3.0 is safe.
+  path-to-regexp: 6.3.0
+  # The adapter 12 line ships wrangler 4.59.2 → miniflare 4.20260114.0, whose
+  # pinned undici/sharp/zod have open advisories (zod 3 has no patched release).
+  # Miniflare 4.20260730.0 drops zod entirely; pin patched undici/sharp below.
+  'wrangler>miniflare': 4.20260730.0
+  'miniflare>undici': 7.30.2
+  'miniflare>sharp': 0.35.5
+
+# pnpm 12 blocks install scripts by default. esbuild and workerd need theirs;
+# sharp ships working prebuilt binaries (verified), and its install script
+# fails on the miniflare copy, so it is explicitly denied.
+allowBuilds:
+  esbuild: true
+  sharp: false
+  workerd: true

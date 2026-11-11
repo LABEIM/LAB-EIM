@@ -24,10 +24,17 @@ const {
         id="filter-search-input"
         class="filter-search-input"
         placeholder={searchPlaceholder}
+        aria-label={searchPlaceholder}
         autocomplete="off"
       />
-      <button type="button" id="search-clear-btn" class="search-clear-btn" title="Clear Search">
-        <i class="fa-solid fa-xmark"></i>
+      <button
+        type="button"
+        id="search-clear-btn"
+        class="search-clear-btn"
+        title="Hapus pencarian"
+        aria-label="Hapus pencarian"
+      >
+        <i class="fa-solid fa-xmark" aria-hidden="true"></i>
       </button>
     </div>
 
@@ -35,21 +42,21 @@ const {
     <div class="sort-select-wrapper">
       <label for="filter-sort-select" class="sort-label">Urutkan:</label>
       <select id="filter-sort-select" class="filter-sort-select">
-        <option value="desc">Terbaru (Newest)</option>
-        <option value="asc">Terlama (Oldest)</option>
+        <option value="desc">Terbaru</option>
+        <option value="asc">Terlama</option>
       </select>
     </div>
   </div>
 
   <!-- Status Filter Pills (if events) -->
   {statuses.length > 0 && (
-    <div class="filter-pills-row" id="status-pills-row">
-      <span class="sort-label">Status:</span>
-      <button type="button" class="filter-pill status-pill active" data-status="all">
+    <div class="filter-pills-row" id="status-pills-row" role="group" aria-labelledby="status-filter-label">
+      <span class="sort-label" id="status-filter-label">Status:</span>
+      <button type="button" class="filter-pill status-pill active" data-status="all" aria-pressed="true">
         Semua Status
       </button>
       {statuses.map(status => (
-        <button type="button" class="filter-pill status-pill" data-status={status.value}>
+        <button type="button" class="filter-pill status-pill" data-status={status.value} aria-pressed="false">
           {status.label}
         </button>
       ))}
@@ -58,13 +65,13 @@ const {
 
   <!-- Category Filter Pills -->
   {categories.length > 0 && (
-    <div class="filter-pills-row" id="category-pills-row">
-      <span class="sort-label">Kategori:</span>
-      <button type="button" class="filter-pill category-pill active" data-category="all">
+    <div class="filter-pills-row" id="category-pills-row" role="group" aria-labelledby="category-filter-label">
+      <span class="sort-label" id="category-filter-label">Kategori:</span>
+      <button type="button" class="filter-pill category-pill active" data-category="all" aria-pressed="true">
         Semua Kategori
       </button>
       {categories.map(cat => (
-        <button type="button" class="filter-pill category-pill" data-category={cat}>
+        <button type="button" class="filter-pill category-pill" data-category={cat} aria-pressed="false">
           {cat}
         </button>
       ))}
@@ -73,9 +80,9 @@ const {
 
   <!-- Filter Summary & Reset Bar -->
   <div class="filter-summary-row" id="filter-summary-row">
-    <span id="filter-results-count">Menampilkan {totalCount} item</span>
+    <span id="filter-results-count" aria-live="polite" aria-atomic="true">Menampilkan {totalCount} item</span>
     <button type="button" id="filter-reset-btn" class="filter-reset-btn" style="display: none;">
-      <i class="fa-solid fa-rotate-left"></i> Reset Filter
+      <i class="fa-solid fa-rotate-left" aria-hidden="true"></i> Reset Filter
     </button>
   </div>
 </div>

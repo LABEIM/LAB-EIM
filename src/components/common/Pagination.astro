@@ -3,14 +3,28 @@
 
 <div class="pagination-container" id="pagination-container" style="display: none;">
   <div class="pagination-controls" id="pagination-controls">
-    <button type="button" class="pagination-btn" id="pagination-prev" disabled title="Halaman Sebelumnya">
-      <i class="fa-solid fa-chevron-left"></i>
+    <button
+      type="button"
+      class="pagination-btn"
+      id="pagination-prev"
+      disabled
+      title="Halaman Sebelumnya"
+      aria-label="Halaman sebelumnya"
+    >
+      <i class="fa-solid fa-chevron-left" aria-hidden="true"></i>
     </button>
     <div id="pagination-numbers" style="display: inline-flex; gap: 6px;">
       <!-- Dynamic page buttons inserted by content-filter.ts -->
     </div>
-    <button type="button" class="pagination-btn" id="pagination-next" disabled title="Halaman Selanjutnya">
-      <i class="fa-solid fa-chevron-right"></i>
+    <button
+      type="button"
+      class="pagination-btn"
+      id="pagination-next"
+      disabled
+      title="Halaman Selanjutnya"
+      aria-label="Halaman berikutnya"
+    >
+      <i class="fa-solid fa-chevron-right" aria-hidden="true"></i>
     </button>
   </div>
   <div class="pagination-info" id="pagination-info">

@@ -15,6 +15,5 @@ benefits:
 requirements:
   - "Requirement 1"
   - "Requirement 2"
-show_register: true # Set to false to hide the register button
 ---
 Write the main event details, schedule, or extra information here in Markdown format.

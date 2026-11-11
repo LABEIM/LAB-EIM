@@ -258,4 +258,57 @@ export interface CandidateResult {
   [key: string]: any;
 }
 
+/** Homepage v2 — Antigravity Light */
+
+export interface Member {
+  id: number;
+  name: string;
+  role: string;
+  division: string;
+  image: string;
+  scale?: string;
+  position?: string;
+}
+
+export interface Lecturer {
+  id: string;
+  name: string;
+  role: string;
+  image: string;
+  scale?: string;
+  position?: string;
+}
+
+export interface HeroPortrait {
+  name: string;
+  image: string;
+}
+
+export interface DivisionPanel {
+  id: string;
+  displayName: string;
+  description: string;
+  memberCount: number;
+  coordinator: Member | null;
+  href: string;
+}
+
+export interface DivisionSection {
+  division: DivisionConfig;
+  coordinator: Member | null;
+  staff: Member[];
+}
+
+export interface AboutData {
+  title: string;
+  description: string;
+  overviewTitle: string;
+  overviewContent1: string;
+  overviewContent2: string;
+  overviewImage: string;
+  vision: string;
+  missions: string[];
+  values: { title: string; description: string; icon: string; isAccent?: boolean }[];
+}
+
 

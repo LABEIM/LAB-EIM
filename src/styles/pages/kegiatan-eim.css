@@ -1,0 +1,539 @@
+/* Kegiatan pages — Antigravity Light variants. Import AFTER home-eim.css. */
+@import '../components/prose.css';
+@import '../components/content-filter-eim.css';
+
+/* == Event list == */
+
+.kegiatan-list-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.25rem;
+  margin: 2rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+@media (min-width: 640px) {
+  .kegiatan-list-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1024px) {
+  .kegiatan-list-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1.5rem;
+  }
+}
+
+/* == Card == */
+
+/* The filter script sets visible cards to display: flex. */
+.kegiatan-card-item {
+  display: flex;
+  min-width: 0;
+}
+
+.kegiatan-card {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  width: 100%;
+  min-width: 0;
+  color: var(--color-foreground);
+  text-decoration: none;
+  transition: transform var(--dur-control) var(--ease);
+}
+
+.kegiatan-card-media {
+  display: block;
+  position: relative;
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-card);
+  background: var(--color-surface-strong);
+}
+
+.kegiatan-card-media img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform var(--dur-reveal) var(--ease);
+}
+
+.kegiatan-media-fallback {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 100%;
+  height: 100%;
+  padding: 1.25rem;
+  background: var(--color-surface-strong);
+}
+
+.kegiatan-media-fallback-category {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-brand);
+}
+
+.kegiatan-media-fallback-date {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-muted-ink);
+}
+
+.kegiatan-card-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 1rem;
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-muted-ink);
+}
+
+.kegiatan-card-title {
+  margin-top: 0.5rem;
+  font-family: var(--font-display);
+  font-size: clamp(1.375rem, 2vw, 1.75rem);
+  font-weight: 400;
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+  overflow-wrap: break-word;
+  transition: color var(--dur-control) var(--ease);
+}
+
+.kegiatan-card:focus-visible {
+  outline: 2px solid var(--color-brand);
+  outline-offset: 2px;
+  border-radius: var(--radius-card);
+}
+
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .kegiatan-card:hover,
+  .kegiatan-card:focus-visible {
+    transform: translateY(-2px);
+  }
+
+  .kegiatan-card:hover .kegiatan-card-media img,
+  .kegiatan-card:focus-visible .kegiatan-card-media img {
+    transform: scale(1.03);
+  }
+
+  .kegiatan-card:hover .kegiatan-card-title,
+  .kegiatan-card:focus-visible .kegiatan-card-title {
+    color: var(--color-brand);
+  }
+}
+
+/* == Status pill == */
+
+.kegiatan-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35em;
+  padding: 0.3rem 0.6rem;
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-pill);
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  font-weight: 500;
+  line-height: 1.2;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.kegiatan-status--upcoming {
+  border-color: color-mix(in srgb, var(--color-brand) 30%, transparent);
+  background: color-mix(in srgb, var(--color-brand) 10%, transparent);
+  color: var(--color-brand);
+}
+
+.kegiatan-status--ongoing {
+  border-color: color-mix(in srgb, var(--color-brand-bright) 45%, transparent);
+  background: color-mix(in srgb, var(--color-brand-bright) 18%, transparent);
+  color: color-mix(in srgb, var(--color-brand) 80%, var(--color-brand-bright));
+}
+
+.kegiatan-status--completed {
+  border-color: var(--color-line);
+  background: var(--color-surface-strong);
+  color: var(--color-muted-ink);
+}
+
+/* == Empty states == */
+
+.kegiatan-empty,
+.kegiatan-list-empty {
+  padding-top: 2.5rem;
+  border-top: 1px solid var(--color-line);
+}
+
+.kegiatan-list-empty {
+  margin-bottom: clamp(2rem, 5vh, 3rem);
+}
+
+.kegiatan-empty-title {
+  font-family: var(--font-display);
+  font-size: clamp(1.5rem, 2.4vw, 2.25rem);
+  font-weight: 400;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+}
+
+.kegiatan-empty-desc {
+  max-width: 52ch;
+  margin-top: 0.75rem;
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--color-muted-ink);
+}
+
+.kegiatan-empty-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem 1.75rem;
+  margin-top: 1.75rem;
+}
+
+
+/* == Detail actions == */
+
+.kegiatan-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 44px;
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-muted-ink);
+  text-decoration: none;
+}
+
+.kegiatan-back:hover {
+  color: var(--color-brand);
+}
+
+.kegiatan-back:focus-visible {
+  outline: 2px solid var(--color-brand);
+  outline-offset: 2px;
+}
+
+.kegiatan-share {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 0 1rem;
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-pill);
+  background: transparent;
+  color: var(--color-foreground);
+  font-family: var(--font-body);
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.kegiatan-share:hover {
+  border-color: var(--color-brand);
+  background: var(--color-brand-soft);
+  color: var(--color-brand);
+}
+
+.kegiatan-share:focus-visible {
+  outline: 2px solid var(--color-brand);
+  outline-offset: 2px;
+}
+
+/* == Recap hero == */
+
+.kegiatan-recap-hero {
+  padding-top: calc(var(--site-header-height, 5rem) + clamp(2rem, 5vh, 3.5rem));
+  padding-bottom: clamp(2.5rem, 6vh, 4rem);
+}
+
+.kegiatan-recap-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: clamp(2rem, 5vh, 3rem);
+}
+
+/* Shared mono meta row: uppercase small caps used in the recap hero, gallery head and related rows. */
+.kegiatan-recap-eyebrow,
+.kegiatan-recap-meta,
+.kegiatan-related-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-muted-ink);
+}
+
+.kegiatan-recap-title {
+  margin-top: 1rem;
+  font-family: var(--font-display);
+  font-size: clamp(2.5rem, 5vw, 4.5rem);
+  font-weight: 400;
+  line-height: 1.02;
+  letter-spacing: -0.01em;
+  text-wrap: balance;
+  overflow-wrap: break-word;
+}
+
+.kegiatan-recap-standfirst {
+  max-width: 62ch;
+  margin-top: 1.25rem;
+  font-size: clamp(1rem, 1.2vw, 1.125rem);
+  line-height: 1.6;
+  color: var(--color-muted-ink);
+}
+
+.kegiatan-recap-meta {
+  margin-top: 1.5rem;
+}
+
+.kegiatan-recap-cover {
+  position: relative;
+  margin-top: clamp(2rem, 5vh, 3rem);
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-media);
+  background: var(--color-surface-strong);
+}
+
+.kegiatan-recap-cover img,
+.kegiatan-gallery-item img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.kegiatan-recap-fallback {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  position: absolute;
+  inset: 0;
+  padding: clamp(1.25rem, 3vw, 2rem);
+  background: var(--color-surface-strong);
+}
+
+@media (min-width: 640px) {
+  .kegiatan-recap-cover {
+    aspect-ratio: 16 / 9;
+  }
+}
+
+/* == Story == */
+
+.kegiatan-story {
+  /* The hero already ends with the cover and its own bottom padding, so the top
+     gap continues that rhythm instead of stacking a second full section pad. */
+  padding-block: clamp(2.5rem, 6vh, 4rem) clamp(4.5rem, 10vh, 8.75rem);
+  padding-inline: clamp(1.25rem, 4vw, 4rem);
+}
+
+.kegiatan-story-inner {
+  max-width: 68ch;
+  margin-inline: auto;
+}
+
+/* == Gallery == */
+
+.kegiatan-gallery {
+  /* The story already closes with the page's section gap, so the gallery adds
+     no top padding of its own and only keeps the gap before the next block. */
+  padding-block: 0 clamp(4.5rem, 10vh, 8.75rem);
+}
+
+.kegiatan-gallery-head {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-bottom: clamp(1.5rem, 4vh, 2.5rem);
+}
+
+.kegiatan-gallery-title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(1.5rem, 2.4vw, 2rem);
+  font-weight: 400;
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+  color: var(--color-foreground);
+}
+
+.kegiatan-gallery-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-items: start;
+  gap: 1rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.kegiatan-gallery-item {
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-card);
+  background: var(--color-surface-strong);
+}
+
+.kegiatan-gallery-item img {
+  transition: transform var(--dur-reveal) var(--ease);
+}
+
+@media (min-width: 640px) {
+  .kegiatan-gallery-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1024px) {
+  .kegiatan-gallery-grid {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    gap: 1.25rem;
+  }
+
+  .kegiatan-gallery-item {
+    grid-column: span 5;
+  }
+
+  .kegiatan-gallery-item:nth-child(4n + 1),
+  .kegiatan-gallery-item:nth-child(4n + 4) {
+    grid-column: span 7;
+  }
+
+  .kegiatan-gallery-item:nth-child(4n + 2),
+  .kegiatan-gallery-item:nth-child(4n + 3) {
+    aspect-ratio: 4 / 5;
+  }
+}
+
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .kegiatan-gallery-item:hover img {
+    transform: scale(1.02);
+  }
+}
+
+/* == Recap closing == */
+
+/* Sits in the same content column as the hero/gallery/related containers. */
+.kegiatan-recap-empty {
+  max-width: calc(52ch + 2 * clamp(1.25rem, 4vw, 4rem));
+  margin-inline: auto;
+  margin-block: 0 clamp(4.5rem, 10vh, 8.75rem);
+  padding-inline: clamp(1.25rem, 4vw, 4rem);
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--color-muted-ink);
+}
+
+.kegiatan-recap-end {
+  max-width: var(--max-width);
+  margin-inline: auto;
+  padding: clamp(1.5rem, 4vh, 2.5rem) clamp(1.25rem, 4vw, 4rem) clamp(4.5rem, 10vh, 8rem);
+  border-top: 1px solid var(--color-line);
+}
+
+/* == Related == */
+
+.kegiatan-related-list {
+  margin: clamp(2.5rem, 6vh, 4rem) 0 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--color-line);
+}
+
+.kegiatan-related-row {
+  border-bottom: 1px solid var(--color-line);
+}
+
+.kegiatan-related-row a {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 1.25rem;
+  align-items: center;
+  gap: 0.375rem 1rem;
+  padding-block: clamp(1.25rem, 3vh, 1.75rem);
+  color: var(--color-foreground);
+  text-decoration: none;
+}
+
+.kegiatan-related-meta {
+  grid-column: 1 / -1;
+}
+
+.kegiatan-related-title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(1.25rem, 2vw, 1.5rem);
+  font-weight: 400;
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+  overflow-wrap: break-word;
+}
+
+.kegiatan-related-arrow {
+  justify-self: end;
+  font-size: 1rem;
+  line-height: 1;
+  color: var(--color-muted-ink);
+  transition:
+    transform var(--dur-control) var(--ease),
+    color var(--dur-control) var(--ease);
+}
+
+.kegiatan-related-row a:focus-visible {
+  outline: 2px solid var(--color-brand);
+  outline-offset: 2px;
+}
+
+@media (min-width: 640px) {
+  .kegiatan-related-row a {
+    grid-template-columns: 8.5rem minmax(0, 1fr) 1.25rem;
+    gap: 1.5rem;
+  }
+
+  .kegiatan-related-meta {
+    grid-column: auto;
+  }
+}
+
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .kegiatan-related-row a:hover .kegiatan-related-arrow,
+  .kegiatan-related-row a:focus-visible .kegiatan-related-arrow {
+    transform: translateX(0.25rem);
+    color: var(--color-brand);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .kegiatan-card,
+  .kegiatan-card-media img {
+    transition: none;
+  }
+}

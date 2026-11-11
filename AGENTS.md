@@ -60,12 +60,12 @@ Before ending a session, the agent must perform these tasks:
 - `keystatic.config.ts`: Keystatic CMS singletons (e.g. recruitment settings) and collections.
 - `src/content.config.ts`: Collection loaders and Zod schemas (`news`, `events`).
 - `src/content/`: Static Markdown content files (`news/`, `events/`).
-- `src/data/`: JSON configuration (`site.json`, `members.json`, `lecturers.json`, `divisions.json`, `registration.json`) and `CONFIG_GUIDE.md`.
+- `src/data/`: JSON configuration (`site.json`, `contact.json`, `members.json`, `lecturers.json`, `divisions.json`, `registration.json`) and `CONFIG_GUIDE.md`.
 - `src/components/`: Reusable Astro and React UI components (Navbar, Footer, cards, forms, plus homepage, about-page, structure-page, and event-page sections under `home/`, `about/`, `structure/`, and `kegiatan/`).
 - `src/pages/`: File-system routes, the `/keystatic` admin, and API endpoints.
 - `src/layouts/Layout.astro`: Base wrapper page layout.
 - `src/styles/`: Modular design system and stylesheets (`variables.css`, `base.css`, `globals.css`, `mobile.css`, `icons.css`, plus `components/` and `pages/`).
-- `src/utils/`: Business logic, i18n helpers, content filtering, event helpers, registration logic, and interfaces (`i18n.ts`, `content-helpers.ts`, `event-helpers.ts`, `registration-config.ts`, `recruitment.ts`, `division-mapper.ts`, `types.ts`, `constants.ts`).
+- `src/utils/`: Business logic, i18n helpers, content filtering, event helpers, registration logic, and interfaces (`i18n.ts`, `content-helpers.ts`, `event-helpers.ts`, `registration-config.ts`, `recruitment.ts`, `division-mapper.ts`, `safe-link.ts`, `types.ts`, `constants.ts`).
 - `public/`: Static assets, `robots.txt`, `sitemap.xml`, `manifest.webmanifest`, `llms.txt`, `llms-full.txt`, and `.well-known/security.txt`.
 
 ### 2.3 Role-Based Access Control & Scoping

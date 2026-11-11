@@ -60,6 +60,9 @@ export const uiTranslations: Record<Locale, Record<string, string>> = {
     // Registration & Selection Main
     'reg.title': 'Pendaftaran Asisten',
     'reg.statusCheck': 'Cek Hasil Seleksi',
+    'reg.heroPrimary': 'Lihat formulir',
+    'reg.heroSecondary': 'Hubungi kami',
+    'reg.period': 'Periode pendaftaran: {start} — {end}',
     'reg.contactPerson': 'Narahubung',
     'reg.cpNotice': 'Memiliki pertanyaan seputar pendaftaran? Hubungi narahubung kami di bawah ini.',
     'reg.resultsTitle': 'Cek Status Seleksi Asisten',

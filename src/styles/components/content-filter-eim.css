@@ -1,0 +1,187 @@
+/* Shared filter bar / pagination — Antigravity Light.
+   Applies to any content list wrapped in .eim-list-filter (events, articles). */
+
+.eim-list-filter {
+  margin-top: clamp(2.5rem, 6vh, 4rem);
+}
+
+.eim-list-filter .content-filter-bar {
+  margin-bottom: 0;
+  padding: 1.25rem;
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-card);
+  background: transparent;
+  box-shadow: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+.eim-list-filter .search-icon {
+  color: var(--color-muted-ink);
+}
+
+.eim-list-filter .filter-search-input,
+.eim-list-filter .filter-sort-select {
+  min-height: 44px;
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-pill);
+  background: var(--color-background);
+  color: var(--color-foreground);
+  font-family: var(--font-body);
+  box-shadow: none;
+}
+
+.eim-list-filter .filter-sort-select {
+  border-radius: var(--radius-card);
+}
+
+.eim-list-filter .filter-search-input::placeholder {
+  color: var(--color-muted-ink);
+  opacity: 1;
+}
+
+.eim-list-filter .filter-search-input:focus-visible,
+.eim-list-filter .filter-sort-select:focus-visible {
+  outline: 2px solid var(--color-brand);
+  outline-offset: 2px;
+  border-color: var(--color-brand);
+  box-shadow: none;
+}
+
+.eim-list-filter .search-clear-btn {
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  right: 0;
+  padding: 0;
+  color: var(--color-muted-ink);
+}
+
+.eim-list-filter .search-clear-btn:hover {
+  color: var(--color-brand);
+}
+
+.eim-list-filter .search-clear-btn:focus-visible {
+  outline: 2px solid var(--color-brand);
+  outline-offset: 2px;
+  border-radius: var(--radius-pill);
+}
+
+.eim-list-filter .sort-label {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-muted-ink);
+}
+
+.eim-list-filter .filter-pill {
+  min-height: 44px;
+  padding: 0.55rem 1rem;
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-pill);
+  background: transparent;
+  color: var(--color-muted-ink);
+  font-family: var(--font-body);
+  font-size: 0.8125rem;
+  font-weight: 500;
+}
+
+.eim-list-filter .filter-pill:hover {
+  border-color: var(--color-brand);
+  background: var(--color-brand-soft);
+  color: var(--color-brand);
+}
+
+.eim-list-filter .filter-pill.active {
+  border-color: var(--color-brand);
+  background: var(--color-brand);
+  color: var(--color-background);
+  font-weight: 500;
+}
+
+.eim-list-filter .filter-pill:focus-visible {
+  outline: 2px solid var(--color-brand);
+  outline-offset: 2px;
+}
+
+.eim-list-filter .filter-summary-row {
+  padding-top: 0.85rem;
+  border-top: 1px solid var(--color-line);
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.04em;
+  color: var(--color-muted-ink);
+}
+
+.eim-list-filter .filter-reset-btn {
+  min-height: 44px;
+  padding: 0 0.75rem;
+  color: var(--color-brand);
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.04em;
+}
+
+.eim-list-filter .filter-reset-btn:hover {
+  background: var(--color-brand-soft);
+}
+
+.eim-list-filter .filter-reset-btn:focus-visible {
+  outline: 2px solid var(--color-brand);
+  outline-offset: 2px;
+}
+
+.eim-list-filter .pagination-btn {
+  min-width: 44px;
+  height: 44px;
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-pill);
+  background: transparent;
+  color: var(--color-muted-ink);
+  font-family: var(--font-mono);
+  box-shadow: none;
+}
+
+.eim-list-filter .pagination-btn:hover:not(:disabled) {
+  border-color: var(--color-brand);
+  background: var(--color-brand-soft);
+  color: var(--color-brand);
+}
+
+.eim-list-filter .pagination-btn.active {
+  border-color: var(--color-brand);
+  background: var(--color-brand);
+  color: var(--color-background);
+  font-weight: 500;
+}
+
+.eim-list-filter .pagination-btn:focus-visible {
+  outline: 2px solid var(--color-brand);
+  outline-offset: 2px;
+}
+
+.eim-list-filter .pagination-btn:disabled {
+  opacity: 0.4;
+}
+
+.eim-list-filter .pagination-info {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.04em;
+  color: var(--color-muted-ink);
+}
+
+@media (max-width: 639px) {
+  .eim-list-filter .search-box-wrapper,
+  .eim-list-filter .sort-select-wrapper {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .eim-list-filter .filter-sort-select {
+    flex: 1;
+    width: 100%;
+  }
+}

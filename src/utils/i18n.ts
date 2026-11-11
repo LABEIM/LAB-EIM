@@ -278,6 +278,28 @@ export const uiTranslations: Record<Locale, Record<string, string>> = {
     'news.relatedTitle': 'Baca juga.',
     'news.relatedIntro': 'Artikel lain dari EIM Research Lab yang mungkin Anda minati.',
 
+    // News Index
+    'news.metaDescription': 'Artikel, publikasi, dan pengumuman dari EIM Research Lab.',
+    'news.heroEyebrow': 'Artikel',
+    'news.heroTitle': 'Catatan\ndari lab.',
+    'news.heroDesc': 'Tulisan riset, publikasi, dan pengumuman dari EIM Research Lab.',
+    'news.heroPrimary': 'Telusuri artikel',
+    'news.heroSecondary': 'Lihat kegiatan',
+    'news.heroMeta': '{articles} artikel · {categories} kategori · terbaru {year}',
+    'news.heroMetaEmpty': 'Belum ada artikel yang dipublikasikan.',
+    'news.sectionNavLabel': 'Navigasi bagian halaman',
+    'news.navDotList': 'Daftar',
+    'news.navDotCta': 'Gabung',
+    'news.listEyebrow': 'Daftar',
+    'news.listTitle': 'Semua artikel.',
+    'news.listIntro': 'Telusuri tulisan, publikasi, dan pengumuman EIM berdasarkan judul atau kategori.',
+    'news.searchPlaceholder': 'Cari judul artikel, penulis, atau kata kunci...',
+    'news.listEmptyTitle': 'Belum ada artikel yang dipublikasikan.',
+    'news.listEmptyDesc': 'Artikel akan tampil di sini setelah dipublikasikan.',
+    'news.listNoMatchTitle': 'Artikel tidak ditemukan.',
+    'news.listNoMatchDesc': 'Tidak ada artikel yang cocok dengan pencarian atau filter Anda. Coba kata kunci lain atau reset filter.',
+    'news.contact': 'Hubungi kami',
+
     // Home Page v2 [PLACEHOLDER — draft]
     'home.heroKicker': 'EIM Research Lab',
     'home.heroTitle': 'Riset infrastruktur\nuntuk dunia nyata.',

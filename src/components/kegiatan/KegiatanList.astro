@@ -50,7 +50,7 @@ const categories = [...new Set(events.map((event) => event.data.category).filter
         </div>
       </div>
     ) : (
-      <div class="kegiatan-list-filter">
+      <div class="eim-list-filter">
         <FilterControlBar
           categories={categories}
           searchPlaceholder={t('events.searchPlaceholder', locale)}

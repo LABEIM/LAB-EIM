@@ -42,9 +42,6 @@ const platformConfig: Record<string, { label: string; iconClass: string }> = {
 
 {contactPersons.length > 0 && (
   <div class={compact ? 'cp-box compact' : 'cp-box'}>
-    <div class="cp-badge">
-      <i class="fa-solid fa-headset" aria-hidden="true"></i> {t('reg.contactPerson', locale)}
-    </div>
     <h3 class="cp-title">{title}</h3>
     {subtitle && <p class="cp-subtitle">{subtitle}</p>}
 

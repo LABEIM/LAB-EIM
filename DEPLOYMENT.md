@@ -157,7 +157,7 @@ Keystatic API routes require Node.js compatibility. `wrangler.json` sets `nodejs
 
 ### 3.3 Environment Variables Reference
 
-Build-time `PUBLIC_*` values can come from GitHub secrets or variables; a variable wins over a same-named secret, and an empty variable does not override a non-empty secret. Keystatic Cloud needs no runtime variables.
+Build-time `PUBLIC_*` values can come from GitHub secrets or variables. Since Shared-CICD v2.3.0, a name defined in both with **different values fails the build** instead of silently picking one; an empty variable does not override a non-empty secret. Keystatic Cloud needs no runtime variables.
 
 | Variable Name | Description | Example / Required Target |
 | :--- | :--- | :--- |
@@ -213,7 +213,7 @@ In GitHub go to **Settings** > **Secrets and variables** > **Actions**.
 **Variables** (identifiers and public build config):
 
 - `PUBLIC_GOOGLE_SHEET_SCRIPT_URL`, `PUBLIC_RECRUITMENT_SECRET`, `PUBLIC_SITE_URL`: all three are public (the endpoint URL and token ship in the HTML), so variables are enough.
-- A `PUBLIC_*` variable wins over a same-named secret, and an empty variable does not override a non-empty secret. Variables are **not** masked in Actions logs, so never store a non-public value under a `PUBLIC_*` name. Never keep both a variable and a secret for the same `PUBLIC_*` name; delete the stale one.
+- A `PUBLIC_*` name defined in both a secret and a variable with different values fails the build with the conflicting names; an empty variable does not override a non-empty secret. Variables are **not** masked in Actions logs, so never store a non-public value under a `PUBLIC_*` name.
 - `CLOUDFLARE_ACCOUNT_ID`: passed through the `cloudflare_account_id` input; the secret is used when the variable is empty.
 - `VERCEL_ORG_ID` / `VERCEL_PROJECT_ID`: found in `.vercel/project.json` or the Vercel dashboard. Required as **variables**, not secrets, because reusable-workflow `with:` inputs cannot read the `secrets` context.
 
@@ -221,7 +221,7 @@ Keystatic Cloud needs no Worker runtime secrets, so there is nothing to set on t
 
 The Vercel backup deployment is enabled automatically when both Vercel variables are present.
 
-> **Note:** The Cloudflare Worker name (`lab-eim`) is set as the `cloudflare_project_name` input in `ci-cd.yml`. Change it there if the Worker is renamed.
+> **Note:** The Cloudflare Worker name (`lab-eim`) is set as the `cloudflare_project_name` input in `ci-cd.yml`. Change it there if the Worker is renamed. `production_branch: 'main'` is what marks a run as a production deploy; since Shared-CICD v2.3.0 it is required, and any other branch, tag, or release deploys to a preview environment.
 
 ### 5.2 Pipeline Stages (`ci-cd.yml`)
 

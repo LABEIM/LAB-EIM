@@ -68,6 +68,7 @@ Before ending a session, the agent must perform these tasks:
 - `src/layouts/Layout.astro`: Base wrapper page layout.
 - `src/styles/`: Modular design system and stylesheets (`variables.css`, `base.css`, `globals.css`, `mobile.css`, `icons.css`, plus `components/` and `pages/`).
 - `src/utils/`: Business logic, i18n helpers, content filtering, event helpers, registration logic, and interfaces (`i18n.ts`, `content-helpers.ts`, `event-helpers.ts`, `registration-config.ts`, `recruitment.ts`, `division-mapper.ts`, `safe-link.ts`, `types.ts`, `constants.ts`).
+- `docs/`: Design token reference (`DESIGN_TOKENS.md`) — layer model, naming rules, token index, and the starter recipe for reusing this token layer in another lab site.
 - `public/`: Static assets, `robots.txt`, `sitemap.xml`, `manifest.webmanifest`, `llms.txt`, `llms-full.txt`, and `.well-known/security.txt`.
 
 ### 2.3 Role-Based Access Control & Scoping

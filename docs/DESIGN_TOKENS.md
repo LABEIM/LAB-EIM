@@ -17,7 +17,7 @@ Three layers, consumed in one direction only.
 
 | Layer | Tokens | Holds |
 | --- | --- | --- |
-| Primitives | `--brand-*`, `--eim-*`, `--legacy-*`, `--neutral-*`, `--white`, `--black` | Raw values: hexes, font stacks, motion curves, radius. No roles, no context. |
+| Primitives | `--brand-*`, `--eim-*`, `--legacy-*`, `--neutral-*`, `--white`, `--black`, and the literal-only `--color-*` entries listed under Primitives below | Raw values: hexes, font stacks, motion curves, radius. No roles, no context. |
 | Semantic | `--color-*`, `--space-*`, `--text-*`, `--z-*`, `--radius-*`, `--ease-*`, `--dur-*`, `--shadow-*` | A role or a documented scale step. Value is inline or an alias of a primitive. |
 | Consumers | `src/styles/base.css`, `globals.css`, `components/`, `pages/`, `Layout.astro` | Read tokens. Never define them, except page-scoped `--reg-*` in `registration-eim.css`. |
 
@@ -32,8 +32,9 @@ Rules enforced by the current file:
 - A primitive never references another token. `--brand-cyan` is a hex, not an alias.
 - A semantic token may alias a primitive (`--color-brand: var(--eim-brand)`) or carry a
   literal when no primitive matches (`--color-danger-base: #ef4444`).
-- Consumers never reach past the semantic layer. If you need a new role, add the semantic
-  token.
+- Consumers use semantic roles first. The primitive palette (`--white`, `--black`,
+  `--neutral-*`, `--brand-*`) is allowed where the value itself is the meaning (pure white
+  text, a brand gradient stop); reach for a `--color-*` role whenever one exists.
 - Aliases are not chained more than one hop (`--text-primary` -> `--legacy-ink` ends there).
 
 ## Naming rules
@@ -89,11 +90,11 @@ Values are reproduced as written in `variables.css`; aliases appear as `var(--�
 | Family | Tokens and values |
 | --- | --- |
 | Legacy surface, border, text — **this site only, do not copy** | `--bg-dark` `var(--legacy-bg)` · `--bg-dark-secondary` `var(--legacy-bg-secondary)` · `--bg-card` `var(--legacy-card)` · `--bg-card-hover` `var(--legacy-card-hover)` · `--border-color` `var(--legacy-line)` · `--border-color-hover` `var(--legacy-line-hover)` · `--text-primary` `var(--legacy-ink)` · `--text-secondary` `var(--legacy-ink-secondary)` · `--text-muted` `var(--legacy-ink-muted)` · `--site-header-height` `80px`, `122px` under `body.has-announcement-banner` |
-| Theme accents | `--accent-red` `var(--legacy-accent)` · `--accent-red-rgb` `14, 85, 95` · `--accent-red-hover` `var(--legacy-accent-hover)` · `--accent-red-gradient` `var(--legacy-accent-gradient)` · `--accent-cyan` `var(--brand-cyan)` · `--accent-cyan-rgb` `var(--brand-cyan-rgb)` · `--accent-cyan-hover` `var(--brand-cyan-light)` · `--accent-cyan-gradient` `linear-gradient(135deg, var(--brand-cyan) 0%, var(--brand-cyan-light) 100%)` |
+| Theme accents | `--accent-red` `var(--legacy-accent)` · `--accent-red-rgb` `var(--brand-dark-azure-rgb)` · `--accent-red-hover` `var(--legacy-accent-hover)` · `--accent-red-gradient` `var(--legacy-accent-gradient)` · `--accent-cyan` `var(--brand-cyan)` · `--accent-cyan-rgb` `var(--brand-cyan-rgb)` · `--accent-cyan-hover` `var(--brand-cyan-light)` · `--accent-cyan-gradient` `linear-gradient(135deg, var(--brand-cyan) 0%, var(--brand-cyan-light) 100%)` |
 | Surface and brand mapping | `--color-background` `var(--eim-background)` · `--color-foreground` `var(--eim-foreground)` · `--color-surface` `var(--eim-surface)` · `--color-surface-strong` `var(--eim-surface-strong)` · `--color-line` `var(--eim-line)` · `--color-muted-ink` `var(--eim-muted-ink)` · `--color-brand` `var(--eim-brand)` · `--color-brand-bright` `var(--eim-brand-bright)` · `--color-brand-soft` `var(--eim-brand-soft)` |
 | Font, motion, radius aliases | `--font-mono` `var(--eim-font-mono)` · `--ease` `var(--eim-ease)` · `--ease-inout` `var(--eim-ease-inout)` · `--dur-control` `var(--eim-dur-control)` · `--dur-reveal` `var(--eim-dur-reveal)` · `--radius-pill` `var(--eim-radius-pill)` · `--radius-card` `var(--eim-radius-card)` · `--radius-media` `var(--eim-radius-media)` |
 | Typography | `--font-heading` `'Poppins', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif` · `--font-body` `'Montserrat', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif` · `--font-display` `'Instrument Serif', Georgia, serif` · `--font-ui` `'IBM Plex Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif` · `--max-width` `1200px` |
-| Layout, motion, shadow | `--border-radius-sm` `8px` · `--border-radius-md` `16px` · `--border-radius-lg` `24px` · `--transition-fast` `0.15s ease-out` · `--transition-normal` `0.25s ease-out` · `--transition-slow` `0.4s ease-out` · `--shadow-sm` `0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)` · `--shadow-md` `0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)` · `--glow-cyan` `0 0 20px rgba(var(--accent-cyan-rgb), 0.15)` · `--glow-red` `0 0 20px rgba(var(--accent-red-rgb), 0.15)` · `--glow-cyan-intense` `0 0 30px rgba(var(--accent-cyan-rgb), 0.3)` · `--glow-red-intense` `0 0 30px rgba(var(--accent-red-rgb), 0.3)` |
+| Layout, motion, shadow | `--border-radius-sm` `8px` · `--border-radius-md` `16px` · `--border-radius-lg` `24px` (new code uses `--radius-*`; `--border-radius-*` is the legacy pair)  · `--transition-fast` `0.15s ease-out` · `--transition-normal` `0.25s ease-out` · `--transition-slow` `0.4s ease-out` · `--shadow-sm` `0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)` · `--shadow-md` `0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)` · `--glow-cyan` `0 0 20px rgba(var(--accent-cyan-rgb), 0.15)` · `--glow-red` `0 0 20px rgba(var(--accent-red-rgb), 0.15)` · `--glow-cyan-intense` `0 0 30px rgba(var(--accent-cyan-rgb), 0.3)` · `--glow-red-intense` `0 0 30px rgba(var(--accent-red-rgb), 0.3)` |
 
 ### Spacing scale
 
@@ -218,6 +219,8 @@ These stay literal on purpose. Do not tokenize them:
   beneath them on dark surfaces; a named token would not make them clearer.
 - **Third-party marks.** Brand-colored SVG fills in `src/components/Footer.astro`
   (e.g. `#007EBB`) belong to their owners and must not be restyled with our palette.
+- **Footer contrast override.** `footer.css` sets `--text-muted` to `#52686B` on the
+  footer band to clear AA; the global token is intentionally overridden there.
 - **Dead files.** `pages/events.css`, `pages/organization.css`, and `pages/contact.css`
   are still imported by `globals.css` but no page renders the markup they style
   (`contact.astro` uses `contact-eim.css`). They are intentionally left

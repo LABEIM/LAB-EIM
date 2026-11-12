@@ -322,14 +322,8 @@ const recruitmentResultsSchema = {
 
 
 export default config({
-  storage: import.meta.env.PROD
-    ? {
-      kind: 'github',
-      repo: 'LABEIM/LAB-EIM',
-    }
-    : {
-      kind: 'local',
-    },
+  storage: import.meta.env.PROD ? { kind: 'cloud' } : { kind: 'local' },
+  cloud: { project: 'eimlab/lab-eim' },
   collections: {
     news: collection({
       label: 'News',

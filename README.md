@@ -15,17 +15,17 @@ Official website of the Enterprise Infrastructure Management (EIM) Research Labo
 
 ## About This Project
 
-The EIM Research Lab website is a statically generated, Indonesian-language public site built with Astro and managed through Keystatic CMS. Content is stored as Markdown collections and JSON data files, so the site can be maintained without a database. It is deployed to Cloudflare Pages as the primary host, with Vercel available as a backup host.
+The EIM Research Lab website is a statically generated, Indonesian-language public site built with Astro and managed through Keystatic CMS. Content is stored as Markdown collections and JSON data files, so the site can be maintained without a database. It is deployed to Cloudflare Workers as the primary host, with Vercel available as a static backup host.
 
 - **Primary Host:** [eimlab.org](https://eimlab.org)
 - **Secondary Host:** [backup.eimlab.org](https://backup.eimlab.org)
 
 ### Key Technologies
 
-- **Framework:** [Astro v7.1.6](https://astro.build/) (SSG with `@astrojs/cloudflare` adapter)
-- **CMS:** [Keystatic](https://keystatic.com/) (`@keystatic/astro` v5.0.0, `@keystatic/core` v0.6.0)
-- **UI Components:** React v19.2.8 (`@astrojs/react`)
-- **Styling:** [Tailwind CSS v4.3.3](https://tailwindcss.com/) via `@tailwindcss/vite`, plus modular vanilla CSS
+- **Framework:** [Astro v7.4.7](https://astro.build/) (SSG with `@astrojs/cloudflare` adapter, deployed to Cloudflare Workers)
+- **CMS:** [Keystatic](https://keystatic.com/) (`@keystatic/astro` v5.2.0, `@keystatic/core` v0.6.9, Keystatic Cloud in production)
+- **UI Components:** React v19.3.1 (`@astrojs/react`)
+- **Styling:** [Tailwind CSS v4.3.5](https://tailwindcss.com/) via `@tailwindcss/vite`, plus modular vanilla CSS
 - **Language:** TypeScript v6.0.3
 - **Runtime:** Node.js `>=22.12.0`
 
@@ -35,7 +35,7 @@ The EIM Research Lab website is a statically generated, Indonesian-language publ
 
 For detailed instructions on local development, deployment, backend integrations, brand assets, and data management, refer to the guides below:
 
-1. **[Deployment & Hosting Guide](DEPLOYMENT.md)**: Local development setup, Cloudflare Pages primary deployment, Keystatic CMS configuration, Vercel backup hosting, and dual-hosting CI/CD pipeline.
+1. **[Deployment & Hosting Guide](DEPLOYMENT.md)**: Local development setup, Cloudflare Workers primary deployment, Keystatic Cloud configuration, Vercel backup hosting, and dual-hosting CI/CD pipeline.
 2. **[Brand & Email Assets Hub](ASSETS.md)**: Public CDN endpoints, email-optimized logos, dark/light banners, and social icons for email templates.
 3. **[Registration Setup & Operations Guide](REGISTRATION_SETUP.md)**: Google Apps Script (`code.gs`) backend setup, Google Drive permissions, recruitment pipeline stages, and candidate selection announcement management.
 4. **[Data & Content Configuration Guide](src/data/CONFIG_GUIDE.md)**: Customizing laboratory divisions, staff member profiles, site metadata, and Keystatic CMS singletons.

@@ -2,8 +2,7 @@
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "lab-eim",
   "compatibility_date": "2026-08-09",
-  "compatibility_flags": [
-    "nodejs_compat"
-  ],
-  "pages_build_output_dir": "dist"
+  "compatibility_flags": ["nodejs_compat", "assets_navigation_has_no_effect"],
+  "workers_dev": true,
+  "preview_urls": true
 }

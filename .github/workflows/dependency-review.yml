@@ -9,6 +9,6 @@ permissions:
 
 jobs:
   dependency-review:
-    uses: LABEIM/Shared-CICD/.github/workflows/dependency-review.yml@v1
+    uses: LABEIM/Shared-CICD/.github/workflows/dependency-review.yml@v2
     with:
       fail_on_severity: 'high'

@@ -6,19 +6,22 @@ import cloudflare from '@astrojs/cloudflare';
 
 // https://astro.build/config
 export default defineConfig({
-  site: process.env.CF_PAGES_URL
-    ? process.env.CF_PAGES_URL.startsWith('http') ? process.env.CF_PAGES_URL : `https://${process.env.CF_PAGES_URL}`
-    : process.env.PUBLIC_SITE_URL
-      ? process.env.PUBLIC_SITE_URL.startsWith('http') ? process.env.PUBLIC_SITE_URL : `https://${process.env.PUBLIC_SITE_URL}`
-      : process.env.VERCEL_PROJECT_PRODUCTION_URL
-        ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
-        : process.env.VERCEL_URL
-          ? `https://${process.env.VERCEL_URL}`
-          : 'http://localhost:4321',
-  adapter: cloudflare({
+  site: process.env.PUBLIC_SITE_URL
+    ? process.env.PUBLIC_SITE_URL.startsWith('http') ? process.env.PUBLIC_SITE_URL : `https://${process.env.PUBLIC_SITE_URL}`
+    : process.env.VERCEL_PROJECT_PRODUCTION_URL
+      ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
+      : process.env.VERCEL_URL
+        ? `https://${process.env.VERCEL_URL}`
+        : 'http://localhost:4321',
+  // The Cloudflare adapter runs dev in workerd, where Keystatic's local storage
+  // cannot read the filesystem. Keep Node for dev; Workers for builds.
+  adapter: process.env.NODE_ENV === 'development' ? undefined : cloudflare({
     imageService: 'compile',
-    entrypointResolution: 'auto',
+    // Prerendering in workerd hangs here on miniflare's Request.cf fetch.
+    prerenderEnvironment: 'node',
   }),
+  // The site does not use Astro sessions; skip the KV namespace the adapter would auto-provision.
+  session: false,
   integrations: [react(), keystatic()],
   build: {
     inlineStylesheets: 'always',

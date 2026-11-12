@@ -1,6 +1,6 @@
-# Deployment & Hosting Guide (Cloudflare Pages Primary & Vercel Backup)
+# Deployment & Hosting Guide (Cloudflare Workers Primary & Vercel Backup)
 
-This guide provides step-by-step instructions for local development, deploying to **Cloudflare Pages** (Primary Host), configuring **Keystatic CMS**, setting up **Vercel** (Failover Backup), and managing the automated dual-hosting CI/CD pipeline.
+This guide provides step-by-step instructions for local development, deploying to **Cloudflare Workers** (Primary Host), configuring **Keystatic Cloud**, setting up **Vercel** (Failover Backup), and managing the automated dual-hosting CI/CD pipeline.
 
 ---
 
@@ -22,20 +22,20 @@ This guide provides step-by-step instructions for local development, deploying t
                        │                                 │
                        ▼ (Primary)                       ▼ (Failover Backup)
         ┌─────────────────────────────┐   ┌─────────────────────────────┐
-        │   Cloudflare Pages          │   │   Vercel Deployment         │
-        │   Direct Upload (dist)      │   │   (If Cloudflare Fails or   │
-        │   via npx wrangler pages    │   │    Manual Dispatch Trigger)│
+        │   Cloudflare Workers        │   │   Vercel Deployment         │
+        │   Worker + static assets    │   │   Prerendered static site   │
+        │   (wrangler deploy)         │   │   (dist/client)             │
         └──────────────┬──────────────┘   └──────────────┬──────────────┘
                        │                                 │
                        ▼                                 ▼
              Primary Custom Domain                     Backup Subdomain
             (e.g., eim-lab.org /                   (e.g., backup.eim-lab.org
-             lab-eim.pages.dev)                      or lab-eim.vercel.app)
+             lab-eim.<subdomain>.workers.dev)       or lab-eim.vercel.app)
 ```
 
-- **Build Export**: Pure static SSG HTML/CSS/JS export in `dist/` (`pnpm run build`).
-- **Primary Hosting**: Cloudflare Pages (`pnpm dlx wrangler pages deploy`).
-- **Backup Hosting**: Vercel Static Deployment (`vercel deploy dist --prod`).
+- **Build Export**: Prerendered pages in `dist/client/`; the Worker entry and generated Wrangler config in `dist/server/` (`pnpm run build`).
+- **Primary Hosting**: Cloudflare Workers, direct upload of the Worker plus assets (`wrangler deploy`).
+- **Backup Hosting**: Vercel static deployment of `dist/client` (`vercel deploy --prebuilt`).
 
 ---
 
@@ -84,7 +84,7 @@ To test compiling the production static build locally:
 ```bash
 pnpm run build
 ```
-The compiled static HTML/CSS/JS files will be exported to the `dist/` directory.
+The compiled prerendered pages are exported to `dist/client/`, and the Worker entry (`dist/server/entry.mjs`) plus the adapter-generated Wrangler config (`dist/server/wrangler.json`) are written to `dist/server/`.
 
 ### 1.6 Audit Benchmark Content & Developer URL Testing Toggles
 
@@ -101,13 +101,13 @@ Content entries marked with `audit: true` (e.g. `src/content/news/audit-benchmar
 
 ---
 
-## 2. Primary Deployment: Cloudflare Pages
+## 2. Primary Deployment: Cloudflare Workers
 
-### 2.1 Project Shell Creation
-**Zero Manual Dashboard Creation Required**:
-You do **not** need to manually create the project in the Cloudflare Dashboard. 
+### 2.1 Worker Creation
+**Zero Manual Worker Creation Required**:
+The Shared-CICD `deploy-cloudflare` action (`cloudflare_mode: 'ssr'`) creates the Worker (`lab-eim`) on its first deploy using `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID`. `wrangler.json` supplies the Worker name and compatibility flags; the adapter generates `main` and `assets` into `dist/server/wrangler.json`.
 
-The Shared-CICD deploy action used by `.github/workflows/ci-cd.yml` automatically creates the Cloudflare Pages project (`lab-eim`) via `npx wrangler pages project create` on its initial run using your `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID`.
+The account's `workers.dev` subdomain must be registered: Dashboard > **Workers & Pages** > **Your subdomain**. Direct uploads always expose `workers_dev` and preview URLs.
 
 ### 2.2 Obtaining Cloudflare Credentials
 
@@ -120,80 +120,68 @@ The Shared-CICD deploy action used by `.github/workflows/ci-cd.yml` automaticall
 1. Go to **Manage account** > **Account API Tokens** (or **My Profile** > **API Tokens**).
 2. Click **Create Token**.
 3. Scroll to **Custom Token** and click **Get started**.
-4. Set **Token name**: `GitHub Actions - Cloudflare Pages Deploy`.
+4. Set **Token name**: `GitHub Actions - Cloudflare Workers Deploy`.
 5. Under **Permission policies**:
-   - Scope: **Entire Account** (or select your target account).
+   - Scope: the Cloudflare account that owns Worker `lab-eim`.
    - Category **Developer Platform**:
-     - **Pages**: Select `Edit` (Grants write/deploy permissions).
-     - *(Optional)* **Workers Scripts**: Select `Edit`.
-6. Under **Token expiration**, select **No expiration**.
+     - **Workers Scripts**: Select `Edit` (grants deploy and preview permissions).
+6. Under **Token expiration**, set an expiry (for example 90 days) and rotate the GitHub secret before it lapses.
 7. Click **Continue to summary** -> **Create Token**.
 8. Copy the generated secret token string.
 
 ### 2.3 Primary Custom Domain Setup
-1. In the Cloudflare Pages dashboard (`lab-eim`), go to **Custom Domains** > **Set up a custom domain**.
-2. Enter your main domain (e.g. `eim-lab.org` or `www.eim-lab.org`).
-3. Follow the prompts to activate DNS routing automatically (if DNS is managed by Cloudflare) or add a CNAME record pointing to `lab-eim.pages.dev`.
+1. If `eim-lab.org` is still attached to the old Pages project, remove it from that project first.
+2. In **Workers & Pages** > Worker (`lab-eim`) > **Settings** > **Domains & Routes**, add a custom domain.
+3. Enter your main domain (e.g. `eim-lab.org` or `www.eim-lab.org`) and activate DNS routing. The zone must be active on Cloudflare.
+4. Verify that `/keystatic` loads (see Section 3.2).
+
+> Adding the domain is a dashboard action performed with your Cloudflare login; the CI API token does not need zone (DNS) permissions.
 
 ---
 
-## 3. Keystatic CMS Configuration (Cloudflare Pages & Vercel)
+## 3. Keystatic CMS Configuration (Keystatic Cloud)
 
-Keystatic CMS (`/keystatic`) provides a git-based admin UI for managing content. In production, it authenticates users via a **GitHub App** and commits changes directly back to your GitHub repository.
+Keystatic CMS (`/keystatic`) is a git-based admin UI for managing content. Production uses **Keystatic Cloud** storage and local development uses local file storage; content remains in the repository's Markdown and JSON files.
 
-### 3.1 Creating the GitHub App for Keystatic CMS
+### 3.1 Setting Up Keystatic Cloud
 
-1. In GitHub, go to **Settings** > **Developer Settings** > **GitHub Apps** > **New GitHub App** ([Direct Link](https://github.com/settings/apps/new)).
-2. Fill out the registration details:
-   - **GitHub App Name**: `EIM Lab CMS` (must be unique across GitHub).
-   - **Homepage URL**: `https://lab-eim.pages.dev` (or your primary custom domain `https://eim-lab.org`).
-   - **Authorization callback URL**: `https://lab-eim.pages.dev/api/keystatic/github/oauth/callback` (or `https://eim-lab.org/api/keystatic/github/oauth/callback`).
-   - **Webhook**: Uncheck **Active** (Webhooks are not required for Keystatic).
-   - **Repository Permissions**:
-     - **Contents**: Select `Read & Write`.
-     - **Pull Requests**: Select `Read & Write`.
-3. Click **Create GitHub App**.
-4. Generate a **Client Secret** and copy both the **Client ID** and **Client Secret**.
-5. Copy the **App Slug** from the top of your GitHub App settings page (e.g. `eim-lab-cms`).
-6. In the left sidebar of your GitHub App settings, click **Install App** and install it on your target repository (`LABEIM/LAB-EIM`).
+1. Sign in at [keystatic.cloud](https://keystatic.cloud) with GitHub.
+2. Create a project connected to `LABEIM/LAB-EIM` and install the Keystatic GitHub App on the repository.
+3. Copy the project slug (`<team>/<project>`); this repository uses `eimlab/lab-eim`, set in `keystatic.config.ts` as `cloud.project`.
+4. Set `KEYSTATIC_SECRET` (minimum 32 characters) as a Worker runtime secret:
+   `pnpm exec wrangler secret put KEYSTATIC_SECRET`, or Dashboard > Worker (`lab-eim`) > **Settings** > **Variables and Secrets**.
 
-> [!NOTE]
-> **OAuth Callback Domain Handling**: GitHub Apps support one primary callback URL per app. If deploying to both Cloudflare Pages and Vercel, set the callback URL to your primary production domain (`https://lab-eim.pages.dev` or custom domain). Users accessing Keystatic on the backup domain will be redirected to the primary domain during OAuth sign-in.
+Development (`pnpm run dev`) keeps using local storage; no cloud credentials are needed locally. `astro dev` runs on Node (the Cloudflare adapter is applied only to builds) because Keystatic's local storage needs filesystem access.
 
-### 3.2 Functions Compatibility Flag (`nodejs_compat`) for Cloudflare Pages
+### 3.2 Worker Compatibility (`nodejs_compat`)
 
-Keystatic server-side API routes require Node.js runtime compatibility when running on Cloudflare Pages:
-
-1. In the Cloudflare Dashboard, go to **Workers & Pages** > select project (`lab-eim`).
-2. Navigate to **Settings** > **Functions**.
-3. Under **Compatibility flags**, click **Add flag**.
-4. Add `nodejs_compat` for both **Production** and **Preview** environments.
-5. Alternatively, `wrangler.json` in the root directory already defines `nodejs_compat`.
+Keystatic API routes require Node.js compatibility. `wrangler.json` sets `nodejs_compat` and `assets_navigation_has_no_effect`. The latter makes a browser navigation to `/keystatic` (which has no matching static asset) invoke the Worker instead of being answered by the assets layer with a 404. The shared deploy action preserves these flags in `dist/server/wrangler.json`.
 
 ### 3.3 Environment Variables Reference
 
-Add the following environment variables across your hosting providers (Cloudflare Pages Dashboard, Vercel Dashboard, and GitHub Repository Secrets):
+Build-time values are GitHub secrets (inherited by the pipeline); `KEYSTATIC_SECRET` is a Worker runtime secret.
 
 | Variable Name | Description | Example / Required Target |
 | :--- | :--- | :--- |
 | `PUBLIC_GOOGLE_SHEET_SCRIPT_URL` | Web App deployment URL for Google Apps Script endpoint | `https://script.google.com/macros/s/.../exec` |
 | `PUBLIC_RECRUITMENT_SECRET` | Passphrase matching `SECRET_KEY` in Apps Script Properties | `your_secret_passphrase_here` |
-| `KEYSTATIC_GITHUB_CLIENT_ID` | Client ID from your GitHub App | `Iv1.xxxxxxxxxxxx` |
-| `KEYSTATIC_GITHUB_CLIENT_SECRET` | Client Secret from your GitHub App | `xxxxxxxxxxxxxxxxxxxxxxxx` |
-| `PUBLIC_KEYSTATIC_GITHUB_APP_SLUG` | URL slug of your GitHub App | `eim-lab-cms` |
-| `KEYSTATIC_SECRET` | Secret key used to sign session cookies | `random_long_secret_string` |
+| `PUBLIC_SITE_URL` | Canonical origin Astro uses for `site` (canonical and Open Graph URLs) | `https://eimlab.org` |
+| `KEYSTATIC_SECRET` | Signs Keystatic Cloud sessions; minimum 32 characters | Worker runtime secret |
+
+> [!NOTE]
+> `KEYSTATIC_GITHUB_CLIENT_ID`, `KEYSTATIC_GITHUB_CLIENT_SECRET`, and `PUBLIC_KEYSTATIC_GITHUB_APP_SLUG` were used by the previous GitHub storage mode and are no longer needed.
 
 ---
 
 ## 4. Failover Deployment: Vercel Backup
 
-Vercel serves as an automated parallel build target and failover backup if Cloudflare Pages experiences service degradation.
+Vercel serves as an automated parallel build target and failover backup if Cloudflare Workers experiences service degradation. It deploys the prerendered site from `dist/client`; the Keystatic admin (`/keystatic`, `/api/keystatic/*`) is Worker-only and is not available on the backup.
 
 ### 4.1 Configuring Vercel Project
 
 1. Import your GitHub repository to [Vercel](https://vercel.com/).
-2. Framework Preset: Select **Astro** (Output directory: `dist/`).
-3. Add Environment Variables listed in Section 3.3.
+2. Framework Preset: Select **Astro**. GitHub Actions deploys prebuilt output (`dist/client`), so Vercel's own build and output settings are not used.
+3. Add the build-time environment variables listed in Section 3.3.
 
 ### 4.2 Preventing Duplicate Deployments (Vercel Ignored Build Step)
 
@@ -213,7 +201,7 @@ Because Vercel automatically triggers builds on git pushes by default, you must 
 
 ## 5. CI/CD Pipeline & Operational Procedures
 
-The repository's workflow ([`.github/workflows/ci-cd.yml`](file:///.github/workflows/ci-cd.yml)) is a thin caller for the organization-wide [Shared-CICD](https://github.com/LABEIM/Shared-CICD) reusable pipeline (`deploy-app.yml@v1`). Quality gates, build, deployment retry logic, preview comments, and Lighthouse auditing all live in that shared workflow; this repository only supplies its inputs and secrets.
+The repository's workflow ([`.github/workflows/ci-cd.yml`](file:///.github/workflows/ci-cd.yml)) is a thin caller for the organization-wide [Shared-CICD](https://github.com/LABEIM/Shared-CICD) reusable pipeline (`deploy-app.yml@v2`). Quality gates, build, deployment retry logic, preview comments, and Lighthouse auditing all live in that shared workflow; this repository only supplies its inputs and secrets.
 
 ### 5.1 Repository Secrets & Variables
 
@@ -226,9 +214,10 @@ In GitHub go to **Settings** > **Secrets and variables** > **Actions**.
 - `VERCEL_TOKEN`: Vercel Personal Access Token ([Vercel Account Settings > Tokens](https://vercel.com/account/tokens)).
 - `PUBLIC_GOOGLE_SHEET_SCRIPT_URL`: Google Apps Script Web App URL.
 - `PUBLIC_RECRUITMENT_SECRET`: Passphrase for form signature verification.
-- `PUBLIC_KEYSTATIC_GITHUB_APP_SLUG`: `eim-lab-cms`
 
 Any inherited secret whose name starts with `PUBLIC_` is exported to the build environment by the shared workflow, so Vite/Astro can inline it into the static output.
+
+`KEYSTATIC_SECRET` is not a GitHub secret: set it on the Worker itself (Section 3.1).
 
 **Variables:**
 
@@ -237,7 +226,7 @@ Any inherited secret whose name starts with `PUBLIC_` is exported to the build e
 
 The Vercel backup deployment is enabled automatically when both variables are present. They must be **variables**, not secrets, because reusable-workflow `with:` inputs cannot read the `secrets` context.
 
-> **Note:** The Cloudflare Pages project name (`lab-eim`) is set as the `cloudflare_project_name` input in `ci-cd.yml`. Change it there if the Pages project is renamed.
+> **Note:** The Cloudflare Worker name (`lab-eim`) is set as the `cloudflare_project_name` input in `ci-cd.yml`. Change it there if the Worker is renamed.
 
 ### 5.2 Pipeline Stages (`ci-cd.yml`)
 
@@ -267,10 +256,10 @@ The Vercel backup deployment is enabled automatically when both variables are pr
               └─────────────────────┘     └───────────────────┘
 ```
 
-1. **`validate-and-build`**: Installs dependencies with `pnpm install --frozen-lockfile`, exports inherited `PUBLIC_*` secrets to the build environment, runs `pnpm exec astro check` and `pnpm run build`, and uploads the compiled `dist/` artifact. The built output includes `dist/_worker.js` and `dist/_routes.json`, so Cloudflare Pages serves `/keystatic` and `/api/keystatic/*` through the worker.
-2. **`deploy-cloudflare` & `deploy-vercel`**: Deploys the `dist/` artifact to Cloudflare Pages (Primary) and, when the Vercel variables are configured, Vercel (Backup) **in parallel** with **retry logic** (3 attempts, exponential backoff). `deploy-cloudflare` resolves the canonical Production URL (`https://lab-eim.pages.dev`) on `main` and branch alias URLs (`https://<branch>.lab-eim.pages.dev`) on feature branches. Both jobs register GitHub Deployment environments for deploy tracking.
+1. **`validate-and-build`**: Installs dependencies with `pnpm install --frozen-lockfile`, exports inherited `PUBLIC_*` secrets to the build environment, runs `pnpm exec astro check` and `pnpm run build`, and uploads the compiled artifact. The build emits prerendered pages in `dist/client/` and the Worker (`dist/server/entry.mjs` plus the adapter-generated `dist/server/wrangler.json`) in `dist/server/`. With `cloudflare_mode: 'ssr'`, the deploy job uploads the Worker and its assets, so `/keystatic` and `/api/keystatic/*` run in the Worker.
+2. **`deploy-cloudflare` & `deploy-vercel`**: Deploys the Worker plus assets to Cloudflare Workers (Primary) and, when the Vercel variables are configured, the prerendered `dist/client` output to Vercel (Backup) **in parallel** with **retry logic** (3 attempts, exponential backoff). `deploy-cloudflare` resolves the canonical Production URL (`https://lab-eim.<subdomain>.workers.dev`) on `main` and branch preview URLs (`https://<branch>-lab-eim.<subdomain>.workers.dev`) on pull requests. Both jobs register GitHub Deployment environments for deploy tracking.
 3. **`comment-pr` (Post PR Preview Comment)**: Posts or updates a formatted table with the live Cloudflare and Vercel preview deployment URLs, commit SHA, and workflow run link on Pull Requests.
-4. **`lighthouse`**: Audits the routes listed in `lighthouse_routes` with **3 runs** each (representative median score), resolves the live Cloudflare URL first (or the static build as a fallback), and appends parsed scores to `$GITHUB_STEP_SUMMARY` and the PR preview comment. On **Pull Requests**, a failing Lighthouse score marks the PR check failed. On **push to `main`**, it serves as post-deploy monitoring. Score thresholds:
+4. **`lighthouse`**: Audits the routes listed in `lighthouse_routes` with **3 runs** each (representative median score), resolves the live Cloudflare URL first (the static fallback only applies to static-mode deploys; with `cloudflare_mode: 'ssr'` the live Worker URL is required), and appends parsed scores to `$GITHUB_STEP_SUMMARY` and the PR preview comment. On **Pull Requests**, a failing Lighthouse score marks the PR check failed. On **push to `main`**, it serves as post-deploy monitoring. Score thresholds:
    - Performance: ≥ 80% (warn only)
    - Accessibility: ≥ 90% (error — blocks PR merge)
    - Best Practices: ≥ 90% (error — blocks PR merge)
@@ -278,11 +267,11 @@ The Vercel backup deployment is enabled automatically when both variables are pr
 
 ### 5.3 Pipeline Security & Reliability Features
 
-- **Shared Workflow Pinning**: This repository pins the Shared-CICD reusable workflow to the floating `v1` major tag. Action SHA pinning and dependency updates are maintained inside Shared-CICD.
+- **Shared Workflow Pinning**: This repository pins the Shared-CICD reusable workflow to the floating `v2` major tag. Action SHA pinning and dependency updates are maintained inside Shared-CICD.
 - **Principle of Least Privilege**: The caller grants only `contents: read`, `pull-requests: write`, and `deployments: write`; the shared workflow cannot exceed those permissions.
 - **Scoped Credentials**: `secrets: inherit` passes the repository secrets into the shared workflow. Only inherited `PUBLIC_*` secrets are exported to the build environment; deployment tokens stay scoped to the deploy steps.
 - **Path Filtering (`paths-ignore`)**: Push events to `main` ignore root documentation updates (`README.md`, `DEPLOYMENT.md`, etc.), saving CI runner minutes while preserving full verification for content (`src/content/`) and source code. PR events always run full verification.
-- **Centralized pnpm settings**: `pnpm-workspace.yaml` carries the `@emnapi/runtime` override (peer-resolution workaround for `@napi-rs/wasm-runtime`) and the `allowBuilds` list for esbuild/workerd install scripts.
+- **Centralized pnpm settings**: `pnpm-workspace.yaml` carries the `@emnapi/runtime`, `path-to-regexp`, `miniflare>undici`, and `miniflare>sharp` overrides plus the `allowBuilds` list for esbuild/workerd install scripts.
 - **Job Timeouts & Retries**: The shared workflow applies explicit job timeouts (5–15 minutes) and retries Cloudflare/Vercel deployments up to 3 times with exponential backoff (10s → 20s → 40s).
 - **Concurrency Control**: Duplicate runs on the same branch are automatically cancelled.
 - **Artifact Integrity**: The shared workflow generates a SHA256 hash for the build artifact before deployment.
@@ -291,14 +280,14 @@ The Vercel backup deployment is enabled automatically when both variables are pr
 
 To manually deploy from GitHub Actions:
 1. Go to GitHub Actions tab > **CI/CD Pipeline** > **Run workflow**.
-2. Choose the branch and run. The workflow deploys to Cloudflare Pages, plus Vercel when `VERCEL_PROJECT_ID` and `VERCEL_ORG_ID` are configured as repository variables. There is no per-run target selector; enable or disable Vercel by adding or removing those variables.
+2. Choose the branch and run. The workflow deploys to Cloudflare Workers, plus Vercel when `VERCEL_PROJECT_ID` and `VERCEL_ORG_ID` are configured as repository variables. There is no per-run target selector; enable or disable Vercel by adding or removing those variables.
 
 ### 5.5 Emergency Manual Failover Procedures
 
-If Cloudflare Pages experiences an outage:
+If Cloudflare Workers experiences an outage:
 
 - **Option A (GitHub Actions)**: Ensure `VERCEL_PROJECT_ID` and `VERCEL_ORG_ID` are set as repository variables, then run the **CI/CD Pipeline** workflow. Vercel deploys in parallel with Cloudflare.
-- **Option B (DNS Switch)**: In Cloudflare DNS management, update your main domain (`eim-lab.org`) CNAME target from `lab-eim.pages.dev` to `cname.vercel-dns.com` (or Vercel CNAME IP).
+- **Option B (DNS Switch)**: In Cloudflare DNS management, update your main domain (`eim-lab.org`) CNAME target from the Worker hostname to `cname.vercel-dns.com` (or the Vercel CNAME IP).
 
 ---
 
@@ -327,11 +316,11 @@ Triggered via `pull_request_target` (runs in base branch context with secret acc
 
 ### 6.3 CodeQL Security Analysis ([`.github/workflows/codeql.yml`](file:///.github/workflows/codeql.yml))
 
-Delegates to `LABEIM/Shared-CICD/.github/workflows/codeql-scan.yml@v1`. Runs automated static application security testing (SAST) for JavaScript/TypeScript on every push to `main`, on PRs, and weekly (Monday 04:30 UTC).
+Delegates to `LABEIM/Shared-CICD/.github/workflows/codeql-scan.yml@v2`. Runs automated static application security testing (SAST) for JavaScript/TypeScript on every push to `main`, on PRs, and weekly (Monday 04:30 UTC).
 
 ### 6.4 Dependency Review ([`.github/workflows/dependency-review.yml`](file:///.github/workflows/dependency-review.yml))
 
-Delegates to `LABEIM/Shared-CICD/.github/workflows/dependency-review.yml@v1`. Scans pull requests for newly introduced vulnerable dependencies or invalid licenses before code is merged into `main`. Fails on vulnerabilities with `high` or `critical` severity.
+Delegates to `LABEIM/Shared-CICD/.github/workflows/dependency-review.yml@v2`. Scans pull requests for newly introduced vulnerable dependencies or invalid licenses before code is merged into `main`. Fails on vulnerabilities with `high` or `critical` severity.
 
 > **Requirement**: Requires **Dependency graph** enabled in GitHub repository settings (**Settings** > **Advanced Security** / **Code security and analysis**).
 

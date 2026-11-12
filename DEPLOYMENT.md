@@ -148,10 +148,8 @@ Keystatic CMS (`/keystatic`) is a git-based admin UI for managing content. Produ
 1. Sign in at [keystatic.cloud](https://keystatic.cloud) with GitHub.
 2. Create a project connected to `LABEIM/LAB-EIM` and install the Keystatic GitHub App on the repository.
 3. Copy the project slug (`<team>/<project>`); this repository uses `eimlab/lab-eim`, set in `keystatic.config.ts` as `cloud.project`.
-4. Set `KEYSTATIC_SECRET` (minimum 32 characters) as a Worker runtime secret:
-   `pnpm exec wrangler secret put KEYSTATIC_SECRET`, or Dashboard > Worker (`lab-eim`) > **Settings** > **Variables and Secrets**.
 
-Development (`pnpm run dev`) keeps using local storage; no cloud credentials are needed locally. `astro dev` runs on Node (the Cloudflare adapter is applied only to builds) because Keystatic's local storage needs filesystem access.
+Keystatic Cloud needs no environment variables or Worker secrets. Development (`pnpm run dev`) keeps using local storage; no cloud credentials are needed locally. `astro dev` runs on Node (the Cloudflare adapter is applied only to builds) because Keystatic's local storage needs filesystem access.
 
 ### 3.2 Worker Compatibility (`nodejs_compat`)
 
@@ -159,17 +157,16 @@ Keystatic API routes require Node.js compatibility. `wrangler.json` sets `nodejs
 
 ### 3.3 Environment Variables Reference
 
-Build-time `PUBLIC_*` values can come from GitHub secrets or variables; a variable wins over a same-named secret, and an empty variable does not override a non-empty secret. `KEYSTATIC_SECRET` is a Worker runtime secret.
+Build-time `PUBLIC_*` values can come from GitHub secrets or variables. Since Shared-CICD v2.3.0, a name defined in both with **different values fails the build** instead of silently picking one; an empty variable does not override a non-empty secret. Keystatic Cloud needs no runtime variables.
 
 | Variable Name | Description | Example / Required Target |
 | :--- | :--- | :--- |
 | `PUBLIC_GOOGLE_SHEET_SCRIPT_URL` | Web App deployment URL for Google Apps Script endpoint | `https://script.google.com/macros/s/.../exec` |
 | `PUBLIC_RECRUITMENT_SECRET` | Passphrase matching `SECRET_KEY` in Apps Script Properties | `your_secret_passphrase_here` |
 | `PUBLIC_SITE_URL` | Canonical origin Astro uses for `site` (canonical and Open Graph URLs) | `https://eimlab.org` |
-| `KEYSTATIC_SECRET` | Signs Keystatic Cloud sessions; minimum 32 characters | Worker runtime secret |
 
 > [!NOTE]
-> `KEYSTATIC_GITHUB_CLIENT_ID`, `KEYSTATIC_GITHUB_CLIENT_SECRET`, and `PUBLIC_KEYSTATIC_GITHUB_APP_SLUG` were used by the previous GitHub storage mode and are no longer needed.
+> `KEYSTATIC_GITHUB_CLIENT_ID`, `KEYSTATIC_GITHUB_CLIENT_SECRET`, `PUBLIC_KEYSTATIC_GITHUB_APP_SLUG`, and `KEYSTATIC_SECRET` were used by the previous GitHub storage mode. Cloud mode needs none of them.
 
 ---
 
@@ -216,15 +213,15 @@ In GitHub go to **Settings** > **Secrets and variables** > **Actions**.
 **Variables** (identifiers and public build config):
 
 - `PUBLIC_GOOGLE_SHEET_SCRIPT_URL`, `PUBLIC_RECRUITMENT_SECRET`, `PUBLIC_SITE_URL`: all three are public (the endpoint URL and token ship in the HTML), so variables are enough.
-- A `PUBLIC_*` variable wins over a same-named secret, and an empty variable does not override a non-empty secret. Variables are **not** masked in Actions logs, so never store a non-public value under a `PUBLIC_*` name. Never keep both a variable and a secret for the same `PUBLIC_*` name; delete the stale one.
+- A `PUBLIC_*` name defined in both a secret and a variable with different values fails the build with the conflicting names; an empty variable does not override a non-empty secret. Variables are **not** masked in Actions logs, so never store a non-public value under a `PUBLIC_*` name.
 - `CLOUDFLARE_ACCOUNT_ID`: passed through the `cloudflare_account_id` input; the secret is used when the variable is empty.
 - `VERCEL_ORG_ID` / `VERCEL_PROJECT_ID`: found in `.vercel/project.json` or the Vercel dashboard. Required as **variables**, not secrets, because reusable-workflow `with:` inputs cannot read the `secrets` context.
 
-`KEYSTATIC_SECRET` is neither: it is a Worker runtime secret (Section 3.1).
+Keystatic Cloud needs no Worker runtime secrets, so there is nothing to set on the Worker itself (Section 3.1).
 
 The Vercel backup deployment is enabled automatically when both Vercel variables are present.
 
-> **Note:** The Cloudflare Worker name (`lab-eim`) is set as the `cloudflare_project_name` input in `ci-cd.yml`. Change it there if the Worker is renamed.
+> **Note:** The Cloudflare Worker name (`lab-eim`) is set as the `cloudflare_project_name` input in `ci-cd.yml`. Change it there if the Worker is renamed. `production_branch: 'main'` is what marks a run as a production deploy; since Shared-CICD v2.3.0 it is required, and any other branch, tag, or release deploys to a preview environment.
 
 ### 5.2 Pipeline Stages (`ci-cd.yml`)
 

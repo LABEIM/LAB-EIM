@@ -15,7 +15,7 @@ export default defineConfig({
         : 'http://localhost:4321',
   // The Cloudflare adapter runs dev in workerd, where Keystatic's local storage
   // cannot read the filesystem. Keep Node for dev; Workers for builds.
-  adapter: process.env.NODE_ENV === 'development' ? undefined : cloudflare({
+  adapter: process.argv.includes('dev') ? undefined : cloudflare({
     imageService: 'compile',
     // Prerendering in workerd hangs here on miniflare's Request.cf fetch.
     prerenderEnvironment: 'node',

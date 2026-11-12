@@ -107,7 +107,7 @@ Content entries marked with `audit: true` (e.g. `src/content/news/audit-benchmar
 **Zero Manual Worker Creation Required**:
 The Shared-CICD `deploy-cloudflare` action (`cloudflare_mode: 'ssr'`) creates the Worker (`lab-eim`) on its first deploy using `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID`. `wrangler.json` supplies the Worker name and compatibility flags; the adapter generates `main` and `assets` into `dist/server/wrangler.json`.
 
-The account's `workers.dev` subdomain must be registered: Dashboard > **Workers & Pages** > **Your subdomain**. Direct uploads always expose `workers_dev` and preview URLs.
+The account's `workers.dev` subdomain must be registered: Dashboard > **Workers & Pages** > **Your subdomain**. Direct uploads always expose `workers_dev` and preview URLs. Each deployment version also gets a public preview URL (`preview_urls: true`); treat those URLs as public.
 
 ### 2.2 Obtaining Cloudflare Credentials
 
@@ -211,11 +211,13 @@ In GitHub go to **Settings** > **Secrets and variables** > **Actions**.
 
 - `CLOUDFLARE_API_TOKEN`: Created in Section 2.2B.
 - `VERCEL_TOKEN`: Vercel Personal Access Token ([Vercel Account Settings > Tokens](https://vercel.com/account/tokens)).
+- `PUBLIC_GOOGLE_SHEET_SCRIPT_URL`: Google Apps Script endpoint. It ships in the HTML, but keep it a secret so no same-named variable can override it silently.
 - `CLOUDFLARE_ACCOUNT_ID`: optional fallback; prefer the variable below.
 
 **Variables** (identifiers and public build config):
 
-- `PUBLIC_GOOGLE_SHEET_SCRIPT_URL`, `PUBLIC_RECRUITMENT_SECRET`, `PUBLIC_SITE_URL`: exported to the build environment. These values ship in the static output anyway, so a variable is enough. A variable wins over a same-named secret; an empty variable does not override a non-empty secret.
+- `PUBLIC_RECRUITMENT_SECRET`, `PUBLIC_SITE_URL`: exported to the build environment. Both values are public (the token ships in the HTML), so a variable is enough.
+- A `PUBLIC_*` variable wins over a same-named secret, and an empty variable does not override a non-empty secret. Variables are **not** masked in Actions logs, so never store a non-public value under a `PUBLIC_*` name.
 - `CLOUDFLARE_ACCOUNT_ID`: passed through the `cloudflare_account_id` input; the secret is used when the variable is empty.
 - `VERCEL_ORG_ID` / `VERCEL_PROJECT_ID`: found in `.vercel/project.json` or the Vercel dashboard. Required as **variables**, not secrets, because reusable-workflow `with:` inputs cannot read the `secrets` context.
 
@@ -231,7 +233,7 @@ The Vercel backup deployment is enabled automatically when both Vercel variables
 ┌─────────────────────────────────────────────────────────────────┐
 │ validate-and-build (15 min timeout, Shared-CICD)                │
 │ ├─ pnpm install --frozen-lockfile (cached)                      │
-│ ├─ Export PUBLIC_* secrets to the build environment             │
+│ ├─ Export PUBLIC_* values (variable > secret)                    │
 │ ├─ pnpm exec astro check                                        │
 │ ├─ pnpm run build + SHA256 hash                                 │
 │ └─ Upload dist/ artifact                                        │

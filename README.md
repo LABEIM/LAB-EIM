@@ -39,6 +39,7 @@ For detailed instructions on local development, deployment, backend integrations
 2. **[Brand & Email Assets Hub](ASSETS.md)**: Public CDN endpoints, email-optimized logos, dark/light banners, and social icons for email templates.
 3. **[Registration Setup & Operations Guide](REGISTRATION_SETUP.md)**: Google Apps Script (`code.gs`) backend setup, Google Drive permissions, recruitment pipeline stages, and candidate selection announcement management.
 4. **[Data & Content Configuration Guide](src/data/CONFIG_GUIDE.md)**: Customizing laboratory divisions, staff member profiles, site metadata, and Keystatic CMS singletons.
+5. **[Design Token Reference](docs/DESIGN_TOKENS.md)**: Token layers, naming rules, preferred spacing/type subsets, the full token index, and the starter recipe for a new lab site.
 
 ---
 

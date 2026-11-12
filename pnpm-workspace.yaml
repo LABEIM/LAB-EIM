@@ -6,10 +6,9 @@ overrides:
   '@emnapi/runtime': 1.11.3
   # GHSA-9wv6-86v2-598j: @vercel/routing-utils accepts ^6, so 6.3.0 is safe.
   path-to-regexp: 6.3.0
-  # The adapter 12 line ships wrangler 4.59.2 → miniflare 4.20260114.0, whose
-  # pinned undici/sharp/zod have open advisories (zod 3 has no patched release).
-  # Miniflare 4.20260730.0 drops zod entirely; pin patched undici/sharp below.
-  'wrangler>miniflare': 4.20260730.0
+  # The adapter 14 line ships wrangler 4.160.0 → miniflare 5.20261110.0-beta,
+  # which no longer depends on zod. Keep undici/sharp pinned to patched versions
+  # for every miniflare copy in the tree.
   'miniflare>undici': 7.30.2
   'miniflare>sharp': 0.35.5
 
@@ -20,3 +19,7 @@ allowBuilds:
   esbuild: true
   sharp: false
   workerd: true
+
+minimumReleaseAgeExclude:
+  - '@astrojs/cloudflare@14.4.7'
+  - '@astrojs/internal-helpers@0.13.2'

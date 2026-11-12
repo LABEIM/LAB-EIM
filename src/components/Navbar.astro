@@ -132,6 +132,14 @@ const isActive = (rawHref: string) => {
         return isNaN(ms) ? 0 : ms;
       }
 
+      // data-* hrefs are markup, not a trust boundary: only allow same-origin
+      // absolute paths so a `javascript:` value can never reach setAttribute.
+      // Keep in sync with internalHref() in src/utils/safe-link.ts.
+      function internalHref(value, fallback) {
+        var href = (value || '').trim();
+        return /^\/(?![/\\\t\n\r])/.test(href) ? href : fallback;
+      }
+
       var now = Date.now();
       var openMs = parseDate(openStr);
       var deadlineMs = parseDate(deadlineStr);
@@ -150,8 +158,8 @@ const isActive = (rawHref: string) => {
 
       var joinLabel = nav.getAttribute('data-join-label') || 'Join Us';
       var contactLabel = nav.getAttribute('data-contact-label') || 'Kontak';
-      var joinHref = nav.getAttribute('data-join-href') || '/registration';
-      var contactHref = nav.getAttribute('data-contact-href') || '/contact';
+      var joinHref = internalHref(nav.getAttribute('data-join-href'), '/registration');
+      var contactHref = internalHref(nav.getAttribute('data-contact-href'), '/contact');
 
       var span = cta.querySelector('span');
       if (isActive) {

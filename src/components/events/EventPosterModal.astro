@@ -129,6 +129,7 @@ const preparedEvents = upcomingEvents.map((event) => {
 )}
 
 <script>
+  import { internalHref } from '../../utils/safe-link';
   // Event details payload injected from SSR
   const eventDataElement = document.getElementById('eventPosterModal');
 
@@ -219,9 +220,7 @@ const preparedEvents = upcomingEvents.map((event) => {
       // Update metadata in footer/header if target image exists
       const targetImg = images[currentIndex];
       if (targetImg) {
-        const detailUrl = targetImg.dataset.detailUrl || '#';
-        
-        if (ctaBtn) ctaBtn.href = detailUrl;
+        if (ctaBtn) ctaBtn.href = internalHref(targetImg.dataset.detailUrl, '#');
       }
     }
 
@@ -358,7 +357,7 @@ const preparedEvents = upcomingEvents.map((event) => {
       // Handle image click navigation
       img.addEventListener('click', () => {
         if (!dragThreshold) {
-          const detailUrl = img.dataset.detailUrl;
+          const detailUrl = internalHref(img.dataset.detailUrl, '');
           if (detailUrl) {
             window.location.href = detailUrl;
           }

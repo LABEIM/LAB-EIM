@@ -3,8 +3,8 @@
 .global-announcement-bar {
   position: relative;
   width: 100%;
-  z-index: 1000;
-  color: var(--text-color, #f8fafc);
+  z-index: var(--z-header);
+  color: var(--text-color, var(--neutral-50));
   font-family: inherit;
   font-size: 0.875rem;
   line-height: 1.4;
@@ -22,78 +22,78 @@
 
 /* 1. Recruitment Theme (Purple & Gold) */
 .global-announcement-bar.theme-recruitment {
-  background: linear-gradient(90deg, #1e1b4b 0%, #31103f 50%, #1e1b4b 100%);
-  border-bottom-color: rgba(234, 179, 8, 0.3);
+  background: linear-gradient(90deg, var(--color-campaign-bar) 0%, var(--color-campaign-bar-mid) 50%, var(--color-campaign-bar) 100%);
+  border-bottom-color: rgba(var(--color-campaign-rgb), 0.3);
 }
 .global-announcement-bar.theme-recruitment .announcement-badge {
-  background: linear-gradient(135deg, #eab308 0%, #ca8a04 100%);
-  color: #0f172a;
+  background: linear-gradient(135deg, var(--color-campaign-base) 0%, var(--color-campaign-strong) 100%);
+  color: var(--color-campaign-ink);
 }
 .global-announcement-bar.theme-recruitment .announcement-cta {
-  background: linear-gradient(135deg, #eab308 0%, #ca8a04 100%);
-  color: #0f172a;
-  box-shadow: 0 0 12px rgba(234, 179, 8, 0.35);
+  background: linear-gradient(135deg, var(--color-campaign-base) 0%, var(--color-campaign-strong) 100%);
+  color: var(--color-campaign-ink);
+  box-shadow: 0 0 12px rgba(var(--color-campaign-rgb), 0.35);
 }
 .global-announcement-bar.theme-recruitment .announcement-cta:hover {
-  background: linear-gradient(135deg, #fde047 0%, #eab308 100%);
-  box-shadow: 0 0 18px rgba(234, 179, 8, 0.55);
+  background: linear-gradient(135deg, var(--color-campaign-light) 0%, var(--color-campaign-base) 100%);
+  box-shadow: 0 0 18px rgba(var(--color-campaign-rgb), 0.55);
 }
 
 /* 2. Maintenance / Warning Theme (Amber & Crimson) */
 .global-announcement-bar.theme-maintenance {
-  background: linear-gradient(90deg, #450a0a 0%, #7f1d1d 50%, #450a0a 100%);
-  border-bottom-color: rgba(239, 68, 68, 0.4);
+  background: linear-gradient(90deg, var(--color-danger-bar) 0%, var(--color-danger-bar-mid) 50%, var(--color-danger-bar) 100%);
+  border-bottom-color: rgba(var(--color-danger-rgb), 0.4);
 }
 .global-announcement-bar.theme-maintenance .announcement-badge {
-  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
-  color: #ffffff;
+  background: linear-gradient(135deg, var(--color-danger-base) 0%, var(--color-danger-strong) 100%);
+  color: var(--white);
 }
 .global-announcement-bar.theme-maintenance .announcement-cta {
-  background: #ef4444;
-  color: #ffffff;
-  box-shadow: 0 0 12px rgba(239, 68, 68, 0.35);
+  background: var(--color-danger-base);
+  color: var(--white);
+  box-shadow: 0 0 12px rgba(var(--color-danger-rgb), 0.35);
 }
 .global-announcement-bar.theme-maintenance .announcement-cta:hover {
-  background: #f87171;
-  box-shadow: 0 0 18px rgba(239, 68, 68, 0.55);
+  background: var(--color-danger-light);
+  box-shadow: 0 0 18px rgba(var(--color-danger-rgb), 0.55);
 }
 
 /* 3. General Info Theme (Cyan & Deep Indigo) */
 .global-announcement-bar.theme-info {
-  background: linear-gradient(90deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
-  border-bottom-color: rgba(6, 182, 212, 0.3);
+  background: linear-gradient(90deg, var(--color-info-bar) 0%, var(--color-info-bar-mid) 50%, var(--color-info-bar) 100%);
+  border-bottom-color: rgba(var(--color-info-rgb), 0.3);
 }
 .global-announcement-bar.theme-info .announcement-badge {
-  background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%);
-  color: #0f172a;
+  background: linear-gradient(135deg, var(--color-info-base) 0%, var(--color-info-strong) 100%);
+  color: var(--color-info-ink);
 }
 .global-announcement-bar.theme-info .announcement-cta {
-  background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%);
-  color: #0f172a;
-  box-shadow: 0 0 12px rgba(6, 182, 212, 0.35);
+  background: linear-gradient(135deg, var(--color-info-base) 0%, var(--color-info-strong) 100%);
+  color: var(--color-info-ink);
+  box-shadow: 0 0 12px rgba(var(--color-info-rgb), 0.35);
 }
 .global-announcement-bar.theme-info .announcement-cta:hover {
-  background: linear-gradient(135deg, #22d3ee 0%, #06b6d4 100%);
-  box-shadow: 0 0 18px rgba(6, 182, 212, 0.55);
+  background: linear-gradient(135deg, var(--color-info-light) 0%, var(--color-info-base) 100%);
+  box-shadow: 0 0 18px rgba(var(--color-info-rgb), 0.55);
 }
 
 /* 4. Success / Results Theme (Emerald Green) */
 .global-announcement-bar.theme-success {
-  background: linear-gradient(90deg, #064e3b 0%, #065f46 50%, #064e3b 100%);
-  border-bottom-color: rgba(16, 185, 129, 0.3);
+  background: linear-gradient(90deg, var(--color-success-bar) 0%, var(--color-success-bar-mid) 50%, var(--color-success-bar) 100%);
+  border-bottom-color: rgba(var(--color-success-rgb), 0.3);
 }
 .global-announcement-bar.theme-success .announcement-badge {
-  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-  color: #064e3b;
+  background: linear-gradient(135deg, var(--color-success-base) 0%, var(--color-success-strong) 100%);
+  color: var(--color-success-ink);
 }
 .global-announcement-bar.theme-success .announcement-cta {
-  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-  color: #064e3b;
-  box-shadow: 0 0 12px rgba(16, 185, 129, 0.35);
+  background: linear-gradient(135deg, var(--color-success-base) 0%, var(--color-success-strong) 100%);
+  color: var(--color-success-ink);
+  box-shadow: 0 0 12px rgba(var(--color-success-rgb), 0.35);
 }
 .global-announcement-bar.theme-success .announcement-cta:hover {
-  background: linear-gradient(135deg, #34d399 0%, #10b981 100%);
-  box-shadow: 0 0 18px rgba(16, 185, 129, 0.55);
+  background: linear-gradient(135deg, var(--color-success-light) 0%, var(--color-success-base) 100%);
+  box-shadow: 0 0 18px rgba(var(--color-success-rgb), 0.55);
 }
 
 /* Inner Layout Container */
@@ -135,7 +135,7 @@
 
 .announcement-text {
   font-weight: 500;
-  color: #f1f5f9;
+  color: var(--neutral-100);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -173,7 +173,7 @@
 .announcement-close-btn {
   background: rgba(255, 255, 255, 0.15);
   border: 1px solid rgba(255, 255, 255, 0.25);
-  color: #ffffff;
+  color: var(--white);
   cursor: pointer;
   width: 28px;
   height: 28px;
@@ -190,7 +190,7 @@
 }
 
 .announcement-close-btn:hover {
-  color: #ffffff;
+  color: var(--white);
   background-color: rgba(255, 255, 255, 0.35);
   border-color: rgba(255, 255, 255, 0.6);
   transform: scale(1.1);
@@ -212,7 +212,7 @@
     line-clamp: 2;
     -webkit-box-orient: vertical;
   }
-  
+
   .announcement-cta {
     padding: 0.25rem 0.65rem;
     font-size: 0.75rem;

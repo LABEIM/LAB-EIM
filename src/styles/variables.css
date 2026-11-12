@@ -43,15 +43,18 @@
     /* Neutral ramp — grays currently inlined by announcement/forms/toolbars. */
     --white: #ffffff;
     --black: #000000;
+    --black-rgb: 0, 0, 0;
     --neutral-50: #f8fafc;
     --neutral-100: #f1f5f9;
     --neutral-200: #e2e8f0;
     --neutral-300: #cbd5e1;
     --neutral-400: #94a3b8;
+    --neutral-400-rgb: 148, 163, 184;
     --neutral-600: #475569;
     --neutral-700: #334155;
     --neutral-800: #1e293b;
     --neutral-900: #0f172a;
+    --neutral-900-rgb: 15, 23, 42;
 
     /* Status families. -bar/-bar-mid are the banner backgrounds, -base/-strong/-light
        the accents, -ink text on the accent. */
@@ -61,10 +64,22 @@
     --color-danger-bar: #450a0a;
     --color-danger-bar-mid: #7f1d1d;
     --color-danger-ink: var(--white);
+    --color-danger-deep: #b42318;
+    --color-danger-soft: #fdf1f0;
+    --color-danger-line: #f0bdb8;
+    /* Red-300 text on dark surfaces. Exact value; do NOT merge with -light (#f87171). */
+    --color-danger-lighter: #fca5a5;
+
+    /* Warning family (registration banners): -soft/-line are the banner surface,
+       -ink is the banner text itself (not text-on-accent). */
+    --color-warning-soft: #fdf6e7;
+    --color-warning-line: #f0d49a;
+    --color-warning-ink: #92400e;
 
     --color-success-base: #10b981; --color-success-rgb: 16, 185, 129;
     --color-success-strong: #059669;
     --color-success-light: #34d399;
+    --color-success-light-rgb: 52, 211, 153;
     --color-success-bar: #064e3b;
     --color-success-bar-mid: #065f46;
     --color-success-ink: #064e3b;
@@ -83,6 +98,12 @@
     --color-campaign-bar: #1e1b4b;
     --color-campaign-bar-mid: #31103f;
     --color-campaign-ink: var(--neutral-900);
+
+    /* Registration simulator toolbar (dev-only indigo panel). */
+    --color-toolbar-rgb: 99, 102, 241;
+    --color-toolbar-base: #6366f1;
+    --color-toolbar-strong: #4f46e5;
+    --color-toolbar-light: #a5b4fc;
 
     /* Theme Accents (Mapped to Brand Colors) */
     --accent-red: var(--legacy-accent);
@@ -119,6 +140,8 @@
     --eim-brand-bright: #11B4BD;
     --eim-brand-soft: #E2F3F4;
     --eim-black: #050B0D;
+    /* #050B0D as a triplet for rgba() scrims */
+    --eim-black-rgb: 5, 11, 13;
     --eim-font-display: 'Instrument Serif', Georgia, serif;
     --eim-font-body: 'IBM Plex Sans', system-ui, -apple-system, sans-serif;
     --eim-font-mono: 'IBM Plex Mono', ui-monospace, SFMono-Regular, monospace;

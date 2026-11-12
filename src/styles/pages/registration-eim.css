@@ -5,12 +5,12 @@
 /* Modals are teleported to <body> by the registration script, so the
    page-scoped tokens must live on the body to reach them. */
 body.home-skin {
-  --reg-danger: #B42318;
-  --reg-danger-soft: #FDF1F0;
-  --reg-danger-line: #F0BDB8;
-  --reg-warn: #92400E;
-  --reg-warn-soft: #FDF6E7;
-  --reg-warn-line: #F0D49A;
+  --reg-danger: var(--color-danger-deep);
+  --reg-danger-soft: var(--color-danger-soft);
+  --reg-danger-line: var(--color-danger-line);
+  --reg-warn: var(--color-warning-ink);
+  --reg-warn-soft: var(--color-warning-soft);
+  --reg-warn-line: var(--color-warning-line);
 }
 
 /* == Layout == */
@@ -723,7 +723,7 @@ input[type='file'].form-control::file-selector-button:hover {
 
 .registration-page .btn-primary:hover,
 .progress-modal-card .btn-primary:hover {
-  background: color-mix(in srgb, var(--color-brand) 88%, black);
+  background: color-mix(in srgb, var(--color-brand) 88%, var(--black));
   transform: translateY(-1px);
   box-shadow: none;
 }
@@ -1017,7 +1017,7 @@ input[type='file'].form-control::file-selector-button:hover {
   position: fixed;
   right: 1.5rem;
   bottom: 1.5rem;
-  z-index: 99990;
+  z-index: var(--z-toolbar);
   display: flex;
   align-items: center;
   gap: 0.5rem;
@@ -1053,12 +1053,12 @@ input[type='file'].form-control::file-selector-button:hover {
 .progress-modal-overlay {
   position: fixed;
   inset: 0;
-  z-index: 99999;
+  z-index: var(--z-top);
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 1rem;
-  background: rgb(5 11 13 / 0.55);
+  background: rgba(var(--eim-black-rgb), 0.55);
 }
 
 .progress-modal-card {
@@ -1069,7 +1069,7 @@ input[type='file'].form-control::file-selector-button:hover {
   border-radius: var(--radius-media);
   background: var(--color-background);
   color: var(--color-foreground);
-  box-shadow: 0 24px 60px rgb(5 11 13 / 0.25);
+  box-shadow: 0 24px 60px rgba(var(--eim-black-rgb), 0.25);
   animation: reg-modal-in 0.3s var(--ease);
 }
 
@@ -1242,11 +1242,11 @@ input[type='file'].form-control::file-selector-button:hover {
 .btn-modal-confirm {
   border-color: var(--reg-danger);
   background: var(--reg-danger);
-  color: #fff;
+  color: var(--white);
 }
 
 .btn-modal-confirm:hover {
-  background: color-mix(in srgb, var(--reg-danger) 85%, black);
+  background: color-mix(in srgb, var(--reg-danger) 85%, var(--black));
 }
 
 /* == Responsive / motion == */

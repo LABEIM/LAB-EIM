@@ -2,7 +2,7 @@
 
 Official documentation for all visual assets, logos, emblems, banners, and social media icons for the **Enterprise Infrastructure Management (EIM) Research Lab**.
 
-All assets are hosted publicly via the web server / Cloudflare Pages CDN so they can be accessed online by email clients (**Gmail**, **Outlook**, **Apple Mail**, **Yahoo**), web applications, and backend integrations.
+All assets are hosted publicly via the site's Cloudflare CDN so they can be accessed online by email clients (**Gmail**, **Outlook**, **Apple Mail**, **Yahoo**), web applications, and backend integrations.
 
 ---
 

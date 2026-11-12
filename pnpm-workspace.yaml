@@ -21,5 +21,6 @@ allowBuilds:
   workerd: true
 
 minimumReleaseAgeExclude:
+  # Versions installed inside pnpm's release-age cooldown; drop once they age out.
   - '@astrojs/cloudflare@14.4.7'
   - '@astrojs/internal-helpers@0.13.2'

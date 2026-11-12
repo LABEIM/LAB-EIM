@@ -122,10 +122,10 @@ The account's `workers.dev` subdomain must be registered: Dashboard > **Workers 
 3. Scroll to **Custom Token** and click **Get started**.
 4. Set **Token name**: `GitHub Actions - Cloudflare Workers Deploy`.
 5. Under **Permission policies**:
-   - Scope: **Entire Account** (or select your target account).
+   - Scope: the Cloudflare account that owns Worker `lab-eim`.
    - Category **Developer Platform**:
      - **Workers Scripts**: Select `Edit` (grants deploy and preview permissions).
-6. Under **Token expiration**, select **No expiration**.
+6. Under **Token expiration**, set an expiry (for example 90 days) and rotate the GitHub secret before it lapses.
 7. Click **Continue to summary** -> **Create Token**.
 8. Copy the generated secret token string.
 
@@ -133,7 +133,9 @@ The account's `workers.dev` subdomain must be registered: Dashboard > **Workers 
 1. If `eim-lab.org` is still attached to the old Pages project, remove it from that project first.
 2. In **Workers & Pages** > Worker (`lab-eim`) > **Settings** > **Domains & Routes**, add a custom domain.
 3. Enter your main domain (e.g. `eim-lab.org` or `www.eim-lab.org`) and activate DNS routing. The zone must be active on Cloudflare.
-4. Verify that `/keystatic` reaches the Worker. Browser navigations must not be answered by the assets layer; this depends on `assets_navigation_has_no_effect` in `wrangler.json`.
+4. Verify that `/keystatic` loads (see Section 3.2).
+
+> Adding the domain is a dashboard action performed with your Cloudflare login; the CI API token does not need zone (DNS) permissions.
 
 ---
 
@@ -147,7 +149,7 @@ Keystatic CMS (`/keystatic`) is a git-based admin UI for managing content. Produ
 2. Create a project connected to `LABEIM/LAB-EIM` and install the Keystatic GitHub App on the repository.
 3. Copy the project slug (`<team>/<project>`); this repository uses `eimlab/lab-eim`, set in `keystatic.config.ts` as `cloud.project`.
 4. Set `KEYSTATIC_SECRET` (minimum 32 characters) as a Worker runtime secret:
-   `npx wrangler secret put KEYSTATIC_SECRET`, or Dashboard > Worker (`lab-eim`) > **Settings** > **Variables and Secrets**.
+   `pnpm exec wrangler secret put KEYSTATIC_SECRET`, or Dashboard > Worker (`lab-eim`) > **Settings** > **Variables and Secrets**.
 
 Development (`pnpm run dev`) keeps using local storage; no cloud credentials are needed locally.
 
@@ -163,6 +165,7 @@ Build-time values are GitHub secrets (inherited by the pipeline); `KEYSTATIC_SEC
 | :--- | :--- | :--- |
 | `PUBLIC_GOOGLE_SHEET_SCRIPT_URL` | Web App deployment URL for Google Apps Script endpoint | `https://script.google.com/macros/s/.../exec` |
 | `PUBLIC_RECRUITMENT_SECRET` | Passphrase matching `SECRET_KEY` in Apps Script Properties | `your_secret_passphrase_here` |
+| `PUBLIC_SITE_URL` | Canonical origin Astro uses for `site` (canonical and Open Graph URLs) | `https://eimlab.org` |
 | `KEYSTATIC_SECRET` | Signs Keystatic Cloud sessions; minimum 32 characters | Worker runtime secret |
 
 > [!NOTE]
@@ -256,7 +259,7 @@ The Vercel backup deployment is enabled automatically when both variables are pr
 1. **`validate-and-build`**: Installs dependencies with `pnpm install --frozen-lockfile`, exports inherited `PUBLIC_*` secrets to the build environment, runs `pnpm exec astro check` and `pnpm run build`, and uploads the compiled artifact. The build emits prerendered pages in `dist/client/` and the Worker (`dist/server/entry.mjs` plus the adapter-generated `dist/server/wrangler.json`) in `dist/server/`. With `cloudflare_mode: 'ssr'`, the deploy job uploads the Worker and its assets, so `/keystatic` and `/api/keystatic/*` run in the Worker.
 2. **`deploy-cloudflare` & `deploy-vercel`**: Deploys the Worker plus assets to Cloudflare Workers (Primary) and, when the Vercel variables are configured, the prerendered `dist/client` output to Vercel (Backup) **in parallel** with **retry logic** (3 attempts, exponential backoff). `deploy-cloudflare` resolves the canonical Production URL (`https://lab-eim.<subdomain>.workers.dev`) on `main` and branch preview URLs (`https://<branch>-lab-eim.<subdomain>.workers.dev`) on pull requests. Both jobs register GitHub Deployment environments for deploy tracking.
 3. **`comment-pr` (Post PR Preview Comment)**: Posts or updates a formatted table with the live Cloudflare and Vercel preview deployment URLs, commit SHA, and workflow run link on Pull Requests.
-4. **`lighthouse`**: Audits the routes listed in `lighthouse_routes` with **3 runs** each (representative median score), resolves the live Cloudflare URL first (or the static build as a fallback), and appends parsed scores to `$GITHUB_STEP_SUMMARY` and the PR preview comment. On **Pull Requests**, a failing Lighthouse score marks the PR check failed. On **push to `main`**, it serves as post-deploy monitoring. Score thresholds:
+4. **`lighthouse`**: Audits the routes listed in `lighthouse_routes` with **3 runs** each (representative median score), resolves the live Cloudflare URL first (the static fallback only applies to static-mode deploys; with `cloudflare_mode: 'ssr'` the live Worker URL is required), and appends parsed scores to `$GITHUB_STEP_SUMMARY` and the PR preview comment. On **Pull Requests**, a failing Lighthouse score marks the PR check failed. On **push to `main`**, it serves as post-deploy monitoring. Score thresholds:
    - Performance: ≥ 80% (warn only)
    - Accessibility: ≥ 90% (error — blocks PR merge)
    - Best Practices: ≥ 90% (error — blocks PR merge)

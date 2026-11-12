@@ -22,10 +22,10 @@ The EIM Research Lab website is a statically generated, Indonesian-language publ
 
 ### Key Technologies
 
-- **Framework:** [Astro v7.1.6](https://astro.build/) (SSG with `@astrojs/cloudflare` adapter)
-- **CMS:** [Keystatic](https://keystatic.com/) (`@keystatic/astro` v5.0.0, `@keystatic/core` v0.6.0)
-- **UI Components:** React v19.2.8 (`@astrojs/react`)
-- **Styling:** [Tailwind CSS v4.3.3](https://tailwindcss.com/) via `@tailwindcss/vite`, plus modular vanilla CSS
+- **Framework:** [Astro v7.4.7](https://astro.build/) (SSG with `@astrojs/cloudflare` adapter, deployed to Cloudflare Workers)
+- **CMS:** [Keystatic](https://keystatic.com/) (`@keystatic/astro` v5.2.0, `@keystatic/core` v0.6.9, Keystatic Cloud in production)
+- **UI Components:** React v19.3.1 (`@astrojs/react`)
+- **Styling:** [Tailwind CSS v4.3.5](https://tailwindcss.com/) via `@tailwindcss/vite`, plus modular vanilla CSS
 - **Language:** TypeScript v6.0.3
 - **Runtime:** Node.js `>=22.12.0`
 

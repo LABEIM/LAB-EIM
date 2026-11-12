@@ -24,8 +24,8 @@ The EIM Research Lab Website is the official public site of the Enterprise Infra
 - **Backend / API Engine:** None (static site); Google Apps Script handles registration form submissions
 - **Database / Storage:** Markdown content collections (`src/content/`) and JSON data files (`src/data/`); no database
 - **Styling:** Tailwind CSS v4.3.3 with modular vanilla CSS (`src/styles/`)
-- **Authentication:** None (fully public site); Keystatic CMS runs locally or through its GitHub integration
-- **Hosting / Edge Platform:** Cloudflare Pages (primary), Vercel (backup)
+- **Authentication:** None (fully public site); Keystatic CMS runs locally or through Keystatic Cloud
+- **Hosting / Edge Platform:** Cloudflare Workers (primary), Vercel (prerendered static backup)
 - **CI/CD:** GitHub Actions (`.github/workflows/ci-cd.yml`)
 
 ### Architectural Overview

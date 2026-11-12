@@ -41,17 +41,17 @@
     --brand-gray-azure-rgb: 78, 138, 146;
 
     /* Neutral ramp — grays currently inlined by announcement/forms/toolbars. */
-    --color-white: #ffffff;
-    --color-black: #000000;
-    --color-neutral-50: #f8fafc;
-    --color-neutral-100: #f1f5f9;
-    --color-neutral-200: #e2e8f0;
-    --color-neutral-300: #cbd5e1;
-    --color-neutral-400: #94a3b8;
-    --color-neutral-600: #475569;
-    --color-neutral-700: #334155;
-    --color-neutral-800: #1e293b;
-    --color-neutral-900: #0f172a;
+    --white: #ffffff;
+    --black: #000000;
+    --neutral-50: #f8fafc;
+    --neutral-100: #f1f5f9;
+    --neutral-200: #e2e8f0;
+    --neutral-300: #cbd5e1;
+    --neutral-400: #94a3b8;
+    --neutral-600: #475569;
+    --neutral-700: #334155;
+    --neutral-800: #1e293b;
+    --neutral-900: #0f172a;
 
     /* Status families. -bar/-bar-mid are the banner backgrounds, -base/-strong/-light
        the accents, -ink text on the accent. */
@@ -60,7 +60,7 @@
     --color-danger-light: #f87171;
     --color-danger-bar: #450a0a;
     --color-danger-bar-mid: #7f1d1d;
-    --color-danger-ink: var(--color-white);
+    --color-danger-ink: var(--white);
 
     --color-success-base: #10b981; --color-success-rgb: 16, 185, 129;
     --color-success-strong: #059669;
@@ -72,9 +72,9 @@
     --color-info-base: #06b6d4;    --color-info-rgb: 6, 182, 212;
     --color-info-strong: #0891b2;
     --color-info-light: #22d3ee;
-    --color-info-bar: var(--color-neutral-900);
-    --color-info-bar-mid: var(--color-neutral-800);
-    --color-info-ink: var(--color-neutral-900);
+    --color-info-bar: var(--neutral-900);
+    --color-info-bar-mid: var(--neutral-800);
+    --color-info-ink: var(--neutral-900);
 
     /* Campaign (recruitment banner): plum bar, gold accent. Not a generic status. */
     --color-campaign-base: #eab308; --color-campaign-rgb: 234, 179, 8;
@@ -82,7 +82,7 @@
     --color-campaign-light: #fde047;
     --color-campaign-bar: #1e1b4b;
     --color-campaign-bar-mid: #31103f;
-    --color-campaign-ink: var(--color-neutral-900);
+    --color-campaign-ink: var(--neutral-900);
 
     /* Theme Accents (Mapped to Brand Colors) */
     --accent-red: var(--legacy-accent);
@@ -221,9 +221,10 @@ body.has-announcement-banner {
     --space-44: 2.75rem;
     --space-50: 3.125rem;
     --space-60: 3.75rem;
+    --space-80: 5rem;
     --space-100: 6.25rem;
 
-    /* Preferred subset for new code (4px grid): 4, 8, 12, 16, 20, 24, 32, 40 */
+    /* Preferred subset for new code: 12, 14, 16, 18, 20, 24, 32, 40, 48 */
     --text-10: 0.625rem;
     --text-10-4: 0.65rem;
     --text-10-8: 0.675rem;
@@ -254,6 +255,7 @@ body.has-announcement-banner {
     --text-24-8: 1.55rem;
     --text-27-2: 1.7rem;
     --text-28: 1.75rem;
+    --text-28-8: 1.8rem;
     --text-32: 2rem;
     --text-35-2: 2.2rem;
     --text-36: 2.25rem;

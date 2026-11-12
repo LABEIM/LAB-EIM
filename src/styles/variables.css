@@ -40,6 +40,17 @@
     --brand-gray-azure: #4E8A92;
     --brand-gray-azure-rgb: 78, 138, 146;
 
+    /* Exact-value tokens for shared components (no same-valued token existed;
+       do not merge with near matches — each is a measured, distinct color). */
+    --color-brand-deep: #093f47;
+    --color-surface-deep: #091b1e;
+    --color-surface-muted: #f9f9f9;
+    --color-danger-alt: #e53e3e;
+    --color-danger-alt-rgb: 229, 62, 62;
+    --color-ink-deep: #070913;
+    --color-scrim-rgb: 7, 26, 30;
+    --legacy-bg-secondary-rgb: 248, 249, 250;
+
     /* Neutral ramp — grays currently inlined by announcement/forms/toolbars. */
     --white: #ffffff;
     --black: #000000;
@@ -290,7 +301,9 @@ body.has-announcement-banner {
     --z-below: -1;
     --z-base: 0;
     --z-raised: 1;
-    --z-sticky: 10;
+    --z-layer: 10;
+    --z-elevated: 30;
+    --z-nav: 999;
     --z-header: 1000;
     --z-header-popover: 1001;
     --z-header-overlay: 1002;

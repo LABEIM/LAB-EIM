@@ -65,7 +65,7 @@
 
     body {
         font-size: 14px;
-        background-color: #f9f9f9;
+        background-color: var(--color-surface-muted);
     }
 
     /* The container element will fill the screen width */

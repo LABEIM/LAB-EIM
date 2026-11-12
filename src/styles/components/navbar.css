@@ -4,7 +4,7 @@
     top: 0;
     left: 0;
     width: 100%;
-    z-index: 1000;
+    z-index: var(--z-header);
     display: flex;
     flex-direction: column;
 }
@@ -12,7 +12,7 @@
 .navbar {
     position: relative;
     width: 100%;
-    z-index: 999;
+    z-index: var(--z-nav);
     padding: 14px 0;
     background-color: rgba(255, 255, 255, 0.92);
     border-bottom: 1px solid transparent;
@@ -220,7 +220,7 @@
     border: 0;
     border-radius: 999px;
     background: var(--brand-dark-azure);
-    color: #ffffff;
+    color: var(--white);
     font-family: var(--font-ui);
     font-weight: 500;
     font-size: 0.9rem;
@@ -237,8 +237,8 @@
 
 .nav-links a.nav-cta:hover,
 .nav-links a.nav-cta.active {
-    background: #093f47;
-    color: #ffffff;
+    background: var(--color-brand-deep);
+    color: var(--white);
     transform: translateY(-1px);
 }
 
@@ -250,13 +250,13 @@ html.nav-open {
 @media (max-width: 768px) {
     .nav-toggle {
         display: flex;
-        z-index: 1002;
+        z-index: var(--z-header-overlay);
     }
 
     .nav-links {
         position: fixed;
         inset: 0;
-        z-index: 1001;
+        z-index: var(--z-header-popover);
         width: 100%;
         height: 100dvh;
         margin: 0;

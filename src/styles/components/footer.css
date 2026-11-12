@@ -130,7 +130,7 @@
     height: 38px;
     border-radius: 50%;
     border: 1px solid var(--border-color);
-    background: #ffffff;
+    background: var(--white);
     display: flex;
     align-items: center;
     justify-content: center;

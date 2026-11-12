@@ -3,8 +3,8 @@
 .event-modal-overlay {
   position: fixed;
   inset: 0;
-  z-index: 9999;
-  background: rgba(7, 26, 30, 0.75);
+  z-index: var(--z-modal);
+  background: rgba(var(--color-scrim-rgb), 0.75);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
   display: flex;
@@ -27,9 +27,9 @@
   max-width: 680px;
   max-height: 90vh;
   background: rgba(255, 255, 255, 0.96);
-  border: 1px solid rgba(17, 180, 189, 0.25);
+  border: 1px solid rgba(var(--brand-cyan-rgb), 0.25);
   border-radius: var(--border-radius-lg, 24px);
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.35), 0 0 30px rgba(17, 180, 189, 0.2);
+  box-shadow: 0 25px 50px -12px rgba(var(--black-rgb), 0.35), 0 0 30px rgba(var(--brand-cyan-rgb), 0.2);
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -47,8 +47,8 @@
   align-items: center;
   justify-content: space-between;
   padding: 1rem 1.25rem;
-  border-bottom: 1px solid var(--border-color, rgba(14, 85, 95, 0.08));
-  background: rgba(248, 249, 250, 0.8);
+  border-bottom: 1px solid var(--border-color, rgba(var(--brand-dark-azure-rgb), 0.08));
+  background: rgba(var(--legacy-bg-secondary-rgb), 0.8);
 }
 
 .event-modal-header-info {
@@ -62,7 +62,7 @@
   align-items: center;
   gap: 0.35rem;
   background: linear-gradient(135deg, var(--brand-dark-azure) 0%, var(--brand-cyan) 100%);
-  color: #ffffff;
+  color: var(--white);
   font-size: 0.75rem;
   font-weight: 700;
   text-transform: uppercase;
@@ -99,7 +99,7 @@
 }
 
 .event-modal-close-btn:hover {
-  background: rgba(14, 85, 95, 0.1);
+  background: rgba(var(--brand-dark-azure-rgb), 0.1);
   color: var(--brand-dark-azure);
 }
 
@@ -111,7 +111,7 @@
   min-height: 320px;
   max-height: 60vh;
   overflow: hidden;
-  background: #091b1e;
+  background: var(--color-surface-deep);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -158,7 +158,7 @@
   transform-origin: center center;
   transition: transform 0.1s ease-out;
   pointer-events: auto;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 10px 25px rgba(var(--black-rgb), 0.4);
 }
 
 /* Zoom Toolbar Controls */
@@ -166,22 +166,22 @@
   position: absolute;
   bottom: 1rem;
   right: 1rem;
-  z-index: 10;
+  z-index: var(--z-layer);
   display: flex;
   align-items: center;
   gap: 0.35rem;
-  background: rgba(7, 26, 30, 0.82);
+  background: rgba(var(--color-scrim-rgb), 0.82);
   backdrop-filter: blur(6px);
   -webkit-backdrop-filter: blur(6px);
   padding: 0.3rem 0.5rem;
   border-radius: 30px;
-  border: 1px solid rgba(17, 180, 189, 0.3);
+  border: 1px solid rgba(var(--brand-cyan-rgb), 0.3);
 }
 
 .zoom-btn {
   background: transparent;
   border: none;
-  color: #ffffff;
+  color: var(--white);
   width: 32px;
   height: 32px;
   border-radius: 50%;
@@ -194,7 +194,7 @@
 }
 
 .zoom-btn:hover {
-  background: rgba(17, 180, 189, 0.25);
+  background: rgba(var(--brand-cyan-rgb), 0.25);
   color: var(--brand-cyan);
   transform: scale(1.08);
 }
@@ -212,10 +212,10 @@
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  z-index: 10;
-  background: rgba(7, 26, 30, 0.75);
-  border: 1px solid rgba(17, 180, 189, 0.3);
-  color: #ffffff;
+  z-index: var(--z-layer);
+  background: rgba(var(--color-scrim-rgb), 0.75);
+  border: 1px solid rgba(var(--brand-cyan-rgb), 0.3);
+  color: var(--white);
   width: 40px;
   height: 40px;
   border-radius: 50%;
@@ -230,7 +230,7 @@
 
 .carousel-nav-btn:hover {
   background: var(--brand-cyan);
-  color: #ffffff;
+  color: var(--white);
 }
 
 .carousel-prev {
@@ -247,11 +247,11 @@
   bottom: 1rem;
   left: 50%;
   transform: translateX(-50%);
-  z-index: 10;
+  z-index: var(--z-layer);
   display: flex;
   align-items: center;
   gap: 0.4rem;
-  background: rgba(7, 26, 30, 0.75);
+  background: rgba(var(--color-scrim-rgb), 0.75);
   backdrop-filter: blur(6px);
   padding: 0.35rem 0.75rem;
   border-radius: 20px;
@@ -276,8 +276,8 @@
 /* Modal Footer */
 .event-modal-footer {
   padding: 1rem 1.25rem;
-  background: #ffffff;
-  border-top: 1px solid var(--border-color, rgba(14, 85, 95, 0.08));
+  background: var(--white);
+  border-top: 1px solid var(--border-color, rgba(var(--brand-dark-azure-rgb), 0.08));
   display: flex;
   align-items: center;
   justify-content: space-between;

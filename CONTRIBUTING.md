@@ -204,7 +204,7 @@ Before submitting your Pull Request, ensure:
 
 Once your PR is opened:
 1. Automated CI/CD pipelines will execute build, lint, and test suites.
-2. If integrated with Cloudflare Pages or Vercel, a preview deployment will be generated for visual verification.
+2. Opening a pull request produces a Cloudflare Workers preview deployment (plus a Vercel preview when the backup is enabled) for visual verification.
 3. Ensure all CI checks pass green before requesting maintainer review.
 
 ### Code Review Process

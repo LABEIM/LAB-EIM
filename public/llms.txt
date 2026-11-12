@@ -14,7 +14,7 @@
 - **Framework:** Astro v7.1.6 (static site generation) with React 19 islands
 - **Content:** Keystatic CMS with Markdown collections and JSON data files (no database)
 - **Styling:** Tailwind CSS v4.3.3 with modular vanilla CSS
-- **Deployment:** Cloudflare Pages (primary), Vercel (backup)
+- **Deployment:** Cloudflare Workers (primary), Vercel (prerendered static backup)
 - **CI/CD:** LABEIM Shared CI/CD Workflow (`.github/workflows/ci-cd.yml`)
 
 ## Key Endpoints & Routes

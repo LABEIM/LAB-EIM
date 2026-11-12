@@ -31,7 +31,7 @@ permissions:
 
 jobs:
   deploy:
-    uses: LABEIM/Shared-CICD/.github/workflows/deploy-app.yml@v1
+    uses: LABEIM/Shared-CICD/.github/workflows/deploy-app.yml@v2
     with:
       # Runtime & Build
       node_version: '22'
@@ -43,6 +43,9 @@ jobs:
       # Platforms
       enable_cloudflare: true
       cloudflare_project_name: 'lab-eim'
+      cloudflare_mode: 'ssr'
+      # Non-secret account ID; falls back to the CLOUDFLARE_ACCOUNT_ID secret when empty.
+      cloudflare_account_id: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
       production_branch: 'main'
 
       # Vercel backup is enabled automatically once both IDs exist as

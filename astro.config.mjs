@@ -18,6 +18,8 @@ export default defineConfig({
     // Prerendering in workerd hangs here on miniflare's Request.cf fetch.
     prerenderEnvironment: 'node',
   }),
+  // The site does not use Astro sessions; skip the KV namespace the adapter would auto-provision.
+  session: false,
   integrations: [react(), keystatic()],
   build: {
     inlineStylesheets: 'always',

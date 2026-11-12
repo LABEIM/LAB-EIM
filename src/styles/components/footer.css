@@ -5,7 +5,7 @@
     --text-muted: #52686B;
 
     border-top: 1px solid var(--border-color);
-    padding: clamp(3.5rem, 8vh, 5.5rem) 0 2rem;
+    padding: clamp(3.5rem, 8vh, 5.5rem) 0 var(--space-32);
     background: var(--bg-dark-secondary);
     font-family: var(--font-ui);
 }
@@ -21,7 +21,7 @@
 .footer-brand {
     display: inline-flex;
     align-items: center;
-    gap: 12px;
+    gap: var(--space-12);
     color: var(--text-primary);
 }
 
@@ -48,25 +48,25 @@
 .footer .logo-name-sm {
     font-family: var(--font-display);
     font-weight: 400;
-    font-size: 1.4rem;
+    font-size: var(--text-22-4);
     letter-spacing: -0.01em;
     color: var(--text-primary);
 }
 
 .footer .logo-sub-sm {
     font-family: var(--font-ui);
-    font-size: 0.75rem;
+    font-size: var(--text-12);
     font-weight: 500;
     letter-spacing: 0.18em;
     text-transform: uppercase;
     color: var(--text-muted);
-    margin-top: 4px;
+    margin-top: var(--space-4);
 }
 
 .footer-desc {
     color: var(--text-secondary);
-    margin-top: 1.25rem;
-    font-size: 0.9rem;
+    margin-top: var(--space-20);
+    font-size: var(--text-14-4);
     line-height: 1.6;
     max-width: 36ch;
 }
@@ -74,12 +74,12 @@
 /* Column headings */
 .footer-title {
     font-family: var(--font-ui);
-    font-size: 0.75rem;
+    font-size: var(--text-12);
     font-weight: 500;
     letter-spacing: 0.18em;
     text-transform: uppercase;
     color: var(--text-muted);
-    margin-bottom: 1.1rem;
+    margin-bottom: var(--space-17-6);
 }
 
 /* Links and contact */
@@ -87,12 +87,12 @@
     list-style: none;
     display: flex;
     flex-direction: column;
-    gap: 0.55rem;
+    gap: var(--space-8-8);
 }
 
 .footer-links li {
     color: var(--text-secondary);
-    font-size: 0.9rem;
+    font-size: var(--text-14-4);
     line-height: 1.5;
 }
 
@@ -108,21 +108,21 @@
 .footer-contact-list li {
     display: flex;
     align-items: flex-start;
-    gap: 0.6rem;
+    gap: var(--space-9-6);
 }
 
 .footer-contact-list i {
     color: var(--brand-dark-azure);
     width: 1em;
-    margin-top: 0.25rem;
+    margin-top: var(--space-4);
     text-align: center;
 }
 
 /* Socials */
 .footer-connect-list {
     display: flex;
-    gap: 0.6rem;
-    margin-top: 1.5rem;
+    gap: var(--space-9-6);
+    margin-top: var(--space-24);
 }
 
 .footer-connect-btn {
@@ -134,7 +134,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 9px;
+    padding: var(--space-9);
     transition:
         border-color var(--transition-fast),
         transform var(--transition-fast),
@@ -156,13 +156,13 @@
 /* Bottom bar */
 .footer-bottom {
     border-top: 1px solid var(--border-color);
-    padding-top: 1.5rem;
+    padding-top: var(--space-24);
     display: flex;
     justify-content: space-between;
     align-items: center;
     flex-wrap: wrap;
-    gap: 1rem;
-    font-size: 0.75rem;
+    gap: var(--space-16);
+    font-size: var(--text-12);
     color: var(--text-muted);
 }
 
@@ -173,14 +173,14 @@
 .footer-bottom-end {
     display: flex;
     align-items: center;
-    gap: 1.5rem;
+    gap: var(--space-24);
 }
 
 .footer-top-link {
     display: inline-flex;
     align-items: center;
-    gap: 0.4rem;
-    font-size: 0.75rem;
+    gap: var(--space-6-4);
+    font-size: var(--text-12);
     letter-spacing: 0.08em;
     text-transform: uppercase;
     color: var(--brand-dark-azure);

@@ -7,14 +7,14 @@
 
 .event-card .btn-read-more {
   width: 100%;
-  margin-top: 15px;
-  padding: 8px;
-  font-size: 0.9rem;
+  margin-top: var(--space-15);
+  padding: var(--space-8);
+  font-size: var(--text-14-4);
   text-align: center;
 }
 
 .event-card .btn-read-more i {
-  margin-left: 5px;
+  margin-left: var(--space-5);
 }
 
 .event-card .event-footer {
@@ -23,5 +23,5 @@
   justify-content: space-between;
   align-items: center;
   border-top: 1px solid var(--border-color);
-  padding-top: 20px;
+  padding-top: var(--space-20);
 }

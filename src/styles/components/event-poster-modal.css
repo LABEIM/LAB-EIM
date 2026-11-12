@@ -10,7 +10,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 1.25rem;
+  padding: var(--space-20);
   opacity: 0;
   visibility: hidden;
   transition: opacity 0.3s ease, visibility 0.3s ease;
@@ -46,7 +46,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 1rem 1.25rem;
+  padding: var(--space-16) var(--space-20);
   border-bottom: 1px solid var(--border-color, rgba(var(--brand-dark-azure-rgb), 0.08));
   background: rgba(var(--legacy-bg-secondary-rgb), 0.8);
 }
@@ -54,26 +54,26 @@
 .event-modal-header-info {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  gap: var(--space-12);
 }
 
 .event-modal-badge {
   display: inline-flex;
   align-items: center;
-  gap: 0.35rem;
+  gap: var(--space-5-6);
   background: linear-gradient(135deg, var(--brand-dark-azure) 0%, var(--brand-cyan) 100%);
   color: var(--white);
-  font-size: 0.75rem;
+  font-size: var(--text-12);
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  padding: 0.25rem 0.65rem;
+  padding: var(--space-4) var(--space-10-4);
   border-radius: 20px;
 }
 
 .event-modal-title {
   font-family: var(--font-heading);
-  font-size: 1rem;
+  font-size: var(--text-16);
   font-weight: 700;
   color: var(--text-primary);
   margin: 0;
@@ -93,7 +93,7 @@
   align-items: center;
   justify-content: center;
   color: var(--text-muted);
-  font-size: 1.1rem;
+  font-size: var(--text-17-6);
   cursor: pointer;
   transition: background 0.2s ease, color 0.2s ease;
 }
@@ -164,16 +164,16 @@
 /* Zoom Toolbar Controls */
 .poster-zoom-controls {
   position: absolute;
-  bottom: 1rem;
-  right: 1rem;
+  bottom: var(--space-16);
+  right: var(--space-16);
   z-index: var(--z-layer);
   display: flex;
   align-items: center;
-  gap: 0.35rem;
+  gap: var(--space-5-6);
   background: rgba(var(--color-scrim-rgb), 0.82);
   backdrop-filter: blur(6px);
   -webkit-backdrop-filter: blur(6px);
-  padding: 0.3rem 0.5rem;
+  padding: var(--space-4-8) var(--space-8);
   border-radius: 30px;
   border: 1px solid rgba(var(--brand-cyan-rgb), 0.3);
 }
@@ -188,7 +188,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 0.85rem;
+  font-size: var(--text-13-6);
   cursor: pointer;
   transition: background 0.2s ease, transform 0.15s ease;
 }
@@ -200,9 +200,9 @@
 }
 
 .zoom-reset-btn {
-  font-size: 0.72rem;
+  font-size: var(--text-11-52);
   font-weight: 700;
-  padding: 0 0.5rem;
+  padding: 0 var(--space-8);
   width: auto;
   border-radius: 12px;
 }
@@ -222,7 +222,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1rem;
+  font-size: var(--text-16);
   cursor: pointer;
   backdrop-filter: blur(4px);
   transition: background 0.2s ease, transform 0.2s ease;
@@ -234,26 +234,26 @@
 }
 
 .carousel-prev {
-  left: 0.75rem;
+  left: var(--space-12);
 }
 
 .carousel-next {
-  right: 0.75rem;
+  right: var(--space-12);
 }
 
 /* Carousel Indicator Dots */
 .carousel-dots {
   position: absolute;
-  bottom: 1rem;
+  bottom: var(--space-16);
   left: 50%;
   transform: translateX(-50%);
   z-index: var(--z-layer);
   display: flex;
   align-items: center;
-  gap: 0.4rem;
+  gap: var(--space-6-4);
   background: rgba(var(--color-scrim-rgb), 0.75);
   backdrop-filter: blur(6px);
-  padding: 0.35rem 0.75rem;
+  padding: var(--space-5-6) var(--space-12);
   border-radius: 20px;
 }
 
@@ -275,32 +275,32 @@
 
 /* Modal Footer */
 .event-modal-footer {
-  padding: 1rem 1.25rem;
+  padding: var(--space-16) var(--space-20);
   background: var(--white);
   border-top: 1px solid var(--border-color, rgba(var(--brand-dark-azure-rgb), 0.08));
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 1rem;
+  gap: var(--space-16);
 }
 
 .event-modal-meta {
   display: flex;
   flex-direction: column;
-  gap: 0.15rem;
+  gap: var(--space-2-4);
 }
 
 .event-modal-meta-date {
-  font-size: 0.82rem;
+  font-size: var(--text-13-12);
   color: var(--brand-dark-azure);
   font-weight: 600;
   display: flex;
   align-items: center;
-  gap: 0.35rem;
+  gap: var(--space-5-6);
 }
 
 .event-modal-meta-desc {
-  font-size: 0.8rem;
+  font-size: var(--text-12-8);
   color: var(--text-muted);
   white-space: nowrap;
   overflow: hidden;
@@ -312,11 +312,11 @@
   white-space: nowrap;
   display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
-  padding: 0.65rem 1.25rem;
+  gap: var(--space-8);
+  padding: var(--space-10-4) var(--space-20);
   border-radius: var(--border-radius-sm, 8px);
   font-family: var(--font-heading);
-  font-size: 0.88rem;
+  font-size: var(--text-14-08);
   font-weight: 600;
   text-decoration: none;
   transition: all 0.2s ease;
@@ -330,18 +330,18 @@
   }
 
   .event-modal-header {
-    padding: 0.85rem 1rem;
+    padding: var(--space-13-6) var(--space-16);
   }
 
   .event-modal-title {
     max-width: 180px;
-    font-size: 0.9rem;
+    font-size: var(--text-14-4);
   }
 
   .event-modal-footer {
     flex-direction: column;
     align-items: stretch;
-    gap: 0.75rem;
+    gap: var(--space-12);
   }
 
   .event-modal-meta-desc {
@@ -355,11 +355,11 @@
   }
 
   .poster-zoom-controls {
-    bottom: 0.5rem;
-    right: 0.5rem;
+    bottom: var(--space-8);
+    right: var(--space-8);
   }
 
   .carousel-dots {
-    bottom: 0.5rem;
+    bottom: var(--space-8);
   }
 }

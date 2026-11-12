@@ -211,6 +211,7 @@ body.has-announcement-banner {
 :root {
     /* Preferred subset for new code (4px grid): 4, 8, 12, 16, 20, 24, 32, 40 */
     --space-neg-36: -2.25rem;
+    --space-neg-32: -2rem;
     --space-neg-10: -0.625rem;
     --space-neg-8: -0.5rem;
     --space-1-6: 0.1rem;

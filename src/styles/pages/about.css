@@ -2,11 +2,11 @@
 .focus-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-    gap: 30px;
+    gap: var(--space-30);
 }
 
 .focus-card {
-    padding: 40px;
+    padding: var(--space-40);
     position: relative;
     overflow: hidden;
 }
@@ -29,33 +29,33 @@
 }
 
 .focus-icon {
-    font-size: 2.5rem;
-    margin-bottom: 24px;
+    font-size: var(--text-40);
+    margin-bottom: var(--space-24);
     display: inline-block;
     color: var(--accent-cyan);
 }
 
 .focus-card h3 {
-    font-size: 1.4rem;
-    margin-bottom: 16px;
+    font-size: var(--text-22-4);
+    margin-bottom: var(--space-16);
 }
 
 .focus-card p {
     color: var(--text-secondary);
-    font-size: 0.95rem;
+    font-size: var(--text-15-2);
 }
 
 /* About Section Layouts */
 .about-overview-grid {
     display: grid;
     grid-template-columns: 1.2fr 0.8fr;
-    gap: 40px;
+    gap: var(--space-40);
     align-items: center;
 }
 
 .about-visionmission-grid {
     border-top: 3px solid var(--accent-red);
-    padding: 40px;
+    padding: var(--space-40);
 }
 
 .about-image img {
@@ -65,7 +65,7 @@
     box-shadow: var(--shadow-md);
     max-height: 280px;
     object-fit: contain;
-    padding: 50px;
+    padding: var(--space-50);
     background: white;
 }
 

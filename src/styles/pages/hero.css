@@ -11,22 +11,22 @@
 .hero-grid {
     display: grid;
     grid-template-columns: 1.1fr 0.9fr;
-    gap: 50px;
+    gap: var(--space-50);
     align-items: center;
 }
 
 .hero-tag {
     display: inline-flex;
     align-items: center;
-    gap: 8px;
-    padding: 8px 16px;
+    gap: var(--space-8);
+    padding: var(--space-8) var(--space-16);
     background: rgba(var(--accent-red-rgb), 0.1);
     border: 1px solid rgba(var(--accent-red-rgb), 0.2);
     color: var(--accent-red-hover);
     border-radius: 30px;
-    font-size: 0.85rem;
+    font-size: var(--text-13-6);
     font-weight: 600;
-    margin-bottom: 24px;
+    margin-bottom: var(--space-24);
     text-transform: uppercase;
     letter-spacing: 1px;
 }
@@ -42,22 +42,22 @@
 }
 
 .hero h1 {
-    font-size: 3.5rem;
-    margin-bottom: 24px;
+    font-size: var(--text-56);
+    margin-bottom: var(--space-24);
     font-weight: 800;
     letter-spacing: -1px;
 }
 
 .hero p.hero-desc {
-    font-size: 1.15rem;
+    font-size: var(--text-18-4);
     color: var(--text-secondary);
-    margin-bottom: 36px;
+    margin-bottom: var(--space-36);
     max-width: 580px;
 }
 
 .hero-actions {
     display: flex;
-    gap: 16px;
+    gap: var(--space-16);
 }
 
 .hero-visual {
@@ -125,15 +125,15 @@
 }
 
 .research-focus-wrapper {
-    margin-top: 100px;
+    margin-top: var(--space-100);
 }
 
 .home-section-wrapper {
-    margin-top: 100px;
+    margin-top: var(--space-100);
 }
 
 .latest-news-section {
-    margin-bottom: 20px;
+    margin-bottom: var(--space-20);
 }
 
 .division-card-link {
@@ -151,6 +151,6 @@
 
 .view-all-news-wrapper {
     text-align: center;
-    margin-top: 40px;
+    margin-top: var(--space-40);
 }
 

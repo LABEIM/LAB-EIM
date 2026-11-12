@@ -50,7 +50,7 @@ Before ending a session, the agent must perform these tasks:
 - **UI Components**: React v19.3.1 (`@astrojs/react`) combined with Astro components.
 - **Styling**: Tailwind CSS v4.3.5 (via `@tailwindcss/vite`) combined with a modular Vanilla CSS architecture (`src/styles/`).
 - **State Management**: React component state and native browser APIs; client JavaScript is kept minimal through Astro islands.
-- **Database / CMS**: Keystatic CMS (`@keystatic/astro` v5.2.0, `@keystatic/core` v0.6.9) backed by Markdown collections (`src/content/`) and JSON data files (`src/data/`); no database.
+- **Database / CMS**: Keystatic CMS (`@keystatic/astro` v5.2.0, `@keystatic/core` v0.6.9) backed by Markdown collections (`src/content/`) and JSON data files (`src/data/`); production editing uses Keystatic Cloud (`eimlab/lab-eim`), local development uses local storage; no database.
 - **Internationalization (i18n)**: Single-locale (`id`) translation and UI dictionary utilities (`src/utils/i18n.ts`).
 - **Typography & Icons**: `@fontsource/inter`, `@fontsource/montserrat`, `@fontsource/poppins`; icon styles in `src/styles/icons.css`.
 - **Runtime & Build Tools**: Node.js `>=22.12.0`, pnpm (the shared CI installs `latest`; `pnpm-lock.yaml` pins resolutions). Project-level pnpm settings — peer/security overrides and the install-script allowlist — live in `pnpm-workspace.yaml`.
@@ -70,14 +70,14 @@ Before ending a session, the agent must perform these tasks:
 
 ### 2.3 Role-Based Access Control & Scoping
 - **Authentication**: None. The EIM Research Lab website is a fully public, static application.
-- **Authorization / RBAC**: Public read-only access. Keystatic CMS operates locally or through its GitHub integration; there is no database-backed auth layer.
+- **Authorization / RBAC**: Public read-only access. Keystatic CMS operates locally or through Keystatic Cloud; there is no database-backed auth layer.
 - **Protected Routes**: None. `/keystatic` is the CMS admin surface, not an authenticated application route.
 
 ### 2.4 Service & Business Logic Layer
 - **API Endpoints**: Astro server endpoint `src/pages/api/save-recruitment-results.ts` (Cloudflare adapter server output).
 - **Registration Form**: Posts payloads client-side to Google Apps Script (`code.gs`).
 - **Recruitment Pipeline**: Configured through Keystatic CMS singletons (`keystatic.config.ts`) and loaded via `src/utils/registration-config.ts`.
-- **Deployment**: Cloudflare Pages (primary) with Vercel as a backup host; `.github/workflows/ci-cd.yml` is a caller for the organization-wide `LABEIM/Shared-CICD` reusable workflow (`deploy-app.yml@v1`). Vercel deploys when `VERCEL_PROJECT_ID` and `VERCEL_ORG_ID` are set as repository variables.
+- **Deployment**: Cloudflare Workers (primary, `cloudflare_mode: 'ssr'`) with Vercel as a static backup host; `.github/workflows/ci-cd.yml` is a caller for the organization-wide `LABEIM/Shared-CICD` reusable workflow (`deploy-app.yml@v2`). Vercel deploys the prerendered `dist/client` output when `VERCEL_PROJECT_ID` and `VERCEL_ORG_ID` are set as repository variables.
 
 ---
 
@@ -90,7 +90,7 @@ Before ending a session, the agent must perform these tasks:
 ### 3.2 Security Rules
 1. **Input Sanitization**: Escape dynamic inputs and query parameters; rely on Astro's standard HTML escaping and validate payloads with Zod where applicable.
 2. **CORS & Headers**: Apply restrictive security headers and CORS policies on any server endpoint.
-3. **Session & Token Storage**: Not applicable — the site has no authenticated sessions or tokens.
+3. **Session & Token Storage**: Keystatic Cloud sessions are signed with the `KEYSTATIC_SECRET` Worker secret (minimum 32 characters); the public site itself has no authenticated sessions or tokens.
 4. **Dependency Hygiene**: Keep dependencies patched; review Dependabot and CodeQL findings.
 
 ### 3.3 Database Status & State Codes
@@ -132,4 +132,4 @@ Before ending a session, the agent must perform these tasks:
 
 ### 4.3 Containerization & Ports
 - **Dev Server**: `http://localhost:4321`
-- **Production / Deployment Target**: Cloudflare Pages (primary), Vercel (backup).
+- **Production / Deployment Target**: Cloudflare Workers (primary), Vercel (backup, prerendered static only).

@@ -15,7 +15,7 @@ Official website of the Enterprise Infrastructure Management (EIM) Research Labo
 
 ## About This Project
 
-The EIM Research Lab website is a statically generated, Indonesian-language public site built with Astro and managed through Keystatic CMS. Content is stored as Markdown collections and JSON data files, so the site can be maintained without a database. It is deployed to Cloudflare Pages as the primary host, with Vercel available as a backup host.
+The EIM Research Lab website is a statically generated, Indonesian-language public site built with Astro and managed through Keystatic CMS. Content is stored as Markdown collections and JSON data files, so the site can be maintained without a database. It is deployed to Cloudflare Workers as the primary host, with Vercel available as a static backup host.
 
 - **Primary Host:** [eimlab.org](https://eimlab.org)
 - **Secondary Host:** [backup.eimlab.org](https://backup.eimlab.org)
@@ -35,7 +35,7 @@ The EIM Research Lab website is a statically generated, Indonesian-language publ
 
 For detailed instructions on local development, deployment, backend integrations, brand assets, and data management, refer to the guides below:
 
-1. **[Deployment & Hosting Guide](DEPLOYMENT.md)**: Local development setup, Cloudflare Pages primary deployment, Keystatic CMS configuration, Vercel backup hosting, and dual-hosting CI/CD pipeline.
+1. **[Deployment & Hosting Guide](DEPLOYMENT.md)**: Local development setup, Cloudflare Workers primary deployment, Keystatic Cloud configuration, Vercel backup hosting, and dual-hosting CI/CD pipeline.
 2. **[Brand & Email Assets Hub](ASSETS.md)**: Public CDN endpoints, email-optimized logos, dark/light banners, and social icons for email templates.
 3. **[Registration Setup & Operations Guide](REGISTRATION_SETUP.md)**: Google Apps Script (`code.gs`) backend setup, Google Drive permissions, recruitment pipeline stages, and candidate selection announcement management.
 4. **[Data & Content Configuration Guide](src/data/CONFIG_GUIDE.md)**: Customizing laboratory divisions, staff member profiles, site metadata, and Keystatic CMS singletons.

@@ -3,15 +3,15 @@
 .contact-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-    gap: var(--space-30);
-    margin-bottom: var(--space-60);
+    gap: 30px;
+    margin-bottom: 60px;
 }
 
 .contact-card {
     background: var(--bg-card);
     border: 1px solid var(--border-color);
     border-radius: var(--radius-lg);
-    padding: var(--space-32);
+    padding: 32px;
     transition: var(--transition-normal);
     position: relative;
     overflow: hidden;
@@ -50,34 +50,34 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: var(--text-24);
-    margin-bottom: var(--space-24);
+    font-size: 1.5rem;
+    margin-bottom: 24px;
     border: 1px solid rgba(0, 242, 254, 0.15);
 }
 
 .contact-card-title {
     font-family: var(--font-heading);
-    font-size: var(--text-20);
+    font-size: 1.25rem;
     font-weight: 700;
     color: var(--text-primary);
-    margin-bottom: var(--space-12);
+    margin-bottom: 12px;
 }
 
 .contact-card-text {
     color: var(--text-secondary);
-    font-size: var(--text-15-2);
+    font-size: 0.95rem;
     line-height: 1.6;
-    margin-bottom: var(--space-24);
+    margin-bottom: 24px;
     flex-grow: 1;
 }
 
 .contact-card-link {
     display: inline-flex;
     align-items: center;
-    gap: var(--space-8);
+    gap: 8px;
     color: var(--accent-cyan);
     font-weight: 600;
-    font-size: var(--text-14-4);
+    font-size: 0.9rem;
     text-decoration: none;
     transition: var(--transition-fast);
 }
@@ -92,37 +92,37 @@
     background: var(--bg-card);
     border: 1px solid var(--border-color);
     border-radius: var(--radius-lg);
-    padding: var(--space-40);
-    margin-bottom: var(--space-60);
+    padding: 40px;
+    margin-bottom: 60px;
 }
 
 .socials-hub-title {
     font-family: var(--font-heading);
-    font-size: var(--text-22-4);
+    font-size: 1.4rem;
     font-weight: 700;
     color: var(--text-primary);
-    margin-bottom: var(--space-8);
+    margin-bottom: 8px;
     text-align: center;
 }
 
 .socials-hub-subtitle {
     color: var(--text-secondary);
     text-align: center;
-    margin-bottom: var(--space-32);
-    font-size: var(--text-15-2);
+    margin-bottom: 32px;
+    font-size: 0.95rem;
 }
 
 .socials-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: var(--space-20);
+    gap: 20px;
 }
 
 .social-item-card {
     display: flex;
     align-items: center;
-    gap: var(--space-16);
-    padding: var(--space-20);
+    gap: 16px;
+    padding: 20px;
     background: rgba(14, 85, 95, 0.08);
     border: 1px solid rgba(14, 85, 95, 0.15);
     border-radius: var(--radius-md);
@@ -143,7 +143,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: var(--text-20);
+    font-size: 1.25rem;
     color: #ffffff;
 }
 
@@ -159,17 +159,17 @@
 .social-name {
     font-weight: 600;
     color: var(--text-primary);
-    font-size: var(--text-15-2);
+    font-size: 0.95rem;
 }
 
 .social-handle {
-    font-size: var(--text-12-8);
+    font-size: 0.8rem;
     color: var(--text-secondary);
 }
 
 @media (max-width: 768px) {
     .socials-hub-container {
-        padding: var(--space-24);
+        padding: 24px;
     }
     
     .socials-grid {
@@ -188,25 +188,25 @@
     background: var(--bg-card);
     border: 1px solid var(--border-color);
     border-radius: var(--radius-lg);
-    padding: var(--space-40);
-    margin-bottom: var(--space-60);
+    padding: 40px;
+    margin-bottom: 60px;
     scroll-margin-top: 100px;
 }
 
 .map-title {
     font-family: var(--font-heading);
-    font-size: var(--text-22-4);
+    font-size: 1.4rem;
     font-weight: 700;
     color: var(--text-primary);
-    margin-bottom: var(--space-8);
+    margin-bottom: 8px;
     text-align: center;
 }
 
 .map-subtitle {
     color: var(--text-secondary);
     text-align: center;
-    margin-bottom: var(--space-24);
-    font-size: var(--text-15-2);
+    margin-bottom: 24px;
+    font-size: 0.95rem;
 }
 
 .map-wrapper {
@@ -226,7 +226,7 @@
 
 @media (max-width: 768px) {
     .map-container {
-        padding: var(--space-24);
+        padding: 24px;
     }
 
     .map-wrapper iframe {

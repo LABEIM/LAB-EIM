@@ -1,13 +1,28 @@
 /* --- DESIGN SYSTEM TOKENS --- */
 :root {
+    /* Legacy base palette — values frozen for the pre-Antigravity pages.
+       Do not use in new code; do not converge with --color-* (visual change). */
+    --legacy-bg: #ffffff;
+    --legacy-bg-secondary: #f8f9fa;
+    --legacy-ink: #1a202c;
+    --legacy-ink-secondary: #4a5568;
+    --legacy-ink-muted: #718096;
+    --legacy-accent: #0E555F;          /* deep teal; the "--accent-red" name is a legacy misnomer */
+    --legacy-accent-hover: #1AACAD;
+    --legacy-accent-gradient: linear-gradient(135deg, #0E555F 0%, #072a2f 100%);
+    --legacy-line: rgba(14, 85, 95, 0.08);
+    --legacy-line-hover: rgba(14, 85, 95, 0.15);
+    --legacy-card: rgba(14, 85, 95, 0.03);
+    --legacy-card-hover: rgba(14, 85, 95, 0.06);
+
     /* Color Palette */
-    --bg-dark: #ffffff;
-    --bg-dark-secondary: #f8f9fa;
-    --bg-card: rgba(14, 85, 95, 0.03);
-    --bg-card-hover: rgba(14, 85, 95, 0.06);
+    --bg-dark: var(--legacy-bg);
+    --bg-dark-secondary: var(--legacy-bg-secondary);
+    --bg-card: var(--legacy-card);
+    --bg-card-hover: var(--legacy-card-hover);
     
-    --border-color: rgba(14, 85, 95, 0.08);
-    --border-color-hover: rgba(14, 85, 95, 0.15);
+    --border-color: var(--legacy-line);
+    --border-color-hover: var(--legacy-line-hover);
 
     /* Layout Header Height Dynamic Token */
     --site-header-height: 80px;
@@ -26,10 +41,10 @@
     --brand-gray-azure-rgb: 78, 138, 146;
 
     /* Theme Accents (Mapped to Brand Colors) */
-    --accent-red: var(--brand-dark-azure);
-    --accent-red-rgb: var(--brand-dark-azure-rgb);
-    --accent-red-hover: var(--brand-cyan-light);
-    --accent-red-gradient: linear-gradient(135deg, var(--brand-dark-azure) 0%, #072a2f 100%);
+    --accent-red: var(--legacy-accent);
+    --accent-red-rgb: 14, 85, 95;
+    --accent-red-hover: var(--legacy-accent-hover);
+    --accent-red-gradient: var(--legacy-accent-gradient);
     
     --accent-cyan: var(--brand-cyan);
     --accent-cyan-rgb: var(--brand-cyan-rgb);
@@ -37,9 +52,9 @@
     --accent-cyan-gradient: linear-gradient(135deg, var(--brand-cyan) 0%, var(--brand-cyan-light) 100%);
     
     /* Text Colors */
-    --text-primary: #1a202c;
-    --text-secondary: #4a5568;
-    --text-muted: #718096;
+    --text-primary: var(--legacy-ink);
+    --text-secondary: var(--legacy-ink-secondary);
+    --text-muted: var(--legacy-ink-muted);
     
     /* Typography */
     --font-heading: 'Poppins', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;

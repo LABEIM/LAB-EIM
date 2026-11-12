@@ -16,6 +16,6 @@ permissions:
 
 jobs:
   analyze:
-    uses: LABEIM/Shared-CICD/.github/workflows/codeql-scan.yml@v1
+    uses: LABEIM/Shared-CICD/.github/workflows/codeql-scan.yml@v2
     with:
       language: 'javascript-typescript'

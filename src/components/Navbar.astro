@@ -61,8 +61,6 @@ const isActive = (rawHref: string) => {
   data-selection-steps={JSON.stringify(registrationData?.selectionSteps || [])}
   data-join-label={t('nav.joinUs', locale)}
   data-contact-label={t('nav.contact', locale)}
-  data-join-href={getLocalizedPath('/registration', locale)}
-  data-contact-href={getLocalizedPath('/contact', locale)}
 >
   <div class="container">
     <a href={getLocalizedPath('/', locale)} class="logo-container">
@@ -150,8 +148,8 @@ const isActive = (rawHref: string) => {
 
       var joinLabel = nav.getAttribute('data-join-label') || 'Join Us';
       var contactLabel = nav.getAttribute('data-contact-label') || 'Kontak';
-      var joinHref = nav.getAttribute('data-join-href') || '/registration';
-      var contactHref = nav.getAttribute('data-contact-href') || '/contact';
+      var joinHref = '/registration';
+      var contactHref = '/contact';
 
       var span = cta.querySelector('span');
       if (isActive) {

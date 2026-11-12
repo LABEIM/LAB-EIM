@@ -1,5 +1,5 @@
 import { calculateStageFromDates, getEffectiveNowMs, updateGlobalAnnouncementBanner } from './registration/stage';
-import { STAGE_ACTION_CONFIG } from '../utils/constants';
+import { STAGE_ACTION_CONFIG, STAGE_LABELS } from '../utils/constants';
 
 /**
  * Synchronizes the Navbar CTA button (Kontak vs Join Us) dynamically based on current recruitment stage.
@@ -13,8 +13,9 @@ export function syncNavbarCTA(activeStage: string): void {
 
   const joinLabel = navbar.getAttribute('data-join-label') || 'Join Us';
   const contactLabel = navbar.getAttribute('data-contact-label') || 'Kontak';
-  const joinHref = navbar.getAttribute('data-join-href') || '/registration';
-  const contactHref = navbar.getAttribute('data-contact-href') || '/contact';
+  // Routes are compile-time constants; never copy a URL out of the DOM.
+  const joinHref = '/registration';
+  const contactHref = '/contact';
 
   const isRecruitmentActive = activeStage === 'open' || activeStage === 'extended';
 
@@ -84,7 +85,7 @@ export function syncHeroRecruitmentBtn(activeStage: string): void {
     icon.className = `fa-solid ${actionConfig.icon}`;
   }
 
-  const joinHref = heroBtn.getAttribute('data-join-href') || '/registration';
+  const joinHref = STAGE_LABELS[activeStage]?.href || '/registration';
   heroBtn.setAttribute('href', joinHref);
 }
 

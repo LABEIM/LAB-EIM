@@ -92,7 +92,7 @@ Before ending a session, the agent must perform these tasks:
 ### 3.2 Security Rules
 1. **Input Sanitization**: Escape dynamic inputs and query parameters; rely on Astro's standard HTML escaping and validate payloads with Zod where applicable.
 2. **CORS & Headers**: Apply restrictive security headers and CORS policies on any server endpoint.
-3. **Session & Token Storage**: Keystatic Cloud sessions are signed with the `KEYSTATIC_SECRET` Worker secret (minimum 32 characters); the public site itself has no authenticated sessions or tokens.
+3. **Session & Token Storage**: Keystatic Cloud handles CMS authentication itself and needs no Worker runtime secrets; the public site has no authenticated sessions or tokens.
 4. **Dependency Hygiene**: Keep dependencies patched; review Dependabot and CodeQL findings.
 
 ### 3.3 Database Status & State Codes

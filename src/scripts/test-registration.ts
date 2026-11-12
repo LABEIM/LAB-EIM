@@ -7,7 +7,7 @@ import {
   validateRegistrationForm
 } from './registration/validation';
 import { calculateStageFromDates } from './registration/stage';
-import { safeLink } from '../utils/safe-link';
+import { safeLink, internalHref } from '../utils/safe-link';
 
 function assert(condition: boolean, testName: string) {
   if (condition) {
@@ -563,6 +563,18 @@ assert(safeLink('javascript:alert(1)') === undefined, 'javascript: scheme should
 assert(safeLink('data:text/html,<script>alert(1)</script>') === undefined, 'data: scheme should be rejected');
 assert(safeLink('wa.me/6281234567890') === undefined, 'Bare host without scheme should be rejected');
 assert(safeLink('') === undefined, 'Empty link should be rejected');
+
+// 11. Internal href guard (home hero CTA, event poster modal)
+console.log('\n1️⃣1️⃣ Testing Internal Href Sanitizer:');
+assert(internalHref('/registration', '/fallback') === '/registration', 'Root-relative path should pass');
+assert(internalHref('/', '/fallback') === '/', 'Root path should pass');
+assert(internalHref(' /contact?x=1#y ', '/fallback') === '/contact?x=1#y', 'Query, hash and whitespace should be trimmed and pass');
+assert(internalHref('//evil.com', '/fallback') === '/fallback', 'Protocol-relative URL should be rejected');
+assert(internalHref('/\\evil.com', '/fallback') === '/fallback', 'Backslash authority should be rejected');
+assert(internalHref('/\t/evil.com', '/fallback') === '/fallback', 'Tab-folded authority should be rejected');
+assert(internalHref('javascript:alert(1)', '/fallback') === '/fallback', 'javascript: scheme should be rejected');
+assert(internalHref('https://evil.com', '/fallback') === '/fallback', 'Absolute URL should be rejected');
+assert(internalHref(null, '/fallback') === '/fallback', 'Missing value should fall back');
 
 console.log('\n✨ All Automated Registration Unit Tests Execution Completed Successfully!');
 

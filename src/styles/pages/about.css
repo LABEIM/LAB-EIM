@@ -66,7 +66,7 @@
     max-height: 280px;
     object-fit: contain;
     padding: var(--space-50);
-    background: white;
+    background: var(--white);
 }
 
 .mb-80 { margin-bottom: 80px; }

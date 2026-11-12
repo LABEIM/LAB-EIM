@@ -35,7 +35,8 @@ Rules enforced by the current file:
 - Consumers use semantic roles first. The primitive palette (`--white`, `--black`,
   `--neutral-*`, `--brand-*`) is allowed where the value itself is the meaning (pure white
   text, a brand gradient stop); reach for a `--color-*` role whenever one exists.
-- Aliases are not chained more than one hop (`--text-primary` -> `--legacy-ink` ends there).
+- Alias chains stay short (`--text-primary` -> `--legacy-ink` ends there). The glow tokens are the
+  documented exception: `--glow-red` -> `--accent-red-rgb` -> `--brand-dark-azure-rgb`.
 
 ## Naming rules
 
@@ -93,7 +94,7 @@ Values are reproduced as written in `variables.css`; aliases appear as `var(--�
 | Theme accents | `--accent-red` `var(--legacy-accent)` · `--accent-red-rgb` `var(--brand-dark-azure-rgb)` · `--accent-red-hover` `var(--legacy-accent-hover)` · `--accent-red-gradient` `var(--legacy-accent-gradient)` · `--accent-cyan` `var(--brand-cyan)` · `--accent-cyan-rgb` `var(--brand-cyan-rgb)` · `--accent-cyan-hover` `var(--brand-cyan-light)` · `--accent-cyan-gradient` `linear-gradient(135deg, var(--brand-cyan) 0%, var(--brand-cyan-light) 100%)` |
 | Surface and brand mapping | `--color-background` `var(--eim-background)` · `--color-foreground` `var(--eim-foreground)` · `--color-surface` `var(--eim-surface)` · `--color-surface-strong` `var(--eim-surface-strong)` · `--color-line` `var(--eim-line)` · `--color-muted-ink` `var(--eim-muted-ink)` · `--color-brand` `var(--eim-brand)` · `--color-brand-bright` `var(--eim-brand-bright)` · `--color-brand-soft` `var(--eim-brand-soft)` |
 | Font, motion, radius aliases | `--font-mono` `var(--eim-font-mono)` · `--ease` `var(--eim-ease)` · `--ease-inout` `var(--eim-ease-inout)` · `--dur-control` `var(--eim-dur-control)` · `--dur-reveal` `var(--eim-dur-reveal)` · `--radius-pill` `var(--eim-radius-pill)` · `--radius-card` `var(--eim-radius-card)` · `--radius-media` `var(--eim-radius-media)` |
-| Typography | `--font-heading` `'Poppins', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif` · `--font-body` `'Montserrat', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif` · `--font-display` `'Instrument Serif', Georgia, serif` · `--font-ui` `'IBM Plex Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif` · `--max-width` `1200px` |
+| Typography | `--font-heading` `'Poppins', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif` · `--font-body` `'Montserrat', …` in `variables.css`, but re-declared as `var(--eim-font-body)` ('IBM Plex Sans') by the `@theme` block in `home-eim.css` — the later declaration wins site-wide · `--font-display` `'Instrument Serif', Georgia, serif` · `--font-ui` `'IBM Plex Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif` · `--max-width` `1200px` |
 | Layout, motion, shadow | `--border-radius-sm` `8px` · `--border-radius-md` `16px` · `--border-radius-lg` `24px` (new code uses `--radius-*`; `--border-radius-*` is the legacy pair)  · `--transition-fast` `0.15s ease-out` · `--transition-normal` `0.25s ease-out` · `--transition-slow` `0.4s ease-out` · `--shadow-sm` `0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)` · `--shadow-md` `0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)` · `--glow-cyan` `0 0 20px rgba(var(--accent-cyan-rgb), 0.15)` · `--glow-red` `0 0 20px rgba(var(--accent-red-rgb), 0.15)` · `--glow-cyan-intense` `0 0 30px rgba(var(--accent-cyan-rgb), 0.3)` · `--glow-red-intense` `0 0 30px rgba(var(--accent-red-rgb), 0.3)` |
 
 ### Spacing scale
@@ -179,13 +180,13 @@ Twelve layers, ascending. Use the lowest layer that works; never hand-pick a num
 | `--z-raised` | `1` | Card hover state, sticky element inside a card. |
 | `--z-layer` | `10` | Local overlays inside a section (image captions, scrims). |
 | `--z-elevated` | `30` | Dropdowns and popovers owned by page content. |
-| `--z-nav` | `999` | In-page navigation and filter bars. |
+| `--z-nav` | `999` | The site navbar itself (`navbar.css`). |
 | `--z-header` | `1000` | Site header bar. |
 | `--z-header-popover` | `1001` | Header dropdown menu. |
 | `--z-header-overlay` | `1002` | Full-screen header menu, above the header and its popover. |
 | `--z-modal` | `9999` | Dialogs and poster modals. |
-| `--z-toolbar` | `99990` | Dev-only registration toolbar. |
-| `--z-top` | `99999` | Announcement banner and anything that must beat every page layer. |
+| `--z-toolbar` | `99990` | Registration draft toast. |
+| `--z-top` | `99999` | Progress modal overlay and the registration simulator toolbar. |
 
 ## Why the tokens are not projected into Tailwind `@theme`
 
@@ -200,9 +201,12 @@ The rest of `variables.css` is deliberately not projected:
 3. **Tailwind already ships usable type and spacing utilities.** Its default scale covers
    ordinary layout; the token scales exist for the fine-grained 1-2px adjustments the
    design actually uses.
-4. **`@theme` is site-wide.** The Tailwind entry point is imported by the homepage-family
-   pages, not globally. Elevating the tokens there would change every page that loads the
-   stylesheet, which is a visual change, not a refactor.
+4. **`@theme` applies site-wide.** Every page imports `home-eim.css`, so any key added there
+   affects all routes. It also re-declares ~20 names that `variables.css` already defines
+   (`--color-brand`, `--font-body`, …); the later declaration wins, which is why `--font-body`
+   resolves to IBM Plex Sans everywhere. Never add a same-named literal there — edit the
+   primitive in `variables.css` and let the alias follow. One `--color-*` role lives only in
+   that block: `--color-black` (`#050B0D`), consumed by the registration and assets pages.
 
 The existing `--eim-*` -> `--color-*` mapping is safe because the names differ: the theme
 key is `--color-brand`, the source is `--eim-brand`, so no key references itself.
@@ -221,7 +225,10 @@ These stay literal on purpose. Do not tokenize them:
   (e.g. `#007EBB`) belong to their owners and must not be restyled with our palette.
 - **Footer contrast override.** `footer.css` sets `--text-muted` to `#52686B` on the
   footer band to clear AA; the global token is intentionally overridden there.
-- **Dead files.** `pages/events.css`, `pages/organization.css`, and `pages/contact.css`
+- **Black-alpha shadows.** `rgb(0 0 0 / α)` in `text-shadow`/`drop-shadow` stays inline, matching the
+  `--shadow-*` tokens which hold `rgba(0, 0, 0, α)` themselves.
+- **Dead files.** `pages/events.css`, `pages/organization.css`, `pages/contact.css`, and the dead
+  rules in `pages/about.css`/`pages/hero.css`
   are still imported by `globals.css` but no page renders the markup they style
   (`contact.astro` uses `contact-eim.css`). They are intentionally left
   untouched: tokenising dead rules adds churn without changing a pixel.

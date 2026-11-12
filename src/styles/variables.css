@@ -224,7 +224,7 @@ body.has-announcement-banner {
     --space-80: 5rem;
     --space-100: 6.25rem;
 
-    /* Preferred subset for new code: 12, 14, 16, 18, 20, 24, 32, 40, 48 */
+    /* Preferred subset for new code: 12, 14, 16, 18.4, 20, 24, 32, 40, 48 */
     --text-10: 0.625rem;
     --text-10-4: 0.65rem;
     --text-10-8: 0.675rem;

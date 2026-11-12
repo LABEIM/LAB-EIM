@@ -8,13 +8,9 @@
  * guarantees this is the final write on load and on `eim:stage-changed`.
  */
 import { STAGE_LABELS } from '../utils/constants';
+import { internalHref } from '../utils/safe-link';
 
 type StageLabel = { label: string; href: string };
-
-/** Only same-origin, root-relative paths may become the CTA's href. */
-function safeHref(href: string): string {
-  return href.startsWith('/') && !href.startsWith('//') ? href : '/registration';
-}
 
 export function initHomeCTA(initialStage: string): void {
   const btn = document.getElementById('hero-recruitment-btn') as HTMLAnchorElement | null;
@@ -26,7 +22,7 @@ export function initHomeCTA(initialStage: string): void {
   const apply = (stage: string): void => {
     const entry = resolve(stage);
     if (!entry) return;
-    btn.setAttribute('href', safeHref(entry.href));
+    btn.setAttribute('href', internalHref(entry.href, '/registration'));
     const text = btn.querySelector('.hero-btn-text');
     if (text) text.textContent = entry.label;
   };

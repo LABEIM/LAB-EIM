@@ -151,7 +151,7 @@ Keystatic CMS (`/keystatic`) is a git-based admin UI for managing content. Produ
 4. Set `KEYSTATIC_SECRET` (minimum 32 characters) as a Worker runtime secret:
    `pnpm exec wrangler secret put KEYSTATIC_SECRET`, or Dashboard > Worker (`lab-eim`) > **Settings** > **Variables and Secrets**.
 
-Development (`pnpm run dev`) keeps using local storage; no cloud credentials are needed locally.
+Development (`pnpm run dev`) keeps using local storage; no cloud credentials are needed locally. `astro dev` runs on Node (the Cloudflare adapter is applied only to builds) because Keystatic's local storage needs filesystem access.
 
 ### 3.2 Worker Compatibility (`nodejs_compat`)
 

@@ -57,7 +57,7 @@ Before ending a session, the agent must perform these tasks:
 - **Runtime & Build Tools**: Node.js `>=22.12.0`, pnpm (the shared CI installs `latest`; `pnpm-lock.yaml` pins resolutions). Project-level pnpm settings — peer/security overrides and the install-script allowlist — live in `pnpm-workspace.yaml`.
 
 ### 2.2 Directory Layout & Component Roles
-- `astro.config.mjs`: Astro configuration for the Cloudflare adapter (Node prerender environment, sessions disabled), integrations, Vite alias (`@/`), SSR externalized modules (`sharp`, `detect-libc`), and chunk size limits.
+- `astro.config.mjs`: Astro configuration; the Cloudflare adapter is applied to builds only (dev runs on Node so Keystatic local storage can read the filesystem), with a Node prerender environment and sessions disabled.
 - `wrangler.json`: Cloudflare Worker name and compatibility flags (`nodejs_compat`, `assets_navigation_has_no_effect`); deploys use the adapter-generated `dist/server/wrangler.json`.
 - `keystatic.config.ts`: Keystatic CMS singletons (e.g. recruitment settings), collections, and storage (Keystatic Cloud in production, local in development).
 - `src/content.config.ts`: Collection loaders and Zod schemas (`news`, `events`).

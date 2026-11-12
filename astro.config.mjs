@@ -13,7 +13,9 @@ export default defineConfig({
       : process.env.VERCEL_URL
         ? `https://${process.env.VERCEL_URL}`
         : 'http://localhost:4321',
-  adapter: cloudflare({
+  // The Cloudflare adapter runs dev in workerd, where Keystatic's local storage
+  // cannot read the filesystem. Keep Node for dev; Workers for builds.
+  adapter: process.env.NODE_ENV === 'development' ? undefined : cloudflare({
     imageService: 'compile',
     // Prerendering in workerd hangs here on miniflare's Request.cf fetch.
     prerenderEnvironment: 'node',

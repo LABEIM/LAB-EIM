@@ -107,7 +107,7 @@ Content entries marked with `audit: true` (e.g. `src/content/news/audit-benchmar
 **Zero Manual Worker Creation Required**:
 The Shared-CICD `deploy-cloudflare` action (`cloudflare_mode: 'ssr'`) creates the Worker (`lab-eim`) on its first deploy using `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID`. `wrangler.json` supplies the Worker name and compatibility flags; the adapter generates `main` and `assets` into `dist/server/wrangler.json`.
 
-The account's `workers.dev` subdomain must be registered: Dashboard > **Workers & Pages** > **Your subdomain**. Direct uploads always expose `workers_dev` and preview URLs.
+The account's `workers.dev` subdomain must be registered: Dashboard > **Workers & Pages** > **Your subdomain**. Direct uploads always expose `workers_dev` and preview URLs. Each deployment version also gets a public preview URL (`preview_urls: true`); treat those URLs as public.
 
 ### 2.2 Obtaining Cloudflare Credentials
 
@@ -159,7 +159,7 @@ Keystatic API routes require Node.js compatibility. `wrangler.json` sets `nodejs
 
 ### 3.3 Environment Variables Reference
 
-Build-time values are GitHub secrets (inherited by the pipeline); `KEYSTATIC_SECRET` is a Worker runtime secret.
+Build-time `PUBLIC_*` values can come from GitHub secrets or variables; a variable wins over a same-named secret, and an empty variable does not override a non-empty secret. `KEYSTATIC_SECRET` is a Worker runtime secret.
 
 | Variable Name | Description | Example / Required Target |
 | :--- | :--- | :--- |
@@ -207,24 +207,22 @@ The repository's workflow ([`.github/workflows/ci-cd.yml`](file:///.github/workf
 
 In GitHub go to **Settings** > **Secrets and variables** > **Actions**.
 
-**Secrets:**
+**Secrets** (credentials only):
 
 - `CLOUDFLARE_API_TOKEN`: Created in Section 2.2B.
-- `CLOUDFLARE_ACCOUNT_ID`: Created in Section 2.2A.
 - `VERCEL_TOKEN`: Vercel Personal Access Token ([Vercel Account Settings > Tokens](https://vercel.com/account/tokens)).
-- `PUBLIC_GOOGLE_SHEET_SCRIPT_URL`: Google Apps Script Web App URL.
-- `PUBLIC_RECRUITMENT_SECRET`: Passphrase for form signature verification.
+- `CLOUDFLARE_ACCOUNT_ID`: optional fallback; prefer the variable below.
 
-Any inherited secret whose name starts with `PUBLIC_` is exported to the build environment by the shared workflow, so Vite/Astro can inline it into the static output.
+**Variables** (identifiers and public build config):
 
-`KEYSTATIC_SECRET` is not a GitHub secret: set it on the Worker itself (Section 3.1).
+- `PUBLIC_GOOGLE_SHEET_SCRIPT_URL`, `PUBLIC_RECRUITMENT_SECRET`, `PUBLIC_SITE_URL`: all three are public (the endpoint URL and token ship in the HTML), so variables are enough.
+- A `PUBLIC_*` variable wins over a same-named secret, and an empty variable does not override a non-empty secret. Variables are **not** masked in Actions logs, so never store a non-public value under a `PUBLIC_*` name. Never keep both a variable and a secret for the same `PUBLIC_*` name; delete the stale one.
+- `CLOUDFLARE_ACCOUNT_ID`: passed through the `cloudflare_account_id` input; the secret is used when the variable is empty.
+- `VERCEL_ORG_ID` / `VERCEL_PROJECT_ID`: found in `.vercel/project.json` or the Vercel dashboard. Required as **variables**, not secrets, because reusable-workflow `with:` inputs cannot read the `secrets` context.
 
-**Variables:**
+`KEYSTATIC_SECRET` is neither: it is a Worker runtime secret (Section 3.1).
 
-- `VERCEL_ORG_ID`: Found in `.vercel/project.json` or Vercel Team Settings.
-- `VERCEL_PROJECT_ID`: Found in `.vercel/project.json` or Vercel Project Settings.
-
-The Vercel backup deployment is enabled automatically when both variables are present. They must be **variables**, not secrets, because reusable-workflow `with:` inputs cannot read the `secrets` context.
+The Vercel backup deployment is enabled automatically when both Vercel variables are present.
 
 > **Note:** The Cloudflare Worker name (`lab-eim`) is set as the `cloudflare_project_name` input in `ci-cd.yml`. Change it there if the Worker is renamed.
 
@@ -234,7 +232,7 @@ The Vercel backup deployment is enabled automatically when both variables are pr
 ┌─────────────────────────────────────────────────────────────────┐
 │ validate-and-build (15 min timeout, Shared-CICD)                │
 │ ├─ pnpm install --frozen-lockfile (cached)                      │
-│ ├─ Export PUBLIC_* secrets to the build environment             │
+│ ├─ Export PUBLIC_* values (variable > secret)                    │
 │ ├─ pnpm exec astro check                                        │
 │ ├─ pnpm run build + SHA256 hash                                 │
 │ └─ Upload dist/ artifact                                        │
@@ -256,7 +254,7 @@ The Vercel backup deployment is enabled automatically when both variables are pr
               └─────────────────────┘     └───────────────────┘
 ```
 
-1. **`validate-and-build`**: Installs dependencies with `pnpm install --frozen-lockfile`, exports inherited `PUBLIC_*` secrets to the build environment, runs `pnpm exec astro check` and `pnpm run build`, and uploads the compiled artifact. The build emits prerendered pages in `dist/client/` and the Worker (`dist/server/entry.mjs` plus the adapter-generated `dist/server/wrangler.json`) in `dist/server/`. With `cloudflare_mode: 'ssr'`, the deploy job uploads the Worker and its assets, so `/keystatic` and `/api/keystatic/*` run in the Worker.
+1. **`validate-and-build`**: Installs dependencies with `pnpm install --frozen-lockfile`, exports `PUBLIC_*` values (variables win over secrets) to the build environment, runs `pnpm exec astro check` and `pnpm run build`, and uploads the compiled artifact. The build emits prerendered pages in `dist/client/` and the Worker (`dist/server/entry.mjs` plus the adapter-generated `dist/server/wrangler.json`) in `dist/server/`. With `cloudflare_mode: 'ssr'`, the deploy job uploads the Worker and its assets, so `/keystatic` and `/api/keystatic/*` run in the Worker.
 2. **`deploy-cloudflare` & `deploy-vercel`**: Deploys the Worker plus assets to Cloudflare Workers (Primary) and, when the Vercel variables are configured, the prerendered `dist/client` output to Vercel (Backup) **in parallel** with **retry logic** (3 attempts, exponential backoff). `deploy-cloudflare` resolves the canonical Production URL (`https://lab-eim.<subdomain>.workers.dev`) on `main` and branch preview URLs (`https://<branch>-lab-eim.<subdomain>.workers.dev`) on pull requests. Both jobs register GitHub Deployment environments for deploy tracking.
 3. **`comment-pr` (Post PR Preview Comment)**: Posts or updates a formatted table with the live Cloudflare and Vercel preview deployment URLs, commit SHA, and workflow run link on Pull Requests.
 4. **`lighthouse`**: Audits the routes listed in `lighthouse_routes` with **3 runs** each (representative median score), resolves the live Cloudflare URL first (the static fallback only applies to static-mode deploys; with `cloudflare_mode: 'ssr'` the live Worker URL is required), and appends parsed scores to `$GITHUB_STEP_SUMMARY` and the PR preview comment. On **Pull Requests**, a failing Lighthouse score marks the PR check failed. On **push to `main`**, it serves as post-deploy monitoring. Score thresholds:
@@ -269,7 +267,7 @@ The Vercel backup deployment is enabled automatically when both variables are pr
 
 - **Shared Workflow Pinning**: This repository pins the Shared-CICD reusable workflow to the floating `v2` major tag. Action SHA pinning and dependency updates are maintained inside Shared-CICD.
 - **Principle of Least Privilege**: The caller grants only `contents: read`, `pull-requests: write`, and `deployments: write`; the shared workflow cannot exceed those permissions.
-- **Scoped Credentials**: `secrets: inherit` passes the repository secrets into the shared workflow. Only inherited `PUBLIC_*` secrets are exported to the build environment; deployment tokens stay scoped to the deploy steps.
+- **Scoped Credentials**: `secrets: inherit` passes the repository secrets into the shared workflow. Only `PUBLIC_*` values (variables or secrets) are exported to the build environment; deployment tokens stay scoped to the deploy steps.
 - **Path Filtering (`paths-ignore`)**: Push events to `main` ignore root documentation updates (`README.md`, `DEPLOYMENT.md`, etc.), saving CI runner minutes while preserving full verification for content (`src/content/`) and source code. PR events always run full verification.
 - **Centralized pnpm settings**: `pnpm-workspace.yaml` carries the `@emnapi/runtime`, `path-to-regexp`, `miniflare>undici`, and `miniflare>sharp` overrides plus the `allowBuilds` list for esbuild/workerd install scripts.
 - **Job Timeouts & Retries**: The shared workflow applies explicit job timeouts (5–15 minutes) and retries Cloudflare/Vercel deployments up to 3 times with exponential backoff (10s → 20s → 40s).

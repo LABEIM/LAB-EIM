@@ -564,7 +564,7 @@ assert(safeLink('data:text/html,<script>alert(1)</script>') === undefined, 'data
 assert(safeLink('wa.me/6281234567890') === undefined, 'Bare host without scheme should be rejected');
 assert(safeLink('') === undefined, 'Empty link should be rejected');
 
-// 11. Internal href guard (data-* sourced navbar/hero links)
+// 11. Internal href guard (home hero CTA, event poster modal)
 console.log('\n1️⃣1️⃣ Testing Internal Href Sanitizer:');
 assert(internalHref('/registration', '/fallback') === '/registration', 'Root-relative path should pass');
 assert(internalHref('/', '/fallback') === '/', 'Root path should pass');

@@ -4,11 +4,11 @@
 motion, radius, shadow, and stacking order. It is imported once from
 `src/styles/globals.css`, so every token below is global.
 
-The file has three `:root` blocks: the base palette and aliases, the value-named
-`--space-*`/`--text-*` scales, and the `--z-*` ladder. `body.has-announcement-banner`
-adds one override (`--site-header-height: 122px`).
+The file has two `:root` blocks: the base palette and aliases, then the value-named
+`--space-*`/`--text-*`/`--z-*` scales. `body.has-announcement-banner` adds one override
+(`--site-header-height: 122px`).
 
-250 custom properties are defined. This page documents them as they exist; it is a
+252 unique custom properties are defined. This page documents them as they exist; it is a
 reference, not a proposal.
 
 ## Layer model
@@ -59,8 +59,9 @@ same rule with the trailing zero dropped.
 
 ## Preferred subsets
 
-New work uses only these steps. Anything else in the scale stays supported for existing
-markup but is not a choice for new code.
+New work uses only these steps. The rest of the scale is a frozen record of values already
+in the codebase (11, 13, 15 and the fractional steps are common in existing markup); it is
+not a ladder and should not be "tidied" into one, because every step is an exact value.
 
 Spacing (`--space-*`), 4px grid: `--space-4`, `--space-8`, `--space-12`, `--space-16`,
 `--space-20`, `--space-24`, `--space-32`, `--space-40`.
@@ -219,8 +220,8 @@ These stay literal on purpose. Do not tokenize them:
   (e.g. `#007EBB`) belong to their owners and must not be restyled with our palette.
 - **Dead files.** `pages/events.css`, `pages/organization.css`, and `pages/contact.css`
   are still imported by `globals.css` but no page renders the markup they style
-  (`contact.astro` uses `contact-eim.css`). They were migrated to tokens for
-  consistency, not because they are live.
+  (`contact.astro` uses `contact-eim.css`). They are intentionally left
+  untouched: tokenising dead rules adds churn without changing a pixel.
 
 ## Start a new lab site
 

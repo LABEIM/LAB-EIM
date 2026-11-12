@@ -46,11 +46,11 @@
 }
 .global-announcement-bar.theme-maintenance .announcement-badge {
   background: linear-gradient(135deg, var(--color-danger-base) 0%, var(--color-danger-strong) 100%);
-  color: var(--white);
+  color: var(--color-danger-ink);
 }
 .global-announcement-bar.theme-maintenance .announcement-cta {
   background: var(--color-danger-base);
-  color: var(--white);
+  color: var(--color-danger-ink);
   box-shadow: 0 0 12px rgba(var(--color-danger-rgb), 0.35);
 }
 .global-announcement-bar.theme-maintenance .announcement-cta:hover {

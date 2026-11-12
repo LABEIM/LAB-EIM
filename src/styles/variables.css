@@ -118,7 +118,7 @@
 
     /* Theme Accents (Mapped to Brand Colors) */
     --accent-red: var(--legacy-accent);
-    --accent-red-rgb: 14, 85, 95;
+    --accent-red-rgb: var(--brand-dark-azure-rgb);
     --accent-red-hover: var(--legacy-accent-hover);
     --accent-red-gradient: var(--legacy-accent-gradient);
     

@@ -5,6 +5,7 @@ import '../../styles/pages/home-eim.css';
 import { courseHasContent, resolveCourses } from '../../utils/course-helpers';
 import { getLocaleFromUrl, getLocalizedJsonData, t } from '../../utils/i18n';
 import { buildPositionIndex, parsePositions, positionLabel } from '../../utils/position-mapper';
+import { getInitials } from '../../utils/initials';
 import type { CourseView, Lecturer, Member } from '../../utils/types';
 
 export async function getStaticPaths() {
@@ -31,15 +32,6 @@ const locale = getLocaleFromUrl(Astro.url);
 
 const positionsData = getLocalizedJsonData<{ list: unknown }>('positions', locale);
 const positionIndex = buildPositionIndex(parsePositions(positionsData));
-const initials = (name: string): string =>
-  name
-    .split(/\s+/)
-    .filter(Boolean)
-    .slice(0, 2)
-    .map((word) => word[0])
-    .join('')
-    .toUpperCase();
-
 const { Content } = await render(entry);
 const { modules, assistants } = courseHasContent(course);
 ---
@@ -73,19 +65,20 @@ const { modules, assistants } = courseHasContent(course);
           {course.title}
         </h1>
         <div class="mt-6 flex items-center gap-4">
-          <span class="h-16 w-16 shrink-0 overflow-hidden rounded-media bg-surface-strong">
+          <span class="h-16 w-16 shrink-0 overflow-hidden rounded-card bg-surface-strong">
             {course.coordinator?.image ? (
               <img
                 src={course.coordinator.image}
                 alt=""
-                loading="lazy"
+                loading="eager"
+                fetchpriority="high"
                 decoding="async"
                 class="h-full w-full object-cover"
                 style={`transform: scale(${course.coordinator.scale || '1'}); transform-origin: ${course.coordinator.position || 'center'};`}
               />
             ) : (
               <span class="grid h-full w-full place-items-center font-display text-[18px] text-muted-ink" aria-hidden="true">
-                {initials(course.coordinator?.name ?? '—')}
+                {getInitials(course.coordinator?.name?.trim() || '—')}
               </span>
             )}
           </span>
@@ -142,7 +135,7 @@ const { modules, assistants } = courseHasContent(course);
           <ul class="mt-4 grid list-none gap-x-8 gap-y-1 p-0 sm:grid-cols-2 lg:grid-cols-3">
             {assistants.map((assistant) => (
               <li class="flex items-center gap-3 border-b border-line py-2">
-                <span class="h-10 w-10 shrink-0 overflow-hidden rounded-media bg-surface-strong">
+                <span class="h-10 w-10 shrink-0 overflow-hidden rounded-card bg-surface-strong">
                   {assistant.image ? (
                     <img
                       src={assistant.image}
@@ -154,7 +147,7 @@ const { modules, assistants } = courseHasContent(course);
                     />
                   ) : (
                     <span class="grid h-full w-full place-items-center font-display text-[13px] text-muted-ink" aria-hidden="true">
-                      {initials(assistant.name)}
+                      {getInitials(assistant.name)}
                     </span>
                   )}
                 </span>

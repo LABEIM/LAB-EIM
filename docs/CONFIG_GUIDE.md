@@ -7,13 +7,13 @@ Admin Portal: https://lab-eim.vercel.app/keystatic
 ---
 
 ## 1. Positions Configuration (`src/data/positions.json`)
-This file defines the laboratory's role hierarchy. The `/structure` chart and role sections, the Tentang Kami team list, and the Keystatic `Position` dropdowns on members and lecturers all read from it.
+This file defines the laboratory's role hierarchy. The `/structure` chart and role sections and the Keystatic `Position` dropdowns on members and lecturers all read from it.
 
 The hierarchy is fixed in code (`STRUCTURE_TREE` in `src/utils/position-mapper.ts`): Ketua Lab → Wakil Ketua Lab → Dosen Anggota / Koordinator Mata Kuliah / Koordinator Asisten Lab → Asisten Koordinator Praktikum / Mahasiswa Anggota / Tim Adhoc. Ketua Kelompok Keilmuan and Ka.Ur.Lab FRI are faculty-level and intentionally not listed. Asisten Praktikum belongs to a course, not to this structure.
 
 ### Fields Explanation
 * **`id`** (String): Unique lowercase identifier. Member and lecturer `role` values must match one of these.
-* **`label`** (String): Display label used in the chart, section headings, member cards, and `AboutTeam`.
+* **`label`** (String): Display label used in the chart, section headings, and member cards.
 * **`group`** (String): One of `dosen`, `asisten`, `mahasiswa`. Controls the eyebrow label above each section.
 * **`order`** (Integer): Sort order. Roles with equal `order` keep the array order.
 
@@ -43,7 +43,7 @@ Do not delete this file without also changing the registration form.
 ---
 
 ## 2. Members Directory (`src/data/members.json`)
-This file lists student members and assistants. On `/structure` each person renders under their position section; on `/about` the whole roster is listed with its position label. Photos still live in `/image/division/...`; those folder names are historical and unrelated to the current structure.
+This file lists student members and assistants. On `/structure` each person renders under their position section. Photos still live in `/image/division/...`; those folder names are historical and unrelated to the current structure.
 
 ### Fields Explanation
 * **`id`** (Number): A unique numeric ID for the member. Course assistant lists reference these ids.
@@ -282,7 +282,7 @@ Site administrators can toggle and configure a top global announcement banner th
 ---
 
 ## 9. Lecturers (`src/data/lecturers.json`)
-This file holds the dosen entries. Each entry's `role` is a position id from `positions.json`, so a lecturer appears in the matching `/structure` section and in the Tentang Kami roster.
+This file holds the dosen entries. Each entry's `role` is a position id from `positions.json`, so a lecturer appears in the matching `/structure` section.
 
 Manage it via **Keystatic Admin > Singletons > Lecturers**. Entries with an empty `image` fall back to the placeholder avatar.
 

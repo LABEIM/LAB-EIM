@@ -140,8 +140,8 @@
 }
 
 /* == Role tree ==
-   One nested <ol> carries the hierarchy. Below 1024px it reads as an indented
-   tree; from 1024px the same list lays out as a horizontal org chart. */
+   One nested <ol> carries the hierarchy. Below 1200px it reads as an indented
+   tree; from 1200px the same list lays out as a horizontal org chart. */
 
 .chart-tree,
 .chart-children {

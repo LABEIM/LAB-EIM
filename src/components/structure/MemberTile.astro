@@ -1,5 +1,6 @@
 ---
 import { positionLabel } from '../../utils/position-mapper';
+import { getInitials } from '../../utils/initials';
 import type { Member, Position } from '../../utils/types';
 
 interface Props {
@@ -10,13 +11,6 @@ interface Props {
 
 const { member, positionIndex, index } = Astro.props;
 
-const initials = member.name
-  .split(/\s+/)
-  .filter(Boolean)
-  .slice(0, 2)
-  .map((word) => word[0])
-  .join('')
-  .toUpperCase();
 ---
 
 <article
@@ -34,7 +28,7 @@ const initials = member.name
         style={`transform: scale(${member.scale ?? '1'}); transform-origin: ${member.position ?? 'center'};`}
       />
     ) : (
-      <span class="member-tile-fallback" aria-hidden="true">{initials}</span>
+      <span class="member-tile-fallback" aria-hidden="true">{getInitials(member.name)}</span>
     )}
   </div>
   <div class="member-tile-body">

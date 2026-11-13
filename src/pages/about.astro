@@ -35,8 +35,8 @@ const courses = await getCollection('courses');
 const sectionItems = [
   { id: 'profil', label: t('about.navDotProfile', locale) },
   { id: 'angka', label: t('about.navDotStats', locale) },
-  ...(gallery.photos?.length ? [{ id: 'galeri', label: t('about.galleryNavDot', locale) }] : []),
   { id: 'visi-misi', label: t('home.navDotVision', locale) },
+  ...(gallery.photos?.length ? [{ id: 'galeri', label: t('about.galleryNavDot', locale) }] : []),
   { id: 'gabung', label: t('about.navDotCta', locale) },
 ];
 ---
@@ -68,7 +68,7 @@ const sectionItems = [
         image={gallery.featured.image}
         alt={gallery.featured.alt}
         caption={gallery.featured.caption}
-        label={t('about.galleryNavDot', locale)}
+        label={t('about.studioLabel', locale)}
       />
     )}
     <EimVisiMisi about={aboutData} />

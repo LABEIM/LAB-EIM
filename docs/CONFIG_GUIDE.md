@@ -382,7 +382,7 @@ Deskripsi singkat mata kuliah dan cakupan praktikumnya.
 ```
 
 ## 12. Photo Gallery (`src/data/gallery.json`)
-Photos shown on the Tentang Kami page. The featured studio portrait renders as a full-width band after the numbers; the activity photos render as a grid at the end of the page. The gallery section is hidden when it has no photos.
+Photos shown on the Tentang Kami page. The featured studio portrait renders as a full-width band after the numbers; the activity photos render as a grid at the end of the page. The grid is hidden when there are no photos; the band is hidden when the featured photo is empty.
 
 ### Fields Explanation
 * **`featured`** (Object): The special studio portrait.

@@ -14,7 +14,7 @@ const { image, alt, caption, label } = Astro.props;
     <img
       class="h-[clamp(220px,45vh,560px)] w-full object-cover"
       src={image}
-      alt={alt}
+      alt={alt || caption}
       loading="lazy"
       decoding="async"
     />

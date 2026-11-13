@@ -8,9 +8,12 @@ interface Props {
 
 const { photos } = Astro.props;
 const locale = getLocaleFromUrl(Astro.url);
+
+// A CMS row can exist before its upload lands; skip those instead of a broken image.
+const items = photos.filter((photo) => photo.image);
 ---
 
-{photos.length > 0 && (
+{items.length > 0 && (
   <section id="galeri" class="border-t border-line py-[clamp(4.5rem,10vh,8.75rem)]" aria-labelledby="gallery-title">
     <div class="mx-auto max-w-[1200px] px-[clamp(1.25rem,4vw,4rem)]">
       <p class="e-reveal font-mono text-xs uppercase tracking-[0.08em] text-brand">{t('about.galleryEyebrow', locale)}</p>
@@ -22,14 +25,14 @@ const locale = getLocaleFromUrl(Astro.url);
       </div>
 
       <ul class="e-reveal-group mt-10 grid list-none gap-6 sm:grid-cols-2 lg:grid-cols-3" role="list">
-        {photos.map((photo) => (
-          <li>
+        {items.map((photo, index) => (
+          <li style={`--i:${index}`}>
             <figure>
               <div class="aspect-[4/3] overflow-hidden rounded-[var(--radius-media)] border border-line bg-surface">
                 <img
                   class="h-full w-full object-cover"
                   src={photo.image}
-                  alt={photo.alt}
+                  alt={photo.alt || photo.caption}
                   loading="lazy"
                   decoding="async"
                 />

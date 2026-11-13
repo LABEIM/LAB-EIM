@@ -612,7 +612,12 @@ export default config({
       schema: {
         featured: fields.object(
           {
-            image: fields.image({ label: 'Studio Photo', directory: 'public/image/gallery', publicPath: '/image/gallery/' }),
+            image: fields.image({
+              label: 'Studio Photo',
+              directory: 'public/image/gallery',
+              publicPath: '/image/gallery/',
+              validation: { isRequired: true },
+            }),
             alt: fields.text({ label: 'Alt Text', validation: { isRequired: true } }),
             caption: fields.text({ label: 'Caption', validation: { isRequired: true } }),
           },
@@ -620,7 +625,12 @@ export default config({
         ),
         photos: fields.array(
           fields.object({
-            image: fields.image({ label: 'Photo', directory: 'public/image/gallery', publicPath: '/image/gallery/' }),
+            image: fields.image({
+              label: 'Photo',
+              directory: 'public/image/gallery',
+              publicPath: '/image/gallery/',
+              validation: { isRequired: true },
+            }),
             alt: fields.text({ label: 'Alt Text', validation: { isRequired: true } }),
             caption: fields.text({ label: 'Caption', validation: { isRequired: true } }),
           }),

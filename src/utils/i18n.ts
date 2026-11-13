@@ -246,6 +246,7 @@ export const uiTranslations: Record<Locale, Record<string, string>> = {
     'about.galleryTitle': 'Galeri kegiatan.',
     'about.galleryIntro': 'Suasana praktikum, kunjungan, dan kegiatan lain di lab.',
     'about.galleryNavDot': 'Galeri',
+    'about.studioLabel': 'Foto studio tim',
     'about.statsLabel': 'EIM dalam angka',
     'about.teamLink': 'Lihat seluruh struktur',
     'about.ctaTitle': 'Ingin tumbuh bersama kami?',

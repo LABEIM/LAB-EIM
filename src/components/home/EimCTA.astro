@@ -12,6 +12,7 @@ const locale = getLocaleFromUrl(Astro.url);
 const contact = site?.contact ?? {};
 const primaryCta = resolveStageCta(stage);
 const joinIsPrimary = primaryCta.href === '/registration';
+const contactLabel = t('about.ctaContact', locale);
 ---
 
 <section id="gabung" class="eim-cta" aria-labelledby="eim-cta-title">
@@ -24,7 +25,11 @@ const joinIsPrimary = primaryCta.href === '/registration';
     </div>
     <div>
       <div class="flex flex-wrap items-center gap-x-6 gap-y-4">
-        <a class="eim-cta-primary" href={primaryCta.href} data-stage-primary>{primaryCta.label}</a>
+        <a
+          class="eim-cta-primary"
+          href={primaryCta.href}
+          data-stage-primary
+          data-contact-label={contactLabel}>{primaryCta.href === '/contact' ? contactLabel : primaryCta.label}</a>
         <a class="eim-cta-secondary" href="/registration" data-stage-secondary hidden={joinIsPrimary}>
           {t('nav.joinUs', locale)} <span aria-hidden="true">→</span>
         </a>

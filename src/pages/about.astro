@@ -8,8 +8,8 @@ import { getCurrentRecruitmentStage } from '../utils/recruitment';
 import type { AboutData, Lecturer, Member, RecruitmentConfig } from '../utils/types';
 import AboutHero from '../components/about/AboutHero.astro';
 import AboutProfile from '../components/about/AboutProfile.astro';
-import AboutStats from '../components/about/AboutStats.astro';
 import EimVisiMisi from '../components/home/EimVisiMisi.astro';
+import EimLabNumbers from '../components/home/EimLabNumbers.astro';
 import EimCTA from '../components/home/EimCTA.astro';
 import EimSectionNav from '../components/home/EimSectionNav.astro';
 
@@ -42,10 +42,14 @@ const sectionItems = [
     <EimSectionNav items={sectionItems} label={t('about.sectionNavLabel', locale)} />
     <AboutHero />
     <AboutProfile about={aboutData} site={siteData} />
-    <AboutStats
-      membersCount={members.length}
-      courseCount={courses.length}
-      dosenCount={groupCounts.dosen}
+    <EimLabNumbers
+      id="angka"
+      label={t('about.statsLabel', locale)}
+      stats={[
+        { label: t('stats.members', locale), value: members.length },
+        { label: t('stats.courses', locale), value: courses.length },
+        { label: t('stats.dosen', locale), value: groupCounts.dosen },
+      ]}
     />
     <div class="mx-auto max-w-[1200px] px-[clamp(1.25rem,4vw,4rem)]">
       <a

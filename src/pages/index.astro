@@ -20,7 +20,7 @@ import {
   t
 } from '../utils/i18n';
 import { filterAuditContent } from '../utils/content-helpers';
-import { resolveCourses, summarizePracticumAssistants } from '../utils/course-helpers';
+import { resolveCourses } from '../utils/course-helpers';
 import { countPeopleByGroup, parsePositions } from '../utils/position-mapper';
 import type { Lecturer, Member } from '../utils/types';
 
@@ -69,7 +69,6 @@ const groupCounts = countPeopleByGroup(people, positions);
 const courseEntries = await getCollection('courses');
 const allCourses = resolveCourses(courseEntries, lecturersData?.list ?? [], members);
 const bandCourses = allCourses.filter((course) => course.hasPracticum).slice(0, 3);
-const assistantCount = summarizePracticumAssistants(allCourses, members).distinctCount;
 ---
 
 <Layout title={`EIM Research Lab · Riset infrastruktur untuk dunia nyata`} homeSkin skipLink>
@@ -98,15 +97,12 @@ const assistantCount = summarizePracticumAssistants(allCourses, members).distinc
     <EimFocus />
     <EimVisiMisi about={about} />
     <EimLabNumbers
-      dosen={groupCounts.dosen}
-      anggota={members.length}
-      asisten={assistantCount}
-      assistantNote={assistantCount > 0
-        ? t('home.numbersNote', locale, {
-            n: String(assistantCount),
-            total: String(members.length),
-          })
-        : ''}
+      label={t('home.numbersLabel', locale)}
+      stats={[
+        { label: t('stats.dosen', locale), value: groupCounts.dosen },
+        { label: t('stats.members', locale), value: members.length },
+        { label: t('stats.courses', locale), value: allCourses.length },
+      ]}
     />
     <EimCourses courses={bandCourses} />
     <EimEvents events={events} locale={locale} />

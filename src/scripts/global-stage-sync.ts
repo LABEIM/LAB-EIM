@@ -20,7 +20,9 @@ export function syncNavbarCTA(activeStage: string): void {
 
   document.querySelectorAll<HTMLAnchorElement>('[data-stage-primary]').forEach((el) => {
     el.setAttribute('href', targetHref);
-    el.textContent = targetLabel;
+    // A block may prefer its own wording for the contact action.
+    const contactLabel = el.dataset.contactLabel;
+    el.textContent = targetHref === '/contact' && contactLabel ? contactLabel : targetLabel;
   });
   document.querySelectorAll<HTMLAnchorElement>('[data-stage-secondary]').forEach((el) => {
     el.hidden = targetHref === el.getAttribute('href');

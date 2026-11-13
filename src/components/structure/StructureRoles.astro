@@ -26,6 +26,9 @@ const isLecturer = (person: Member | Lecturer): person is Lecturer =>
 const lecturers = section.people.filter(isLecturer);
 const members = section.people.filter((person): person is Member => !isLecturer(person));
 const titleId = `pos-${section.position.id}-title`;
+// A lone lead reads as an empty third of a row at three columns.
+const density =
+  section.people.length === 1 ? 'staff-grid--solo' : section.people.length === 2 ? 'staff-grid--pair' : '';
 ---
 
 <section
@@ -51,7 +54,7 @@ const titleId = `pos-${section.position.id}-title`;
       </p>
     </div>
 
-    <ul class="staff-grid e-reveal-group mt-[clamp(2rem,5vh,3rem)] list-none p-0">
+    <ul class={`staff-grid ${density} e-reveal-group mt-[clamp(2rem,5vh,3rem)] list-none p-0`}>
       {lecturers.map((lecturer) => (
         <li>
           <LecturerCard lecturer={lecturer} positionIndex={positionIndex} />

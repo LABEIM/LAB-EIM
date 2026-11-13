@@ -139,6 +139,40 @@
   }
 }
 
+/* One or two people fill the row instead of leaving gaps. */
+.staff-grid--solo {
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 1024px) {
+  .staff-grid--solo {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .staff-grid--solo > li {
+    grid-column: span 2;
+  }
+}
+
+.staff-grid--pair {
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 640px) {
+  .staff-grid--pair {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.staff-grid--solo :is(.member-tile-media, .lecturer-card-media) {
+  flex-basis: 8rem;
+  width: 8rem;
+  height: 8rem;
+}
+
+.staff-grid--solo :is(.member-tile-name, .lecturer-card-name) {
+  font-size: var(--text-24);
+}
+
 /* == Role tree ==
    One nested <ol> carries the hierarchy. Below 1200px it reads as an indented
    tree; from 1200px the same list lays out as a horizontal org chart. */

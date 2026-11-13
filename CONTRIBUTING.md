@@ -46,13 +46,13 @@ All members, contributors, and maintainers are expected to uphold our [Code of C
 <!-- OPTION A: For Open-Source Projects (MIT Licensed)                          -->
 <!-- ========================================================================= -->
 <!--
-This project is open-source under the [MIT License](../LICENSE). By contributing to this repository, you agree that your contributions will be licensed under the same MIT License terms that govern the project.
+This project is open-source under the [MIT License](LICENSE). By contributing to this repository, you agree that your contributions will be licensed under the same MIT License terms that govern the project.
 -->
 
 <!-- ========================================================================= -->
 <!-- OPTION B: For Proprietary / Lab Internal Projects (All Rights Reserved)     -->
 <!-- ========================================================================= -->
-This repository and its assets are proprietary and licensed under [All Rights Reserved](../LICENSE) by **Enterprise Infrastructure Management (EIM) Research Laboratory**, Telkom University.
+This repository and its assets are proprietary and licensed under [All Rights Reserved](LICENSE) by **Enterprise Infrastructure Management (EIM) Research Laboratory**, Telkom University.
 
 We welcome contributions from external collaborators, researchers, and students under the following terms:
 1. **Grant of Rights & Assignment:** By submitting a Pull Request, issue, patch, or code snippet, you agree that your contribution is provided to the laboratory, and you grant the laboratory all necessary rights, title, and interest to use, modify, integrate, and distribute the contributed work under the repository's proprietary terms.
@@ -217,7 +217,7 @@ Once your PR is opened:
 
 ## Coding Standards & Quality Assurance
 
-- **Code Formatting & Style:** Maintain consistent formatting by adhering to [`.editorconfig`](../.editorconfig) (UTF-8, LF line endings, 2-space indentation).
+- **Code Formatting & Style:** Maintain consistent formatting by adhering to [`.editorconfig`](.editorconfig) (UTF-8, LF line endings, 2-space indentation).
 - **Readability & Modularity:** Write clear, self-documenting code with descriptive naming and minimal cognitive complexity.
 - **Type Safety:** Ensure strong typing (e.g. TypeScript, Zod, Python type hints) across data boundaries and API interfaces.
 - **Error Handling:** Gracefully catch and handle unexpected exceptions with helpful diagnostic log context.

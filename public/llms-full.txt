@@ -94,5 +94,5 @@ The EIM Research Lab Website is the official public site of the Enterprise Infra
 ## 5. Developer & Agent Guidelines
 
 - **Agent Rules:** Adhere strictly to the definitions of done, startup workflows, and tech stack constraints in [`AGENTS.md`](https://github.com/LABEIM/LAB-EIM/blob/main/AGENTS.md).
-- **Contributing:** Follow conventional commits (`feat:`, `fix:`, `docs:`, `refactor:`) and branch protection rules in [`CONTRIBUTING.md`](https://github.com/LABEIM/LAB-EIM/blob/main/docs/CONTRIBUTING.md).
-- **Security Policy:** Report any vulnerabilities privately per [`SECURITY.md`](https://github.com/LABEIM/LAB-EIM/blob/main/docs/SECURITY.md).
+- **Contributing:** Follow conventional commits (`feat:`, `fix:`, `docs:`, `refactor:`) and branch protection rules in [`CONTRIBUTING.md`](https://github.com/LABEIM/LAB-EIM/blob/main/CONTRIBUTING.md).
+- **Security Policy:** Report any vulnerabilities privately per [`SECURITY.md`](https://github.com/LABEIM/LAB-EIM/blob/main/SECURITY.md).

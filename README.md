@@ -2,8 +2,8 @@
 
 [![License: All Rights Reserved](https://img.shields.io/badge/License-All_Rights_Reserved-red.svg)](LICENSE)
 [![CI/CD](https://github.com/LABEIM/LAB-EIM/actions/workflows/ci-cd.yml/badge.svg)](https://github.com/LABEIM/LAB-EIM/actions)
-[![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-2.1-4baaaa.svg)](docs/CODE_OF_CONDUCT.md)
-[![Security Policy](https://img.shields.io/badge/Security-Policy-brightgreen.svg)](docs/SECURITY.md)
+[![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-2.1-4baaaa.svg)](CODE_OF_CONDUCT.md)
+[![Security Policy](https://img.shields.io/badge/Security-Policy-brightgreen.svg)](SECURITY.md)
 [![Website](https://img.shields.io/badge/Website-eimlab.org-0284c7.svg)](https://eimlab.org)
 [![Organization](https://img.shields.io/badge/Org-LABEIM-6366f1.svg)](https://eimlab.org)
 
@@ -58,11 +58,11 @@ For detailed instructions on local development, deployment, backend integrations
 
 ## Community & Contributing
 
-We are committed to fostering an open, welcoming, and harassment-free environment for all researchers, developers, and contributors. All participants and team members are expected to adhere to our [Code of Conduct](docs/CODE_OF_CONDUCT.md).
+We are committed to fostering an open, welcoming, and harassment-free environment for all researchers, developers, and contributors. All participants and team members are expected to adhere to our [Code of Conduct](CODE_OF_CONDUCT.md).
 
-For contribution workflows, git branching standards, and Pull Request guidelines, please refer to our [Contributing Guide](docs/CONTRIBUTING.md).
+For contribution workflows, git branching standards, and Pull Request guidelines, please refer to our [Contributing Guide](CONTRIBUTING.md).
 
-To report security vulnerabilities responsibly, please review our [Security Policy](docs/SECURITY.md).
+To report security vulnerabilities responsibly, please review our [Security Policy](SECURITY.md).
 
 For concerns or incident reports, please contact the project team or laboratory administration at [`lab@eimlab.org`](mailto:lab@eimlab.org).
 

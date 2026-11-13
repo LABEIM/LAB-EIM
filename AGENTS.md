@@ -68,7 +68,7 @@ Before ending a session, the agent must perform these tasks:
 - `src/layouts/Layout.astro`: Base wrapper page layout.
 - `src/styles/`: Modular design system and stylesheets (`variables.css`, `base.css`, `globals.css`, `mobile.css`, `icons.css`, plus `components/` and `pages/`).
 - `src/utils/`: Business logic, i18n helpers, content filtering, event helpers, registration logic, and interfaces (`i18n.ts`, `content-helpers.ts`, `event-helpers.ts`, `registration-config.ts`, `recruitment.ts`, `division-mapper.ts`, `safe-link.ts`, `types.ts`, `constants.ts`).
-- `docs/`: Project guides (`CONTRIBUTING.md`, `SECURITY.md`, `CODE_OF_CONDUCT.md`, `DEPLOYMENT.md`, `REGISTRATION_SETUP.md`, `ASSETS.md`, `CONFIG_GUIDE.md`) and the design token reference (`DESIGN_TOKENS.md`). GitHub still surfaces the community files from `docs/`.
+- `docs/`: Project guides (`DEPLOYMENT.md`, `REGISTRATION_SETUP.md`, `ASSETS.md`, `CONFIG_GUIDE.md`) and the design token reference (`DESIGN_TOKENS.md`). `CONTRIBUTING.md`, `SECURITY.md`, and `CODE_OF_CONDUCT.md` stay at the root so GitHub's community tabs and direct links keep their canonical paths.
 - `public/`: Static assets, `robots.txt`, `sitemap.xml`, `manifest.webmanifest`, `llms.txt`, `llms-full.txt`, and `.well-known/security.txt`.
 
 ### 2.3 Role-Based Access Control & Scoping

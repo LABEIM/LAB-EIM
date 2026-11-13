@@ -1,5 +1,6 @@
 ---
 import type { EventEntry } from '../../utils/event-helpers';
+import { t } from '../../utils/i18n';
 import type { Locale } from '../../utils/i18n';
 import {
   getEventCover,
@@ -51,10 +52,14 @@ const href = getEventHref(event, locale);
       {dateMs > 0 ? <time datetime={event.data.event_date}>{dateLabel}</time> : <span>{dateLabel}</span>}
       <span aria-hidden="true">·</span>
       <span>{event.data.category}</span>
+    </span>
+    <h3 class="kegiatan-card-title">{event.data.title}</h3>
+    {event.data.description && <span class="kegiatan-card-excerpt">{event.data.description}</span>}
+    <span class="kegiatan-card-footer">
+      <span>{event.data.organizer || t('events.organizerFallback', locale)}</span>
       {showStatus && (
         <span class={`kegiatan-status kegiatan-status--${event.data.status}`}>{statusLabel}</span>
       )}
     </span>
-    <h3 class="kegiatan-card-title">{event.data.title}</h3>
   </a>
 </li>

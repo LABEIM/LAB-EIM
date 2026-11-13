@@ -5,7 +5,7 @@ import '../../styles/pages/home-eim.css';
 import '../../styles/pages/kegiatan-eim.css';
 import KegiatanRecapHero from '../../components/kegiatan/KegiatanRecapHero.astro';
 import KegiatanStory from '../../components/kegiatan/KegiatanStory.astro';
-import KegiatanGallery from '../../components/kegiatan/KegiatanGallery.astro';
+import PhotoGallery from '../../components/common/PhotoGallery.astro';
 import KegiatanRelated from '../../components/kegiatan/KegiatanRelated.astro';
 import {
   getCleanSlug,
@@ -59,7 +59,12 @@ const related = [
     <KegiatanStory event={event}>
       <Content />
     </KegiatanStory>
-    <KegiatanGallery event={event} locale={locale} />
+    <PhotoGallery
+      images={getEventStoryGallery(event)}
+      eyebrow={t('events.galleryEyebrow', locale)}
+      title={t('events.galleryTitle', locale)}
+      altLabel={event.data.title}
+    />
     {!event.body?.trim() && getEventStoryGallery(event).length === 0 && (
       <p class="kegiatan-recap-empty">{t('events.recapEmpty', locale)}</p>
     )}

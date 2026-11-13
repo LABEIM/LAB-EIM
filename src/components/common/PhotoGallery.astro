@@ -1,0 +1,36 @@
+---
+interface Props {
+  images: string[];
+  eyebrow: string;
+  title: string;
+  altLabel: string;
+}
+
+const { images, eyebrow, title, altLabel } = Astro.props;
+---
+
+{images.length > 0 && (
+  <section class="photo-gallery" aria-labelledby="photo-gallery-title">
+    <div class="mx-auto max-w-[1200px] px-[clamp(1.25rem,4vw,4rem)]">
+      <div class="photo-gallery-head">
+        <p class="font-mono text-xs uppercase tracking-[0.08em] text-brand">{eyebrow}</p>
+        <h2 id="photo-gallery-title" class="photo-gallery-title">{title}</h2>
+      </div>
+
+      <ul class="photo-gallery-grid e-reveal-group" role="list">
+        {images.map((src, index) => (
+          <li class="photo-gallery-item" style={`--i:${index}`}>
+            <img
+              src={src}
+              alt={`${altLabel} ${index + 1}`}
+              width="800"
+              height="600"
+              loading="lazy"
+              decoding="async"
+            />
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+)}

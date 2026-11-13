@@ -1,5 +1,6 @@
 /* Article pages — Antigravity Light variants. Import AFTER home-eim.css. */
 @import '../components/prose.css';
+@import '../components/photo-gallery.css';
 @import '../components/content-filter-eim.css';
 
 .article-detail-hero {

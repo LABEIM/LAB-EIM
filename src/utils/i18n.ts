@@ -309,6 +309,8 @@ export const uiTranslations: Record<Locale, Record<string, string>> = {
     'news.relatedIntro': 'Artikel lain dari EIM Lab yang mungkin Anda minati.',
 
     // News Index
+    'news.galleryEyebrow': 'Dokumentasi',
+    'news.galleryTitle': 'Foto artikel.',
     'news.metaDescription': 'Artikel, publikasi, dan pengumuman dari EIM Lab.',
     'news.heroEyebrow': 'Artikel',
     'news.heroTitle': 'Catatan\ndari lab.',

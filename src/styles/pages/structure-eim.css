@@ -139,47 +139,36 @@
   }
 }
 
-/* One or two people fill the row instead of leaving gaps. */
-.staff-grid--solo {
+/* Every role except the member roster reads as portrait cards, centred. */
+.staff-grid--lead {
   grid-template-columns: minmax(0, 1fr);
 }
 
 @media (min-width: 640px) {
-  .staff-grid--solo {
-    grid-template-columns: minmax(0, 20rem);
+  .staff-grid--lead {
+    grid-template-columns: repeat(auto-fit, minmax(16rem, 20rem));
     justify-content: center;
   }
 }
 
-.staff-grid--pair {
-  grid-template-columns: 1fr;
-}
-
-@media (min-width: 640px) {
-  .staff-grid--pair {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-}
-
-/* The portrait sits on top with the name under it, centred in the page. */
-.staff-grid--solo :is(.member-tile, .lecturer-card) {
+.staff-grid--lead :is(.member-tile, .lecturer-card) {
   flex-direction: column;
   align-items: center;
   gap: var(--space-12);
   text-align: center;
 }
 
-.staff-grid--solo :is(.member-tile-media, .lecturer-card-media) {
+.staff-grid--lead :is(.member-tile-media, .lecturer-card-media) {
   flex: none;
   width: 12rem;
   height: 12rem;
 }
 
-.staff-grid--solo :is(.member-tile-body, .lecturer-card-body) {
+.staff-grid--lead :is(.member-tile-body, .lecturer-card-body) {
   align-items: center;
 }
 
-.staff-grid--solo :is(.member-tile-name, .lecturer-card-name) {
+.staff-grid--lead :is(.member-tile-name, .lecturer-card-name) {
   font-size: var(--text-24);
 }
 

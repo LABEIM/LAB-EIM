@@ -26,9 +26,8 @@ const isLecturer = (person: Member | Lecturer): person is Lecturer =>
 const lecturers = section.people.filter(isLecturer);
 const members = section.people.filter((person): person is Member => !isLecturer(person));
 const titleId = `pos-${section.position.id}-title`;
-// A lone lead reads as an empty third of a row at three columns.
-const density =
-  section.people.length === 1 ? 'staff-grid--solo' : section.people.length === 2 ? 'staff-grid--pair' : '';
+// Every role except the member roster reads as centred portrait cards.
+const density = section.position.id === 'mahasiswa-anggota' ? '' : 'staff-grid--lead';
 ---
 
 <section

@@ -31,7 +31,7 @@ const { panels } = Astro.props;
 
         return (
           <article
-            class="div-row grid gap-8 lg:grid-cols-2 lg:items-center lg:gap-16"
+            class:list={['div-row grid gap-8 lg:items-center lg:gap-16', media.length > 0 && 'lg:grid-cols-2']}
             style={`--i:${index}`}
           >
             <div class:list={['flex flex-col', flip && 'lg:order-2']}>
@@ -57,15 +57,15 @@ const { panels } = Astro.props;
               </a>
             </div>
 
-            <div
-              class:list={[
-                'div-media aspect-[4/3] overflow-hidden rounded-media border border-line bg-surface',
-                media.length > 1 ? 'grid grid-cols-2 gap-2' : 'grid',
-                flip && 'lg:order-1',
-              ]}
-            >
-              {media.length > 0 ? (
-                media.slice(0, 2).map((src) => (
+            {media.length > 0 && (
+              <div
+                class:list={[
+                  'div-media aspect-[4/3] overflow-hidden rounded-media border border-line bg-surface',
+                  media.length > 1 ? 'grid grid-cols-2 gap-2' : 'grid',
+                  flip && 'lg:order-1',
+                ]}
+              >
+                {media.slice(0, 2).map((src) => (
                   <img
                     src={src}
                     alt={`Kegiatan divisi ${panel.displayName}`}
@@ -73,13 +73,9 @@ const { panels } = Astro.props;
                     decoding="async"
                     class="h-full w-full object-cover"
                   />
-                ))
-              ) : (
-                <span class="flex h-full w-full items-end bg-surface-strong p-5 font-mono text-xs uppercase tracking-[0.08em] text-muted-ink">
-                  {t('home.divisionPhoto', DEFAULT_LOCALE, { name: panel.displayName })}
-                </span>
-              )}
-            </div>
+                ))}
+              </div>
+            )}
           </article>
         );
       })}

@@ -20,7 +20,7 @@ const MEDIA: { kind: 'pending' | 'image' | 'video'; src: string; poster?: string
 };
 ---
 
-<section id="reveal" class="e-reveal-stage" aria-label="Media pengantar">
+<section id="reveal" class:list={['e-reveal-stage', MEDIA.kind === 'pending' && 'is-pending']} aria-label="Media pengantar">
   <figure class="e-reveal-stage-figure">
     {MEDIA.kind === 'video' && (
       <video

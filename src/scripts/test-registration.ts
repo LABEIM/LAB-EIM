@@ -615,6 +615,10 @@ assert(sel(filterCards, { search: '', sort: 'asc', page: 1, perPage: 99 }).pageI
 assert((() => { const p = sel(filterCards, { page: 99, perPage: 3 }); return p.totalPages === 3 && p.page === 3 && p.pageItems.length === 1; })(), 'pagination clamps an out-of-range page');
 assert(sel(filterCards, { forceEmpty: true }).total === 0, 'forceEmpty empties the grid');
 assert(sel(filterCards, { hideAudit: true }).total === 6, 'hideAudit drops audit cards');
+assert(sel(filterCards, { status: 'draft' }).total === 1, 'status filter is exact and case-insensitive');
+const filterOrderBefore = filterCards.map(card => card.searchText).join('|');
+sel(filterCards, { search: '', sort: 'asc', page: 1, perPage: 99 });
+assert(filterCards.map(card => card.searchText).join('|') === filterOrderBefore, 'selection does not mutate the input order');
 
 console.log(`\n${passed} passed, ${failed} failed`);
 if (failed > 0) process.exitCode = 1;

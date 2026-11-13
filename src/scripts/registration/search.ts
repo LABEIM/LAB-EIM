@@ -17,32 +17,24 @@ interface Candidate {
   [key: string]: string | number | CandidateStepStatus[] | undefined;
 }
 
-interface AnnouncementConfig {
+/** Message overrides shared by the announcement config and per-step results. */
+interface OutcomeMessages {
   acceptedMessage?: string;
   passedMessage?: string;
   rejectedMessage?: string;
   failedMessage?: string;
   waitlistMessage?: string;
-}
-
-interface ResultsConfig {
-  passedMessage?: string;
-  failedMessage?: string;
-  waitlistMessage?: string;
-  acceptedMessage?: string;
-  rejectedMessage?: string;
 }
 
 interface SelectionStep {
   id: string;
-  resultsConfig?: ResultsConfig;
-  [key: string]: unknown;
+  resultsConfig?: OutcomeMessages;
 }
 
 interface RecruitmentResults {
   candidates?: Candidate[];
   bulkImportText?: string;
-  announcementConfig?: AnnouncementConfig;
+  announcementConfig?: OutcomeMessages;
 }
 
 /**
@@ -66,7 +58,7 @@ function getResultsConfigData(): RecruitmentResults {
         try {
           return JSON.parse(raw) as RecruitmentResults;
         } catch (e) {
-          console.warn('recruitment results parse failed', e);
+          console.warn('recruitment results parse failed', (e as Error).name);
         }
       }
     }
@@ -126,7 +118,7 @@ function parseBulkImportText(text: string, activeSteps: SelectionStep[] = []): C
         { id: 'technical_test' },
         { id: 'interview' },
         { id: 'final_selection' },
-      ] as Array<{ id: string }>
+      ]
   ).filter(s => {
     const id = (s.id || '').toLowerCase();
     return id !== 'final_selection' && id !== 'announcement' && id !== 'pengumuman';
@@ -321,7 +313,7 @@ function getSelectionStepsConfig(): SelectionStep[] {
       try {
         return JSON.parse(raw) as SelectionStep[];
       } catch (e) {
-        console.warn('selection steps parse failed', e);
+        console.warn('selection steps parse failed', (e as Error).name);
       }
     }
   }
@@ -332,13 +324,8 @@ function getSelectionStepsConfig(): SelectionStep[] {
  * Reads announcementConfig from the container's data-recruitment-results
  * or falls back to the imported JSON, in order to get accepted/rejected messages.
  */
-function getAnnouncementConfig(): AnnouncementConfig {
-  try {
-    if (registrationData?.announcementConfig) return registrationData.announcementConfig as AnnouncementConfig;
-  } catch (e) {
-    console.warn('announcement config parse failed', e);
-  }
-  return {};
+function getAnnouncementConfig(): OutcomeMessages {
+  return (registrationData?.announcementConfig as OutcomeMessages) ?? {};
 }
 
 /**

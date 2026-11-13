@@ -49,7 +49,7 @@ export function selectVisibleCards(items: FilterCard[], state: FilterState): Fil
     return true;
   });
 
-  const matchedItems = [...filtered].sort((a, b) =>
+  const matchedItems = filtered.sort((a, b) =>
     state.sort === 'asc' ? a.dateMs - b.dateMs : b.dateMs - a.dateMs
   );
 

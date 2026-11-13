@@ -1,13 +1,13 @@
 /* --- CONTACT SECTION --- */
 
 .social-icon.instagram {
- background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888); 
+    background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
 }
 
 .social-icon.linkedin {
- background: #0077b5; 
+    background: #0077b5;
 }
 
 .social-icon.github {
- background: #24292e; 
+    background: #24292e;
 }

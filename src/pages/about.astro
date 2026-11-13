@@ -4,7 +4,8 @@ import Layout from '../layouts/Layout.astro';
 import '../styles/pages/home-eim.css';
 import { getLocaleFromUrl, getLocalizedJsonData, t } from '../utils/i18n';
 import { countPeopleByGroup, parsePositions } from '../utils/position-mapper';
-import type { AboutData, Lecturer, Member } from '../utils/types';
+import { getCurrentRecruitmentStage } from '../utils/recruitment';
+import type { AboutData, Lecturer, Member, RecruitmentConfig } from '../utils/types';
 import AboutHero from '../components/about/AboutHero.astro';
 import AboutProfile from '../components/about/AboutProfile.astro';
 import AboutStats from '../components/about/AboutStats.astro';
@@ -18,6 +19,8 @@ const siteData = getLocalizedJsonData<any>('site', locale);
 const membersData = getLocalizedJsonData<{ list: Member[] }>('members', locale);
 const lecturersData = getLocalizedJsonData<{ list: Lecturer[] }>('lecturers', locale);
 const positionsData = getLocalizedJsonData<{ list: unknown }>('positions', locale);
+const registrationConfig = getLocalizedJsonData<Partial<RecruitmentConfig>>('registration', locale);
+const recruitmentStage = getCurrentRecruitmentStage(registrationConfig || {});
 
 const positions = parsePositions(positionsData);
 const members: Member[] = membersData?.list ?? [];
@@ -40,7 +43,7 @@ const sectionItems = [
     <AboutHero />
     <AboutProfile about={aboutData} site={siteData} />
     <AboutStats
-      membersCount={groupCounts.asisten + groupCounts.mahasiswa}
+      membersCount={members.length}
       courseCount={courses.length}
       dosenCount={groupCounts.dosen}
     />
@@ -53,6 +56,6 @@ const sectionItems = [
       </a>
     </div>
     <EimVisiMisi about={aboutData} />
-    <EimCTA site={siteData} />
+    <EimCTA site={siteData} stage={recruitmentStage} />
   </main>
 </Layout>

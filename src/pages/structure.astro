@@ -11,13 +11,16 @@ import { getCollection } from 'astro:content';
 import { buildPositionIndex, countPeopleByGroup, groupPeople, parsePositions } from '../utils/position-mapper';
 import { resolveCourses } from '../utils/course-helpers';
 import { getLocaleFromUrl, getLocalizedJsonData, t } from '../utils/i18n';
-import type { Lecturer, Member } from '../utils/types';
+import type { Lecturer, Member, RecruitmentConfig } from '../utils/types';
+import { getCurrentRecruitmentStage } from '../utils/recruitment';
 
 const locale = getLocaleFromUrl(Astro.url);
 const membersData = getLocalizedJsonData<{ list: Member[] }>('members', locale);
 const positionsData = getLocalizedJsonData<{ list: unknown }>('positions', locale);
 const siteData = getLocalizedJsonData<any>('site', locale);
 const lecturersData = getLocalizedJsonData<{ list: Lecturer[] }>('lecturers', locale);
+const registrationConfig = getLocalizedJsonData<Partial<RecruitmentConfig>>('registration', locale);
+const recruitmentStage = getCurrentRecruitmentStage(registrationConfig || {});
 
 const positions = parsePositions(positionsData);
 const positionIndex = buildPositionIndex(positions);
@@ -32,7 +35,7 @@ const sections = groupPeople(people, positions);
 const groupCounts = countPeopleByGroup(people, positions);
 const dosenCount = groupCounts.dosen;
 // "Anggota" excludes dosen, who are counted separately in the hero meta.
-const assistantCount = groupCounts.asisten + groupCounts.mahasiswa;
+const memberCount = members.length;
 
 const sectionItems = [
   { id: 'struktur', label: t('struct.navDotChart', locale) },
@@ -50,7 +53,7 @@ const sectionItems = [
   <main id="main-content" tabindex="-1">
     <EimSectionNav items={sectionItems} label={t('struct.sectionNavLabel', locale)} />
     <StructureHero
-      memberCount={assistantCount}
+      memberCount={memberCount}
       dosenCount={dosenCount}
       positionCount={positions.length}
     />
@@ -69,6 +72,6 @@ const sectionItems = [
         locale={locale}
       />
     ))}
-    <EimCTA site={siteData} />
+    <EimCTA site={siteData} stage={recruitmentStage} />
   </main>
 </Layout>

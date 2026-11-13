@@ -4,12 +4,14 @@ import { resolveStageCta } from '../../utils/constants';
 
 interface Props {
   site: any;
+  stage: string;
 }
 
-const { site } = Astro.props;
+const { site, stage } = Astro.props;
 const locale = getLocaleFromUrl(Astro.url);
 const contact = site?.contact ?? {};
-const primaryCta = resolveStageCta('closed');
+const primaryCta = resolveStageCta(stage);
+const joinIsPrimary = primaryCta.href === '/registration';
 ---
 
 <section id="gabung" class="eim-cta" aria-labelledby="eim-cta-title">
@@ -23,7 +25,7 @@ const primaryCta = resolveStageCta('closed');
     <div>
       <div class="flex flex-wrap items-center gap-x-6 gap-y-4">
         <a class="eim-cta-primary" href={primaryCta.href} data-stage-primary>{primaryCta.label}</a>
-        <a class="eim-cta-secondary" href="/registration" data-stage-secondary>
+        <a class="eim-cta-secondary" href="/registration" data-stage-secondary hidden={joinIsPrimary}>
           {t('nav.joinUs', locale)} <span aria-hidden="true">→</span>
         </a>
       </div>

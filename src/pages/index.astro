@@ -61,14 +61,15 @@ const upcomingEvents = events.filter((event) => event.data.status === 'upcoming'
 
 // Lab numbers, derived — never typed in.
 const positions = parsePositions(positionsData);
-const people = [...(lecturersData?.list ?? []), ...(membersData?.list ?? [])];
+const members = membersData?.list ?? [];
+const people = [...(lecturersData?.list ?? []), ...members];
 const groupCounts = countPeopleByGroup(people, positions);
 
 // Beranda course band: first three courses that actually run a practicum.
 const courseEntries = await getCollection('courses');
-const allCourses = resolveCourses(courseEntries, lecturersData?.list ?? [], membersData?.list ?? []);
+const allCourses = resolveCourses(courseEntries, lecturersData?.list ?? [], members);
 const bandCourses = allCourses.filter((course) => course.hasPracticum).slice(0, 3);
-const assistantCount = summarizePracticumAssistants(allCourses, membersData?.list ?? []).distinctCount;
+const assistantCount = summarizePracticumAssistants(allCourses, members).distinctCount;
 ---
 
 <Layout title={`EIM Research Lab · Riset infrastruktur untuk dunia nyata`} homeSkin skipLink>
@@ -98,8 +99,12 @@ const assistantCount = summarizePracticumAssistants(allCourses, membersData?.lis
     <EimVisiMisi about={about} />
     <EimLabNumbers
       dosen={groupCounts.dosen}
-      anggota={groupCounts.asisten + groupCounts.mahasiswa}
+      anggota={members.length}
       asisten={assistantCount}
+      assistantNote={t('home.numbersNote', locale, {
+        n: String(assistantCount),
+        total: String(members.length),
+      })}
     />
     <EimCourses courses={bandCourses} />
     <EimEvents events={events} locale={locale} />

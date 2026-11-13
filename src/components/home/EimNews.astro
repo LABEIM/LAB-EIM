@@ -51,7 +51,7 @@ const featuredImage = featured?.data.image?.[0];
       >
         <a href={featuredHref} class="news-featured group block">
           {featuredImage && (
-            <span class="block overflow-hidden rounded-card border border-line bg-surface">
+            <span class:list={['block overflow-hidden rounded-card border border-line bg-surface', secondary.length === 0 && 'lg:max-w-[820px]']}>
               <Image
                 src={featuredImage}
                 alt=""

@@ -141,15 +141,13 @@
 
 /* One or two people fill the row instead of leaving gaps. */
 .staff-grid--solo {
-  grid-template-columns: 1fr;
+  grid-template-columns: minmax(0, 1fr);
 }
 
-@media (min-width: 1024px) {
+@media (min-width: 640px) {
   .staff-grid--solo {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-  .staff-grid--solo > li {
-    grid-column: span 2;
+    grid-template-columns: minmax(0, 22rem);
+    justify-content: center;
   }
 }
 
@@ -163,10 +161,23 @@
   }
 }
 
+/* The portrait sits on top with the name under it, centred in the page. */
+.staff-grid--solo :is(.member-tile, .lecturer-card) {
+  flex-direction: column;
+  align-items: stretch;
+  gap: var(--space-12);
+  text-align: center;
+}
+
 .staff-grid--solo :is(.member-tile-media, .lecturer-card-media) {
-  flex-basis: 8rem;
-  width: 8rem;
-  height: 8rem;
+  flex: none;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1;
+}
+
+.staff-grid--solo :is(.member-tile-body, .lecturer-card-body) {
+  align-items: center;
 }
 
 .staff-grid--solo :is(.member-tile-name, .lecturer-card-name) {

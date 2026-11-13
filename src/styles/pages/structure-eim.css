@@ -139,7 +139,9 @@
   }
 }
 
-/* == Role tree == */
+/* == Role tree ==
+   One nested <ol> carries the hierarchy. Below 1024px it reads as an indented
+   tree; from 1024px the same list lays out as a horizontal org chart. */
 
 .chart-tree,
 .chart-children {
@@ -148,30 +150,17 @@
   padding: 0;
 }
 
-/* A left spine is the whole hierarchy cue; it needs to survive on the panel
-   background, where --color-line is close to invisible. */
-.chart-children {
-  margin-top: var(--space-12);
-  padding-left: var(--space-16);
-  border-left: 1px solid color-mix(in srgb, var(--color-muted-ink) 55%, transparent);
-}
-
-@media (min-width: 640px) {
-  .chart-children {
-    margin-left: var(--space-16);
-    padding-left: var(--space-24);
-  }
-}
-
-.chart-node + .chart-node {
-  margin-top: var(--space-12);
+.chart-node {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .chart-node-head {
   display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  gap: var(--space-4) var(--space-12);
+  flex-direction: column;
+  gap: var(--space-4);
+  width: 100%;
   padding: var(--space-12) var(--space-16);
   border: 1px solid var(--color-line);
   border-radius: var(--radius-card);
@@ -194,7 +183,6 @@
 }
 
 .chart-count {
-  margin-left: auto;
   font-family: var(--font-mono);
   font-size: var(--text-11);
   letter-spacing: 0.08em;
@@ -208,4 +196,77 @@
   font-size: var(--text-11);
   letter-spacing: 0.04em;
   color: var(--color-muted-ink);
+}
+
+/* Indented tree — default, i.e. below 1200px. */
+.chart-children {
+  align-self: stretch;
+  margin-top: var(--space-12);
+  margin-left: var(--space-16);
+  padding-left: var(--space-16);
+  border-left: 1px solid color-mix(in srgb, var(--color-muted-ink) 55%, transparent);
+}
+
+.chart-children > .chart-node + .chart-node {
+  margin-top: var(--space-12);
+}
+
+@media (min-width: 1200px) {
+  /* Horizontal org chart: siblings sit in a row, each parent centred over its
+     own subtree. The bus is drawn per child (::before = drop, ::after = half
+     of the horizontal line) so a sibling can never read as a descendant. */
+  .chart-children {
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 0;
+    margin: 0;
+    padding: 0;
+    border-left: 0;
+  }
+
+  .chart-children > .chart-node {
+    position: relative;
+    padding: 2rem var(--space-12) 0;
+  }
+
+  .chart-children > .chart-node + .chart-node {
+    margin-top: 0;
+  }
+
+  .chart-children > .chart-node::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    width: 1px;
+    height: 2rem;
+    background: color-mix(in srgb, var(--color-muted-ink) 55%, transparent);
+  }
+
+  .chart-children > .chart-node::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: color-mix(in srgb, var(--color-muted-ink) 55%, transparent);
+  }
+
+  .chart-children > .chart-node:first-child::after {
+    left: 50%;
+  }
+
+  .chart-children > .chart-node:last-child::after {
+    right: 50%;
+  }
+
+  .chart-children > .chart-node:only-child::after {
+    display: none;
+  }
+
+  .chart-node-head {
+    width: min(100%, 18rem);
+  }
 }

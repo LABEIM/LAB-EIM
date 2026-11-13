@@ -20,7 +20,7 @@ const membersData = getLocalizedJsonData<{ list: Member[] }>('members', locale);
 const lecturersData = getLocalizedJsonData<{ list: Lecturer[] }>('lecturers', locale);
 const positionsData = getLocalizedJsonData<{ list: unknown }>('positions', locale);
 const registrationConfig = getLocalizedJsonData<Partial<RecruitmentConfig>>('registration', locale);
-const recruitmentStage = getCurrentRecruitmentStage(registrationConfig || {});
+const recruitmentStage = getCurrentRecruitmentStage(registrationConfig);
 
 const positions = parsePositions(positionsData);
 const members: Member[] = membersData?.list ?? [];

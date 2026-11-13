@@ -5,7 +5,7 @@ interface Props {
   dosen: number;
   anggota: number;
   asisten: number;
-  assistantNote: string;
+  assistantNote?: string;
 }
 
 const { dosen, anggota, asisten, assistantNote } = Astro.props;
@@ -28,6 +28,8 @@ const stats = [
         </div>
       ))}
     </dl>
-    <p class="e-reveal mt-5 font-mono text-xs uppercase tracking-[0.08em] text-muted-ink">{assistantNote}</p>
+    {assistantNote && (
+      <p class="e-reveal mt-5 font-mono text-xs uppercase tracking-[0.08em] text-muted-ink">{assistantNote}</p>
+    )}
   </div>
 </section>

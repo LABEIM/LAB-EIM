@@ -276,11 +276,6 @@ html {
   );
 }
 
-.eim-subhero .eim-hero-title {
-  /* `ch` measures the 0 glyph, not this face: it orphaned the last word. */
-  max-width: 14em;
-}
-
 .eim-subhero .eim-hero-desc {
   max-width: 56ch;
 }

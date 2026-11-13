@@ -20,7 +20,7 @@ const positionsData = getLocalizedJsonData<{ list: unknown }>('positions', local
 const siteData = getLocalizedJsonData<any>('site', locale);
 const lecturersData = getLocalizedJsonData<{ list: Lecturer[] }>('lecturers', locale);
 const registrationConfig = getLocalizedJsonData<Partial<RecruitmentConfig>>('registration', locale);
-const recruitmentStage = getCurrentRecruitmentStage(registrationConfig || {});
+const recruitmentStage = getCurrentRecruitmentStage(registrationConfig);
 
 const positions = parsePositions(positionsData);
 const positionIndex = buildPositionIndex(positions);
@@ -34,7 +34,7 @@ const courses = resolveCourses(courseEntries, lecturers, members);
 const sections = groupPeople(people, positions);
 const groupCounts = countPeopleByGroup(people, positions);
 const dosenCount = groupCounts.dosen;
-// "Anggota" excludes dosen, who are counted separately in the hero meta.
+// The member roster excludes dosen; lecturers are counted separately in the hero meta.
 const memberCount = members.length;
 
 const sectionItems = [

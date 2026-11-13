@@ -101,10 +101,12 @@ const assistantCount = summarizePracticumAssistants(allCourses, members).distinc
       dosen={groupCounts.dosen}
       anggota={members.length}
       asisten={assistantCount}
-      assistantNote={t('home.numbersNote', locale, {
-        n: String(assistantCount),
-        total: String(members.length),
-      })}
+      assistantNote={assistantCount > 0
+        ? t('home.numbersNote', locale, {
+            n: String(assistantCount),
+            total: String(members.length),
+          })
+        : ''}
     />
     <EimCourses courses={bandCourses} />
     <EimEvents events={events} locale={locale} />

@@ -61,13 +61,13 @@ Before ending a session, the agent must perform these tasks:
 - `wrangler.json`: Cloudflare Worker name and compatibility flags (`nodejs_compat`, `assets_navigation_has_no_effect`); deploys use the adapter-generated `dist/server/wrangler.json`.
 - `keystatic.config.ts`: Keystatic CMS singletons (e.g. recruitment settings), collections, and storage (Keystatic Cloud in production, local in development).
 - `src/content.config.ts`: Collection loaders and Zod schemas (`news`, `events`).
-- `src/content/`: Static Markdown content files (`news/`, `events/`).
-- `src/data/`: JSON configuration (`site.json`, `contact.json`, `members.json`, `lecturers.json`, `divisions.json`, `registration.json`) and the guide in `docs/CONFIG_GUIDE.md`.
+- `src/content/`: Static Markdown content files (`news/`, `events/`, `courses/`).
+- `src/data/`: JSON configuration (`site.json`, `contact.json`, `members.json`, `lecturers.json`, `positions.json`, `divisions.json`, `registration.json`) and the guide in `docs/CONFIG_GUIDE.md`.
 - `src/components/`: Reusable Astro and React UI components (Navbar, Footer, cards, forms, plus homepage, about-page, structure-page, and event-page sections under `home/`, `about/`, `structure/`, and `kegiatan/`).
 - `src/pages/`: File-system routes, the `/keystatic` admin, and API endpoints.
 - `src/layouts/Layout.astro`: Base wrapper page layout.
 - `src/styles/`: Modular design system and stylesheets (`variables.css`, `base.css`, `globals.css`, `mobile.css`, `icons.css`, plus `components/` and `pages/`).
-- `src/utils/`: Business logic, i18n helpers, content filtering, event helpers, registration logic, and interfaces (`i18n.ts`, `content-helpers.ts`, `event-helpers.ts`, `registration-config.ts`, `recruitment.ts`, `division-mapper.ts`, `roles.ts`, `safe-link.ts`, `types.ts`, `constants.ts`).
+- `src/utils/`: Business logic, i18n helpers, content filtering, event helpers, registration logic, and interfaces (`i18n.ts`, `content-helpers.ts`, `event-helpers.ts`, `registration-config.ts`, `recruitment.ts`, `division-mapper.ts`, `position-mapper.ts`, `course-helpers.ts`, `safe-link.ts`, `types.ts`, `constants.ts`).
 - `docs/`: Project guides (`DEPLOYMENT.md`, `REGISTRATION_SETUP.md`, `ASSETS.md`, `CONFIG_GUIDE.md`) and the design token reference (`DESIGN_TOKENS.md`). `CONTRIBUTING.md`, `SECURITY.md`, and `CODE_OF_CONDUCT.md` stay at the root so GitHub's community tabs and direct links keep their canonical paths.
 - `public/`: Static assets, `robots.txt`, `sitemap.xml`, `manifest.webmanifest`, `llms.txt`, `llms-full.txt`, and `.well-known/security.txt`.
 

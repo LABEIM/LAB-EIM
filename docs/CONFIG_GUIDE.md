@@ -1,50 +1,42 @@
 # EIM Research Lab - Configuration Guide & Templates
 
-This guide explains how to update the laboratory divisions, staff members, and recruitment registration details using the JSON files in the `src/data/` directory.
+This guide explains how to update the laboratory positions, members, courses, and recruitment registration details using the JSON files in `src/data/` and the Markdown collections in `src/content/`.
 
 Admin Portal: https://lab-eim.vercel.app/keystatic
 
 ---
 
-## 1. Divisions Configuration (`src/data/divisions.json`)
-This file defines all operational divisions in the laboratory. Adding or updating a division here or via **Keystatic Admin > Singletons > Divisions Configuration** automatically updates the homepage grid, the `/structure` org chart and division sections, and the dropdown choices on the registration page.
+## 1. Positions Configuration (`src/data/positions.json`)
+This file defines the laboratory's role hierarchy. The `/structure` chart and role sections, the Tentang Kami team list, and the Keystatic `Position` dropdowns on members and lecturers all read from it.
+
+The hierarchy is fixed in code (`STRUCTURE_TREE` in `src/utils/position-mapper.ts`): Ketua Lab → Wakil Ketua Lab → Dosen Anggota / Koordinator Mata Kuliah / Koordinator Asisten Lab → Asisten Koordinator Praktikum / Mahasiswa Anggota / Tim Adhoc. Ketua Kelompok Keilmuan and Ka.Ur.Lab FRI are faculty-level and intentionally not listed. Asisten Praktikum belongs to a course, not to this structure.
 
 ### Fields Explanation
-* **`id`** (String): A unique, lowercase identifier for the division. Member `division` values are resolved against this id and the `aliases` list (e.g. `core` → `inti`, `research` → `riset`, `community` → `care`).
-* **`name`** (String): The title-case name of the division. (e.g. `"Cyber Security"`)
-* **`displayName`** (String): The display label used on the homepage division cards, the `/structure` org chart, and each division section heading. (e.g. `"CYBER SECURITY"`)
-* **`description`** (String): A brief description of the division's role, displayed on the homepage division grid and the `/structure` division section.
-* **`registrationLabel`** (String): The text displayed in the division choices selection dropdowns on the registration page.
-* **`registrationValue`** (String): The database/Sheets value sent upon registration (historically Indonesian terms, e.g. `"Inti"`, `"Riset"`, `"Lomba"`, etc.).
-* **`aliases`** (Array of Strings): Alternative keys that map legacy member `division` values and links to this division. For example, `community` members render under `care`, and `core` members render under `inti`.
-* **`borderColor`** (String): A CSS color string defining the border glow of the member cards in this division. (Supports `rgba()`, `hex`, or theme custom properties).
-* **`roleColor`** (String): A CSS color string defining the coordinator/staff role text color.
+* **`id`** (String): Unique lowercase identifier. Member and lecturer `role` values must match one of these.
+* **`label`** (String): Display label used in the chart, section headings, member cards, and `AboutTeam`.
+* **`group`** (String): One of `dosen`, `asisten`, `mahasiswa`. Controls the eyebrow label above each section.
+* **`order`** (Integer): Sort order. Roles with equal `order` keep the array order.
 
-### Division Template
+### Position Template
 ```json
   {
-    "id": "security",
-    "name": "Cyber Security",
-    "displayName": "CYBER SECURITY",
-    "description": "Focuses on network defense, penetration testing, security audits, and cryptography studies.",
-    "registrationLabel": "Cyber Security (Defense & Penetration Testing)",
-    "registrationValue": "Security",
-    "aliases": ["security", "keamanan"],
-    "borderColor": "rgba(231, 76, 60, 0.3)",
-    "roleColor": "#e74c3c"
+    "id": "dosen-anggota",
+    "label": "Dosen Anggota Laboratorium",
+    "group": "dosen",
+    "order": 3
   }
 ```
+Sections render only for positions that hold at least one person; the chart always shows every position.
 
 ---
 
 ## 2. Members Directory (`src/data/members.json`)
-This file contains the list of all active laboratory assistants. On `/structure`, core members and division coordinators render as compact photo cards, while staff (anggota) render as a smaller photo-card grid under each division coordinator.
+This file lists student members and assistants. On `/structure` each person renders under their position section; on `/about` the whole roster is listed with its position label. Photos still live in `/image/division/...`; those folder names are historical and unrelated to the current structure.
 
 ### Fields Explanation
-* **`id`** (Number): A unique numeric ID for the member.
+* **`id`** (Number): A unique numeric ID for the member. Course assistant lists reference these ids.
 * **`name`** (String): Full name of the assistant.
-* **`role`** (String): Role or title in the lab (e.g. `"EIM Lab Coordinator"`, `"Staff"`, `"Research Coordinator"`).
-* **`division`** (String): Must match the **`id`** or an **alias** of a division in `divisions.json` (e.g. `"core"` → `inti`, `"research"` → `riset`, `"community"` → `care`).
+* **`role`** (String): A position id from `positions.json` (Keystatic shows it as a Position dropdown).
 * **`image`** (String): Path to the member's avatar image starting from `/image/`.
 * **`scale`** (String, Optional): CSS transform scale value for positioning adjustments in the square avatar frame (e.g. `"2.5"`, `"3"`, `"1"`).
 * **`position`** (String, Optional): CSS transform-origin values to focus/center the avatar face inside the square avatar crop (e.g. `"center 32%"`, `"50% 15%"`).
@@ -53,9 +45,8 @@ This file contains the list of all active laboratory assistants. On `/structure`
 ```json
   {
     "id": 26,
-    "name": "Jane Doe",
-    "role": "Staff",
-    "division": "research",
+    "name": "Nama Anggota",
+    "role": "mahasiswa-anggota",
     "image": "/image/division/research/RESEARCH_Member_JDOE_Jane-Doe_00.avif",
     "scale": "2.8",
     "position": "50% 25%"
@@ -278,32 +269,28 @@ Site administrators can toggle and configure a top global announcement banner th
 
 ---
 
-## 9. Lecturers / Pembina (`src/data/lecturers.json`)
+## 9. Lecturers (`src/data/lecturers.json`)
+This file holds the dosen entries. Each entry's `role` is a position id from `positions.json`, so a lecturer appears in the matching `/structure` section and in the Tentang Kami roster.
 
-This file configures the Pembina tier of the `/structure` org chart and the `#pembina` section. Manage it via **Keystatic Admin > Singletons > Lecturers**. Any number of entries is supported; entries whose `role` contains "Koordinator" render in the Dosen Koordinator column, and the rest render in the Dosen Lab column. The chart puts the first Dosen Koordinator in the centre and collapses all Dosen Lab into one side card with an overlapping avatar stack and a count, so adding more lecturers never widens the chart; the `#pembina` section lists every entry individually.
+Manage it via **Keystatic Admin > Singletons > Lecturers**. Entries with an empty `image` fall back to the placeholder avatar.
 
 ### Fields Explanation
-* **`id`** (String): Unique identifier for the lecturer entry (e.g. `"dosen-koordinator"`, `"dosen-lab-1"`).
-* **`name`** (String): Lecturer name. May be left empty — the card then uses `role` as its title.
-* **`role`** (String): Role label (e.g. `"Dosen Koordinator"`, `"Dosen Lab"`).
-* **`image`** (String): Path to the lecturer photo starting from `/image/`. Leave empty to render the shared `/image/placeholder-avatar.svg` placeholder.
-* **`scale`** (String, Optional): CSS transform scale value for the square avatar crop.
-* **`position`** (String, Optional): CSS transform-origin value for the square avatar crop (e.g. `"center 32%"`).
+* **`id`** (String): Unique id. Course `coordinatorId` values reference these ids.
+* **`name`** (String): Full name, with title.
+* **`role`** (String): A position id from `positions.json` (`ketua-lab`, `wakil-ketua-lab`, `dosen-anggota`, `koordinator-matkul`, …).
+* **`image`**, **`scale`**, **`position`**: Same meaning as on members.
 
 ### Lecturer Template
 ```json
   {
-    "id": "dosen-lab-1",
-    "name": "",
-    "role": "Dosen Lab",
+    "id": "dosen-koordinator-matkul-1",
+    "name": "Nama Dosen",
+    "role": "koordinator-matkul",
     "image": "",
-    "scale": "",
-    "position": ""
+    "scale": "1",
+    "position": "center"
   }
 ```
-
----
-
 ## 10. Contact Page (`src/data/contact.json`)
 
 Configures the `/contact` page. Manage it via **Keystatic Admin > Singletons > Contact Page**.

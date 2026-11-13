@@ -4,7 +4,6 @@
       "id": 1,
       "name": "Ferdyansyah Adi Saputra",
       "role": "koordinator-asisten",
-      "division": "core",
       "image": "/image/division/inti/CORE_Assistant-Coordinator_DAYY_Ferdiansyah-Adi-Saputra_00.avif",
       "scale": "3",
       "position": "center 32%"
@@ -13,7 +12,6 @@
       "id": 2,
       "name": "Raffi Raditya Sofwan",
       "role": "mahasiswa-anggota",
-      "division": "core",
       "image": "/image/division/inti/CORE_1st-Secretary_WOKY_Raffi-Raditya-Sofwan_00.avif",
       "scale": "2.8",
       "position": "55% 35%"
@@ -22,7 +20,6 @@
       "id": 3,
       "name": "Kania Shafa",
       "role": "mahasiswa-anggota",
-      "division": "core",
       "image": "/image/division/inti/CORE_1st-Treasurer_KSAZ_Kania-Shafa-Az-Zahra_00.avif",
       "scale": "2.7",
       "position": "45% 52%"
@@ -31,7 +28,6 @@
       "id": 4,
       "name": "Ardy Maulana Nayottama Nugroho",
       "role": "mahasiswa-anggota",
-      "division": "research",
       "image": "/image/division/research/RESEARCH_Division-Coordinator_NYTM_Ardy-Maulana-Nayottama-Nugroho_01.avif",
       "scale": "2.3",
       "position": "53% 15%"
@@ -40,7 +36,6 @@
       "id": 5,
       "name": "Tb. Alta Ulil Abshor",
       "role": "mahasiswa-anggota",
-      "division": "research",
       "image": "/image/division/research/RESEARCH_Member_ALTA_Tb.-Alta-Ulil-Abshor_00.avif",
       "scale": "3",
       "position": "49% 35%"
@@ -49,7 +44,6 @@
       "id": 6,
       "name": "Nayla Aulia Rusyda",
       "role": "mahasiswa-anggota",
-      "division": "research",
       "image": "/image/division/research/RESEARCH_Member_NAYL_Nayla-Aulia-Rusyda_00.avif",
       "scale": "3",
       "position": "52% 43%"
@@ -58,7 +52,6 @@
       "id": 7,
       "name": "Hana Humaira",
       "role": "mahasiswa-anggota",
-      "division": "research",
       "image": "/image/division/research/RESEARCH_Member_NARA_Hana-Humaira_00.avif",
       "scale": "3",
       "position": "center 40%"
@@ -67,7 +60,6 @@
       "id": 8,
       "name": "Dara Saifa Mahiroh",
       "role": "mahasiswa-anggota",
-      "division": "research",
       "image": "/image/division/research/RESEARCH_Member_DSFA_Dara-Saifa-Mahiroh_00.avif",
       "scale": "2.5",
       "position": "48% 34%"
@@ -76,7 +68,6 @@
       "id": 9,
       "name": "Winsenlaus Alfero Krisna Ivander Lael",
       "role": "mahasiswa-anggota",
-      "division": "pku",
       "image": "/image/division/pku/PKU_Division-Coordinator_VAND_Winsenlaus-Alfero-Krisna-Ivander-Lael_00.avif",
       "scale": "2.8",
       "position": "50% 13%"
@@ -85,7 +76,6 @@
       "id": 10,
       "name": "Fakhri Muhammad Habibi",
       "role": "mahasiswa-anggota",
-      "division": "pku",
       "image": "/image/division/pku/PKU_Member_KANG_Fakhri-Muhammad-Habibi_00.avif",
       "scale": "2.8",
       "position": "50% 15%"
@@ -94,7 +84,6 @@
       "id": 11,
       "name": "Faiz Dhya Muhamad Rahmantyo",
       "role": "mahasiswa-anggota",
-      "division": "pku",
       "image": "/image/division/pku/PKU_Member_FADH_Faiz-Dhya-Muhamad-Rahmantyo_00.avif",
       "scale": "2.8",
       "position": "50% 15%"
@@ -103,7 +92,6 @@
       "id": 12,
       "name": "Akchmad Reza Zandri",
       "role": "mahasiswa-anggota",
-      "division": "competition",
       "image": "/image/division/competition/COMPETITION_Division-Coordinator_JAAA_Akchmad-Reza-Zandri_00.avif",
       "scale": "2.8",
       "position": "49% 35%"
@@ -112,7 +100,6 @@
       "id": 13,
       "name": "Ganda Dwiyana",
       "role": "mahasiswa-anggota",
-      "division": "competition",
       "image": "/image/division/competition/COMPETITION_Member_NDAA_Ganda-Dwiyana_00.avif",
       "scale": "2.8",
       "position": "50% 31%"
@@ -121,7 +108,6 @@
       "id": 14,
       "name": "Frixtho Alex Credorius Latumahina",
       "role": "mahasiswa-anggota",
-      "division": "competition",
       "image": "/image/division/competition/COMPETITION_Member_FACL_Frixtho-Alex-Credorius-Latumahina_00.avif",
       "scale": "2.8",
       "position": "48% 25%"
@@ -130,7 +116,6 @@
       "id": 15,
       "name": "Muhammad Fizry Alifta",
       "role": "mahasiswa-anggota",
-      "division": "competition",
       "image": "/image/division/competition/COMPETITION_Member_FZRY_Muhammad-Fizry-Alifta_00.avif",
       "scale": "2.8",
       "position": "50% 36%"
@@ -139,7 +124,6 @@
       "id": 17,
       "name": "Aura Haya Azka",
       "role": "mahasiswa-anggota",
-      "division": "media",
       "image": "/image/division/prc/PRC_Division-Coordinator_AUZA_Aura-Haya-Azka_00.avif",
       "scale": "2.2",
       "position": "50% 40%"
@@ -148,7 +132,6 @@
       "id": 18,
       "name": "Firman Zuhdi Affandi",
       "role": "mahasiswa-anggota",
-      "division": "media",
       "image": "/image/division/prc/PRC_Member_FIZI_Firman-Zuhdi-Affandi_00.avif",
       "scale": "2.8",
       "position": "50% 33%"
@@ -157,7 +140,6 @@
       "id": 19,
       "name": "Affan Maulana Raffi",
       "role": "mahasiswa-anggota",
-      "division": "media",
       "image": "/image/division/prc/PRC_Member_AFMR_Affan-Maulana-Raffi_00.avif",
       "scale": "2.4",
       "position": "48% 19%"
@@ -166,7 +148,6 @@
       "id": 20,
       "name": "Wildan Zaaqi",
       "role": "mahasiswa-anggota",
-      "division": "media",
       "image": "/image/division/prc/PRC_Member_WILD_Wildan-Zaaqi_00.avif",
       "scale": "2.4",
       "position": "51% 45%"
@@ -175,7 +156,6 @@
       "id": 21,
       "name": "Bagas Haris Saputro",
       "role": "mahasiswa-anggota",
-      "division": "community",
       "image": "/image/division/care/CARE_Division-Coordinator_ASAP_Bagas-Haris-Saputro_00.avif",
       "scale": "3",
       "position": "50% 20%"
@@ -184,7 +164,6 @@
       "id": 22,
       "name": "Levi Soraya",
       "role": "mahasiswa-anggota",
-      "division": "community",
       "image": "/image/division/care/CARE_Member_RYLA_Levi-Soraya_00.avif",
       "scale": "2",
       "position": "50% 18%"
@@ -193,7 +172,6 @@
       "id": 23,
       "name": "Salman Alfarisy",
       "role": "mahasiswa-anggota",
-      "division": "community",
       "image": "/image/division/care/CARE_Member_SLMN_Salman-Alfarisy_00.avif",
       "scale": "2.3",
       "position": "50% 43%"
@@ -202,7 +180,6 @@
       "id": 24,
       "name": "Deidanisa Aulia Pradina Kya",
       "role": "mahasiswa-anggota",
-      "division": "community",
       "image": "/image/division/care/CARE_Member_KAYS_Deidanisa-Aulia-Pradina-Kya_00.avif",
       "scale": "3.3",
       "position": "50% 45%"
@@ -211,7 +188,6 @@
       "id": 25,
       "name": "Raffi Akbar Firdaus",
       "role": "mahasiswa-anggota",
-      "division": "community",
       "image": "/image/division/care/CARE_Member_AKBR_Raffi-Akbar-Firdaus_00.avif",
       "scale": "2.4",
       "position": "45% 51%"
@@ -220,7 +196,6 @@
       "id": 99,
       "name": "Nama Asisten",
       "role": "asisten-koordinator-praktikum",
-      "division": "core",
       "image": "",
       "scale": "1",
       "position": "center"

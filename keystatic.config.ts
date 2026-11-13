@@ -1,4 +1,15 @@
 import { config, fields, collection, singleton } from '@keystatic/core';
+import positionsData from './src/data/positions.json';
+
+const positionOptions = positionsData.list.map((position) => ({
+  label: position.label,
+  value: position.id,
+}));
+const positionField = fields.select({
+  label: 'Position',
+  options: positionOptions,
+  defaultValue: positionOptions[0]?.value ?? 'mahasiswa-anggota',
+});
 
 const contactPersonsField = fields.array(
   fields.object({
@@ -448,6 +459,33 @@ export default config({
         ),
       },
     }),
+    positions: singleton({
+      label: 'Positions',
+      path: 'src/data/positions',
+      format: { data: 'json' },
+      schema: {
+        list: fields.array(
+          fields.object({
+            id: fields.text({ label: 'ID' }),
+            label: fields.text({ label: 'Label' }),
+            group: fields.select({
+              label: 'Group',
+              options: [
+                { label: 'Dosen', value: 'dosen' },
+                { label: 'Asisten', value: 'asisten' },
+                { label: 'Mahasiswa', value: 'mahasiswa' },
+              ],
+              defaultValue: 'mahasiswa',
+            }),
+            order: fields.integer({ label: 'Order' }),
+          }),
+          {
+            label: 'Positions List',
+            itemLabel: (props) => props.fields.label.value || 'Position',
+          }
+        ),
+      },
+    }),
     members: singleton({
       label: 'Members',
       path: 'src/data/members',
@@ -457,8 +495,7 @@ export default config({
           fields.object({
             id: fields.number({ label: 'ID' }),
             name: fields.text({ label: 'Name' }),
-            role: fields.text({ label: 'Role' }),
-            division: fields.text({ label: 'Division' }),
+            role: positionField,
             image: fields.text({ label: 'Image Path' }),
             scale: fields.text({ label: 'Scale Factor' }),
             position: fields.text({ label: 'Position' }),
@@ -479,7 +516,7 @@ export default config({
           fields.object({
             id: fields.text({ label: 'ID' }),
             name: fields.text({ label: 'Name' }),
-            role: fields.text({ label: 'Role' }),
+            role: positionField,
             image: fields.text({ label: 'Image Path' }),
             scale: fields.text({ label: 'Scale Factor' }),
             position: fields.text({ label: 'Position' }),

@@ -278,7 +278,6 @@ export interface Member {
   id: number;
   name: string;
   role: string;
-  division: string;
   image: string;
   scale?: string;
   position?: string;
@@ -296,15 +295,6 @@ export interface Lecturer {
 export interface HeroPortrait {
   name: string;
   image: string;
-}
-
-export interface DivisionPanel {
-  id: string;
-  displayName: string;
-  description: string;
-  memberCount: number;
-  coordinator: Member | null;
-  href: string;
 }
 
 export interface DivisionSection {

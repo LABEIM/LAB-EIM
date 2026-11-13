@@ -15,7 +15,15 @@ const contact = site?.contact ?? {};
 <section id="profil" class="py-[clamp(4.5rem,10vh,8.75rem)]" aria-labelledby="about-profile-title">
   <div class="mx-auto max-w-[1200px] px-[clamp(1.25rem,4vw,4rem)]">
     <div class="grid gap-[clamp(2.5rem,5vw,5rem)] lg:grid-cols-[minmax(0,4fr)_minmax(0,7fr)]">
-      <div class="e-reveal">
+      <div>
+        <h2 id="about-profile-title" class="e-reveal font-display text-[clamp(2rem,4vw,3.5rem)] leading-[1.05] tracking-[-0.01em]">
+          {about.overviewTitle}
+        </h2>
+        <p class="e-reveal mt-8 max-w-[62ch] text-[17px] leading-[1.65]">{about.overviewContent1}</p>
+        <p class="e-reveal mt-5 max-w-[62ch] text-[15px] leading-[1.65] text-muted-ink">{about.overviewContent2}</p>
+      </div>
+
+      <div class="e-reveal lg:order-first">
         <p class="font-mono text-xs uppercase tracking-[0.08em] text-brand">{t('about.profileEyebrow', locale)}</p>
         <p class="mt-6 font-mono text-[11px] uppercase tracking-[0.08em] text-muted-ink">{t('about.factsLabel', locale)}</p>
         <dl class="mt-2 border-t border-line lg:sticky lg:top-28">
@@ -42,14 +50,6 @@ const contact = site?.contact ?? {};
             </dd>
           </div>
         </dl>
-      </div>
-
-      <div>
-        <h2 id="about-profile-title" class="e-reveal font-display text-[clamp(2rem,4vw,3.5rem)] leading-[1.05] tracking-[-0.01em]">
-          {about.overviewTitle}
-        </h2>
-        <p class="e-reveal mt-8 max-w-[62ch] text-[17px] leading-[1.65]">{about.overviewContent1}</p>
-        <p class="e-reveal mt-5 max-w-[62ch] text-[15px] leading-[1.65] text-muted-ink">{about.overviewContent2}</p>
       </div>
     </div>
   </div>

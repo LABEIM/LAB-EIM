@@ -7,7 +7,9 @@ import EimCTA from '../components/home/EimCTA.astro';
 import StructureHero from '../components/structure/StructureHero.astro';
 import StructureChart from '../components/structure/StructureChart.astro';
 import StructureRoles from '../components/structure/StructureRoles.astro';
+import { getCollection } from 'astro:content';
 import { buildPositionIndex, countPeopleByGroup, groupPeople, parsePositions } from '../utils/position-mapper';
+import { resolveCourses } from '../utils/course-helpers';
 import { getLocaleFromUrl, getLocalizedJsonData, t } from '../utils/i18n';
 import type { Lecturer, Member } from '../utils/types';
 
@@ -22,6 +24,9 @@ const positionIndex = buildPositionIndex(positions);
 const members = membersData?.list ?? [];
 const lecturers = lecturersData?.list ?? [];
 const people = [...lecturers, ...members];
+
+const courseEntries = await getCollection('courses');
+const courses = resolveCourses(courseEntries, lecturers, members);
 
 const sections = groupPeople(people, positions);
 const groupCounts = countPeopleByGroup(people, positions);
@@ -53,6 +58,7 @@ const sectionItems = [
       positions={positions}
       members={members}
       lecturers={lecturers}
+      courses={courses}
       locale={locale}
     />
     {sections.map((section, index) => (

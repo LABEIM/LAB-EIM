@@ -1,41 +1,84 @@
 ---
-import type { Lecturer, Member, Position } from '../../utils/types';
+import type { CourseView, Lecturer, Member, Position } from '../../utils/types';
 import type { Locale } from '../../utils/i18n';
 import { t } from '../../utils/i18n';
-import { STRUCTURE_TREE, type StructureOutlineNode } from '../../utils/position-mapper';
-import StructureNode from './StructureNode.astro';
-import StructureOutline from './StructureOutline.astro';
+import {
+  STRUCTURE_TREE,
+  type ChartNode,
+} from '../../utils/position-mapper';
+import { summarizePracticumAssistants } from '../../utils/course-helpers';
+import ChartBranch from './ChartBranch.astro';
 
 interface Props {
   positions: Position[];
   members: Member[];
   lecturers: Lecturer[];
+  courses: CourseView[];
   locale: Locale;
 }
 
-const { positions, members, lecturers, locale } = Astro.props;
+const { positions, members, lecturers, courses, locale } = Astro.props;
 
 const byId = new Map(positions.map((position) => [position.id, position]));
 const treeById = new Map(STRUCTURE_TREE.map((node) => [node.id, node]));
+const PRAC_ASSISTANT_ID = 'asisten-praktikum';
 
 const holders = new Map<string, number>();
 for (const person of [...lecturers, ...members]) {
   holders.set(person.role, (holders.get(person.role) ?? 0) + 1);
 }
 
-const buildOutline = (id: string): StructureOutlineNode | null => {
-  const position = byId.get(id);
-  if (!position) return null;
-  const children = (treeById.get(id)?.children ?? [])
-    .map(buildOutline)
-    .filter((node): node is StructureOutlineNode => node !== null);
-  return { position, count: holders.get(id) ?? 0, children };
+const students = members.filter((member) => member.role === 'mahasiswa-anggota').length;
+const assistantSummary = summarizePracticumAssistants(
+  courses.map((course) => ({ id: course.id, data: course })),
+  members,
+);
+
+const notesFor = (id: string): string | undefined => {
+  if (id === 'mahasiswa-anggota' && assistantSummary.memberCount > 0) {
+    return t('struct.memberAssistantNote', locale, {
+      n: String(assistantSummary.memberCount),
+      total: String(students),
+    });
+  }
+  if (id === PRAC_ASSISTANT_ID && assistantSummary.memberCount > 0) {
+    return t('struct.assistantMemberNote', locale, {
+      n: String(assistantSummary.memberCount),
+    });
+  }
+  return undefined;
 };
 
-const root = buildOutline(STRUCTURE_TREE[0].id);
-const deputy = root?.children[0] ?? null;
-const branch = deputy?.children ?? [];
-const praktikum = branch[2]?.children ?? [];
+const practicumAssistant = (): ChartNode => ({
+  position: {
+    id: PRAC_ASSISTANT_ID,
+    label: t('struct.practicumAssistant', locale),
+    group: 'asisten',
+    order: 6.5,
+  },
+  count: assistantSummary.distinctCount,
+  note: notesFor(PRAC_ASSISTANT_ID),
+  children: [],
+});
+
+const buildNode = (id: string): ChartNode | null => {
+  if (id === PRAC_ASSISTANT_ID) return practicumAssistant();
+
+  const position = byId.get(id);
+  if (!position) return null;
+
+  const childIds = [...(treeById.get(id)?.children ?? [])];
+  if (id === 'asisten-koordinator-praktikum') childIds.push(PRAC_ASSISTANT_ID);
+
+  const children = childIds
+    .map(buildNode)
+    .filter((child): child is ChartNode => child !== null);
+
+  return { position, count: holders.get(id) ?? 0, note: notesFor(id), children };
+};
+
+const root = buildNode(STRUCTURE_TREE[0].id);
+
 ---
 
 <section
@@ -58,60 +101,10 @@ const praktikum = branch[2]?.children ?? [];
 
     {root && (
       <div
-        class="mt-[clamp(2.5rem,6vh,4rem)] rounded-media border border-line bg-surface p-[clamp(1.25rem,4vw,3rem)]"
+        class="mt-[clamp(2.5rem,6vh,4rem)] rounded-media border border-line bg-surface p-[clamp(1.25rem,4vw,2.5rem)]"
       >
-        <div class="org-tree e-reveal" aria-hidden="true">
-          <div class="org-tier org-tier--lead">
-            <StructureNode position={root.position} count={root.count} locale={locale} />
-          </div>
-
-          {deputy && (
-            <>
-              <span class="org-stem"></span>
-              <div class="org-tier org-tier--lead">
-                <StructureNode position={deputy.position} count={deputy.count} locale={locale} />
-              </div>
-            </>
-          )}
-
-          {branch.length > 0 && (
-            <>
-              <span class="org-stem"></span>
-              <div class="org-branch--three"></div>
-              <div class="org-tier org-tier--three">
-                {branch.slice(0, 2).map((node) => (
-                  <StructureNode position={node.position} count={node.count} locale={locale} />
-                ))}
-
-                <div class="org-column">
-                  {branch[2] && (
-                    <StructureNode
-                      position={branch[2].position}
-                      count={branch[2].count}
-                      locale={locale}
-                    />
-                  )}
-                  {praktikum.length > 0 && (
-                    <div class="org-subtree">
-                      <div class="org-tier org-tier--stack">
-                        {praktikum.map((node) => (
-                          <StructureNode
-                            position={node.position}
-                            count={node.count}
-                            locale={locale}
-                          />
-                        ))}
-                      </div>
-                    </div>
-                  )}
-                </div>
-              </div>
-            </>
-          )}
-        </div>
-
-        <ol class="sr-only">
-          <StructureOutline node={root} locale={locale} />
+        <ol class="chart-tree e-reveal">
+          <ChartBranch node={root} locale={locale} />
         </ol>
       </div>
     )}

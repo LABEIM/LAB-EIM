@@ -5,11 +5,10 @@ import type { Member, Position } from '../../utils/types';
 interface Props {
   member: Member;
   positionIndex: Map<string, Position>;
-  variant?: 'default' | 'featured';
   index?: number;
 }
 
-const { member, positionIndex, variant = 'default', index } = Astro.props;
+const { member, positionIndex, index } = Astro.props;
 
 const initials = member.name
   .split(/\s+/)
@@ -21,7 +20,7 @@ const initials = member.name
 ---
 
 <article
-  class:list={['member-tile', variant === 'featured' && 'member-tile--featured']}
+  class="member-tile"
   data-member-id={member.id}
   style={`--i:${index ?? 0}`}
 >

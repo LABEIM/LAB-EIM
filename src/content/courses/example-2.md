@@ -8,7 +8,7 @@ modules:
     topics: Topik contoh untuk mata kuliah kedua.
 coordinatorId: dosen-koordinator-matkul-1
 assistantIds:
-  - 99
+  - 2
 order: 2
 ---
 

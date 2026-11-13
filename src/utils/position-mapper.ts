@@ -64,10 +64,11 @@ export function countPeopleByGroup<T extends { role: string }>(
   return counts;
 }
 
-export interface StructureOutlineNode {
+export interface ChartNode {
   position: Position;
   count: number;
-  children: StructureOutlineNode[];
+  note?: string;
+  children: ChartNode[];
 }
 
 /**

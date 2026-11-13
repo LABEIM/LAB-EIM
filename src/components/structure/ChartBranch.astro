@@ -1,0 +1,40 @@
+---
+import type { Locale } from '../../utils/i18n';
+import { t } from '../../utils/i18n';
+import type { ChartNode } from '../../utils/position-mapper';
+import ChartBranch from './ChartBranch.astro';
+
+interface Props {
+  node: ChartNode;
+  locale: Locale;
+}
+
+const { node, locale } = Astro.props;
+
+const GROUP_KEYS: Record<string, string> = {
+  dosen: 'struct.groupDosen',
+  asisten: 'struct.groupAsisten',
+  mahasiswa: 'struct.groupMahasiswa',
+};
+
+const count =
+  node.count > 0
+    ? t('struct.positionCount', locale, { n: String(node.count) })
+    : t('struct.emptyPosition', locale);
+---
+
+<li class="chart-node">
+  <div class="chart-node-head">
+    <span class="chart-kicker">{t(GROUP_KEYS[node.position.group], locale)}</span>
+    <span class="chart-label">{node.position.label}</span>
+    <span class="chart-count">{count}</span>
+  </div>
+  {node.note && <p class="chart-note">{node.note}</p>}
+  {node.children.length > 0 && (
+    <ol class="chart-children">
+      {node.children.map((child) => (
+        <ChartBranch node={child} locale={locale} />
+      ))}
+    </ol>
+  )}
+</li>

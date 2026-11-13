@@ -10,7 +10,7 @@ modules:
     topics: Topik contoh ketiga.
 coordinatorId: dosen-koordinator-matkul-1
 assistantIds:
-  - 1
+  - 2
   - 99
 order: 1
 ---

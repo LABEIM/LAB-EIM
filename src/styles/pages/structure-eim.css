@@ -60,10 +60,6 @@
   color: var(--color-muted-ink);
 }
 
-.member-tile--featured {
-  background: var(--color-surface);
-}
-
 /* == Lecturer card == */
 
 .lecturer-list {
@@ -122,25 +118,6 @@
   color: var(--color-muted-ink);
 }
 
-/* Pembina columns share the role/description/card rows so both lecturer cards
-   start at the same height, regardless of description length. */
-.pembina-grid {
-  display: grid;
-}
-
-@media (min-width: 640px) {
-  .pembina-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    grid-template-rows: auto auto auto;
-  }
-
-  .pembina-col {
-    display: grid;
-    grid-row: span 3;
-    grid-template-rows: subgrid;
-  }
-}
-
 /* == Staff list == */
 
 .staff-grid {
@@ -162,57 +139,46 @@
   }
 }
 
-/* == Org chart == */
+/* == Role tree == */
 
-.org-tree {
-  --org-gap: 1rem;
-  /* Connectors at --color-line are ~1.1:1 on the panel; muted ink keeps the
-     hierarchy readable without competing with the boxes. */
-  --org-connector: color-mix(in srgb, var(--color-muted-ink) 55%, transparent);
-
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 100%;
+.chart-tree,
+.chart-children {
+  list-style: none;
+  margin: 0;
+  padding: 0;
 }
 
-.org-tier {
-  display: flex;
-  justify-content: center;
-  width: 100%;
+/* A left spine is the whole hierarchy cue; it needs to survive on the panel
+   background, where --color-line is close to invisible. */
+.chart-children {
+  margin-top: var(--space-12);
+  padding-left: var(--space-16);
+  border-left: 1px solid color-mix(in srgb, var(--color-muted-ink) 55%, transparent);
 }
 
-.org-node {
-  position: relative;
+@media (min-width: 640px) {
+  .chart-children {
+    margin-left: var(--space-16);
+    padding-left: var(--space-24);
+  }
+}
+
+.chart-node + .chart-node {
+  margin-top: var(--space-12);
+}
+
+.chart-node-head {
   display: flex;
-  flex-direction: column;
-  gap: var(--space-4-8);
-  min-height: 44px;
-  padding: var(--space-14-4) var(--space-17-6);
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--space-4) var(--space-12);
+  padding: var(--space-12) var(--space-16);
   border: 1px solid var(--color-line);
   border-radius: var(--radius-card);
   background: var(--color-background);
-  color: var(--color-foreground);
-  text-decoration: none;
-  transition:
-    border-color var(--dur-control) var(--ease),
-    background-color var(--dur-control) var(--ease),
-    transform var(--dur-control) var(--ease);
 }
 
-.org-node:hover {
-  border-color: var(--color-brand);
-  background: var(--color-surface-strong);
-}
-
-.org-node:focus-visible {
-  outline: 2px solid var(--color-brand);
-  outline-offset: 2px;
-}
-
-.org-node-kicker,
-.org-node-role,
-.org-node-count {
+.chart-kicker {
   font-family: var(--font-mono);
   font-size: var(--text-11);
   letter-spacing: 0.08em;
@@ -220,412 +186,26 @@
   color: var(--color-muted-ink);
 }
 
-.org-node-title {
+.chart-label {
   font-family: var(--font-display);
-  font-size: clamp(1.1rem, 1.5vw, 1.35rem);
-  line-height: 1.15;
+  font-size: clamp(1.05rem, 1.4vw, 1.3rem);
+  line-height: 1.2;
   overflow-wrap: break-word;
 }
 
-.org-node--single,
-.org-node--pair,
-.org-node--lead,
-.org-node--lab-group {
-  flex-direction: row;
-  align-items: center;
-  gap: var(--space-12);
-  text-align: left;
-}
-
-.org-node--single {
-  width: min(100%, 22rem);
-}
-
-.org-node--pair {
-  width: 16rem;
-}
-
-.org-node--lead {
-  grid-column: 2;
-  width: min(100%, 22rem);
-}
-
-.org-node--lab-group {
-  position: relative;
-  grid-column: 3;
-  justify-self: start;
-  width: 16rem;
-  margin-left: var(--space-32);
-}
-
-.org-node--lab-group::before {
-  content: '';
-  position: absolute;
-  left: var(--space-neg-32);
-  top: 50%;
-  width: 2rem;
-  height: 1px;
-  background: var(--org-connector);
-}
-
-.org-top {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
-  align-items: center;
-  width: 100%;
-}
-
-.org-node-avatar-stack {
-  display: flex;
-  align-items: center;
-  padding-left: var(--space-8);
-}
-
-.org-node-avatar.org-node-avatar--stack {
-  flex: 0 0 3rem;
-  width: 3rem;
-  height: 3rem;
-  margin-left: var(--space-neg-8);
-  border: 2px solid var(--color-background);
-  border-radius: var(--radius-card);
-}
-
-.org-node-avatar-more {
-  display: grid;
-  place-items: center;
-  width: 3rem;
-  height: 3rem;
-  margin-left: var(--space-neg-8);
-  border: 2px solid var(--color-background);
-  border-radius: var(--radius-card);
-  background: var(--color-surface-strong);
-  font-family: var(--font-mono);
-  font-size: var(--text-11);
-  color: var(--color-muted-ink);
-}
-
-.org-node-body {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-4);
-  min-width: 0;
-}
-
-.org-node-avatar {
-  flex: 0 0 3.5rem;
-  width: 3.5rem;
-  height: 3.5rem;
-  overflow: hidden;
-  border-radius: var(--radius-card);
-  background: var(--color-surface-strong);
-}
-
-.org-node-avatar img {
-  display: block;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.org-node-avatar--sm {
-  flex-basis: 3rem;
-  width: 3rem;
-  height: 3rem;
-}
-
-.org-node--division {
-  width: 100%;
-  min-height: 7.5rem;
-  align-items: flex-start;
-  text-align: left;
-  padding: var(--space-14-4) var(--space-16);
-}
-
-.org-node--division .org-node-count {
-  margin-top: auto;
-}
-
-.org-node-div-top {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  width: 100%;
-}
-
-.org-node-index {
+.chart-count {
+  margin-left: auto;
   font-family: var(--font-mono);
   font-size: var(--text-11);
   letter-spacing: 0.08em;
-  color: var(--color-brand);
+  color: var(--color-muted-ink);
+  white-space: nowrap;
 }
 
-.org-stem {
-  display: block;
-  width: 1px;
-  height: clamp(1.5rem, 3vh, 2.5rem);
-  background: var(--org-connector);
-}
-
-/* Pair branch: stem -> bus -> drops into the two cards. Bus width = card width + gap. */
-.org-branch--pair {
-  position: relative;
-  width: min(100%, 18rem);
-  height: clamp(1.5rem, 3vh, 2.5rem);
-}
-
-.org-branch--pair::before {
-  content: '';
-  position: absolute;
-  left: 50%;
-  top: 0;
-  width: 1px;
-  height: 50%;
-  background: var(--org-connector);
-}
-
-.org-branch--pair::after {
-  content: '';
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 50%;
-  height: 1px;
-  background: var(--org-connector);
-}
-
-.org-tier--pair {
-  gap: var(--space-32);
-}
-
-.org-tier--pair .org-node::before {
-  content: '';
-  position: absolute;
-  left: 50%;
-  top: calc(-1 * clamp(1.5rem, 3vh, 2.5rem) / 2);
-  width: 1px;
-  height: calc(clamp(1.5rem, 3vh, 2.5rem) / 2);
-  background: var(--org-connector);
-}
-
-/* Division branch: stem -> bus spanning first-to-last card centres (5 equal columns). */
-.org-branch--divisions {
-  position: relative;
-  width: 100%;
-  height: clamp(1.5rem, 3vh, 2.5rem);
-}
-
-.org-branch--divisions::before {
-  content: '';
-  position: absolute;
-  left: 50%;
-  top: 0;
-  width: 1px;
-  height: 50%;
-  background: var(--org-connector);
-}
-
-.org-branch--divisions::after {
-  content: '';
-  position: absolute;
-  top: 50%;
-  /* Centre of the first/last of five equal columns:
-     100% / 10 minus half a gap, spread across the four outer gaps. */
-  left: calc(100% / 10 - 4 * var(--org-gap) / 10);
-  right: calc(100% / 10 - 4 * var(--org-gap) / 10);
-  height: 1px;
-  background: var(--org-connector);
-}
-
-.org-tier--divisions {
-  display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
-  gap: var(--org-gap);
-  width: 100%;
-}
-
-.org-tier--divisions .org-node::before {
-  content: '';
-  position: absolute;
-  left: 50%;
-  top: calc(-1 * clamp(1.5rem, 3vh, 2.5rem) / 2);
-  width: 1px;
-  height: calc(clamp(1.5rem, 3vh, 2.5rem) / 2);
-  background: var(--org-connector);
-}
-
-.org-tier-label {
-  width: 100%;
-  margin-bottom: var(--space-12);
-  text-align: center;
+.chart-note {
+  margin: var(--space-4) 0 0 var(--space-16);
   font-family: var(--font-mono);
   font-size: var(--text-11);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+  letter-spacing: 0.04em;
   color: var(--color-muted-ink);
-}
-
-@media (max-width: 1199px) {
-  .org-tier--divisions {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-
-  .org-branch--divisions::after,
-  .org-tier--divisions .org-node::before {
-    display: none;
-  }
-
-  .org-branch--divisions {
-    height: 1.25rem;
-  }
-
-  .org-branch--divisions::before {
-    height: 100%;
-  }
-}
-
-@media (max-width: 1099px) {
-  .org-top {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: var(--space-12);
-  }
-
-  .org-node--lead {
-    width: min(100%, 22rem);
-  }
-
-  .org-node--lab-group {
-    width: min(100%, 22rem);
-    margin-left: 0;
-  }
-
-  .org-node--lab-group::before {
-    display: none;
-  }
-}
-
-@media (max-width: 639px) {
-  .org-tier--pair {
-    flex-direction: column;
-    gap: var(--space-12);
-  }
-
-  .org-branch--pair {
-    width: 1px;
-    height: 1.25rem;
-    background: var(--color-line);
-  }
-
-  .org-branch--pair::before,
-  .org-branch--pair::after,
-  .org-tier--pair .org-node::before {
-    display: none;
-  }
-
-  .org-node--pair {
-    width: 100%;
-  }
-
-  .org-tier--divisions {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-}
-
-@media (max-width: 479px) {
-  .org-tier--divisions {
-    grid-template-columns: 1fr;
-  }
-}
-
-/* == Role chart (redesign v2) == */
-
-.org-tier--three {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: var(--org-gap);
-  width: 100%;
-  align-items: start;
-}
-
-.org-column {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-12);
-}
-
-.org-tier--stack {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-12);
-}
-
-.org-tier--lead > .org-node {
-  width: min(100%, 24rem);
-}
-
-/* Siblings under Koordinator Asisten: a left spine says "group", where a
-   centre stem read as another level of command. */
-.org-subtree {
-  margin-top: var(--space-12);
-  margin-left: var(--space-16);
-  padding-left: var(--space-16);
-  border-left: 1px solid var(--org-connector);
-}
-
-/* Bus over three equal columns: same maths as .org-branch--divisions. */
-.org-branch--three {
-  position: relative;
-  width: 100%;
-  height: clamp(1.5rem, 3vh, 2.5rem);
-}
-
-.org-branch--three::before {
-  content: '';
-  position: absolute;
-  left: 50%;
-  top: 0;
-  width: 1px;
-  height: 50%;
-  background: var(--org-connector);
-}
-
-.org-branch--three::after {
-  content: '';
-  position: absolute;
-  top: 50%;
-  left: calc(100% / 6 - 2 * var(--org-gap) / 6);
-  right: calc(100% / 6 - 2 * var(--org-gap) / 6);
-  height: 1px;
-  background: var(--org-connector);
-}
-
-.org-tier--three > .org-node::before,
-.org-tier--three > .org-column > .org-node::before {
-  content: '';
-  position: absolute;
-  left: 50%;
-  top: calc(-1 * clamp(1.5rem, 3vh, 2.5rem) / 2);
-  width: 1px;
-  height: calc(clamp(1.5rem, 3vh, 2.5rem) / 2);
-  background: var(--org-connector);
-}
-
-@media (max-width: 767px) {
-  .org-tier--three {
-    grid-template-columns: 1fr;
-  }
-
-  .org-branch--three,
-  .org-stem,
-  .org-tier--three > .org-node::before,
-  .org-tier--three > .org-column > .org-node::before {
-    display: none;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .org-node {
-    transition: none;
-  }
 }

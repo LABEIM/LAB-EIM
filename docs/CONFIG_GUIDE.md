@@ -9,7 +9,7 @@ Admin Portal: https://lab-eim.vercel.app/keystatic
 ## 1. Positions Configuration (`src/data/positions.json`)
 This file defines the laboratory's role hierarchy. The `/structure` chart and role sections and the Keystatic `Position` dropdowns on members and lecturers all read from it.
 
-The hierarchy is fixed in code (`STRUCTURE_TREE` in `src/utils/position-mapper.ts`): Ketua Lab → Wakil Ketua Lab → Dosen Anggota / Koordinator Mata Kuliah / Koordinator Asisten Lab → Asisten Koordinator Praktikum / Mahasiswa Anggota / Tim Adhoc. Ketua Kelompok Keilmuan and Ka.Ur.Lab FRI are faculty-level and intentionally not listed. Asisten Praktikum belongs to a course, not to this structure.
+The hierarchy is fixed in code (`STRUCTURE_TREE` in `src/utils/position-mapper.ts`): Ketua Lab → Wakil Ketua Lab → Dosen Anggota / Koordinator Mata Kuliah / Koordinator Asisten Lab → Asisten Koordinator Praktikum / Mahasiswa Anggota, and Asisten Praktikum sits under Asisten Koordinator Praktikum. Tim Adhoc was removed from the structure. Ketua Kelompok Keilmuan and Ka.Ur.Lab FRI are faculty-level and intentionally not listed. Asisten Praktikum belongs to a course, not to this structure.
 
 ### Fields Explanation
 * **`id`** (String): Unique lowercase identifier. Member and lecturer `role` values must match one of these.

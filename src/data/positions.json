@@ -41,12 +41,6 @@
       "label": "Mahasiswa Anggota Laboratorium",
       "group": "mahasiswa",
       "order": 7
-    },
-    {
-      "id": "tim-adhoc",
-      "label": "Tim Adhoc",
-      "group": "mahasiswa",
-      "order": 8
     }
   ]
 }

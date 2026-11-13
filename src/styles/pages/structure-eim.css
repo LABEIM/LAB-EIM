@@ -216,13 +216,25 @@
      own subtree. The bus is drawn per child (::before = drop, ::after = half
      of the horizontal line) so a sibling can never read as a descendant. */
   .chart-children {
+    position: relative;
     display: flex;
     align-items: flex-start;
     justify-content: center;
     gap: 0;
-    margin: 0;
+    margin: var(--space-16) 0 0;
     padding: 0;
     border-left: 0;
+  }
+
+  /* Parent card -> bus. Without it the bus reads as sitting under the card. */
+  .chart-children::before {
+    content: '';
+    position: absolute;
+    left: 50%;
+    bottom: 100%;
+    width: 1px;
+    height: var(--space-16);
+    background: color-mix(in srgb, var(--color-muted-ink) 55%, transparent);
   }
 
   .chart-children > .chart-node {

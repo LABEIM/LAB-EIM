@@ -88,6 +88,6 @@ export const STRUCTURE_TREE: ReadonlyArray<{ id: string; children: readonly stri
   },
   {
     id: 'koordinator-asisten',
-    children: ['asisten-koordinator-praktikum', 'mahasiswa-anggota', 'tim-adhoc'],
+    children: ['asisten-koordinator-praktikum', 'mahasiswa-anggota'],
   },
 ];

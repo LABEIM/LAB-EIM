@@ -164,7 +164,7 @@ export const uiTranslations: Record<Locale, Record<string, string>> = {
 
     // Structure Page
     'struct.title': 'Struktur Organisasi Lab',
-    'struct.metaDescription': 'Struktur organisasi EIM Research Lab: dosen, koordinator asisten, mahasiswa anggota, dan tim adhoc.',
+    'struct.metaDescription': 'Struktur organisasi EIM Research Lab: dosen, koordinator asisten, mahasiswa anggota, dan asisten praktikum.',
     'struct.heroEyebrow': 'Struktur organisasi',
     'struct.heroTitle': 'Satu lab,\nsatu tim.',
     'struct.heroDesc': 'Dosen, koordinator asisten, dan mahasiswa anggota yang menjalankan riset, praktikum, dan pengabdian di EIM Research Lab.',
@@ -178,8 +178,8 @@ export const uiTranslations: Record<Locale, Record<string, string>> = {
     'struct.navDotAsisten': 'Asisten',
     'struct.navDotMahasiswa': 'Mahasiswa',
     'struct.chartTitle': 'Bagan peran.',
-    'struct.chartIntro': 'Struktur peran laboratorium, dari dosen sampai tim adhoc. Detail anggota ada di bagian bawah halaman.',
-    'struct.chartLabel': 'Bagan struktur: Dosen Ketua Laboratorium membawahi Dosen Wakil Ketua Laboratorium, yang membawahi Dosen Anggota Laboratorium, Koordinator Mata Kuliah, dan Koordinator Asisten Laboratorium. Koordinator Asisten Laboratorium membawahi Asisten Koordinator Praktikum, Mahasiswa Anggota Laboratorium, dan Tim Adhoc.',
+    'struct.chartIntro': 'Struktur peran laboratorium, dari dosen sampai asisten praktikum. Detail anggota ada di bagian bawah halaman.',
+    'struct.chartLabel': 'Bagan struktur: Dosen Ketua Laboratorium membawahi Dosen Wakil Ketua Laboratorium, yang membawahi Dosen Anggota Laboratorium, Koordinator Mata Kuliah, dan Koordinator Asisten Laboratorium. Koordinator Asisten Laboratorium membawahi Asisten Koordinator Praktikum dan Mahasiswa Anggota Laboratorium, dan Asisten Koordinator Praktikum membawahi Asisten Praktikum.',
     'struct.groupDosen': 'Dosen',
     'struct.groupAsisten': 'Asisten',
     'struct.groupMahasiswa': 'Mahasiswa',

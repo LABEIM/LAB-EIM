@@ -50,9 +50,8 @@ export const DEFAULT_ACTION_BTN: StageActionConfig = {
 };
 
 /**
- * Homepage v2 hero CTA copy per recruitment stage.
- * Single source shared by `EimHero` (rendered as `data-stage-labels`) and the
- * homepage stage sync (`initHomeCTA`). Unknown stage ids fall back to `closed`.
+ * Recruitment CTA copy per stage, used by the navbar and section CTAs.
+ * Unknown stage ids fall back to `closed`.
  */
 export const STAGE_LABELS: Record<string, { label: string; href: string }> = {
   open: { label: 'Gabung EIM', href: '/registration' },

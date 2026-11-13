@@ -2,8 +2,6 @@
 import { getCollection } from 'astro:content';
 import Layout from '../layouts/Layout.astro';
 import '../styles/pages/home-eim.css';
-import { getCurrentRecruitmentStage } from '../utils/recruitment';
-import { resolveStageCta } from '../utils/constants';
 import type { AboutData } from '../utils/types';
 import EventPosterModal from '../components/events/EventPosterModal.astro';
 import EimHero from '../components/home/EimHero.astro';
@@ -27,7 +25,6 @@ import type { Lecturer, Member } from '../utils/types';
 const locale = getLocaleFromUrl(Astro.url);
 const lecturersData = getLocalizedJsonData<{ list: Lecturer[] }>('lecturers', locale);
 const membersData = getLocalizedJsonData<{ list: Member[] }>('members', locale);
-const registrationConfig = await getLocalizedJsonData<any>('registration', locale);
 const about = await getLocalizedJsonData<AboutData>('about', locale);
 
 // Fetch and filter news for active locale
@@ -59,12 +56,6 @@ const events = filterAuditContent(rawEvents)
 
 const upcomingEvents = events.filter((event) => event.data.status === 'upcoming');
 
-// Hero CTA: server-rendered Indonesian label; initHomeCTA keeps it fresh at runtime.
-const currentStage = getCurrentRecruitmentStage(registrationConfig);
-const stageEntry = resolveStageCta(currentStage);
-const primaryLabel = stageEntry.label;
-const primaryHref = stageEntry.href;
-
 // Beranda course band: first three courses that actually run a practicum.
 const courseEntries = await getCollection('courses');
 const bandCourses = resolveCourses(
@@ -92,7 +83,12 @@ const bandCourses = resolveCourses(
       ]}
       label={t('home.sectionNavLabel', locale)}
     />
-    <EimHero primaryLabel={primaryLabel} primaryHref={primaryHref} />
+    <EimHero
+      primaryLabel={t('home.heroPrimary', locale)}
+      primaryHref="#reveal"
+      secondaryLabel={t('home.heroSecondary', locale)}
+      secondaryHref="/about"
+    />
     <EimReveal />
     <EimFocus />
     <EimVisiMisi about={about} />
@@ -104,8 +100,6 @@ const bandCourses = resolveCourses(
 
 <script>
   import { initGlobalStageSync } from '../scripts/global-stage-sync';
-  import { initHomeCTA } from '../scripts/home-eim';
 
-  const stage = initGlobalStageSync();
-  initHomeCTA(stage);
+  initGlobalStageSync();
 </script>

@@ -53,7 +53,7 @@ Before ending a session, the agent must perform these tasks:
 - **State Management**: React component state and native browser APIs; client JavaScript is kept minimal through Astro islands.
 - **Database / CMS**: Keystatic CMS (`@keystatic/astro` v5.2.0, `@keystatic/core` v0.6.9) backed by Markdown collections (`src/content/`) and JSON data files (`src/data/`); production editing uses Keystatic Cloud (`eimlab/lab-eim`), local development uses local storage; no database.
 - **Internationalization (i18n)**: Single-locale (`id`) translation and UI dictionary utilities (`src/utils/i18n.ts`).
-- **Typography & Icons**: `@fontsource/inter`, `@fontsource/montserrat`, `@fontsource/poppins`; icon styles in `src/styles/icons.css`.
+- **Typography & Icons**: `@fontsource/montserrat`, `@fontsource/poppins`, `@fontsource/instrument-serif`, `@fontsource/ibm-plex-sans`, `@fontsource/ibm-plex-mono`; `@fontsource/inter` stays installed but is not imported; icon styles in `src/styles/icons.css`.
 - **Runtime & Build Tools**: Node.js `>=22.12.0`, pnpm (the shared CI installs `latest`; `pnpm-lock.yaml` pins resolutions). Project-level pnpm settings — peer/security overrides and the install-script allowlist — live in `pnpm-workspace.yaml`.
 
 ### 2.2 Directory Layout & Component Roles

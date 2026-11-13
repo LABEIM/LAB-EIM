@@ -5,15 +5,13 @@ on:
     branches: [ "main" ]
     paths-ignore:
       - 'README.md'
-      - 'DEPLOYMENT.md'
-      - 'REGISTRATION_SETUP.md'
       - 'AGENTS.md'
-      - 'CLAUDE.md'
-      - 'GEMINI.md'
-      - 'ASSETS.md'
       - 'CONTRIBUTING.md'
       - 'SECURITY.md'
       - 'CODE_OF_CONDUCT.md'
+      - 'docs/**'
+      - 'CLAUDE.md'
+      - 'GEMINI.md'
       - 'LICENSE'
       - 'code.gs'
   pull_request:

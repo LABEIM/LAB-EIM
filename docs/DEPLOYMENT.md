@@ -265,7 +265,7 @@ The Vercel backup deployment is enabled automatically when both Vercel variables
 - **Shared Workflow Pinning**: This repository pins the Shared-CICD reusable workflow to the floating `v2` major tag. Action SHA pinning and dependency updates are maintained inside Shared-CICD.
 - **Principle of Least Privilege**: The caller grants only `contents: read`, `pull-requests: write`, and `deployments: write`; the shared workflow cannot exceed those permissions.
 - **Scoped Credentials**: `secrets: inherit` passes the repository secrets into the shared workflow. Only `PUBLIC_*` values (variables or secrets) are exported to the build environment; deployment tokens stay scoped to the deploy steps.
-- **Path Filtering (`paths-ignore`)**: Push events to `main` ignore root documentation updates (`README.md`, `DEPLOYMENT.md`, etc.), saving CI runner minutes while preserving full verification for content (`src/content/`) and source code. PR events always run full verification.
+- **Path Filtering (`paths-ignore`)**: Push events to `main` ignore documentation-only updates (`README.md`, `docs/**`, etc.), saving CI runner minutes while preserving full verification for content (`src/content/`) and source code. PR events always run full verification.
 - **Centralized pnpm settings**: `pnpm-workspace.yaml` carries the `@emnapi/runtime`, `path-to-regexp`, `miniflare>undici`, and `miniflare>sharp` overrides plus the `allowBuilds` list for esbuild/workerd install scripts.
 - **Job Timeouts & Retries**: The shared workflow applies explicit job timeouts (5–15 minutes) and retries Cloudflare/Vercel deployments up to 3 times with exponential backoff (10s → 20s → 40s).
 - **Concurrency Control**: Duplicate runs on the same branch are automatically cancelled.

@@ -41,7 +41,7 @@ const latestNews = filterAuditContent(localizedNews)
     }
     return new Date(b.data.news_date).getTime() - new Date(a.data.news_date).getTime();
   })
-  .slice(0, 3);
+  .slice(0, 5);
 
 // Events: upcoming first, then most recent — the section shows the next two as large poster tiles.
 const rawEvents = await getCollection('events');

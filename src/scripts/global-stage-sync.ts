@@ -1,5 +1,5 @@
 import { calculateStageFromDates, getEffectiveNowMs, updateGlobalAnnouncementBanner } from './registration/stage';
-import { STAGE_ACTION_CONFIG, STAGE_LABELS } from '../utils/constants';
+import { STAGE_ACTION_CONFIG, STAGE_LABELS, resolveStageCta } from '../utils/constants';
 
 /**
  * Synchronizes the Navbar CTA button (Kontak vs Join Us) dynamically based on current recruitment stage.
@@ -11,7 +11,7 @@ export function syncNavbarCTA(activeStage: string): void {
   const ctaLink = navbar.querySelector<HTMLAnchorElement>('.nav-cta');
   if (!ctaLink) return;
 
-  const joinLabel = navbar.getAttribute('data-join-label') || 'Join Us';
+  const joinLabel = navbar.getAttribute('data-join-label') || 'Gabung EIM';
   const contactLabel = navbar.getAttribute('data-contact-label') || 'Kontak';
   // Routes are compile-time constants; never copy a URL out of the DOM.
   const joinHref = '/registration';
@@ -21,6 +21,15 @@ export function syncNavbarCTA(activeStage: string): void {
 
   const targetHref = isRecruitmentActive ? joinHref : contactHref;
   const targetLabel = isRecruitmentActive ? joinLabel : contactLabel;
+
+  const stageCta = resolveStageCta(activeStage);
+  document.querySelectorAll<HTMLAnchorElement>('[data-stage-primary]').forEach((el) => {
+    el.setAttribute('href', stageCta.href);
+    el.textContent = stageCta.label;
+  });
+  document.querySelectorAll<HTMLAnchorElement>('[data-stage-secondary]').forEach((el) => {
+    el.hidden = stageCta.href === el.getAttribute('href');
+  });
 
   ctaLink.setAttribute('href', targetHref);
 

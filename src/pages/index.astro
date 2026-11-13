@@ -18,8 +18,7 @@ import EimSectionNav from '../components/home/EimSectionNav.astro';
 import {
   getLocaleFromUrl,
   getLocalizedJsonData,
-  getCollectionEntriesForLocale,
-  t
+  getCollectionEntriesForLocale
 } from '../utils/i18n';
 import { filterAuditContent } from '../utils/content-helpers';
 
@@ -72,7 +71,7 @@ const primaryLabel = stageEntry?.label ?? 'Gabung EIM';
 const primaryHref = stageEntry?.href ?? '/registration';
 ---
 
-<Layout title={`EIM Research Lab - ${t('home.heroTag', locale)}`} homeSkin skipLink>
+<Layout title={`EIM Research Lab · Riset infrastruktur untuk dunia nyata`} homeSkin skipLink>
   <EventPosterModal upcomingEvents={upcomingEvents} locale={locale} />
   <main id="main-content" tabindex="-1">
     <EimSectionNav />

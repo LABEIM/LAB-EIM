@@ -35,7 +35,7 @@ export const uiTranslations: Record<Locale, Record<string, string>> = {
     'nav.news': 'Artikel',
     'nav.register': 'Pendaftaran',
     'nav.contact': 'Kontak',
-    'nav.joinUs': 'Join Us',
+    'nav.joinUs': 'Gabung EIM',
 
     // Common Buttons & Badges
     'btn.learnMore': 'Pelajari Selengkapnya',

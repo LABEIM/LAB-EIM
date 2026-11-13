@@ -66,3 +66,8 @@ export const STAGE_LABELS: Record<string, { label: string; href: string }> = {
   interview: { label: 'Cek Status Seleksi', href: '/registration' },
   closed: { label: 'Hubungi Kami', href: '/contact' },
 };
+
+/** Primary action for a recruitment stage; unknown stages fall back to closed. */
+export function resolveStageCta(stage: string): { label: string; href: string } {
+  return STAGE_LABELS[stage] ?? STAGE_LABELS.closed;
+}

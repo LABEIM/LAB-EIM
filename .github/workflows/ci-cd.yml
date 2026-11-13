@@ -34,7 +34,9 @@ jobs:
       # Runtime & Build
       node_version: '22'
       package_manager: 'auto'
-      check_command: 'pnpm exec astro check'
+      # The shared workflow has no separate test input; `eval` runs this string
+      # before the build, so a failing suite blocks deploy.
+      check_command: 'pnpm exec astro check && pnpm test'
       build_command: 'pnpm run build'
       dist_dir: 'dist'
 

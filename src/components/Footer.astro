@@ -18,7 +18,7 @@ const navLinks = [
 ---
 
 <footer class="footer">
-  <div class="container">
+  <div class="site-container">
     <div class="footer-grid">
       <div class="footer-about">
         <a href={getLocalizedPath('/', locale)} class="footer-brand" aria-label={`${siteData.name} — Beranda`}>
@@ -82,7 +82,7 @@ const navLinks = [
       </div>
 
       <nav class="footer-col" aria-label={t('footer.quickLinks', locale)}>
-        <h4 class="footer-title">{t('footer.quickLinks', locale)}</h4>
+        <h3 class="footer-title">{t('footer.quickLinks', locale)}</h3>
         <ul class="footer-links">
           {navLinks.map((link) => (
             <li>
@@ -93,7 +93,7 @@ const navLinks = [
       </nav>
 
       <div class="footer-col">
-        <h4 class="footer-title">{t('footer.contact', locale)}</h4>
+        <h3 class="footer-title">{t('footer.contact', locale)}</h3>
         <ul class="footer-links footer-contact-list">
           <li><i class="fa-solid fa-location-dot" aria-hidden="true"></i><span>{siteData.contact.location}</span></li>
           <li><i class="fa-solid fa-university" aria-hidden="true"></i><span>{siteData.contact.university}</span></li>
@@ -102,7 +102,7 @@ const navLinks = [
       </div>
 
       <nav class="footer-col" aria-label={t('footer.resources', locale)}>
-        <h4 class="footer-title">{t('footer.resources', locale)}</h4>
+        <h3 class="footer-title">{t('footer.resources', locale)}</h3>
         <ul class="footer-links">
           <li>
             <a href={getLocalizedPath('/assets', locale)}>{t('footer.assets', locale)}</a>

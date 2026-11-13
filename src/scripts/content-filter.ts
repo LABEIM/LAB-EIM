@@ -6,6 +6,62 @@ export interface ContentFilterOptions {
   itemName?: string; // e.g. "Berita" or "Kegiatan"
 }
 
+export interface FilterCard {
+  el: HTMLElement;
+  category: string;
+  status: string;
+  searchText: string;
+  dateMs: number;
+  audit: boolean;
+}
+
+export interface FilterState {
+  search: string;
+  category: string;
+  status: string;
+  sort: 'asc' | 'desc';
+  page: number;
+  perPage: number;
+  forceEmpty: boolean;
+  hideAudit: boolean;
+}
+
+export interface FilterResult {
+  total: number;
+  totalPages: number;
+  page: number;
+  pageItems: FilterCard[];
+  matchedItems: FilterCard[];
+}
+
+/**
+ * Pure filter/sort/paginate step for the content grid. Keeps the behaviour of
+ * the former inline DOM loop: invalid dates are stored as 0, so they order
+ * last on descending and first on ascending.
+ */
+export function selectVisibleCards(items: FilterCard[], state: FilterState): FilterResult {
+  const query = state.search.trim().toLowerCase();
+  const filtered = state.forceEmpty ? [] : items.filter((item) => {
+    if (state.hideAudit && item.audit) return false;
+    if (state.category !== 'all' && item.category.toLowerCase() !== state.category.toLowerCase()) return false;
+    if (state.status !== 'all' && item.status.toLowerCase() !== state.status.toLowerCase()) return false;
+    if (query && !item.searchText.toLowerCase().includes(query)) return false;
+    return true;
+  });
+
+  const matchedItems = [...filtered].sort((a, b) =>
+    state.sort === 'asc' ? a.dateMs - b.dateMs : b.dateMs - a.dateMs
+  );
+
+  const total = matchedItems.length;
+  const totalPages = Math.ceil(total / state.perPage) || 1;
+  const page = Math.min(Math.max(1, state.page), totalPages);
+  const startIndex = (page - 1) * state.perPage;
+  const pageItems = matchedItems.slice(startIndex, startIndex + state.perPage);
+
+  return { total, totalPages, page, pageItems, matchedItems };
+}
+
 export function initContentFilter(options: ContentFilterOptions) {
   const {
     gridId,
@@ -20,6 +76,19 @@ export function initContentFilter(options: ContentFilterOptions) {
 
   const cards = Array.from(gridEl.querySelectorAll(`.${cardClass}`)) as HTMLElement[];
   if (cards.length === 0) return;
+
+  // Card metadata is read once; nothing mutates these attributes at runtime.
+  const items: FilterCard[] = cards.map((el) => {
+    const time = new Date(el.getAttribute('data-date') || '').getTime();
+    return {
+      el,
+      category: el.getAttribute('data-category') || '',
+      status: el.getAttribute('data-status') || '',
+      searchText: el.getAttribute('data-search-text') || '',
+      dateMs: Number.isNaN(time) ? 0 : time,
+      audit: el.getAttribute('data-audit') === 'true',
+    };
+  });
 
   // DOM Elements
   const searchInput = document.getElementById('filter-search-input') as HTMLInputElement | null;
@@ -43,7 +112,7 @@ export function initContentFilter(options: ContentFilterOptions) {
   let currentSearch = '';
   let currentCategory = 'all';
   let currentStatus = 'all';
-  let currentSort = 'desc'; // 'desc' | 'asc'
+  let currentSort: 'asc' | 'desc' = 'desc'; // 'desc' | 'asc'
   let currentPage = 1;
   let currentAuditParam: string | null = null;
   let currentEmptyParam: string | null = null;
@@ -116,54 +185,24 @@ export function initContentFilter(options: ContentFilterOptions) {
     if (!gridEl) return;
     syncUIFromState();
 
-    // 1. Filter matching cards
-    const query = currentSearch.toLowerCase().trim();
-    const isForceEmpty = currentEmptyParam === 'true' || currentEmptyParam === '1';
-    const isHideAudit = currentAuditParam === 'false' || currentAuditParam === '0';
-
-    const matchingCards = isForceEmpty
-      ? []
-      : cards.filter(card => {
-          const isAuditCard = card.getAttribute('data-audit') === 'true';
-          if (isHideAudit && isAuditCard) {
-            return false;
-          }
-
-          const catAttr = card.getAttribute('data-category') || '';
-          const statusAttr = card.getAttribute('data-status') || '';
-          const searchText = card.getAttribute('data-search-text') || '';
-
-          const matchesCat = currentCategory === 'all' || catAttr.toLowerCase() === currentCategory.toLowerCase();
-          const matchesStatus = currentStatus === 'all' || statusAttr.toLowerCase() === currentStatus.toLowerCase();
-          const matchesQuery = !query || searchText.toLowerCase().includes(query);
-
-          return matchesCat && matchesStatus && matchesQuery;
-        });
-
-    // 2. Sort matching cards
-    matchingCards.sort((a, b) => {
-      const dateAStr = a.getAttribute('data-date') || '';
-      const dateBStr = b.getAttribute('data-date') || '';
-      const timeA = new Date(dateAStr).getTime();
-      const timeB = new Date(dateBStr).getTime();
-
-      const validA = !isNaN(timeA) ? timeA : 0;
-      const validB = !isNaN(timeB) ? timeB : 0;
-
-      return currentSort === 'asc' ? validA - validB : validB - validA;
+    // 1-3. Filter, sort and paginate from the metadata read at init
+    const result = selectVisibleCards(items, {
+      search: currentSearch,
+      category: currentCategory,
+      status: currentStatus,
+      sort: currentSort,
+      page: currentPage,
+      perPage: itemsPerPage,
+      forceEmpty: currentEmptyParam === 'true' || currentEmptyParam === '1',
+      hideAudit: currentAuditParam === 'false' || currentAuditParam === '0',
     });
+    currentPage = result.page;
 
-    // 3. Handle Pagination calculations
-    const totalMatching = matchingCards.length;
-    const totalPages = Math.ceil(totalMatching / itemsPerPage) || 1;
-
-    if (currentPage > totalPages) {
-      currentPage = totalPages;
-    }
-
-    const startIndex = (currentPage - 1) * itemsPerPage;
+    const totalMatching = result.total;
+    const totalPages = result.totalPages;
+    const startIndex = (result.page - 1) * itemsPerPage;
     const endIndex = startIndex + itemsPerPage;
-    const visibleCards = new Set(matchingCards.slice(startIndex, endIndex));
+    const visibleCards = new Set(result.pageItems.map(item => item.el));
 
     // 4. Update DOM card visibility & ordering
     // Hide all cards first
@@ -172,11 +211,11 @@ export function initContentFilter(options: ContentFilterOptions) {
     });
 
     // Re-append matching cards in sorted order to grid
-    matchingCards.forEach(card => {
-      if (visibleCards.has(card)) {
-        card.style.display = 'flex';
+    result.matchedItems.forEach(item => {
+      if (visibleCards.has(item.el)) {
+        item.el.style.display = 'flex';
       }
-      gridEl.appendChild(card);
+      gridEl.appendChild(item.el);
     });
 
     // 5. Update Empty State Notice

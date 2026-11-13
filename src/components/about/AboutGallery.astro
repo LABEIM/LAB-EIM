@@ -1,0 +1,44 @@
+---
+import { getLocaleFromUrl, t } from '../../utils/i18n';
+import type { GalleryItem } from '../../utils/types';
+
+interface Props {
+  photos: GalleryItem[];
+}
+
+const { photos } = Astro.props;
+const locale = getLocaleFromUrl(Astro.url);
+---
+
+{photos.length > 0 && (
+  <section id="galeri" class="border-t border-line py-[clamp(4.5rem,10vh,8.75rem)]" aria-labelledby="gallery-title">
+    <div class="mx-auto max-w-[1200px] px-[clamp(1.25rem,4vw,4rem)]">
+      <p class="e-reveal font-mono text-xs uppercase tracking-[0.08em] text-brand">{t('about.galleryEyebrow', locale)}</p>
+      <div class="mt-4 grid gap-6 lg:grid-cols-[minmax(0,7fr)_minmax(0,4fr)] lg:items-end">
+        <h2 id="gallery-title" class="e-reveal font-display text-[clamp(2rem,4vw,3.5rem)] leading-[1.05] tracking-[-0.01em]">
+          {t('about.galleryTitle', locale)}
+        </h2>
+        <p class="e-reveal text-[15px] leading-[1.6] text-muted-ink">{t('about.galleryIntro', locale)}</p>
+      </div>
+
+      <ul class="e-reveal-group mt-10 grid list-none gap-6 sm:grid-cols-2 lg:grid-cols-3" role="list">
+        {photos.map((photo) => (
+          <li>
+            <figure>
+              <div class="aspect-[4/3] overflow-hidden rounded-[var(--radius-media)] border border-line bg-surface">
+                <img
+                  class="h-full w-full object-cover"
+                  src={photo.image}
+                  alt={photo.alt}
+                  loading="lazy"
+                  decoding="async"
+                />
+              </div>
+              <figcaption class="mt-3 font-mono text-xs uppercase tracking-[0.08em] text-muted-ink">{photo.caption}</figcaption>
+            </figure>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+)}

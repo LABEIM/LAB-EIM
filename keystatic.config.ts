@@ -605,6 +605,29 @@ export default config({
         ),
       },
     }),
+    gallery: singleton({
+      label: 'Photo Gallery',
+      path: 'src/data/gallery',
+      format: { data: 'json' },
+      schema: {
+        featured: fields.object(
+          {
+            image: fields.image({ label: 'Studio Photo', directory: 'public/image/gallery', publicPath: '/image/gallery/' }),
+            alt: fields.text({ label: 'Alt Text', validation: { isRequired: true } }),
+            caption: fields.text({ label: 'Caption', validation: { isRequired: true } }),
+          },
+          { label: 'Featured Studio Photo' }
+        ),
+        photos: fields.array(
+          fields.object({
+            image: fields.image({ label: 'Photo', directory: 'public/image/gallery', publicPath: '/image/gallery/' }),
+            alt: fields.text({ label: 'Alt Text', validation: { isRequired: true } }),
+            caption: fields.text({ label: 'Caption', validation: { isRequired: true } }),
+          }),
+          { label: 'Activity Photos', itemLabel: props => props.fields.caption.value || 'Photo' }
+        ),
+      },
+    }),
     registration: singleton({
       label: 'Registration Settings',
       path: 'src/data/registration',

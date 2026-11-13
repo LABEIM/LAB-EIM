@@ -326,6 +326,17 @@ export interface DivisionSection {
   staff: Member[];
 }
 
+export interface GalleryItem {
+  image: string;
+  alt: string;
+  caption: string;
+}
+
+export interface GalleryData {
+  featured?: GalleryItem;
+  photos?: GalleryItem[];
+}
+
 export interface AboutData {
   title: string;
   description: string;

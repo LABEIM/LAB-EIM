@@ -380,3 +380,17 @@ order: 1
 
 Deskripsi singkat mata kuliah dan cakupan praktikumnya.
 ```
+
+## 12. Photo Gallery (`src/data/gallery.json`)
+Photos shown on the Tentang Kami page. The featured studio portrait renders as a full-width band after the numbers; the activity photos render as a grid at the end of the page. The gallery section is hidden when it has no photos.
+
+### Fields Explanation
+* **`featured`** (Object): The special studio portrait.
+  * **`image`** (String): Photo path. Upload through Keystatic; files are written to `public/image/gallery/`.
+  * **`alt`** (String): Alt text for screen readers. Required.
+  * **`caption`** (String): Caption shown under the band.
+* **`photos`** (Array): Activity photos, each with `image`, `alt`, and `caption`. Three across at desktop, two at tablet, one at phone.
+
+### Notes
+* The shipped entry points at `public/image/gallery/placeholder.svg` so the layout is visible. Replace it with the real portrait and activity photos in Keystatic; the placeholder can stay in the repo.
+* Images are referenced by path, like member photos and news images, so keep files reasonably sized (roughly 1600px wide, under 400 KB) before uploading.

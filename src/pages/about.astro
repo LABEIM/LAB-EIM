@@ -5,12 +5,14 @@ import '../styles/pages/home-eim.css';
 import { getLocaleFromUrl, getLocalizedJsonData, t } from '../utils/i18n';
 import { countPeopleByGroup, parsePositions } from '../utils/position-mapper';
 import { getCurrentRecruitmentStage } from '../utils/recruitment';
-import type { AboutData, Lecturer, Member, RecruitmentConfig } from '../utils/types';
+import type { AboutData, GalleryData, Lecturer, Member, RecruitmentConfig } from '../utils/types';
 import AboutHero from '../components/about/AboutHero.astro';
 import AboutProfile from '../components/about/AboutProfile.astro';
 import EimVisiMisi from '../components/home/EimVisiMisi.astro';
 import EimLabNumbers from '../components/home/EimLabNumbers.astro';
 import EimCTA from '../components/home/EimCTA.astro';
+import GalleryBand from '../components/about/GalleryBand.astro';
+import AboutGallery from '../components/about/AboutGallery.astro';
 import EimSectionNav from '../components/home/EimSectionNav.astro';
 
 const locale = getLocaleFromUrl(Astro.url);
@@ -20,6 +22,7 @@ const membersData = getLocalizedJsonData<{ list: Member[] }>('members', locale);
 const lecturersData = getLocalizedJsonData<{ list: Lecturer[] }>('lecturers', locale);
 const positionsData = getLocalizedJsonData<{ list: unknown }>('positions', locale);
 const registrationConfig = getLocalizedJsonData<Partial<RecruitmentConfig>>('registration', locale);
+const gallery = getLocalizedJsonData<GalleryData>('gallery', locale);
 const recruitmentStage = getCurrentRecruitmentStage(registrationConfig);
 
 const positions = parsePositions(positionsData);
@@ -32,6 +35,7 @@ const courses = await getCollection('courses');
 const sectionItems = [
   { id: 'profil', label: t('about.navDotProfile', locale) },
   { id: 'angka', label: t('about.navDotStats', locale) },
+  ...(gallery.photos?.length ? [{ id: 'galeri', label: t('about.galleryNavDot', locale) }] : []),
   { id: 'visi-misi', label: t('home.navDotVision', locale) },
   { id: 'gabung', label: t('about.navDotCta', locale) },
 ];
@@ -59,7 +63,16 @@ const sectionItems = [
         {t('about.teamLink', locale)} <span aria-hidden="true">→</span>
       </a>
     </div>
+    {gallery.featured?.image && (
+      <GalleryBand
+        image={gallery.featured.image}
+        alt={gallery.featured.alt}
+        caption={gallery.featured.caption}
+        label={t('about.galleryNavDot', locale)}
+      />
+    )}
     <EimVisiMisi about={aboutData} />
+    <AboutGallery photos={gallery.photos ?? []} />
     <EimCTA site={siteData} stage={recruitmentStage} />
   </main>
 </Layout>

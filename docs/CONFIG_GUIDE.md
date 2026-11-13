@@ -26,9 +26,9 @@ The hierarchy is fixed in code (`STRUCTURE_TREE` in `src/utils/position-mapper.t
     "order": 3
   }
 ```
-Sections render only for positions that hold at least one person; the chart always shows every position.
+Sections render only for positions that hold at least one person; the chart shows the positions in `STRUCTURE_TREE` (`src/utils/position-mapper.ts`), so add a position to that tree as well as to `positions.json` if it belongs in the chart.
 
-The numbers on Beranda ("Laboratorium dalam angka") and Tentang Kami are derived — dosen and anggota counts come from `positions.json` plus `members.json`/`lecturers.json`, and the asisten praktikum count from the assistants listed in `src/content/courses/`. Nothing is typed in, so the numbers follow the data automatically.
+The numbers on Beranda ("Laboratorium dalam angka") and Tentang Kami are derived — dosen and anggota counts come from `positions.json` plus `members.json`/`lecturers.json`, and the third Beranda number is the course count from `src/content/courses/` (Tentang Kami shows the dosen count instead). Nothing is typed in, so the numbers follow the data automatically.
 
 ---
 
@@ -129,6 +129,7 @@ News articles are stored as Markdown (`.md`) files in `src/content/news/`.
 * **`author`** (String): The publisher or author name (e.g., `"EIM Lab"`, `"UK Government"`).
 * **`news_date`** (String): Date of publication in `YYYY-MM-DD` format.
 * **`image`** (Array of Strings): Optional image URLs or paths to display as featured images.
+* **`audit`** (Boolean, Optional): Marks preview-only content. Audit entries are reachable by direct URL (with `noindex`) but hidden from production listings.
 
 ### News Template
 A helper template is located at [src/content/news/_template.md](file:///home/arukast/Projects/website-eim/src/content/news/_template.md).
@@ -367,6 +368,7 @@ One Markdown file per course. The `/courses` page lists every entry (code, SKS, 
 ---
 title: Nama Mata Kuliah
 code: SI2xxx
+sks: 3
 semester: 4
 hasPracticum: true
 modules:

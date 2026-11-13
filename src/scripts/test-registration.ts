@@ -670,7 +670,7 @@ assert(groupCounts.mahasiswa === 2, 'mahasiswa count follows the position group'
 assert(groupCounts.asisten === 0, 'unheld group counts zero');
 
 const realPositions = parsePositions(positionsData);
-assert(realPositions.length === 7, 'positions.json holds seven positions');
+assert(realPositions.length > 0, 'positions.json holds at least one position');
 const treeIds = STRUCTURE_TREE.flatMap(node => [node.id, ...node.children]);
 assert(treeIds.every(id => realPositions.some(position => position.id === id)), 'every chart node resolves to a position in positions.json');
 assert(STRUCTURE_TREE[0].id === 'ketua-lab', 'tree starts at ketua-lab');

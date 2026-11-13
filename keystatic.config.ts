@@ -357,6 +357,8 @@ export default config({
         author: fields.text({ label: 'Author', defaultValue: 'Admin EIM' }),
         news_date: fields.date({ label: 'Date' }),
         featured: fields.checkbox({ label: 'Pin as Featured News', defaultValue: false }),
+        // Preview-only flag: must survive an editor save, so it stays non-editable.
+        audit: fields.ignored(),
         excerpt: fields.text({ label: 'Excerpt / Short Summary', multiline: true }),
         tags: fields.array(fields.text({ label: 'Tag' }), {
           label: 'Tags',
@@ -413,6 +415,8 @@ export default config({
           label: 'Requirements',
           itemLabel: props => props.value,
         }),
+        // Preview-only flag: must survive an editor save, so it stays non-editable.
+        audit: fields.ignored(),
       },
     }),
     courses: collection({

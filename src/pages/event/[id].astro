@@ -53,6 +53,7 @@ const related = [
   description={event.data.description}
   homeSkin
   skipLink
+  noindex={event.data.audit === true}
 >
   <main id="main-content" tabindex="-1">
     <KegiatanRecapHero event={event} locale={locale} />

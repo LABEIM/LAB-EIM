@@ -340,6 +340,11 @@
   object-fit: cover;
 }
 
+/* A poster is artwork, not a photo crop: keep the whole frame visible. */
+.kegiatan-recap-cover img.kegiatan-recap-cover-poster {
+  object-fit: contain;
+}
+
 .kegiatan-recap-fallback {
   display: flex;
   flex-direction: column;

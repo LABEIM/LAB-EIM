@@ -22,13 +22,13 @@ const navLinks = [
     <div class="footer-grid">
       <div class="footer-about">
         <a href={getLocalizedPath('/', locale)} class="footer-brand" aria-label={`${siteData.name} — Beranda`}>
-          <span class="logo-icon logo-icon-sm">
-            <img src={siteData.logo} alt="" width="32" height="32" />
-          </span>
-          <span class="logo-text">
-            <span class="logo-name logo-name-sm">{siteData.name}</span>
-            <span class="logo-sub logo-sub-sm">{siteData.subName}</span>
-          </span>
+          <img
+            src="/assets/brand/eim-logo-horizontal-640.avif"
+            alt=""
+            width="221"
+            height="40"
+            decoding="async"
+          />
         </a>
 
         <p class="footer-desc">{t('footer.description', locale)}</p>

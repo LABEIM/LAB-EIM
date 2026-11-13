@@ -5,15 +5,13 @@ on:
     branches: [ "main" ]
     paths-ignore:
       - 'README.md'
-      - 'DEPLOYMENT.md'
-      - 'REGISTRATION_SETUP.md'
       - 'AGENTS.md'
-      - 'CLAUDE.md'
-      - 'GEMINI.md'
-      - 'ASSETS.md'
       - 'CONTRIBUTING.md'
       - 'SECURITY.md'
       - 'CODE_OF_CONDUCT.md'
+      - 'docs/**'
+      - 'CLAUDE.md'
+      - 'GEMINI.md'
       - 'LICENSE'
       - 'code.gs'
   pull_request:
@@ -36,7 +34,9 @@ jobs:
       # Runtime & Build
       node_version: '22'
       package_manager: 'auto'
-      check_command: 'pnpm exec astro check'
+      # The shared workflow has no separate test input; `eval` runs this string
+      # before the build, so a failing suite blocks deploy.
+      check_command: 'pnpm exec astro check && pnpm test'
       build_command: 'pnpm run build'
       dist_dir: 'dist'
 

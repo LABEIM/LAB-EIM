@@ -8,11 +8,17 @@ import {
 } from './registration/validation';
 import { calculateStageFromDates } from './registration/stage';
 import { safeLink, internalHref } from '../utils/safe-link';
+import { selectVisibleCards, type FilterCard, type FilterState, type FilterResult } from './content-filter';
+
+let passed = 0;
+let failed = 0;
 
 function assert(condition: boolean, testName: string) {
   if (condition) {
+    passed++;
     console.log(`  ✅ PASSED: ${testName}`);
   } else {
+    failed++;
     console.error(`  ❌ FAILED: ${testName}`);
     process.exitCode = 1;
   }
@@ -486,12 +492,12 @@ assert(
   'Final announcement search for candidate 102022400023 -> Renders accepted search result'
 );
 
-// Test 9.6: Screening search for candidate with failed status (102022400119)
+// Test 9.6: Screening search for a candidate rejected at the final stage
 selectionInput.value = '102022400119';
 selectionBtn.dispatchEvent({ type: 'click' });
 assert(
-  selectionResultBox.className.includes('status-muted') && selectionResultBox.innerHTML.includes('102022400119'),
-  'Screening search for failed candidate -> Renders muted result with NIM'
+  selectionResultBox.className.includes('status-passed') && selectionResultBox.innerHTML.includes('102022400119'),
+  'Screening search for candidate rejected at final -> renders passed screening'
 );
 
 // 9.7: Testing Rich-Text Formatting for Candidate Notes
@@ -576,6 +582,45 @@ assert(internalHref('javascript:alert(1)', '/fallback') === '/fallback', 'javasc
 assert(internalHref('https://evil.com', '/fallback') === '/fallback', 'Absolute URL should be rejected');
 assert(internalHref(null, '/fallback') === '/fallback', 'Missing value should fall back');
 
-console.log('\n✨ All Automated Registration Unit Tests Execution Completed Successfully!');
+// 12. Content Filter Selection Helper
+console.log('\n1️⃣2️⃣ Testing Content Filter Selection Helper:');
+const mkCard = (category: string, status: string, searchText: string, date: string, audit = false): FilterCard => ({
+  el: {} as HTMLElement,
+  category,
+  status,
+  searchText,
+  dateMs: Number.isNaN(Date.parse(date)) ? 0 : Date.parse(date),
+  audit,
+});
+const filterCards: FilterCard[] = [
+  mkCard('Berita', 'published', 'alpha rilis satu', '2026-01-01'),
+  mkCard('Berita', 'published', 'beta rilis dua', '2026-01-02'),
+  mkCard('Berita', 'published', 'gamma rilis tiga', '2026-01-03'),
+  mkCard('Berita', 'published', 'delta arsip', '2026-01-04', true),
+  mkCard('Kegiatan', 'published', 'alpha acara satu', '2026-01-05'),
+  mkCard('Kegiatan', 'draft', 'beta acara dua', '2026-01-06'),
+  mkCard('Kegiatan', 'published', 'acara tanpa tanggal', 'not-a-date'),
+];
+const sel = (items: FilterCard[], over: Partial<FilterState>): FilterResult =>
+  selectVisibleCards(items, {
+    search: '', category: 'all', status: 'all', sort: 'desc', page: 1, perPage: 6,
+    forceEmpty: false, hideAudit: false, ...over,
+  });
+
+assert(sel(filterCards, { search: '  ALPHA ' }).total === 2, 'search is trimmed and case-insensitive');
+assert(sel(filterCards, { category: 'Kegiatan' }).total === 3, 'category filter is exact and case-insensitive');
+assert(sel(filterCards, { search: 'zzzz' }).total === 0, 'no-match query returns nothing');
+assert(sel(filterCards, { search: '', page: 1, perPage: 99 }).pageItems.at(-1)!.dateMs === 0, 'desc puts an invalid date last');
+assert(sel(filterCards, { search: '', sort: 'asc', page: 1, perPage: 99 }).pageItems[0].dateMs === 0, 'asc puts an invalid date first');
+assert((() => { const p = sel(filterCards, { page: 99, perPage: 3 }); return p.totalPages === 3 && p.page === 3 && p.pageItems.length === 1; })(), 'pagination clamps an out-of-range page');
+assert(sel(filterCards, { forceEmpty: true }).total === 0, 'forceEmpty empties the grid');
+assert(sel(filterCards, { hideAudit: true }).total === 6, 'hideAudit drops audit cards');
+assert(sel(filterCards, { status: 'draft' }).total === 1, 'status filter is exact and case-insensitive');
+const filterOrderBefore = filterCards.map(card => card.searchText).join('|');
+sel(filterCards, { search: '', sort: 'asc', page: 1, perPage: 99 });
+assert(filterCards.map(card => card.searchText).join('|') === filterOrderBefore, 'selection does not mutate the input order');
+
+console.log(`\n${passed} passed, ${failed} failed`);
+if (failed > 0) process.exitCode = 1;
 
 

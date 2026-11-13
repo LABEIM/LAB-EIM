@@ -4,13 +4,13 @@
   display: flex;
   width: fit-content;
   align-items: center;
-  gap: 0.35rem;
+  gap: var(--space-5-6);
   min-height: 44px;
   padding: 0;
   border: 0;
   background: transparent;
   font-family: var(--font-mono);
-  font-size: 0.6875rem;
+  font-size: var(--text-11);
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--color-brand);
@@ -27,8 +27,8 @@
 .contact-action-row {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.25rem 1.25rem;
-  margin-top: 0.25rem;
+  gap: var(--space-4) var(--space-20);
+  margin-top: var(--space-4);
 }
 
 /* Reserve width for the success/failure label so the row does not shift. */
@@ -76,7 +76,7 @@
   display: grid;
   grid-template-columns: 2.5rem minmax(0, 1fr) 1.25rem;
   align-items: center;
-  gap: 1rem;
+  gap: var(--space-16);
   padding-block: clamp(1rem, 2.5vh, 1.5rem);
   color: var(--color-foreground);
   text-decoration: none;
@@ -91,25 +91,25 @@
   border-radius: var(--radius-pill);
   background: var(--color-surface);
   color: var(--color-brand);
-  font-size: 1rem;
+  font-size: var(--text-16);
 }
 
 .contact-social-text {
   display: flex;
   flex-direction: column;
-  gap: 0.15rem;
+  gap: var(--space-2-4);
   min-width: 0;
 }
 
 .contact-social-name {
-  font-size: 15px;
+  font-size: var(--text-15);
   font-weight: 500;
   line-height: 1.4;
 }
 
 .contact-social-handle {
   font-family: var(--font-mono);
-  font-size: 0.6875rem;
+  font-size: var(--text-11);
   letter-spacing: 0.04em;
   color: var(--color-muted-ink);
   overflow-wrap: anywhere;
@@ -117,7 +117,7 @@
 
 .contact-social-arrow {
   justify-self: end;
-  font-size: 1rem;
+  font-size: var(--text-16);
   line-height: 1;
   color: var(--color-muted-ink);
   transition:

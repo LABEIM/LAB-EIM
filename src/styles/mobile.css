@@ -19,15 +19,15 @@
     .hero-grid {
         grid-template-columns: 1fr;
         text-align: center;
-        gap: 40px;
+        gap: var(--space-40);
     }
     
     .hero h1 {
-        font-size: 3rem;
+        font-size: var(--text-48);
     }
     
     .hero p.hero-desc {
-        margin: 0 auto 36px auto;
+        margin: 0 auto var(--space-36) auto;
     }
     
     .hero-actions {
@@ -52,7 +52,7 @@
 
 @media (max-width: 768px) {
     .section-title h2 {
-        font-size: 2rem;
+        font-size: var(--text-32);
     }
 
 }
@@ -64,72 +64,72 @@
     }
 
     body {
-        font-size: 14px;
-        background-color: #f9f9f9;
+        font-size: var(--text-14);
+        background-color: var(--color-surface-muted);
     }
 
     /* The container element will fill the screen width */
     .container {
         width: 100%;
-        padding: 15px;
+        padding: var(--space-15);
     }
 
     /* Change the column layout to vertical (downward) */
     .column {
         width: 100%;
         display: block;
-        margin-bottom: 15px;
+        margin-bottom: var(--space-15);
     }
 
     /* Fix global font & padding for mobile.
        Scoped away from .home-skin: the homepage ships its own fluid heading
        clamps and should not need !important reclaims for every level. */
     body:not(.home-skin) h1 {
-        font-size: 2.2rem !important;
+        font-size: var(--text-35-2) !important;
         letter-spacing: -0.5px !important;
     }
 
     body:not(.home-skin) h2 {
-        font-size: 1.7rem !important;
+        font-size: var(--text-27-2) !important;
     }
 
     body:not(.home-skin) h3 {
-        font-size: 1.3rem !important;
+        font-size: var(--text-20-8) !important;
     }
 
     .section-padding {
-        padding: 50px 0 !important;
+        padding: var(--space-50) 0 !important;
     }
 
     .page-header,
     .event-page-header,
     .structure-page-header {
         padding-top: calc(var(--site-header-height) + 24px) !important;
-        padding-bottom: 20px !important;
+        padding-bottom: var(--space-20) !important;
     }
 
     .page-header + .section-padding,
     .page-header + section {
-        padding-top: 24px !important;
+        padding-top: var(--space-24) !important;
     }
 
     .page-header-content h1 {
-        font-size: 2.2rem !important;
+        font-size: var(--text-35-2) !important;
     }
 
     .hero {
         padding-top: calc(var(--site-header-height) + 36px) !important;
-        padding-bottom: 50px !important;
+        padding-bottom: var(--space-50) !important;
         min-height: auto !important;
     }
 
     .hero h1 {
-        font-size: 2.2rem !important;
+        font-size: var(--text-35-2) !important;
     }
 
     .hero-visual {
         order: 1 !important;
-        margin-top: 30px;
+        margin-top: var(--space-30);
     }
 
     .visual-orbit {
@@ -144,35 +144,35 @@
     }
 
     .visual-core i {
-        font-size: 2rem !important;
+        font-size: var(--text-32) !important;
     }
 
     .visual-node {
         width: 38px !important;
         height: 38px !important;
-        font-size: 0.8rem !important;
+        font-size: var(--text-12-8) !important;
     }
 
     /* Fix About Us (About Page) on Mobile */
     .about-overview-grid {
         grid-template-columns: 1fr !important;
-        gap: 30px !important;
+        gap: var(--space-30) !important;
         text-align: center;
     }
 
     .about-image img {
-        padding: 20px !important;
+        padding: var(--space-20) !important;
         max-height: 200px !important;
         margin: 0 auto;
     }
 
     .about-visionmission-grid {
-        padding: 20px 15px !important;
-        margin-bottom: 40px !important;
+        padding: var(--space-20) var(--space-15) !important;
+        margin-bottom: var(--space-40) !important;
     }
 
     .about-visionmission-grid > div {
         grid-template-columns: 1fr !important;
-        gap: 30px !important;
+        gap: var(--space-30) !important;
     }
 }

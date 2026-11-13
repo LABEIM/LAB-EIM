@@ -1,13 +1,28 @@
 /* --- DESIGN SYSTEM TOKENS --- */
 :root {
+    /* Legacy base palette — values frozen for the pre-Antigravity pages.
+       Do not use in new code; do not converge with --color-* (visual change). */
+    --legacy-bg: #ffffff;
+    --legacy-bg-secondary: #f8f9fa;
+    --legacy-ink: #1a202c;
+    --legacy-ink-secondary: #4a5568;
+    --legacy-ink-muted: #718096;
+    --legacy-accent: #0E555F;          /* deep teal; the "--accent-red" name is a legacy misnomer */
+    --legacy-accent-hover: #1AACAD;
+    --legacy-accent-gradient: linear-gradient(135deg, #0E555F 0%, #072a2f 100%);
+    --legacy-line: rgba(14, 85, 95, 0.08);
+    --legacy-line-hover: rgba(14, 85, 95, 0.15);
+    --legacy-card: rgba(14, 85, 95, 0.03);
+    --legacy-card-hover: rgba(14, 85, 95, 0.06);
+
     /* Color Palette */
-    --bg-dark: #ffffff;
-    --bg-dark-secondary: #f8f9fa;
-    --bg-card: rgba(14, 85, 95, 0.03);
-    --bg-card-hover: rgba(14, 85, 95, 0.06);
+    --bg-dark: var(--legacy-bg);
+    --bg-dark-secondary: var(--legacy-bg-secondary);
+    --bg-card: var(--legacy-card);
+    --bg-card-hover: var(--legacy-card-hover);
     
-    --border-color: rgba(14, 85, 95, 0.08);
-    --border-color-hover: rgba(14, 85, 95, 0.15);
+    --border-color: var(--legacy-line);
+    --border-color-hover: var(--legacy-line-hover);
 
     /* Layout Header Height Dynamic Token */
     --site-header-height: 80px;
@@ -25,11 +40,91 @@
     --brand-gray-azure: #4E8A92;
     --brand-gray-azure-rgb: 78, 138, 146;
 
+    /* Exact-value tokens for shared components (no same-valued token existed;
+       do not merge with near matches — each is a measured, distinct color). */
+    --color-brand-deep: #093f47;
+    --color-surface-deep: #091b1e;
+    --color-surface-muted: #f9f9f9;
+    --color-danger-alt: #e53e3e;
+    --color-danger-alt-rgb: 229, 62, 62;
+    --color-ink-deep: #070913;
+    --color-scrim-rgb: 7, 26, 30;
+    --legacy-bg-secondary-rgb: 248, 249, 250;
+
+    /* Neutral ramp — grays currently inlined by announcement/forms/toolbars. */
+    --white: #ffffff;
+    --black: #000000;
+    --black-rgb: 0, 0, 0;
+    --neutral-50: #f8fafc;
+    --neutral-100: #f1f5f9;
+    --neutral-200: #e2e8f0;
+    --neutral-300: #cbd5e1;
+    --neutral-400: #94a3b8;
+    --neutral-400-rgb: 148, 163, 184;
+    --neutral-600: #475569;
+    --neutral-700: #334155;
+    --neutral-800: #1e293b;
+    --neutral-900: #0f172a;
+    --neutral-900-rgb: 15, 23, 42;
+
+    /* Status families. -bar/-bar-mid are the banner backgrounds, -base/-strong/-light
+       the accents, -ink text on the accent. */
+    --color-danger-base: #ef4444;
+    --color-danger-rgb: 239, 68, 68;
+    --color-danger-strong: #dc2626;
+    --color-danger-light: #f87171;
+    --color-danger-bar: #450a0a;
+    --color-danger-bar-mid: #7f1d1d;
+    --color-danger-ink: var(--white);
+    --color-danger-deep: #b42318;
+    --color-danger-soft: #fdf1f0;
+    --color-danger-line: #f0bdb8;
+    /* Red-300 text on dark surfaces. Exact value; do NOT merge with -light (#f87171). */
+    --color-danger-lighter: #fca5a5;
+
+    /* Warning family (registration banners): -soft/-line are the banner surface,
+       -ink is the banner text itself (not text-on-accent). */
+    --color-warning-soft: #fdf6e7;
+    --color-warning-line: #f0d49a;
+    --color-warning-ink: #92400e;
+
+    --color-success-base: #10b981;
+    --color-success-rgb: 16, 185, 129;
+    --color-success-strong: #059669;
+    --color-success-light: #34d399;
+    --color-success-light-rgb: 52, 211, 153;
+    --color-success-bar: #064e3b;
+    --color-success-bar-mid: #065f46;
+    --color-success-ink: #064e3b;
+
+    --color-info-base: #06b6d4;
+    --color-info-rgb: 6, 182, 212;
+    --color-info-strong: #0891b2;
+    --color-info-light: #22d3ee;
+    --color-info-bar: var(--neutral-900);
+    --color-info-bar-mid: var(--neutral-800);
+    --color-info-ink: var(--neutral-900);
+
+    /* Campaign (recruitment banner): plum bar, gold accent. Not a generic status. */
+    --color-campaign-base: #eab308;
+    --color-campaign-rgb: 234, 179, 8;
+    --color-campaign-strong: #ca8a04;
+    --color-campaign-light: #fde047;
+    --color-campaign-bar: #1e1b4b;
+    --color-campaign-bar-mid: #31103f;
+    --color-campaign-ink: var(--neutral-900);
+
+    /* Registration simulator toolbar (dev-only indigo panel). */
+    --color-toolbar-rgb: 99, 102, 241;
+    --color-toolbar-base: #6366f1;
+    --color-toolbar-strong: #4f46e5;
+    --color-toolbar-light: #a5b4fc;
+
     /* Theme Accents (Mapped to Brand Colors) */
-    --accent-red: var(--brand-dark-azure);
+    --accent-red: var(--legacy-accent);
     --accent-red-rgb: var(--brand-dark-azure-rgb);
-    --accent-red-hover: var(--brand-cyan-light);
-    --accent-red-gradient: linear-gradient(135deg, var(--brand-dark-azure) 0%, #072a2f 100%);
+    --accent-red-hover: var(--legacy-accent-hover);
+    --accent-red-gradient: var(--legacy-accent-gradient);
     
     --accent-cyan: var(--brand-cyan);
     --accent-cyan-rgb: var(--brand-cyan-rgb);
@@ -37,9 +132,9 @@
     --accent-cyan-gradient: linear-gradient(135deg, var(--brand-cyan) 0%, var(--brand-cyan-light) 100%);
     
     /* Text Colors */
-    --text-primary: #1a202c;
-    --text-secondary: #4a5568;
-    --text-muted: #718096;
+    --text-primary: var(--legacy-ink);
+    --text-secondary: var(--legacy-ink-secondary);
+    --text-muted: var(--legacy-ink-muted);
     
     /* Typography */
     --font-heading: 'Poppins', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
@@ -60,6 +155,8 @@
     --eim-brand-bright: #11B4BD;
     --eim-brand-soft: #E2F3F4;
     --eim-black: #050B0D;
+    /* #050B0D as a triplet for rgba() scrims */
+    --eim-black-rgb: 5, 11, 13;
     --eim-font-display: 'Instrument Serif', Georgia, serif;
     --eim-font-body: 'IBM Plex Sans', system-ui, -apple-system, sans-serif;
     --eim-font-mono: 'IBM Plex Mono', ui-monospace, SFMono-Regular, monospace;
@@ -112,4 +209,110 @@
 
 body.has-announcement-banner {
     --site-header-height: 122px;
+}
+
+/* Value-named scales: suffix = px at a 16px root. */
+:root {
+    /* Preferred subset for new code (4px grid): 4, 8, 12, 16, 20, 24, 32, 40 */
+    --space-neg-36: -2.25rem;
+    --space-neg-32: -2rem;
+    --space-neg-10: -0.625rem;
+    --space-neg-8: -0.5rem;
+    --space-1-6: 0.1rem;
+    --space-2: 0.125rem;
+    --space-2-4: 0.15rem;
+    --space-3: 0.1875rem;
+    --space-3-2: 0.2rem;
+    --space-4: 0.25rem;
+    --space-4-8: 0.3rem;
+    --space-5: 0.3125rem;
+    --space-5-6: 0.35rem;
+    --space-6: 0.375rem;
+    --space-6-4: 0.4rem;
+    --space-7-2: 0.45rem;
+    --space-8: 0.5rem;
+    --space-8-8: 0.55rem;
+    --space-9: 0.5625rem;
+    --space-9-6: 0.6rem;
+    --space-10: 0.625rem;
+    --space-10-4: 0.65rem;
+    --space-11-2: 0.7rem;
+    --space-12: 0.75rem;
+    --space-12-8: 0.8rem;
+    --space-13-6: 0.85rem;
+    --space-14: 0.875rem;
+    --space-14-4: 0.9rem;
+    --space-15: 0.9375rem;
+    --space-15-2: 0.95rem;
+    --space-16: 1rem;
+    --space-16-8: 1.05rem;
+    --space-17-6: 1.1rem;
+    --space-18: 1.125rem;
+    --space-20: 1.25rem;
+    --space-22: 1.375rem;
+    --space-24: 1.5rem;
+    --space-28: 1.75rem;
+    --space-30: 1.875rem;
+    --space-30-4: 1.9rem;
+    --space-32: 2rem;
+    --space-36: 2.25rem;
+    --space-40: 2.5rem;
+    --space-44: 2.75rem;
+    --space-50: 3.125rem;
+    --space-60: 3.75rem;
+    --space-80: 5rem;
+    --space-100: 6.25rem;
+
+    /* Preferred subset for new code: 12, 14, 16, 18.4, 20, 24, 32, 40, 48 */
+    --text-10: 0.625rem;
+    --text-10-4: 0.65rem;
+    --text-10-8: 0.675rem;
+    --text-11: 0.6875rem;
+    --text-11-52: 0.72rem;
+    --text-11-6: 0.725rem;
+    --text-12: 0.75rem;
+    --text-12-8: 0.8rem;
+    --text-13: 0.8125rem;
+    --text-13-12: 0.82rem;
+    --text-13-6: 0.85rem;
+    --text-14: 0.875rem;
+    --text-14-08: 0.88rem;
+    --text-14-4: 0.9rem;
+    --text-14-72: 0.92rem;
+    --text-15: 0.9375rem;
+    --text-15-2: 0.95rem;
+    --text-16: 1rem;
+    --text-16-8: 1.05rem;
+    --text-17-6: 1.1rem;
+    --text-18-4: 1.15rem;
+    --text-19-2: 1.2rem;
+    --text-20: 1.25rem;
+    --text-20-8: 1.3rem;
+    --text-21-6: 1.35rem;
+    --text-22-4: 1.4rem;
+    --text-24: 1.5rem;
+    --text-24-8: 1.55rem;
+    --text-27-2: 1.7rem;
+    --text-28: 1.75rem;
+    --text-28-8: 1.8rem;
+    --text-32: 2rem;
+    --text-35-2: 2.2rem;
+    --text-36: 2.25rem;
+    --text-40: 2.5rem;
+    --text-48: 3rem;
+    --text-56: 3.5rem;
+
+    /* Stacking order — ascending, order-preserving. */
+    --z-below: -1;
+    --z-base: 0;
+    --z-raised: 1;
+    --z-layer: 10;
+    --z-elevated: 30;
+    --z-nav: 999;
+    --z-header: 1000;
+    --z-header-popover: 1001;
+    --z-header-overlay: 1002;
+    --z-modal: 9999;
+    --z-toolbar: 99990;
+    --z-top: 99999;
 }

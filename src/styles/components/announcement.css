@@ -3,10 +3,10 @@
 .global-announcement-bar {
   position: relative;
   width: 100%;
-  z-index: 1000;
-  color: var(--text-color, #f8fafc);
+  z-index: var(--z-header);
+  color: var(--text-color, var(--neutral-50));
   font-family: inherit;
-  font-size: 0.875rem;
+  font-size: var(--text-14);
   line-height: 1.4;
   overflow: hidden;
   transition: opacity 0.25s ease, transform 0.25s ease;
@@ -22,95 +22,95 @@
 
 /* 1. Recruitment Theme (Purple & Gold) */
 .global-announcement-bar.theme-recruitment {
-  background: linear-gradient(90deg, #1e1b4b 0%, #31103f 50%, #1e1b4b 100%);
-  border-bottom-color: rgba(234, 179, 8, 0.3);
+  background: linear-gradient(90deg, var(--color-campaign-bar) 0%, var(--color-campaign-bar-mid) 50%, var(--color-campaign-bar) 100%);
+  border-bottom-color: rgba(var(--color-campaign-rgb), 0.3);
 }
 .global-announcement-bar.theme-recruitment .announcement-badge {
-  background: linear-gradient(135deg, #eab308 0%, #ca8a04 100%);
-  color: #0f172a;
+  background: linear-gradient(135deg, var(--color-campaign-base) 0%, var(--color-campaign-strong) 100%);
+  color: var(--color-campaign-ink);
 }
 .global-announcement-bar.theme-recruitment .announcement-cta {
-  background: linear-gradient(135deg, #eab308 0%, #ca8a04 100%);
-  color: #0f172a;
-  box-shadow: 0 0 12px rgba(234, 179, 8, 0.35);
+  background: linear-gradient(135deg, var(--color-campaign-base) 0%, var(--color-campaign-strong) 100%);
+  color: var(--color-campaign-ink);
+  box-shadow: 0 0 12px rgba(var(--color-campaign-rgb), 0.35);
 }
 .global-announcement-bar.theme-recruitment .announcement-cta:hover {
-  background: linear-gradient(135deg, #fde047 0%, #eab308 100%);
-  box-shadow: 0 0 18px rgba(234, 179, 8, 0.55);
+  background: linear-gradient(135deg, var(--color-campaign-light) 0%, var(--color-campaign-base) 100%);
+  box-shadow: 0 0 18px rgba(var(--color-campaign-rgb), 0.55);
 }
 
 /* 2. Maintenance / Warning Theme (Amber & Crimson) */
 .global-announcement-bar.theme-maintenance {
-  background: linear-gradient(90deg, #450a0a 0%, #7f1d1d 50%, #450a0a 100%);
-  border-bottom-color: rgba(239, 68, 68, 0.4);
+  background: linear-gradient(90deg, var(--color-danger-bar) 0%, var(--color-danger-bar-mid) 50%, var(--color-danger-bar) 100%);
+  border-bottom-color: rgba(var(--color-danger-rgb), 0.4);
 }
 .global-announcement-bar.theme-maintenance .announcement-badge {
-  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
-  color: #ffffff;
+  background: linear-gradient(135deg, var(--color-danger-base) 0%, var(--color-danger-strong) 100%);
+  color: var(--color-danger-ink);
 }
 .global-announcement-bar.theme-maintenance .announcement-cta {
-  background: #ef4444;
-  color: #ffffff;
-  box-shadow: 0 0 12px rgba(239, 68, 68, 0.35);
+  background: var(--color-danger-base);
+  color: var(--color-danger-ink);
+  box-shadow: 0 0 12px rgba(var(--color-danger-rgb), 0.35);
 }
 .global-announcement-bar.theme-maintenance .announcement-cta:hover {
-  background: #f87171;
-  box-shadow: 0 0 18px rgba(239, 68, 68, 0.55);
+  background: var(--color-danger-light);
+  box-shadow: 0 0 18px rgba(var(--color-danger-rgb), 0.55);
 }
 
 /* 3. General Info Theme (Cyan & Deep Indigo) */
 .global-announcement-bar.theme-info {
-  background: linear-gradient(90deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
-  border-bottom-color: rgba(6, 182, 212, 0.3);
+  background: linear-gradient(90deg, var(--color-info-bar) 0%, var(--color-info-bar-mid) 50%, var(--color-info-bar) 100%);
+  border-bottom-color: rgba(var(--color-info-rgb), 0.3);
 }
 .global-announcement-bar.theme-info .announcement-badge {
-  background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%);
-  color: #0f172a;
+  background: linear-gradient(135deg, var(--color-info-base) 0%, var(--color-info-strong) 100%);
+  color: var(--color-info-ink);
 }
 .global-announcement-bar.theme-info .announcement-cta {
-  background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%);
-  color: #0f172a;
-  box-shadow: 0 0 12px rgba(6, 182, 212, 0.35);
+  background: linear-gradient(135deg, var(--color-info-base) 0%, var(--color-info-strong) 100%);
+  color: var(--color-info-ink);
+  box-shadow: 0 0 12px rgba(var(--color-info-rgb), 0.35);
 }
 .global-announcement-bar.theme-info .announcement-cta:hover {
-  background: linear-gradient(135deg, #22d3ee 0%, #06b6d4 100%);
-  box-shadow: 0 0 18px rgba(6, 182, 212, 0.55);
+  background: linear-gradient(135deg, var(--color-info-light) 0%, var(--color-info-base) 100%);
+  box-shadow: 0 0 18px rgba(var(--color-info-rgb), 0.55);
 }
 
 /* 4. Success / Results Theme (Emerald Green) */
 .global-announcement-bar.theme-success {
-  background: linear-gradient(90deg, #064e3b 0%, #065f46 50%, #064e3b 100%);
-  border-bottom-color: rgba(16, 185, 129, 0.3);
+  background: linear-gradient(90deg, var(--color-success-bar) 0%, var(--color-success-bar-mid) 50%, var(--color-success-bar) 100%);
+  border-bottom-color: rgba(var(--color-success-rgb), 0.3);
 }
 .global-announcement-bar.theme-success .announcement-badge {
-  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-  color: #064e3b;
+  background: linear-gradient(135deg, var(--color-success-base) 0%, var(--color-success-strong) 100%);
+  color: var(--color-success-ink);
 }
 .global-announcement-bar.theme-success .announcement-cta {
-  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-  color: #064e3b;
-  box-shadow: 0 0 12px rgba(16, 185, 129, 0.35);
+  background: linear-gradient(135deg, var(--color-success-base) 0%, var(--color-success-strong) 100%);
+  color: var(--color-success-ink);
+  box-shadow: 0 0 12px rgba(var(--color-success-rgb), 0.35);
 }
 .global-announcement-bar.theme-success .announcement-cta:hover {
-  background: linear-gradient(135deg, #34d399 0%, #10b981 100%);
-  box-shadow: 0 0 18px rgba(16, 185, 129, 0.55);
+  background: linear-gradient(135deg, var(--color-success-light) 0%, var(--color-success-base) 100%);
+  box-shadow: 0 0 18px rgba(var(--color-success-rgb), 0.55);
 }
 
 /* Inner Layout Container */
 .announcement-container {
   max-width: 1280px;
   margin: 0 auto;
-  padding: 0.625rem 1.25rem;
+  padding: var(--space-10) var(--space-20);
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 1rem;
+  gap: var(--space-16);
 }
 
 .announcement-content-wrap {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  gap: var(--space-12);
   flex: 1;
   min-width: 0;
 }
@@ -118,10 +118,10 @@
 .announcement-badge {
   display: inline-flex;
   align-items: center;
-  gap: 0.375rem;
-  padding: 0.2rem 0.6rem;
+  gap: var(--space-6);
+  padding: var(--space-3-2) var(--space-9-6);
   border-radius: 9999px;
-  font-size: 0.725rem;
+  font-size: var(--text-11-6);
   font-weight: 700;
   letter-spacing: 0.05em;
   text-transform: uppercase;
@@ -130,12 +130,12 @@
 }
 
 .announcement-icon {
-  font-size: 0.8rem;
+  font-size: var(--text-12-8);
 }
 
 .announcement-text {
   font-weight: 500;
-  color: #f1f5f9;
+  color: var(--neutral-100);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -144,17 +144,17 @@
 .announcement-actions {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  gap: var(--space-12);
   flex-shrink: 0;
 }
 
 .announcement-cta {
   display: inline-flex;
   align-items: center;
-  gap: 0.375rem;
-  padding: 0.3rem 0.85rem;
+  gap: var(--space-6);
+  padding: var(--space-4-8) var(--space-13-6);
   border-radius: 0.375rem;
-  font-size: 0.8rem;
+  font-size: var(--text-12-8);
   font-weight: 600;
   text-decoration: none;
   transition: transform 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
@@ -162,7 +162,7 @@
 }
 
 .announcement-cta i {
-  font-size: 0.75rem;
+  font-size: var(--text-12);
   transition: transform 0.2s ease;
 }
 
@@ -173,7 +173,7 @@
 .announcement-close-btn {
   background: rgba(255, 255, 255, 0.15);
   border: 1px solid rgba(255, 255, 255, 0.25);
-  color: #ffffff;
+  color: var(--white);
   cursor: pointer;
   width: 28px;
   height: 28px;
@@ -181,16 +181,16 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  font-size: 0.85rem;
+  font-size: var(--text-13-6);
   font-weight: 700;
   line-height: 1;
   transition: transform 0.2s ease, background-color 0.2s ease, border-color 0.2s ease;
-  margin-left: 0.35rem;
+  margin-left: var(--space-5-6);
   flex-shrink: 0;
 }
 
 .announcement-close-btn:hover {
-  color: #ffffff;
+  color: var(--white);
   background-color: rgba(255, 255, 255, 0.35);
   border-color: rgba(255, 255, 255, 0.6);
   transform: scale(1.1);
@@ -199,33 +199,33 @@
 /* Mobile Responsiveness */
 @media (max-width: 768px) {
   .announcement-container {
-    padding: 0.5rem 0.85rem;
-    gap: 0.5rem;
+    padding: var(--space-8) var(--space-13-6);
+    gap: var(--space-8);
   }
 
   .announcement-text {
     white-space: normal;
-    font-size: 0.8rem;
+    font-size: var(--text-12-8);
     line-height: 1.35;
     display: -webkit-box;
     -webkit-line-clamp: 2;
     line-clamp: 2;
     -webkit-box-orient: vertical;
   }
-  
+
   .announcement-cta {
-    padding: 0.25rem 0.65rem;
-    font-size: 0.75rem;
+    padding: var(--space-4) var(--space-10-4);
+    font-size: var(--text-12);
   }
 }
 
 @media (max-width: 480px) {
   .announcement-content-wrap {
-    gap: 0.5rem;
+    gap: var(--space-8);
   }
   .announcement-badge {
-    padding: 0.15rem 0.45rem;
-    font-size: 0.675rem;
+    padding: var(--space-2-4) var(--space-7-2);
+    font-size: var(--text-10-8);
   }
   .announcement-badge span.badge-text {
     display: none;

@@ -16,7 +16,7 @@ Before writing any code, the agent must complete these steps:
 4. Keep all changes within the selected task scope unless a critical blocker forces a narrow supporting fix.
 5. Do not silently alter verification rules or relax tests during implementation.
 6. Prefer durable repository artifacts and updated documentation over transient chat summaries.
-7. When making structural updates, dependency version bumps, framework configuration changes, schema updates, or directory layout shifts, the agent must update corresponding repository documentation (`AGENTS.md`, `README.md`, `DEPLOYMENT.md`, `REGISTRATION_SETUP.md`) and TypeScript interfaces / data models (`src/utils/types.ts`) to reflect the new state.
+7. When making structural updates, dependency version bumps, framework configuration changes, schema updates, or directory layout shifts, the agent must update corresponding repository documentation (`AGENTS.md`, `README.md`, `docs/DEPLOYMENT.md`, `docs/REGISTRATION_SETUP.md`) and TypeScript interfaces / data models (`src/utils/types.ts`) to reflect the new state.
 
 ### 1.3 Required Artifacts & Key Files
 1. `package.json`: Main repository dependencies, runtime constraints (`node >=22.12.0`), and script targets.
@@ -53,7 +53,7 @@ Before ending a session, the agent must perform these tasks:
 - **State Management**: React component state and native browser APIs; client JavaScript is kept minimal through Astro islands.
 - **Database / CMS**: Keystatic CMS (`@keystatic/astro` v5.2.0, `@keystatic/core` v0.6.9) backed by Markdown collections (`src/content/`) and JSON data files (`src/data/`); production editing uses Keystatic Cloud (`eimlab/lab-eim`), local development uses local storage; no database.
 - **Internationalization (i18n)**: Single-locale (`id`) translation and UI dictionary utilities (`src/utils/i18n.ts`).
-- **Typography & Icons**: `@fontsource/inter`, `@fontsource/montserrat`, `@fontsource/poppins`; icon styles in `src/styles/icons.css`.
+- **Typography & Icons**: `@fontsource/montserrat`, `@fontsource/poppins`, `@fontsource/instrument-serif`, `@fontsource/ibm-plex-sans`, `@fontsource/ibm-plex-mono`; `@fontsource/inter` stays installed but is not imported; icon styles in `src/styles/icons.css`.
 - **Runtime & Build Tools**: Node.js `>=22.12.0`, pnpm (the shared CI installs `latest`; `pnpm-lock.yaml` pins resolutions). Project-level pnpm settings — peer/security overrides and the install-script allowlist — live in `pnpm-workspace.yaml`.
 
 ### 2.2 Directory Layout & Component Roles
@@ -62,12 +62,13 @@ Before ending a session, the agent must perform these tasks:
 - `keystatic.config.ts`: Keystatic CMS singletons (e.g. recruitment settings), collections, and storage (Keystatic Cloud in production, local in development).
 - `src/content.config.ts`: Collection loaders and Zod schemas (`news`, `events`).
 - `src/content/`: Static Markdown content files (`news/`, `events/`).
-- `src/data/`: JSON configuration (`site.json`, `contact.json`, `members.json`, `lecturers.json`, `divisions.json`, `registration.json`) and `CONFIG_GUIDE.md`.
+- `src/data/`: JSON configuration (`site.json`, `contact.json`, `members.json`, `lecturers.json`, `divisions.json`, `registration.json`) and the guide in `docs/CONFIG_GUIDE.md`.
 - `src/components/`: Reusable Astro and React UI components (Navbar, Footer, cards, forms, plus homepage, about-page, structure-page, and event-page sections under `home/`, `about/`, `structure/`, and `kegiatan/`).
 - `src/pages/`: File-system routes, the `/keystatic` admin, and API endpoints.
 - `src/layouts/Layout.astro`: Base wrapper page layout.
 - `src/styles/`: Modular design system and stylesheets (`variables.css`, `base.css`, `globals.css`, `mobile.css`, `icons.css`, plus `components/` and `pages/`).
 - `src/utils/`: Business logic, i18n helpers, content filtering, event helpers, registration logic, and interfaces (`i18n.ts`, `content-helpers.ts`, `event-helpers.ts`, `registration-config.ts`, `recruitment.ts`, `division-mapper.ts`, `safe-link.ts`, `types.ts`, `constants.ts`).
+- `docs/`: Project guides (`DEPLOYMENT.md`, `REGISTRATION_SETUP.md`, `ASSETS.md`, `CONFIG_GUIDE.md`) and the design token reference (`DESIGN_TOKENS.md`). `CONTRIBUTING.md`, `SECURITY.md`, and `CODE_OF_CONDUCT.md` stay at the root so GitHub's community tabs and direct links keep their canonical paths.
 - `public/`: Static assets, `robots.txt`, `sitemap.xml`, `manifest.webmanifest`, `llms.txt`, `llms-full.txt`, and `.well-known/security.txt`.
 
 ### 2.3 Role-Based Access Control & Scoping

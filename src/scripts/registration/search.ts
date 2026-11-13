@@ -14,7 +14,27 @@ interface Candidate {
   status?: string;
   division?: string;
   notes?: string;
-  [key: string]: any;
+  [key: string]: string | number | CandidateStepStatus[] | undefined;
+}
+
+/** Message overrides shared by the announcement config and per-step results. */
+interface OutcomeMessages {
+  acceptedMessage?: string;
+  passedMessage?: string;
+  rejectedMessage?: string;
+  failedMessage?: string;
+  waitlistMessage?: string;
+}
+
+interface SelectionStep {
+  id: string;
+  resultsConfig?: OutcomeMessages;
+}
+
+interface RecruitmentResults {
+  candidates?: Candidate[];
+  bulkImportText?: string;
+  announcementConfig?: OutcomeMessages;
 }
 
 /**
@@ -29,19 +49,21 @@ function normalizeNim(val: string | number | undefined | null): string {
 /**
  * Gets candidate results data from container data-attributes or fallback imported JSON.
  */
-function getResultsConfigData(): any {
+function getResultsConfigData(): RecruitmentResults {
   if (typeof document !== 'undefined') {
     const container = document.getElementById('registration-container');
     if (container) {
       const raw = container.getAttribute('data-recruitment-results');
       if (raw) {
         try {
-          return JSON.parse(raw);
-        } catch (e) {}
+          return JSON.parse(raw) as RecruitmentResults;
+        } catch (e) {
+          console.warn('recruitment results parse failed', (e as Error).name);
+        }
       }
     }
   }
-  return resultsData;
+  return resultsData as RecruitmentResults;
 }
 
 /**
@@ -74,7 +96,7 @@ const OUTCOME_KEYWORDS = [
   'rejected', 'gagal', 'tidak lolos', 'tidak_lolos', 'tidak lulus', 'failed',
 ];
 
-function parseBulkImportText(text: string, activeSteps: Array<{ id: string }> = []): Candidate[] {
+function parseBulkImportText(text: string, activeSteps: SelectionStep[] = []): Candidate[] {
   if (!text || typeof text !== 'string') return [];
   const lines = text.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
   if (!lines.length) return [];
@@ -96,7 +118,7 @@ function parseBulkImportText(text: string, activeSteps: Array<{ id: string }> = 
         { id: 'technical_test' },
         { id: 'interview' },
         { id: 'final_selection' },
-      ] as Array<{ id: string }>
+      ]
   ).filter(s => {
     const id = (s.id || '').toLowerCase();
     return id !== 'final_selection' && id !== 'announcement' && id !== 'pengumuman';
@@ -182,7 +204,7 @@ function parseBulkImportText(text: string, activeSteps: Array<{ id: string }> = 
 /**
  * Finds candidate record by NIM, checking structured array, bulk text, and aliases.
  */
-function findCandidate(query: string, activeSteps: any[] = []): Candidate | undefined {
+function findCandidate(query: string, activeSteps: SelectionStep[] = []): Candidate | undefined {
   const q = normalizeNim(query);
   if (!q) return undefined;
 
@@ -282,15 +304,17 @@ function getIsEnglish(): boolean {
   return typeof window !== 'undefined' && window.location.pathname.startsWith('/en');
 }
 
-function getSelectionStepsConfig(): any[] {
+function getSelectionStepsConfig(): SelectionStep[] {
   if (typeof document === 'undefined') return [];
   const container = document.getElementById('registration-container');
   if (container) {
     const raw = container.getAttribute('data-selection-steps');
     if (raw) {
       try {
-        return JSON.parse(raw);
-      } catch (e) {}
+        return JSON.parse(raw) as SelectionStep[];
+      } catch (e) {
+        console.warn('selection steps parse failed', (e as Error).name);
+      }
     }
   }
   return [];
@@ -300,11 +324,8 @@ function getSelectionStepsConfig(): any[] {
  * Reads announcementConfig from the container's data-recruitment-results
  * or falls back to the imported JSON, in order to get accepted/rejected messages.
  */
-function getAnnouncementConfig(): { acceptedMessage?: string; rejectedMessage?: string; waitlistMessage?: string } {
-  try {
-    if (registrationData?.announcementConfig) return registrationData.announcementConfig;
-  } catch (e) {}
-  return {};
+function getAnnouncementConfig(): OutcomeMessages {
+  return (registrationData?.announcementConfig as OutcomeMessages) ?? {};
 }
 
 /**
@@ -357,7 +378,7 @@ export function initRegistrationSearch() {
 
     const normKey = normalizeStepIdentifier(stepKey);
     const matchedStepCfg = selectionStepsConfig.find(
-      (s: any) => normalizeStepIdentifier(s.id) === normKey || s.id === stepKey
+      (s: SelectionStep) => normalizeStepIdentifier(s.id) === normKey || s.id === stepKey
     );
 
     const executeSearch = () => {
@@ -400,21 +421,21 @@ export function initRegistrationSearch() {
 
         // Read from announcementConfig first (the canonical source for announcement messages)
         if (isAccepted) {
-          defaultOutcomeNote = (announcementCfg as any).acceptedMessage || (announcementCfg as any).passedMessage || '';
+          defaultOutcomeNote = announcementCfg.acceptedMessage || announcementCfg.passedMessage || '';
         } else if (isWaitlist) {
-          defaultOutcomeNote = (announcementCfg as any).waitlistMessage || '';
+          defaultOutcomeNote = announcementCfg.waitlistMessage || '';
         } else if (isRejected) {
-          defaultOutcomeNote = (announcementCfg as any).rejectedMessage || (announcementCfg as any).failedMessage || '';
+          defaultOutcomeNote = announcementCfg.rejectedMessage || announcementCfg.failedMessage || '';
         }
 
         // Fall back to step resultsConfig (backward compatibility)
         if (!defaultOutcomeNote && matchedStepCfg && matchedStepCfg.resultsConfig) {
           if (isAccepted) {
-            defaultOutcomeNote = matchedStepCfg.resultsConfig.passedMessage || (matchedStepCfg.resultsConfig as any).acceptedMessage || '';
+            defaultOutcomeNote = matchedStepCfg.resultsConfig.passedMessage || matchedStepCfg.resultsConfig.acceptedMessage || '';
           } else if (isWaitlist) {
             defaultOutcomeNote = matchedStepCfg.resultsConfig.waitlistMessage || '';
           } else {
-            defaultOutcomeNote = matchedStepCfg.resultsConfig.failedMessage || (matchedStepCfg.resultsConfig as any).rejectedMessage || '';
+            defaultOutcomeNote = matchedStepCfg.resultsConfig.failedMessage || matchedStepCfg.resultsConfig.rejectedMessage || '';
           }
         }
 
@@ -423,15 +444,15 @@ export function initRegistrationSearch() {
           if (isAccepted) {
             defaultOutcomeNote = isEn
               ? 'Congratulations! You have been accepted as an assistant at EIM Research Lab.'
-              : (announcementCfg as any).acceptedMessage || (announcementCfg as any).passedMessage || 'Selamat! Anda dinyatakan diterima sebagai asisten di EIM Research Lab.';
+              : announcementCfg.acceptedMessage || announcementCfg.passedMessage || 'Selamat! Anda dinyatakan diterima sebagai asisten di EIM Research Lab.';
           } else if (isWaitlist) {
             defaultOutcomeNote = isEn
               ? 'You are on the recruitment waitlist.'
-              : (announcementCfg as any).waitlistMessage || 'Anda masuk dalam daftar cadangan (Waitlist) asisten EIM Research Lab.';
+              : announcementCfg.waitlistMessage || 'Anda masuk dalam daftar cadangan (Waitlist) asisten EIM Research Lab.';
           } else {
             defaultOutcomeNote = isEn
               ? 'Thank you for participating in this recruitment cycle.'
-              : (announcementCfg as any).rejectedMessage || (announcementCfg as any).failedMessage || 'Terima kasih telah mengikuti seluruh rangkaian rekrutmen asisten EIM Research Lab.';
+              : announcementCfg.rejectedMessage || announcementCfg.failedMessage || 'Terima kasih telah mengikuti seluruh rangkaian rekrutmen asisten EIM Research Lab.';
           }
         }
 
@@ -491,7 +512,7 @@ export function initRegistrationSearch() {
 
       // Check stageStatuses array matching stepId or normalized aliases
       if (Array.isArray(match.stageStatuses)) {
-        const foundStep = match.stageStatuses.find((s: any) => {
+        const foundStep = match.stageStatuses.find((s: CandidateStepStatus) => {
           const itemNorm = normalizeStepIdentifier(s.stepId || '');
           return itemNorm === normKey || s.stepId === stepKey || s.stepId === normKey;
         });
@@ -525,8 +546,8 @@ export function initRegistrationSearch() {
         }
 
         for (const k of candidatesKeys) {
-          if ((match as any)[k]) {
-            stepStatus = String((match as any)[k]).toLowerCase();
+          if (match[k]) {
+            stepStatus = String(match[k]).toLowerCase();
             break;
           }
         }

@@ -54,7 +54,7 @@ The EIM Research Lab Website is the official public site of the Enterprise Infra
 ├── src/
 │   ├── components/            # Reusable Astro and React components
 │   ├── content/               # Markdown collections (news/, events/)
-│   ├── data/                  # JSON site configuration and CONFIG_GUIDE.md
+│   ├── data/                  # JSON site configuration (guide: docs/CONFIG_GUIDE.md)
 │   ├── layouts/               # Base page layout (Layout.astro)
 │   ├── pages/                 # File-system routes
 │   ├── styles/                # Modular CSS and design tokens
@@ -64,8 +64,8 @@ The EIM Research Lab Website is the official public site of the Enterprise Infra
 ├── AGENTS.md                  # AI coding agent workflow and rules
 ├── CLAUDE.md                  # Claude Code operational instructions
 ├── GEMINI.md                  # Gemini CLI / Antigravity pointer to AGENTS.md
-├── CONTRIBUTING.md            # Git branch strategy & PR guidelines
-├── SECURITY.md                # Vulnerability reporting SLOs
+├── docs/                      # Guides: contributing, security, deployment, assets,
+│                              #   registration setup, data config, design tokens
 └── README.md                  # Main repository README
 ```
 

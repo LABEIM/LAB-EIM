@@ -7,7 +7,7 @@
 
 .eim-list-filter .content-filter-bar {
   margin-bottom: 0;
-  padding: 1.25rem;
+  padding: var(--space-20);
   border: 1px solid var(--color-line);
   border-radius: var(--radius-card);
   background: transparent;
@@ -70,7 +70,7 @@
 
 .eim-list-filter .sort-label {
   font-family: var(--font-mono);
-  font-size: 0.6875rem;
+  font-size: var(--text-11);
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--color-muted-ink);
@@ -78,13 +78,13 @@
 
 .eim-list-filter .filter-pill {
   min-height: 44px;
-  padding: 0.55rem 1rem;
+  padding: var(--space-8-8) var(--space-16);
   border: 1px solid var(--color-line);
   border-radius: var(--radius-pill);
   background: transparent;
   color: var(--color-muted-ink);
   font-family: var(--font-body);
-  font-size: 0.8125rem;
+  font-size: var(--text-13);
   font-weight: 500;
 }
 
@@ -107,20 +107,20 @@
 }
 
 .eim-list-filter .filter-summary-row {
-  padding-top: 0.85rem;
+  padding-top: var(--space-13-6);
   border-top: 1px solid var(--color-line);
   font-family: var(--font-mono);
-  font-size: 0.6875rem;
+  font-size: var(--text-11);
   letter-spacing: 0.04em;
   color: var(--color-muted-ink);
 }
 
 .eim-list-filter .filter-reset-btn {
   min-height: 44px;
-  padding: 0 0.75rem;
+  padding: 0 var(--space-12);
   color: var(--color-brand);
   font-family: var(--font-mono);
-  font-size: 0.6875rem;
+  font-size: var(--text-11);
   letter-spacing: 0.04em;
 }
 
@@ -168,7 +168,7 @@
 
 .eim-list-filter .pagination-info {
   font-family: var(--font-mono);
-  font-size: 0.6875rem;
+  font-size: var(--text-11);
   letter-spacing: 0.04em;
   color: var(--color-muted-ink);
 }

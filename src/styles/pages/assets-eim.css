@@ -5,19 +5,19 @@
 .assets-filters {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.5rem;
+  gap: var(--space-8);
   margin-top: clamp(2.5rem, 6vh, 4rem);
 }
 
 .filter-tab-btn {
   min-height: 44px;
-  padding: 0.55rem 1rem;
+  padding: var(--space-8-8) var(--space-16);
   border: 1px solid var(--color-line);
   border-radius: var(--radius-pill);
   background: transparent;
   color: var(--color-muted-ink);
   font-family: var(--font-body);
-  font-size: 13px;
+  font-size: var(--text-13);
   font-weight: 500;
   cursor: pointer;
 }
@@ -44,8 +44,8 @@
 .assets-grid {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
-  gap: 1.25rem;
-  margin-top: 1.5rem;
+  gap: var(--space-20);
+  margin-top: var(--space-24);
 }
 
 @media (min-width: 640px) {
@@ -57,7 +57,7 @@
 @media (min-width: 1024px) {
   .assets-grid {
     grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 1.5rem;
+    gap: var(--space-24);
   }
 }
 
@@ -84,7 +84,7 @@
   align-items: center;
   justify-content: center;
   aspect-ratio: 16 / 10;
-  padding: 1.5rem;
+  padding: var(--space-24);
   transition: background-color var(--dur-control) var(--ease);
 }
 
@@ -109,18 +109,18 @@
 
 .asset-bg-toggle-btn {
   position: absolute;
-  top: 0.75rem;
-  right: 0.75rem;
+  top: var(--space-12);
+  right: var(--space-12);
   display: inline-flex;
   align-items: center;
-  gap: 0.35rem;
+  gap: var(--space-5-6);
   min-height: 32px;
-  padding: 0.25rem 0.6rem;
+  padding: var(--space-4) var(--space-9-6);
   border: 1px solid var(--color-line);
   border-radius: var(--radius-pill);
   background: color-mix(in srgb, var(--color-background) 88%, transparent);
   font-family: var(--font-mono);
-  font-size: 0.625rem;
+  font-size: var(--text-10);
   letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--color-muted-ink);
@@ -146,22 +146,22 @@
   display: flex;
   flex: 1;
   flex-direction: column;
-  padding: 1.25rem;
+  padding: var(--space-20);
 }
 
 .asset-meta-tags {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.35rem;
-  margin-bottom: 0.75rem;
+  gap: var(--space-5-6);
+  margin-bottom: var(--space-12);
 }
 
 .meta-pill {
-  padding: 0.2rem 0.5rem;
+  padding: var(--space-3-2) var(--space-8);
   border: 1px solid var(--color-line);
   border-radius: var(--radius-pill);
   font-family: var(--font-mono);
-  font-size: 0.625rem;
+  font-size: var(--text-10);
   letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--color-muted-ink);
@@ -185,9 +185,9 @@
 
 .asset-card-desc {
   flex: 1;
-  margin-top: 0.5rem;
-  margin-bottom: 1.25rem;
-  font-size: 14px;
+  margin-top: var(--space-8);
+  margin-bottom: var(--space-20);
+  font-size: var(--text-14);
   line-height: 1.55;
   color: var(--color-muted-ink);
 }
@@ -197,28 +197,28 @@
 .asset-actions {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
-  padding-top: 1rem;
+  gap: var(--space-8);
+  padding-top: var(--space-16);
   border-top: 1px solid var(--color-line);
 }
 
 .asset-action-btn-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 0.5rem;
+  gap: var(--space-8);
 }
 
 .asset-btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 0.4rem;
+  gap: var(--space-6-4);
   min-height: 42px;
-  padding: 0.5rem 0.75rem;
+  padding: var(--space-8) var(--space-12);
   border: 1px solid transparent;
   border-radius: var(--radius-pill);
   font-family: var(--font-body);
-  font-size: 13px;
+  font-size: var(--text-13);
   font-weight: 500;
   line-height: 1.2;
   text-align: center;
@@ -285,8 +285,8 @@
 }
 
 .guidelines-desc {
-  margin-top: 1rem;
-  font-size: 15px;
+  margin-top: var(--space-16);
+  font-size: var(--text-15);
   line-height: 1.6;
   color: var(--color-muted-ink);
 }
@@ -294,18 +294,18 @@
 .guidelines-grid {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
-  gap: 1rem;
+  gap: var(--space-16);
 }
 
 @media (min-width: 640px) {
   .guidelines-grid {
     grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 1.25rem;
+    gap: var(--space-20);
   }
 }
 
 .guideline-box {
-  padding: 1.25rem;
+  padding: var(--space-20);
   border: 1px solid var(--color-line);
   border-radius: var(--radius-card);
   background: var(--color-surface);
@@ -316,15 +316,15 @@
   place-items: center;
   width: 2.25rem;
   height: 2.25rem;
-  margin-bottom: 0.75rem;
+  margin-bottom: var(--space-12);
   border-radius: var(--radius-pill);
   background: var(--color-background);
   color: var(--color-brand);
-  font-size: 1rem;
+  font-size: var(--text-16);
 }
 
 .guideline-box-title {
-  margin: 0 0 0.4rem;
+  margin: 0 0 var(--space-6-4);
   font-family: var(--font-display);
   font-size: clamp(1.15rem, 1.8vw, 1.35rem);
   font-weight: 400;
@@ -333,7 +333,7 @@
 
 .guideline-box-text {
   margin: 0;
-  font-size: 14px;
+  font-size: var(--text-14);
   line-height: 1.55;
   color: var(--color-muted-ink);
 }
@@ -342,9 +342,9 @@
 
 .snippet-title {
   margin-top: clamp(2rem, 5vh, 3rem);
-  margin-bottom: 0.5rem;
+  margin-bottom: var(--space-8);
   font-family: var(--font-mono);
-  font-size: 0.6875rem;
+  font-size: var(--text-11);
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--color-muted-ink);
@@ -353,11 +353,11 @@
 .snippet-box {
   overflow-x: auto;
   margin: 0;
-  padding: 1.25rem;
+  padding: var(--space-20);
   border-radius: var(--radius-card);
   background: var(--color-black);
   font-family: var(--font-mono);
-  font-size: 0.8125rem;
+  font-size: var(--text-13);
   line-height: 1.7;
   color: var(--color-surface-strong);
   overscroll-behavior-x: contain;

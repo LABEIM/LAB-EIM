@@ -229,7 +229,7 @@ export const uiTranslations: Record<Locale, Record<string, string>> = {
     'about.values': 'Nilai-Nilai Utama',
     'about.heroEyebrow': 'Tentang Kami',
     'about.heroTitle': 'Kami mempelajari sistem yang menopang dunia digital.',
-    'about.heroDesc': 'Enterprise Infrastructure Management Lab Telkom University — tempat riset, pembelajaran, dan kolaborasi di bidang infrastruktur enterprise.',
+    'about.heroDesc': 'Laboratorium Enterprise Infrastructure Management Telkom University — tempat riset, pembelajaran, dan kolaborasi di bidang infrastruktur enterprise.',
     'about.heroPrimary': 'Profil lab',
     'about.heroSecondary': 'Struktur',
     'about.heroMeta': 'Telkom University · Fakultas Rekayasa Industri · S1 Sistem Informasi',

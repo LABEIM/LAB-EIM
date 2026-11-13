@@ -1,6 +1,6 @@
 # EIM Brand & Email Assets Hub
 
-Official documentation for all visual assets, logos, emblems, banners, and social media icons for the **Enterprise Infrastructure Management (EIM) Lab**.
+Official documentation for all visual assets, logos, emblems, banners, and social media icons for the **Enterprise Infrastructure Management (EIM) Laboratory**.
 
 All assets are hosted publicly via the site's Cloudflare CDN so they can be accessed online by email clients (**Gmail**, **Outlook**, **Apple Mail**, **Yahoo**), web applications, and backend integrations.
 

@@ -108,7 +108,7 @@
         "title": "Pengumuman Seleksi Berkas",
         "subtitle": "Cek apakah Anda lolos seleksi berkas dan berhak mengikuti tahap selanjutnya.",
         "passedMessage": "Selamat! 🎉\nAnda dinyatakan **-LOLOS-** Seleksi Administrasi dan berhak melanjutkan ke tahap Technical Test.\n\nJadwal Technical Test 29–30 Agustus 2026 \nInfo detail (waktu, lokasi/link, dan ketentuan) akan dibagikan melalui WhatsApp Group Recruitment. Pastikan Anda sudah bergabung.\n\nSampai jumpa di tahap selanjutnya!",
-        "failedMessage": "Terima kasih telah mendaftar sebagai Asisten Lab EIM Lab.\n\nSetelah melalui proses verifikasi berkas, untuk saat ini Anda belum berhasil melanjutkan ke tahap Technical Test.\n\nKami sangat menghargai minat dan usaha Anda. Semoga pengalaman ini tetap bermanfaat, dan jangan ragu untuk mendaftar kembali di rekrutmen berikutnya.\n\nTerima kasih atas partisipasinya."
+        "failedMessage": "Terima kasih telah mendaftar sebagai Asisten EIM Lab.\n\nSetelah melalui proses verifikasi berkas, untuk saat ini Anda belum berhasil melanjutkan ke tahap Technical Test.\n\nKami sangat menghargai minat dan usaha Anda. Semoga pengalaman ini tetap bermanfaat, dan jangan ragu untuk mendaftar kembali di rekrutmen berikutnya.\n\nTerima kasih atas partisipasinya."
       }
     },
     {
@@ -131,7 +131,7 @@
         "title": "Pengumuman Technical Test",
         "subtitle": "Cek apakah Anda lolos Technical Test dan berhak mengikuti tahap selanjutnya.",
         "passedMessage": "Selamat! 🎉\nAnda dinyatakan **-LOLOS-** Technical Test dan berhak melanjutkan ke tahap Wawancara & Microteaching.\n\nJadwal Wawancara & Microteaching 3–6 September 2026 \nInfo detail (waktu, lokasi/link, dan ketentuan) akan dibagikan melalui WhatsApp Group Recruitment. Pastikan Anda sudah bergabung.\n\nSampai jumpa di tahap selanjutnya!",
-        "failedMessage": "Terima kasih telah mendaftar sebagai Asisten Lab EIM Lab.\n\nSetelah melalui proses Technical Test, untuk saat ini Anda belum berhasil melanjutkan ke tahap Wawancara & Microteaching.\n\nKami sangat menghargai minat dan usaha Anda. Semoga pengalaman ini tetap bermanfaat, dan jangan ragu untuk mendaftar kembali di rekrutmen berikutnya.\n\nTerima kasih atas partisipasinya."
+        "failedMessage": "Terima kasih telah mendaftar sebagai Asisten EIM Lab.\n\nSetelah melalui proses Technical Test, untuk saat ini Anda belum berhasil melanjutkan ke tahap Wawancara & Microteaching.\n\nKami sangat menghargai minat dan usaha Anda. Semoga pengalaman ini tetap bermanfaat, dan jangan ragu untuk mendaftar kembali di rekrutmen berikutnya.\n\nTerima kasih atas partisipasinya."
       }
     },
     {

@@ -198,7 +198,7 @@ The Markdown body is rendered on `/event/[id]`. Start body sections at `##` — 
 This file configures the global branding, tab information, and social links of the laboratory website.
 
 ### Fields Explanation
-* **`name`** (String): Short name of the lab (e.g. `"EIM"`). Used in the Navbar logo and title.
+* **`name`** (String): Short name of the lab (e.g. `"EIM"`). Used in the logo `alt` text, the footer lockup, and page titles.
 * **`subName`** (String): Subtitle suffix for the logo (e.g. `"Lab"`).
 * **`fullName`** (String): Complete formal name (e.g. `"Enterprise Infrastructure Management Laboratory"`). Used in copyright text and about summaries.
 * **`defaultTitle`** (String): The default window/tab title for pages that do not override it.
@@ -222,7 +222,7 @@ This file configures the global branding, tab information, and social links of t
   "subName": "Lab",
   "fullName": "Enterprise Infrastructure Management Laboratory",
   "defaultTitle": "EIM Lab - Enterprise Infrastructure Management",
-  "defaultDescription": "Website Resmi Enterprise Infrastructure Management (EIM) Lab Telkom University.",
+  "defaultDescription": "Website Resmi Laboratorium Enterprise Infrastructure Management (EIM) Telkom University.",
   "defaultKeywords": "EIM, EIM Lab, Telkom University, Enterprise Infrastructure Management, Laboratorium Jaringan, Cloud Computing, Praktikum Jaringan",
   "favicon": "/image/eim/logo_EIM.avif",
   "logo": "/image/eim/logo_EIM.avif",

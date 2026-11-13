@@ -369,6 +369,7 @@ export default config({
         content: fields.markdoc({
           label: 'Content',
           extension: 'md',
+          options: { image: { directory: 'public/image/content', publicPath: '/image/content/' } },
         }),
       },
     }),
@@ -394,6 +395,7 @@ export default config({
         content: fields.markdoc({
           label: 'Content',
           extension: 'md',
+          options: { image: { directory: 'public/image/content', publicPath: '/image/content/' } },
         }),
         link: fields.text({ label: 'Link (Optional)' }),
         poster: fields.text({ label: 'Poster / Banner Image URL (Optional)' }),

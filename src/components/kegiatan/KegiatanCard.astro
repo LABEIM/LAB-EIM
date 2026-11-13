@@ -37,7 +37,7 @@ const href = getEventHref(event, locale);
   data-audit={filterable && event.data.audit ? 'true' : undefined}
 >
   <a class="kegiatan-card" href={href}>
-    <span class="kegiatan-card-media">
+    <span class:list={['kegiatan-card-media', event.data.poster && 'kegiatan-card-media--poster']}>
       {cover ? (
         <img src={cover} alt="" width="800" height="1000" loading="lazy" decoding="async" />
       ) : (

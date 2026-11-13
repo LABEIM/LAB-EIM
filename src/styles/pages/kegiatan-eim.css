@@ -63,6 +63,11 @@
   transition: transform var(--dur-reveal) var(--ease);
 }
 
+/* A poster is artwork, not a photo: show all of it instead of slicing it. */
+.kegiatan-card-media--poster img {
+  object-fit: contain;
+}
+
 .kegiatan-media-fallback {
   display: flex;
   flex-direction: column;

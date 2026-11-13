@@ -535,6 +535,78 @@
   }
 }
 
+/* == Role chart (redesign v2) == */
+
+.org-tier--three {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--org-gap);
+  width: 100%;
+  align-items: start;
+}
+
+.org-column {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-12);
+}
+
+.org-tier--stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-12);
+}
+
+/* Bus over three equal columns: same maths as .org-branch--divisions. */
+.org-branch--three {
+  position: relative;
+  width: 100%;
+  height: clamp(1.5rem, 3vh, 2.5rem);
+}
+
+.org-branch--three::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 0;
+  width: 1px;
+  height: 50%;
+  background: var(--color-line);
+}
+
+.org-branch--three::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: calc(100% / 6 - 2 * var(--org-gap) / 6);
+  right: calc(100% / 6 - 2 * var(--org-gap) / 6);
+  height: 1px;
+  background: var(--color-line);
+}
+
+.org-tier--three > .org-node::before,
+.org-tier--three > .org-column > .org-node::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: calc(-1 * clamp(1.5rem, 3vh, 2.5rem) / 2);
+  width: 1px;
+  height: calc(clamp(1.5rem, 3vh, 2.5rem) / 2);
+  background: var(--color-line);
+}
+
+@media (max-width: 767px) {
+  .org-tier--three {
+    grid-template-columns: 1fr;
+  }
+
+  .org-branch--three,
+  .org-tier--three > .org-node::before,
+  .org-tier--three > .org-column > .org-node::before {
+    display: none;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .org-node {
     transition: none;

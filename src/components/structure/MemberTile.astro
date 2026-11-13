@@ -1,14 +1,15 @@
 ---
-import { roleLabel } from '../../utils/roles';
-import type { Member } from '../../utils/types';
+import { positionLabel } from '../../utils/position-mapper';
+import type { Member, Position } from '../../utils/types';
 
 interface Props {
   member: Member;
+  positionIndex: Map<string, Position>;
   variant?: 'default' | 'featured';
   index?: number;
 }
 
-const { member, variant = 'default', index } = Astro.props;
+const { member, positionIndex, variant = 'default', index } = Astro.props;
 
 const initials = member.name
   .split(/\s+/)
@@ -39,6 +40,6 @@ const initials = member.name
   </div>
   <div class="member-tile-body">
     <h3 class="member-tile-name">{member.name}</h3>
-    <p class="member-tile-role">{roleLabel(member.role)}</p>
+    <p class="member-tile-role">{positionLabel(positionIndex, member.role)}</p>
   </div>
 </article>

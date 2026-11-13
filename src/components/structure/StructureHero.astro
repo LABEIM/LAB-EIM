@@ -3,11 +3,11 @@ import { getLocaleFromUrl, t } from '../../utils/i18n';
 
 interface Props {
   memberCount: number;
-  divisionCount: number;
-  leaderCount: number;
+  dosenCount: number;
+  positionCount: number;
 }
 
-const { memberCount, divisionCount, leaderCount } = Astro.props;
+const { memberCount, dosenCount, positionCount } = Astro.props;
 const locale = getLocaleFromUrl(Astro.url);
 const titleLines = t('struct.heroTitle', locale).split('\n');
 ---
@@ -29,8 +29,8 @@ const titleLines = t('struct.heroTitle', locale).split('\n');
     <p class="eim-subhero-meta">
       {t('struct.heroMeta', locale, {
         members: String(memberCount),
-        divisions: String(divisionCount),
-        leaders: String(leaderCount),
+        dosen: String(dosenCount),
+        positions: String(positionCount),
       })}
     </p>
   </div>

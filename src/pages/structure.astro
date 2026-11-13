@@ -6,58 +6,31 @@ import EimSectionNav from '../components/home/EimSectionNav.astro';
 import EimCTA from '../components/home/EimCTA.astro';
 import StructureHero from '../components/structure/StructureHero.astro';
 import StructureChart from '../components/structure/StructureChart.astro';
-import StructurePembina from '../components/structure/StructurePembina.astro';
-import StructureCore from '../components/structure/StructureCore.astro';
-import StructureDivision from '../components/structure/StructureDivision.astro';
-import { buildDivisionMap, getDivisionInfo, parseDivisions } from '../utils/division-mapper';
+import StructureRoles from '../components/structure/StructureRoles.astro';
+import { buildPositionIndex, groupPeople, parsePositions } from '../utils/position-mapper';
 import { getLocaleFromUrl, getLocalizedJsonData, t } from '../utils/i18n';
-import type { DivisionConfig, DivisionSection, Lecturer, Member } from '../utils/types';
+import type { Lecturer, Member } from '../utils/types';
 
 const locale = getLocaleFromUrl(Astro.url);
 const membersData = getLocalizedJsonData<{ list: Member[] }>('members', locale);
-const divisionsData = getLocalizedJsonData<any>('divisions', locale);
+const positionsData = getLocalizedJsonData<{ list: unknown }>('positions', locale);
 const siteData = getLocalizedJsonData<any>('site', locale);
 const lecturersData = getLocalizedJsonData<{ list: Lecturer[] }>('lecturers', locale);
 
-const fallbackLecturers: Lecturer[] = [
-  { id: 'dosen-koordinator', name: '', role: t('struct.dosenCoordinator', locale), image: '' },
-  { id: 'dosen-lab-1', name: '', role: t('struct.dosenLab', locale), image: '' },
-];
-const lecturers = lecturersData?.list?.length ? lecturersData.list : fallbackLecturers;
-
-const divisions = parseDivisions(divisionsData);
+const positions = parsePositions(positionsData);
+const positionIndex = buildPositionIndex(positions);
 const members = membersData?.list ?? [];
-const divisionMap = buildDivisionMap(divisions);
+const lecturers = lecturersData?.list ?? [];
+const people = [...lecturers, ...members];
 
-const divisionMembers = (division: DivisionConfig): Member[] =>
-  members.filter((member) => {
-    const info = getDivisionInfo(member.division, divisionMap);
-    return info?.id.trim().toLowerCase() === division.id.trim().toLowerCase();
-  });
-
-const coreDivision =
-  divisions.find((division) => {
-    const info = getDivisionInfo(division.id, divisionMap);
-    return info?.id === 'inti' || division.aliases?.some((a) => ['core', 'inti'].includes(a.toLowerCase()));
-  }) ?? divisions[0] ?? null;
-
-const coreMembers = coreDivision ? divisionMembers(coreDivision) : [];
-
-const divisionSections: DivisionSection[] = divisions
-  .filter((division) => division.id !== coreDivision?.id)
-  .map((division) => {
-    const list = divisionMembers(division);
-    const coordinator = list.find((member) => /coordinator/i.test(member.role)) ?? null;
-    return { division, coordinator, staff: list.filter((member) => member !== coordinator) };
-  });
-
-const leaderCount = coreMembers.length + divisionSections.filter((s) => s.coordinator).length;
+const sections = groupPeople(people, positions);
+const dosenCount = people.filter(
+  (person) => positionIndex.get(person.role)?.group === 'dosen',
+).length;
 
 const sectionItems = [
   { id: 'struktur', label: t('struct.navDotChart', locale) },
-  { id: 'pembina', label: t('struct.navDotPembina', locale) },
-  { id: 'inti', label: t('struct.navDotCore', locale) },
-  ...divisionSections.map(({ division }) => ({ id: `divisi-${division.id}`, label: division.displayName })),
+  ...sections.map(({ position }) => ({ id: `pos-${position.id}`, label: position.label })),
   { id: 'gabung', label: t('struct.navDotJoin', locale) },
 ];
 ---
@@ -71,21 +44,18 @@ const sectionItems = [
   <main id="main-content" tabindex="-1">
     <EimSectionNav items={sectionItems} label={t('struct.sectionNavLabel', locale)} />
     <StructureHero
-      memberCount={members.length}
-      divisionCount={divisions.length}
-      leaderCount={leaderCount}
+      memberCount={people.length}
+      dosenCount={dosenCount}
+      positionCount={positions.length}
     />
-    <StructureChart
-      core={coreMembers}
-      divisionSections={divisionSections}
-      lecturers={lecturers}
-      locale={locale}
-      startIndex={3}
-    />
-    <StructurePembina lecturers={lecturers} locale={locale} />
-    <StructureCore members={coreMembers} locale={locale} />
-    {divisionSections.map((section, index) => (
-      <StructureDivision section={section} index={index + 3} locale={locale} />
+    <StructureChart positions={positions} locale={locale} />
+    {sections.map((section, index) => (
+      <StructureRoles
+        section={section}
+        index={index}
+        positionIndex={positionIndex}
+        locale={locale}
+      />
     ))}
     <EimCTA site={siteData} />
   </main>

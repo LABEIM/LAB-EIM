@@ -1,0 +1,67 @@
+---
+import type { Lecturer, Member, Position, PositionSection } from '../../utils/types';
+import type { Locale } from '../../utils/i18n';
+import { t } from '../../utils/i18n';
+import MemberTile from './MemberTile.astro';
+import LecturerCard from './LecturerCard.astro';
+
+interface Props {
+  section: PositionSection<Member | Lecturer>;
+  index: number;
+  positionIndex: Map<string, Position>;
+  locale: Locale;
+}
+
+const { section, index, positionIndex, locale } = Astro.props;
+
+const GROUP_KEYS: Record<string, string> = {
+  dosen: 'struct.groupDosen',
+  asisten: 'struct.groupAsisten',
+  mahasiswa: 'struct.groupMahasiswa',
+};
+
+const isLecturer = (person: Member | Lecturer): person is Lecturer =>
+  typeof person.id === 'string';
+
+const lecturers = section.people.filter(isLecturer);
+const members = section.people.filter((person): person is Member => !isLecturer(person));
+const titleId = `pos-${section.position.id}-title`;
+---
+
+<section
+  id={`pos-${section.position.id}`}
+  class="border-t border-line py-[clamp(4.5rem,10vh,8.75rem)]"
+  aria-labelledby={titleId}
+>
+  <div class="mx-auto max-w-[1200px] px-[clamp(1.25rem,4vw,4rem)]">
+    <div class="grid gap-6 lg:grid-cols-2 lg:items-end">
+      <div>
+        <p class="e-reveal font-mono text-xs uppercase tracking-[0.08em] text-brand">
+          {String(index + 1).padStart(2, '0')} — {t(GROUP_KEYS[section.position.group], locale)}
+        </p>
+        <h2
+          id={titleId}
+          class="e-reveal mt-4 font-display text-[clamp(2rem,4vw,3.5rem)] leading-[1.05] tracking-[-0.01em]"
+        >
+          {section.position.label}
+        </h2>
+      </div>
+      <p class="e-reveal max-w-[52ch] text-[15px] leading-[1.55] text-muted-ink lg:justify-self-end">
+        {t('struct.positionIntro', locale, { n: String(section.people.length) })}
+      </p>
+    </div>
+
+    <ul class="staff-grid e-reveal-group mt-[clamp(2rem,5vh,3rem)] list-none p-0">
+      {lecturers.map((lecturer) => (
+        <li>
+          <LecturerCard lecturer={lecturer} positionIndex={positionIndex} />
+        </li>
+      ))}
+      {members.map((member, memberIndex) => (
+        <li>
+          <MemberTile member={member} positionIndex={positionIndex} index={memberIndex} />
+        </li>
+      ))}
+    </ul>
+  </div>
+</section>

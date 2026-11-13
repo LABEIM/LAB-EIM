@@ -2,14 +2,12 @@
 import { getCollection, render } from 'astro:content';
 import Layout from '../layouts/Layout.astro';
 import '../styles/pages/home-eim.css';
-import EimCTA from '../components/home/EimCTA.astro';
 import EimSectionNav from '../components/home/EimSectionNav.astro';
 import { resolveCourses } from '../utils/course-helpers';
 import { getLocaleFromUrl, getLocalizedJsonData, t } from '../utils/i18n';
 import type { Lecturer, Member } from '../utils/types';
 
 const locale = getLocaleFromUrl(Astro.url);
-const siteData = getLocalizedJsonData<any>('site', locale);
 const membersData = getLocalizedJsonData<{ list: Member[] }>('members', locale);
 const lecturersData = getLocalizedJsonData<{ list: Lecturer[] }>('lecturers', locale);
 
@@ -24,7 +22,6 @@ const titleLines = t('courses.heroTitle', locale).split('\n');
 
 const sectionItems = [
   { id: 'daftar', label: t('courses.navDotList', locale) },
-  { id: 'gabung', label: t('courses.navDotCta', locale) },
 ];
 ---
 
@@ -138,6 +135,5 @@ const sectionItems = [
       </div>
     </section>
 
-    <EimCTA site={siteData} />
   </main>
 </Layout>

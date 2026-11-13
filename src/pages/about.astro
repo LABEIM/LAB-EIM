@@ -3,13 +3,12 @@ import { getCollection } from 'astro:content';
 import Layout from '../layouts/Layout.astro';
 import '../styles/pages/home-eim.css';
 import { getLocaleFromUrl, getLocalizedJsonData, t } from '../utils/i18n';
-import { countPeopleByGroup, groupPeople, parsePositions } from '../utils/position-mapper';
+import { countPeopleByGroup, parsePositions } from '../utils/position-mapper';
 import type { AboutData, Lecturer, Member } from '../utils/types';
 import AboutHero from '../components/about/AboutHero.astro';
 import AboutProfile from '../components/about/AboutProfile.astro';
 import AboutStats from '../components/about/AboutStats.astro';
 import EimVisiMisi from '../components/home/EimVisiMisi.astro';
-import AboutTeam from '../components/about/AboutTeam.astro';
 import EimCTA from '../components/home/EimCTA.astro';
 import EimSectionNav from '../components/home/EimSectionNav.astro';
 
@@ -24,7 +23,6 @@ const positions = parsePositions(positionsData);
 const members: Member[] = membersData?.list ?? [];
 const lecturers: Lecturer[] = lecturersData?.list ?? [];
 const people = [...lecturers, ...members];
-const sections = groupPeople(people, positions);
 const groupCounts = countPeopleByGroup(people, positions);
 const courses = await getCollection('courses');
 
@@ -32,7 +30,6 @@ const sectionItems = [
   { id: 'profil', label: t('about.navDotProfile', locale) },
   { id: 'angka', label: t('about.navDotStats', locale) },
   { id: 'visi-misi', label: t('home.navDotVision', locale) },
-  { id: 'koordinator', label: t('about.navDotTeam', locale) },
   { id: 'gabung', label: t('about.navDotCta', locale) },
 ];
 ---
@@ -47,8 +44,15 @@ const sectionItems = [
       courseCount={courses.length}
       focusCount={4}
     />
+    <div class="mx-auto max-w-[1200px] px-[clamp(1.25rem,4vw,4rem)]">
+      <a
+        href="/structure"
+        class="inline-flex items-center gap-2 pb-[clamp(2rem,4vh,3rem)] font-mono text-xs uppercase tracking-[0.08em] text-brand"
+      >
+        {t('about.teamLink', locale)} <span aria-hidden="true">→</span>
+      </a>
+    </div>
     <EimVisiMisi about={aboutData} />
-    <AboutTeam sections={sections} />
     <EimCTA site={siteData} />
   </main>
 </Layout>

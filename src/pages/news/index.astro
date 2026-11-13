@@ -3,7 +3,6 @@ import { getCollection } from 'astro:content';
 import Layout from '../../layouts/Layout.astro';
 import '../../styles/pages/home-eim.css';
 import '../../styles/pages/news-eim.css';
-import EimCTA from '../../components/home/EimCTA.astro';
 import EimSectionNav from '../../components/home/EimSectionNav.astro';
 import FilterControlBar from '../../components/common/FilterControlBar.astro';
 import Pagination from '../../components/common/Pagination.astro';
@@ -14,7 +13,6 @@ import { formatGlobalDate, parseGlobalDateStr } from '../../utils/date';
 import { DEFAULT_COVER_IMAGE } from '../../utils/constants';
 
 const locale = getLocaleFromUrl(Astro.url);
-const siteData = getLocalizedJsonData<any>('site', locale);
 
 const rawNews = await getCollection('news');
 const news = filterAuditContent(getCollectionEntriesForLocale(rawNews, locale)).sort((a, b) => {
@@ -36,7 +34,6 @@ const titleLines = t('news.heroTitle', locale).split('\n');
 const sectionItems = [
   { id: 'artikel', label: t('news.heroEyebrow', locale) },
   { id: 'daftar', label: t('news.navDotList', locale) },
-  { id: 'gabung', label: t('news.navDotCta', locale) },
 ];
 ---
 
@@ -160,7 +157,6 @@ const sectionItems = [
       </div>
     </section>
 
-    <EimCTA site={siteData} />
   </main>
 </Layout>
 

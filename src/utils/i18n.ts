@@ -218,7 +218,6 @@ export const uiTranslations: Record<Locale, Record<string, string>> = {
     'courses.detailDescription': '{title} di EIM Research Lab: status praktikum, modul, dosen koordinator, dan asisten praktikum.',
     'courses.sectionNavLabel': 'Navigasi bagian halaman',
     'courses.navDotList': 'Daftar',
-    'courses.navDotCta': 'Gabung',
 
     // About Page
     'about.vision': 'Visi',
@@ -243,9 +242,6 @@ export const uiTranslations: Record<Locale, Record<string, string>> = {
     'about.statMembers': 'Anggota & asisten',
     'about.statCourses': 'Mata kuliah',
     'about.statFocus': 'Fokus riset',
-    'about.teamEyebrow': 'Orang-orang',
-    'about.teamTitle': 'Dosen, asisten, dan anggota.',
-    'about.teamIntro': '{n} orang yang menjalankan riset, praktikum, dan operasional lab.',
     'about.teamLink': 'Lihat seluruh struktur',
     'about.ctaTitle': 'Ingin tumbuh bersama kami?',
     'about.ctaDesc': 'Pendaftaran asisten dibuka setiap periode. Untuk kolaborasi riset, kunjungan, atau pertanyaan lain, kami terbuka.',
@@ -253,7 +249,6 @@ export const uiTranslations: Record<Locale, Record<string, string>> = {
     'about.sectionNavLabel': 'Navigasi bagian halaman',
     'about.navDotProfile': 'Profil',
     'about.navDotStats': 'Angka',
-    'about.navDotTeam': 'Tim',
     'about.navDotCta': 'Gabung',
 
     // Events Page
@@ -269,7 +264,6 @@ export const uiTranslations: Record<Locale, Record<string, string>> = {
     'events.heroMetaEmpty': 'Belum ada kegiatan yang dipublikasikan.',
     'events.sectionNavLabel': 'Navigasi bagian halaman',
     'events.navDotList': 'Daftar',
-    'events.navDotJoin': 'Gabung',
     'events.listEyebrow': 'Daftar',
     'events.listTitle': 'Kegiatan kami.',
     'events.listIntro': 'Telusuri kegiatan EIM berdasarkan nama atau kategori, lalu buka detailnya untuk melihat dokumentasi.',
@@ -317,7 +311,6 @@ export const uiTranslations: Record<Locale, Record<string, string>> = {
     'news.heroMetaEmpty': 'Belum ada artikel yang dipublikasikan.',
     'news.sectionNavLabel': 'Navigasi bagian halaman',
     'news.navDotList': 'Daftar',
-    'news.navDotCta': 'Gabung',
     'news.listEyebrow': 'Daftar',
     'news.listTitle': 'Semua artikel.',
     'news.listIntro': 'Telusuri tulisan, publikasi, dan pengumuman EIM berdasarkan judul atau kategori.',

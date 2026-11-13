@@ -4,7 +4,7 @@ import Layout from '../layouts/Layout.astro';
 import '../styles/pages/home-eim.css';
 import EimCTA from '../components/home/EimCTA.astro';
 import EimSectionNav from '../components/home/EimSectionNav.astro';
-import { courseHasContent, resolveCourses } from '../utils/course-helpers';
+import { resolveCourses } from '../utils/course-helpers';
 import { getLocaleFromUrl, getLocalizedJsonData, t } from '../utils/i18n';
 import type { Lecturer, Member } from '../utils/types';
 
@@ -81,7 +81,6 @@ const sectionItems = [
           <ul class="mt-[clamp(2.5rem,6vh,4rem)] list-none border-t border-line p-0">
             {courses.map((course, index) => {
               const Content = rendered.get(course.id)?.Content;
-              const { modules, assistants } = courseHasContent(course);
               return (
                 <li
                   class="grid gap-6 border-b border-line py-8 md:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)] md:gap-12"
@@ -90,7 +89,8 @@ const sectionItems = [
                   <div>
                     <p class="font-mono text-xs uppercase tracking-[0.08em] text-muted-ink">
                       {String(index + 1).padStart(2, '0')}
-                      {course.code && <span> · {course.code}</span>}
+                      <span> · {course.code}</span>
+                      <span> · {t('courses.sksLabel', locale, { n: String(course.sks) })}</span>
                       {course.semester && <span> · Semester {course.semester}</span>}
                       <span
                         class:list={[
@@ -104,7 +104,9 @@ const sectionItems = [
                       </span>
                     </p>
                     <h3 class="mt-3 font-display text-[clamp(1.5rem,2.6vw,2.25rem)] leading-[1.1]">
-                      {course.title}
+                      <a href={`/courses/${course.id}`} class="hover:text-brand">
+                        {course.title}
+                      </a>
                     </h3>
                     {Content && (
                       <div class="mt-4 max-w-[58ch] text-[15px] leading-[1.6] text-muted-ink">
@@ -118,35 +120,13 @@ const sectionItems = [
                       <span class="text-muted-ink">{t('courses.coordinatorLabel', locale)}: </span>
                       {course.coordinator?.name.trim() || '—'}
                     </p>
+                    <a
+                      href={`/courses/${course.id}`}
+                      class="font-mono text-xs uppercase tracking-[0.08em] text-brand"
+                    >
+                      {t('courses.detailLink', locale)} <span aria-hidden="true">→</span>
+                    </a>
 
-                    {modules.length > 0 && (
-                      <div>
-                        <p class="font-mono text-xs uppercase tracking-[0.08em] text-muted-ink">
-                          {t('courses.modulesTitle', locale)}
-                        </p>
-                        <ul class="mt-2 list-none space-y-2 p-0 text-[15px] leading-[1.5]">
-                          {modules.map((module) => (
-                            <li>
-                              <span class="font-display">{module.title}</span>
-                              <span class="block text-muted-ink">{module.topics}</span>
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    )}
-
-                    {assistants.length > 0 && (
-                      <div>
-                        <p class="font-mono text-xs uppercase tracking-[0.08em] text-muted-ink">
-                          {t('courses.assistantsLabel', locale)}
-                        </p>
-                        <ul class="mt-2 list-none space-y-1 p-0 text-[15px] leading-[1.5]">
-                          {assistants.map((assistant) => (
-                            <li>{assistant.name}</li>
-                          ))}
-                        </ul>
-                      </div>
-                    )}
                   </div>
                 </li>
               );

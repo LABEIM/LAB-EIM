@@ -1,0 +1,123 @@
+---
+import { getCollection, render, type CollectionEntry } from 'astro:content';
+import Layout from '../../layouts/Layout.astro';
+import '../../styles/pages/home-eim.css';
+import EimCTA from '../../components/home/EimCTA.astro';
+import { courseHasContent, resolveCourses } from '../../utils/course-helpers';
+import { getLocaleFromUrl, getLocalizedJsonData, t } from '../../utils/i18n';
+import type { CourseView, Lecturer, Member } from '../../utils/types';
+
+export async function getStaticPaths() {
+  const locale = 'id';
+  const entries = await getCollection('courses');
+  const membersData = getLocalizedJsonData<{ list: Member[] }>('members', locale);
+  const lecturersData = getLocalizedJsonData<{ list: Lecturer[] }>('lecturers', locale);
+  const courses = resolveCourses(entries, lecturersData?.list ?? [], membersData?.list ?? []);
+
+  return courses.map((course) => ({
+    params: { id: course.id },
+    props: { course, entry: entries.find((item) => item.id === course.id)! },
+  }));
+}
+
+interface Props {
+  course: CourseView;
+  entry: CollectionEntry<'courses'>;
+}
+
+const { course, entry } = Astro.props;
+const locale = getLocaleFromUrl(Astro.url);
+const siteData = getLocalizedJsonData<any>('site', locale);
+
+const { Content } = await render(entry);
+const { modules, assistants } = courseHasContent(course);
+---
+
+<Layout
+  title={`${course.title} · ${t('nav.courses', locale)} · EIM Research Lab`}
+  description={t('courses.detailDescription', locale, { title: course.title })}
+  homeSkin
+  skipLink
+>
+  <main id="main-content" tabindex="-1">
+    <article class="mx-auto max-w-[1200px] px-[clamp(1.25rem,4vw,4rem)] pt-[clamp(6rem,12vh,9rem)] pb-[clamp(4.5rem,10vh,8.75rem)]">
+      <a
+        href="/courses"
+        class="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-[0.08em] text-brand"
+      >
+        <span aria-hidden="true">←</span> {t('courses.back', locale)}
+      </a>
+
+      <header class="mt-8 max-w-[46rem]">
+        <p class="font-mono text-xs uppercase tracking-[0.08em] text-muted-ink">
+          {course.code} · {t('courses.sksLabel', locale, { n: String(course.sks) })}
+          {course.semester && <span> · Semester {course.semester}</span>}
+          <span class:list={['ml-2', course.hasPracticum ? 'text-brand' : 'text-muted-ink']}>
+            · {course.hasPracticum
+              ? t('courses.practicumYes', locale)
+              : t('courses.practicumNo', locale)}
+          </span>
+        </p>
+        <h1 class="mt-4 font-display text-[clamp(2.25rem,5vw,4rem)] leading-[1.03] tracking-[-0.01em]">
+          {course.title}
+        </h1>
+        <p class="mt-6 text-[15px] leading-[1.6] text-muted-ink">
+          <span class="uppercase tracking-[0.08em] font-mono text-xs">
+            {t('courses.coordinatorLabel', locale)}:
+          </span>
+          {course.coordinator?.name.trim() || '—'}
+        </p>
+      </header>
+
+      <div class="mt-8 max-w-[65ch] text-[16px] leading-[1.7] text-muted-ink">
+        <Content />
+      </div>
+
+      {modules.length > 0 && (
+        <section class="mt-[clamp(2.5rem,6vh,4rem)]" aria-labelledby="course-modules">
+          <h2 id="course-modules" class="font-mono text-xs uppercase tracking-[0.08em] text-brand">
+            {t('courses.modulesTitle', locale)}
+          </h2>
+          <ol class="mt-4 list-none border-t border-line p-0">
+            {modules.map((module, index) => (
+              <li class="grid grid-cols-[2.5rem_minmax(0,1fr)] gap-x-4 border-b border-line py-5 md:grid-cols-[4rem_minmax(0,1fr)] md:gap-x-8">
+                <span class="font-mono text-xs tracking-[0.08em] text-muted-ink" aria-hidden="true">
+                  {String(index + 1).padStart(2, '0')}
+                </span>
+                <span>
+                  <span class="block font-display text-[clamp(1.2rem,2vw,1.55rem)] leading-[1.2]">
+                    {module.title}
+                  </span>
+                  <span class="mt-1 block text-[15px] leading-[1.55] text-muted-ink">
+                    {module.topics}
+                  </span>
+                </span>
+              </li>
+            ))}
+          </ol>
+        </section>
+      )}
+
+      {assistants.length > 0 && (
+        <section class="mt-[clamp(2.5rem,6vh,4rem)]" aria-labelledby="course-assistants">
+          <h2 id="course-assistants" class="font-mono text-xs uppercase tracking-[0.08em] text-brand">
+            {t('courses.assistantsLabel', locale)} · {assistants.length}
+          </h2>
+          <ul class="mt-4 grid list-none gap-x-8 gap-y-2 p-0 sm:grid-cols-2 lg:grid-cols-3">
+            {assistants.map((assistant) => (
+              <li class="border-b border-line py-2 text-[15px]">{assistant.name}</li>
+            ))}
+          </ul>
+        </section>
+      )}
+
+      {!course.hasPracticum && (
+        <p class="mt-[clamp(2.5rem,6vh,4rem)] max-w-[52ch] text-[15px] leading-[1.6] text-muted-ink">
+          {t('courses.noPracticumNote', locale)}
+        </p>
+      )}
+    </article>
+
+    <EimCTA site={siteData} />
+  </main>
+</Layout>

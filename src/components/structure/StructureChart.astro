@@ -1,4 +1,5 @@
 ---
+import { roleLabel } from '../../utils/roles';
 import type { DivisionSection, Lecturer, Member } from '../../utils/types';
 import type { Locale } from '../../utils/i18n';
 import { t } from '../../utils/i18n';
@@ -68,10 +69,10 @@ const avatarStyle = (lecturer: Lecturer): string | undefined =>
               <span class="org-node-body">
                 <span class="org-node-kicker">{t('struct.tierPembina', locale)}</span>
                 <span class="org-node-title">
-                  {leadCoordinator.name.trim() || leadCoordinator.role}
+                  {leadCoordinator.name.trim() || roleLabel(leadCoordinator.role)}
                 </span>
                 {leadCoordinator.name.trim() && (
-                  <span class="org-node-role">{leadCoordinator.role}</span>
+                  <span class="org-node-role">{roleLabel(leadCoordinator.role)}</span>
                 )}
               </span>
             </a>
@@ -123,7 +124,7 @@ const avatarStyle = (lecturer: Lecturer): string | undefined =>
                 <span class="org-node-body">
                   <span class="org-node-kicker">{t('struct.tierCore', locale)}</span>
                   <span class="org-node-title">{labCoordinator.name}</span>
-                  <span class="org-node-role">{labCoordinator.role}</span>
+                  <span class="org-node-role">{roleLabel(labCoordinator.role)}</span>
                 </span>
               </a>
             </div>
@@ -149,7 +150,7 @@ const avatarStyle = (lecturer: Lecturer): string | undefined =>
                   <span class="org-node-body">
                     <span class="org-node-kicker">{t('struct.tierCore', locale)}</span>
                     <span class="org-node-title">{secretary.name}</span>
-                    <span class="org-node-role">{secretary.role}</span>
+                    <span class="org-node-role">{roleLabel(secretary.role)}</span>
                   </span>
                 </a>
               )}
@@ -167,7 +168,7 @@ const avatarStyle = (lecturer: Lecturer): string | undefined =>
                   <span class="org-node-body">
                     <span class="org-node-kicker">{t('struct.tierCore', locale)}</span>
                     <span class="org-node-title">{treasurer.name}</span>
-                    <span class="org-node-role">{treasurer.role}</span>
+                    <span class="org-node-role">{roleLabel(treasurer.role)}</span>
                   </span>
                 </a>
               )}

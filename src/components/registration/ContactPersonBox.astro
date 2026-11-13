@@ -56,10 +56,14 @@ const platformConfig: Record<string, { label: string; iconClass: string }> = {
           <div class={`cp-card${link ? ' cp-card--linked' : ''}`}>
             <div class="cp-card-header">
               <span class="cp-role-badge">{cp.role || t('reg.contactPerson', locale)}</span>
-              <div class="cp-plat-icon">
-                <i class={platInfo.iconClass} aria-hidden="true"></i>
-              </div>
-              <span class="sr-only">{platInfo.label}</span>
+              {link && (
+                <>
+                  <div class="cp-plat-icon">
+                    <i class={platInfo.iconClass} aria-hidden="true"></i>
+                  </div>
+                  <span class="sr-only">{platInfo.label}</span>
+                </>
+              )}
             </div>
 
             <h4 class="cp-name">{cp.name}</h4>

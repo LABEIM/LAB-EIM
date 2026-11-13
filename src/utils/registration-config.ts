@@ -10,7 +10,7 @@ export type { RegistrationPageConfigs };
 export function getRegistrationPageConfigs(
   config: Partial<RecruitmentConfig> | Record<string, any>
 ): RegistrationPageConfigs {
-  const formDescriptionTitle = config.formDescriptionTitle || "Requirements:";
+  const formDescriptionTitle = config.formDescriptionTitle || "Persyaratan:";
   const formDescription = config.formDescription || "";
   const formDescriptionItems = config.formDescriptionItems || [];
   const studentYears = config.studentYears || ["2022", "2023", "2024", "2025"];

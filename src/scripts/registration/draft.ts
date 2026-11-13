@@ -51,6 +51,7 @@ export function initRegistrationDraft(
   const confirmClearDraftBtn = document.getElementById('confirm-clear-draft-btn');
 
   const updateWordCounters = () => {
+    const submitAttempted = formElement?.dataset.submitAttempted === 'true';
     const alasan1Input = document.getElementById('alasan_divisi_1') as HTMLTextAreaElement | null;
     const alasan2Input = document.getElementById('alasan_divisi_2') as HTMLTextAreaElement | null;
 
@@ -68,7 +69,7 @@ export function initRegistrationDraft(
         counter1El.classList.add('word-count-valid');
       } else {
         counter1El.classList.remove('word-count-valid');
-        counter1El.classList.add('word-count-invalid');
+        counter1El.classList.toggle('word-count-invalid', submitAttempted);
       }
     }
 
@@ -80,7 +81,7 @@ export function initRegistrationDraft(
         counter2El.classList.add('word-count-valid');
       } else {
         counter2El.classList.remove('word-count-valid');
-        counter2El.classList.add('word-count-invalid');
+        counter2El.classList.toggle('word-count-invalid', submitAttempted);
       }
     }
   };
@@ -236,8 +237,18 @@ export function initRegistrationDraft(
     } catch (e) { }
   };
 
+  const syncFileNames = () => {
+    if (!formElement) return;
+    formElement.querySelectorAll<HTMLInputElement>('input[type="file"]').forEach((input) => {
+      const out = formElement.querySelector<HTMLElement>(`[data-file-name="${input.id}"]`);
+      if (!out) return;
+      out.textContent = input.files?.[0]?.name || out.dataset.emptyLabel || '';
+    });
+  };
+
   const handleFormInput = () => {
     saveDraft();
+    syncFileNames();
     updateWordCounters();
   };
 
@@ -294,6 +305,7 @@ export function initRegistrationDraft(
       formElement.setAttribute('data-draft-bound', 'true');
       formElement.addEventListener('input', handleFormInput);
       formElement.addEventListener('change', handleFormInput);
+      formElement.addEventListener('eim:submit-attempted', updateWordCounters);
     }
   }
 

@@ -180,6 +180,11 @@ export function initRegistrationSubmit(
     if (isSubmitting) return;
     isSubmitting = true;
 
+    if (formElement) {
+      formElement.dataset.submitAttempted = 'true';
+      formElement.dispatchEvent(new CustomEvent('eim:submit-attempted'));
+    }
+
     const website_hp = (document.getElementById('website_hp') as HTMLInputElement | null)?.value.trim() || '';
     if (website_hp !== '') {
       showModalSuccess(false);

@@ -1,4 +1,5 @@
 ---
+import { roleLabel } from '../../utils/roles';
 import type { Member } from '../../utils/types';
 
 interface Props {
@@ -38,6 +39,6 @@ const initials = member.name
   </div>
   <div class="member-tile-body">
     <h3 class="member-tile-name">{member.name}</h3>
-    <p class="member-tile-role">{member.role}</p>
+    <p class="member-tile-role">{roleLabel(member.role)}</p>
   </div>
 </article>

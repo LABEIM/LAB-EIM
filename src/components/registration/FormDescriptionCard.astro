@@ -1,4 +1,6 @@
 ---
+import { getLocaleFromUrl, t } from '../../utils/i18n';
+
 interface Props {
   title?: string;
   description?: string;
@@ -6,8 +8,10 @@ interface Props {
   className?: string;
 }
 
+const locale = getLocaleFromUrl(Astro.url);
+
 const {
-  title = "Requirements:",
+  title = t('form.requirementsTitle', locale),
   description = "",
   items = [],
   className = "",

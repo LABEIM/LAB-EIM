@@ -5,6 +5,8 @@ author: "EIM Lab"
 news_date: "2024-01-01"
 image:
   - "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&q=80&w=1200"
+  - "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&q=80&w=1200"
+  - "https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&q=80&w=1200"
 excerpt: "Halaman ini digunakan sebagai konten tetap untuk pengujian performa Lighthouse CI. Konten ini tidak ditampilkan di halaman daftar berita."
 tags:
   - "benchmark"
@@ -21,6 +23,8 @@ Halaman ini adalah konten benchmark tetap yang digunakan oleh pipeline CI/CD unt
 ## Mengapa Benchmark Diperlukan?
 
 Dalam pengembangan perangkat lunak, pengukuran performa yang konsisten sangat penting untuk:
+
+![Papan sirkuit sebagai ilustrasi pengujian](https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&q=80&w=1200)
 
 - **Mendeteksi regresi performa** sebelum sampai ke produksi
 - **Membandingkan skor** antar pull request secara adil
@@ -41,6 +45,8 @@ Tim peneliti EIM secara aktif mengerjakan beberapa proyek unggulan:
 ### Publikasi Terbaru
 
 Anggota laboratorium telah mempublikasikan hasil penelitian di berbagai jurnal dan konferensi internasional, termasuk IEEE Transactions on Industrial Electronics dan International Conference on Cloud Computing.
+
+![Diskusi tim peneliti](https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&q=80&w=1200)
 
 ## Kesimpulan
 

@@ -29,9 +29,13 @@ audit: true
 
 Halaman ini adalah konten benchmark tetap yang digunakan oleh pipeline CI/CD untuk menjalankan audit performa Lighthouse secara konsisten terhadap template halaman detail kegiatan.
 
+![Peserta mengikuti sesi benchmark](https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&q=80&w=1200)
+
 ## Deskripsi Kegiatan
 
 Laboratorium EIM secara rutin menyelenggarakan berbagai kegiatan akademik dan penelitian, termasuk workshop, seminar, dan program magang. Setiap kegiatan dirancang untuk memberikan pengalaman praktis kepada mahasiswa dalam bidang teknologi terapan.
+
+![Sesi praktikum di laboratorium](https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&q=80&w=1200)
 
 ## Jadwal Kegiatan
 

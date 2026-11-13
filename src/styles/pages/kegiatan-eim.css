@@ -81,6 +81,14 @@
   color: var(--color-brand);
 }
 
+.kegiatan-media-fallback-date {
+  font-family: var(--font-mono);
+  font-size: var(--text-11);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-muted-ink);
+}
+
 .kegiatan-media-fallback-title {
   font-family: var(--font-display);
   font-size: clamp(1.5rem, 3vw, 2rem);

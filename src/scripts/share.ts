@@ -12,19 +12,19 @@ export function initShareButtons(itemType: string = 'Link') {
           // Ignore share cancellation
         }
       } else {
-        let wrap = btn.parentElement?.querySelector<HTMLElement>('.share-wrap');
-        if (!wrap) {
-          wrap = document.createElement('span');
-          wrap.className = 'share-wrap';
-          btn.replaceWith(wrap);
-          wrap.appendChild(btn);
-        }
+        const wrap = btn.closest<HTMLElement>('.share-wrap') ?? (() => {
+          const el = document.createElement('span');
+          el.className = 'share-wrap';
+          btn.replaceWith(el);
+          el.appendChild(btn);
+          return el;
+        })();
         let status = wrap.querySelector<HTMLElement>('.share-status');
         if (!status) {
           status = document.createElement('span');
           status.className = 'share-status';
           status.setAttribute('role', 'status');
-          wrap.appendChild(status);
+          wrap.insertBefore(status, btn);
         }
         try {
           await navigator.clipboard.writeText(window.location.href);

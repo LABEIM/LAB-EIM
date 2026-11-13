@@ -6,7 +6,7 @@
  *
  * One or two entries render as the division's media panel; an empty array
  * omits the panel so the text column takes the full width.
- * shows a neutral placeholder until photos are added. This is the only place
+ * keeps the text column full width until photos are added. This is the only place
  * to edit when the activity photos arrive.
  */
 export const DIVISION_MEDIA: Record<string, string[]> = {

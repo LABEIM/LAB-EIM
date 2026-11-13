@@ -28,7 +28,7 @@ for (const person of [...lecturers, ...members]) {
   holders.set(person.role, (holders.get(person.role) ?? 0) + 1);
 }
 
-const roster = members.length;
+const students = holders.get('mahasiswa-anggota') ?? 0;
 const assistantSummary = summarizePracticumAssistants(courses, members);
 
 const notesFor = (id: string): string | undefined => {
@@ -36,7 +36,7 @@ const notesFor = (id: string): string | undefined => {
   if (id === 'mahasiswa-anggota') {
     return t('struct.memberAssistantNote', locale, {
       n: String(assistantSummary.memberCount),
-      total: String(roster),
+      total: String(students),
     });
   }
   return undefined;
@@ -46,7 +46,6 @@ const practicumAssistant: ChartNode = {
   label: t('struct.practicumAssistant', locale),
   group: 'asisten',
   count: assistantSummary.distinctCount,
-  note: notesFor(PRACTICUM_ASSISTANT_ID),
   children: [],
 };
 

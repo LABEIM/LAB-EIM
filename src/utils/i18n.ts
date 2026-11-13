@@ -249,7 +249,6 @@ export const uiTranslations: Record<Locale, Record<string, string>> = {
     'about.teamLink': 'Lihat seluruh struktur',
     'about.ctaTitle': 'Ingin tumbuh bersama kami?',
     'about.ctaDesc': 'Pendaftaran asisten dibuka setiap periode. Untuk kolaborasi riset, kunjungan, atau pertanyaan lain, kami terbuka.',
-    'about.ctaJoin': 'Gabung EIM',
     'about.sectionNavLabel': 'Navigasi bagian halaman',
     'about.navDotProfile': 'Profil',
     'about.navDotStats': 'Angka',

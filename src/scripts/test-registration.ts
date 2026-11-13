@@ -713,7 +713,11 @@ const overlap = summarizePracticumAssistants(
   overlapMembers,
 );
 assert(overlap.distinctCount === 3, 'distinct assistants span practicum courses and dedupe');
-assert(overlap.memberCount === 2, 'every member who assists is counted, whatever their role');
+assert(overlap.memberCount === 1, 'the note counts student members who also assist');
+assert(
+  overlap.memberCount <= overlapMembers.filter((member) => member.role === 'mahasiswa-anggota').length,
+  'the note numerator never exceeds its denominator',
+);
 const noPracticum = summarizePracticumAssistants(
   [{ title: 'D', code: 'W', sks: 2, hasPracticum: false, modules: [], coordinatorId: 'x', assistantIds: [1], order: 1 }],
   overlapMembers,

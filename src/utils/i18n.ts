@@ -49,8 +49,6 @@ export const uiTranslations: Record<Locale, Record<string, string>> = {
     'btn.search': 'Cari',
     'btn.close': 'Tutup',
     'badge.upcoming': 'Mendatang',
-    'badge.ongoing': 'Berlangsung',
-    'badge.completed': 'Selesai',
 
     // Footer
     'footer.description': 'Laboratorium Enterprise Infrastructure Management Telkom University.',

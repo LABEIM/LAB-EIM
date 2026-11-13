@@ -8,7 +8,6 @@ import {
   getEventDateMs,
   getEventHref,
   getEventSearchText,
-  getEventStatusLabel,
 } from '../../utils/event-helpers';
 
 interface Props {
@@ -23,8 +22,6 @@ const { event, locale, filterable = false, index = 0 } = Astro.props;
 const cover = getEventCover(event);
 const dateMs = getEventDateMs(event);
 const dateLabel = getEventDateLabel(event, locale);
-const statusLabel = getEventStatusLabel(event, locale);
-const showStatus = event.data.status !== 'completed';
 const href = getEventHref(event, locale);
 ---
 
@@ -57,9 +54,6 @@ const href = getEventHref(event, locale);
     {event.data.description && <span class="kegiatan-card-excerpt">{event.data.description}</span>}
     <span class="kegiatan-card-footer">
       <span>{event.data.organizer || t('events.organizerFallback', locale)}</span>
-      {showStatus && (
-        <span class={`kegiatan-status kegiatan-status--${event.data.status}`}>{statusLabel}</span>
-      )}
     </span>
   </a>
 </li>

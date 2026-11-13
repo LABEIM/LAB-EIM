@@ -31,5 +31,5 @@
 ## Developer & Agent Guidelines
 - [Full Context & Architecture (llms-full.txt)](https://eimlab.org/llms-full.txt): Comprehensive technical specifications, data schemas, and architecture diagrams.
 - See [`AGENTS.md`](https://github.com/LABEIM/LAB-EIM/blob/main/AGENTS.md) for coding standards, workflows, and quality gates.
-- See [`CONTRIBUTING.md`](https://github.com/LABEIM/LAB-EIM/blob/main/CONTRIBUTING.md) for branch strategy and pull request instructions.
-- See [`SECURITY.md`](https://github.com/LABEIM/LAB-EIM/blob/main/SECURITY.md) for vulnerability disclosure.
+- See [`CONTRIBUTING.md`](https://github.com/LABEIM/LAB-EIM/blob/main/docs/CONTRIBUTING.md) for branch strategy and pull request instructions.
+- See [`SECURITY.md`](https://github.com/LABEIM/LAB-EIM/blob/main/docs/SECURITY.md) for vulnerability disclosure.

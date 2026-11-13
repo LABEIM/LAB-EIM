@@ -2,8 +2,8 @@
 
 [![License: All Rights Reserved](https://img.shields.io/badge/License-All_Rights_Reserved-red.svg)](LICENSE)
 [![CI/CD](https://github.com/LABEIM/LAB-EIM/actions/workflows/ci-cd.yml/badge.svg)](https://github.com/LABEIM/LAB-EIM/actions)
-[![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-2.1-4baaaa.svg)](CODE_OF_CONDUCT.md)
-[![Security Policy](https://img.shields.io/badge/Security-Policy-brightgreen.svg)](SECURITY.md)
+[![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-2.1-4baaaa.svg)](docs/CODE_OF_CONDUCT.md)
+[![Security Policy](https://img.shields.io/badge/Security-Policy-brightgreen.svg)](docs/SECURITY.md)
 [![Website](https://img.shields.io/badge/Website-eimlab.org-0284c7.svg)](https://eimlab.org)
 [![Organization](https://img.shields.io/badge/Org-LABEIM-6366f1.svg)](https://eimlab.org)
 
@@ -35,10 +35,10 @@ The EIM Research Lab website is a statically generated, Indonesian-language publ
 
 For detailed instructions on local development, deployment, backend integrations, brand assets, and data management, refer to the guides below:
 
-1. **[Deployment & Hosting Guide](DEPLOYMENT.md)**: Local development setup, Cloudflare Workers primary deployment, Keystatic Cloud configuration, Vercel backup hosting, and dual-hosting CI/CD pipeline.
-2. **[Brand & Email Assets Hub](ASSETS.md)**: Public CDN endpoints, email-optimized logos, dark/light banners, and social icons for email templates.
-3. **[Registration Setup & Operations Guide](REGISTRATION_SETUP.md)**: Google Apps Script (`code.gs`) backend setup, Google Drive permissions, recruitment pipeline stages, and candidate selection announcement management.
-4. **[Data & Content Configuration Guide](src/data/CONFIG_GUIDE.md)**: Customizing laboratory divisions, staff member profiles, site metadata, and Keystatic CMS singletons.
+1. **[Deployment & Hosting Guide](docs/DEPLOYMENT.md)**: Local development setup, Cloudflare Workers primary deployment, Keystatic Cloud configuration, Vercel backup hosting, and dual-hosting CI/CD pipeline.
+2. **[Brand & Email Assets Hub](docs/ASSETS.md)**: Public CDN endpoints, email-optimized logos, dark/light banners, and social icons for email templates.
+3. **[Registration Setup & Operations Guide](docs/REGISTRATION_SETUP.md)**: Google Apps Script (`code.gs`) backend setup, Google Drive permissions, recruitment pipeline stages, and candidate selection announcement management.
+4. **[Data & Content Configuration Guide](docs/CONFIG_GUIDE.md)**: Customizing laboratory divisions, staff member profiles, site metadata, and Keystatic CMS singletons.
 5. **[Design Token Reference](docs/DESIGN_TOKENS.md)**: Token layers, naming rules, preferred spacing/type subsets, the full token index, and the starter recipe for a new lab site.
 
 ---
@@ -47,7 +47,7 @@ For detailed instructions on local development, deployment, backend integrations
 
 - `src/content.config.ts`: Defines Zod schemas and loaders for static markdown content collections (`news`, `events`).
 - `src/content/`: Contains static Markdown files representing news articles and laboratory events.
-- `src/data/`: Contains JSON files (`site.json`, `members.json`, `divisions.json`, `registration.json`) for easy website-wide metadata and team configuration, and `CONFIG_GUIDE.md`.
+- `src/data/`: Contains JSON files (`site.json`, `members.json`, `divisions.json`, `registration.json`) for easy website-wide metadata and team configuration, and the guide in `docs/CONFIG_GUIDE.md`.
 - `src/pages/`: File-system routing directories for Astro.
 - `src/layouts/`: Base wrapper page layout (`Layout.astro`).
 - `src/components/`: Reusable components such as `Navbar.astro` and `Footer.astro`.
@@ -58,11 +58,11 @@ For detailed instructions on local development, deployment, backend integrations
 
 ## Community & Contributing
 
-We are committed to fostering an open, welcoming, and harassment-free environment for all researchers, developers, and contributors. All participants and team members are expected to adhere to our [Code of Conduct](CODE_OF_CONDUCT.md).
+We are committed to fostering an open, welcoming, and harassment-free environment for all researchers, developers, and contributors. All participants and team members are expected to adhere to our [Code of Conduct](docs/CODE_OF_CONDUCT.md).
 
-For contribution workflows, git branching standards, and Pull Request guidelines, please refer to our [Contributing Guide](CONTRIBUTING.md).
+For contribution workflows, git branching standards, and Pull Request guidelines, please refer to our [Contributing Guide](docs/CONTRIBUTING.md).
 
-To report security vulnerabilities responsibly, please review our [Security Policy](SECURITY.md).
+To report security vulnerabilities responsibly, please review our [Security Policy](docs/SECURITY.md).
 
 For concerns or incident reports, please contact the project team or laboratory administration at [`lab@eimlab.org`](mailto:lab@eimlab.org).
 

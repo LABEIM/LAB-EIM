@@ -708,12 +708,14 @@ const overlapMembers = [
   { id: 1, name: 'A', role: 'mahasiswa-anggota', image: '', scale: '1', position: 'center' },
   { id: 2, name: 'B', role: 'koordinator-asisten', image: '', scale: '1', position: 'center' },
 ];
-const overlap = summarizePracticumAssistants(overlapCourses, overlapMembers);
+const overlap = summarizePracticumAssistants(
+  overlapCourses.map((course) => course.data),
+  overlapMembers,
+);
 assert(overlap.distinctCount === 3, 'distinct assistants span practicum courses and dedupe');
 assert(overlap.memberCount === 1, 'only mahasiswa-anggota assistants count as members with a dual role');
-assert(!overlapCourses.filter((course) => course.data.hasPracticum).some((course) => course.data.assistantIds.includes(4)), 'non-practicum assistants are excluded');
 const noPracticum = summarizePracticumAssistants(
-  [{ id: 'd', data: { title: 'D', code: 'W', sks: 2, hasPracticum: false, modules: [], coordinatorId: 'x', assistantIds: [1], order: 1 } }],
+  [{ title: 'D', code: 'W', sks: 2, hasPracticum: false, modules: [], coordinatorId: 'x', assistantIds: [1], order: 1 }],
   overlapMembers,
 );
 assert(noPracticum.distinctCount === 0 && noPracticum.memberCount === 0, 'no practicum yields zero assistants');

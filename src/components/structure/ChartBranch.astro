@@ -2,6 +2,7 @@
 import type { Locale } from '../../utils/i18n';
 import { t } from '../../utils/i18n';
 import type { ChartNode } from '../../utils/position-mapper';
+import type { PositionGroup } from '../../utils/types';
 import ChartBranch from './ChartBranch.astro';
 
 interface Props {
@@ -11,7 +12,7 @@ interface Props {
 
 const { node, locale } = Astro.props;
 
-const GROUP_KEYS: Record<string, string> = {
+const GROUP_KEYS: Record<PositionGroup, string> = {
   dosen: 'struct.groupDosen',
   asisten: 'struct.groupAsisten',
   mahasiswa: 'struct.groupMahasiswa',
@@ -25,13 +26,13 @@ const count =
 
 <li class="chart-node">
   <div class="chart-node-head">
-    <span class="chart-kicker">{t(GROUP_KEYS[node.position.group], locale)}</span>
-    <span class="chart-label">{node.position.label}</span>
+    <span class="chart-kicker">{t(GROUP_KEYS[node.group], locale)}</span>
+    <span class="chart-label">{node.label}</span>
     <span class="chart-count">{count}</span>
   </div>
   {node.note && <p class="chart-note">{node.note}</p>}
   {node.children.length > 0 && (
-    <ol class="chart-children">
+    <ol class="chart-children" role="list">
       {node.children.map((child) => (
         <ChartBranch node={child} locale={locale} />
       ))}

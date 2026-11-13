@@ -124,7 +124,9 @@ const sectionItems = [
                       href={`/courses/${course.id}`}
                       class="font-mono text-xs uppercase tracking-[0.08em] text-brand"
                     >
-                      {t('courses.detailLink', locale)} <span aria-hidden="true">→</span>
+                      {t('btn.details', locale)}
+                      <span class="sr-only">: {course.title}</span>
+                      <span aria-hidden="true">→</span>
                     </a>
 
                   </div>

@@ -3,6 +3,7 @@ import type { CourseView, Lecturer, Member, Position } from '../../utils/types';
 import type { Locale } from '../../utils/i18n';
 import { t } from '../../utils/i18n';
 import {
+  PRACTICUM_ASSISTANT_ID,
   STRUCTURE_TREE,
   type ChartNode,
 } from '../../utils/position-mapper';
@@ -21,27 +22,24 @@ const { positions, members, lecturers, courses, locale } = Astro.props;
 
 const byId = new Map(positions.map((position) => [position.id, position]));
 const treeById = new Map(STRUCTURE_TREE.map((node) => [node.id, node]));
-const PRAC_ASSISTANT_ID = 'asisten-praktikum';
 
 const holders = new Map<string, number>();
 for (const person of [...lecturers, ...members]) {
   holders.set(person.role, (holders.get(person.role) ?? 0) + 1);
 }
 
-const students = members.filter((member) => member.role === 'mahasiswa-anggota').length;
-const assistantSummary = summarizePracticumAssistants(
-  courses.map((course) => ({ id: course.id, data: course })),
-  members,
-);
+const students = holders.get('mahasiswa-anggota') ?? 0;
+const assistantSummary = summarizePracticumAssistants(courses, members);
 
 const notesFor = (id: string): string | undefined => {
-  if (id === 'mahasiswa-anggota' && assistantSummary.memberCount > 0) {
+  if (assistantSummary.memberCount === 0) return undefined;
+  if (id === 'mahasiswa-anggota') {
     return t('struct.memberAssistantNote', locale, {
       n: String(assistantSummary.memberCount),
       total: String(students),
     });
   }
-  if (id === PRAC_ASSISTANT_ID && assistantSummary.memberCount > 0) {
+  if (id === PRACTICUM_ASSISTANT_ID) {
     return t('struct.assistantMemberNote', locale, {
       n: String(assistantSummary.memberCount),
     });
@@ -49,32 +47,34 @@ const notesFor = (id: string): string | undefined => {
   return undefined;
 };
 
-const practicumAssistant = (): ChartNode => ({
-  position: {
-    id: PRAC_ASSISTANT_ID,
-    label: t('struct.practicumAssistant', locale),
-    group: 'asisten',
-    order: 6.5,
-  },
+const practicumAssistant: ChartNode = {
+  label: t('struct.practicumAssistant', locale),
+  group: 'asisten',
   count: assistantSummary.distinctCount,
-  note: notesFor(PRAC_ASSISTANT_ID),
+  note: notesFor(PRACTICUM_ASSISTANT_ID),
   children: [],
-});
+};
 
 const buildNode = (id: string): ChartNode | null => {
-  if (id === PRAC_ASSISTANT_ID) return practicumAssistant();
+  if (id === PRACTICUM_ASSISTANT_ID) return practicumAssistant;
 
   const position = byId.get(id);
   if (!position) return null;
 
   const childIds = [...(treeById.get(id)?.children ?? [])];
-  if (id === 'asisten-koordinator-praktikum') childIds.push(PRAC_ASSISTANT_ID);
+  if (id === 'asisten-koordinator-praktikum') childIds.push(PRACTICUM_ASSISTANT_ID);
 
   const children = childIds
     .map(buildNode)
     .filter((child): child is ChartNode => child !== null);
 
-  return { position, count: holders.get(id) ?? 0, note: notesFor(id), children };
+  return {
+    label: position.label,
+    group: position.group,
+    count: holders.get(id) ?? 0,
+    note: notesFor(id),
+    children,
+  };
 };
 
 const root = buildNode(STRUCTURE_TREE[0].id);
@@ -103,7 +103,7 @@ const root = buildNode(STRUCTURE_TREE[0].id);
       <div
         class="mt-[clamp(2.5rem,6vh,4rem)] rounded-media border border-line bg-surface p-[clamp(1.25rem,4vw,2.5rem)]"
       >
-        <ol class="chart-tree e-reveal">
+        <ol class="chart-tree e-reveal" role="list">
           <ChartBranch node={root} locale={locale} />
         </ol>
       </div>

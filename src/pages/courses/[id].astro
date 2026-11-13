@@ -13,11 +13,12 @@ export async function getStaticPaths() {
   const membersData = getLocalizedJsonData<{ list: Member[] }>('members', locale);
   const lecturersData = getLocalizedJsonData<{ list: Lecturer[] }>('lecturers', locale);
   const courses = resolveCourses(entries, lecturersData?.list ?? [], membersData?.list ?? []);
+  const entryById = new Map(entries.map((item) => [item.id, item]));
 
-  return courses.map((course) => ({
-    params: { id: course.id },
-    props: { course, entry: entries.find((item) => item.id === course.id)! },
-  }));
+  return courses.flatMap((course) => {
+    const entry = entryById.get(course.id);
+    return entry ? [{ params: { id: course.id }, props: { course, entry } }] : [];
+  });
 }
 
 interface Props {
@@ -45,7 +46,7 @@ const { modules, assistants } = courseHasContent(course);
         href="/courses"
         class="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-[0.08em] text-brand"
       >
-        <span aria-hidden="true">←</span> {t('courses.back', locale)}
+        <span aria-hidden="true">←</span> {t('courses.backToList', locale)}
       </a>
 
       <header class="mt-8 max-w-[46rem]">

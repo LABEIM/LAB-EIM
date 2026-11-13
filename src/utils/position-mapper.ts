@@ -65,15 +65,20 @@ export function countPeopleByGroup<T extends { role: string }>(
 }
 
 export interface ChartNode {
-  position: Position;
+  label: string;
+  group: PositionGroup;
   count: number;
   note?: string;
   children: ChartNode[];
 }
 
+/** Virtual role rendered under Asisten Koordinator Praktikum; derived from course data. */
+export const PRACTICUM_ASSISTANT_ID = 'asisten-praktikum';
+
 /**
  * Fixed reporting hierarchy. Ketua Kelompok Keilmuan and Ka.Ur.Lab FRI are
- * faculty-level and intentionally absent; Asisten Praktikum lives on /courses.
+ * faculty-level and intentionally absent. Asisten Praktikum is not stored here:
+ * the chart appends it as a virtual node derived from course data.
  */
 export const STRUCTURE_TREE: ReadonlyArray<{ id: string; children: readonly string[] }> = [
   { id: 'ketua-lab', children: ['wakil-ketua-lab'] },

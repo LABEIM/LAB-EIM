@@ -41,13 +41,13 @@ export function courseHasContent(course: CourseView): {
  * them are student members (the same people, listed from the other end).
  */
 export function summarizePracticumAssistants(
-  entries: Array<{ id: string; data: CourseData }>,
+  courses: CourseData[],
   members: Member[],
 ): { distinctCount: number; memberCount: number } {
   const assistantIds = new Set<number>();
-  for (const { data } of entries) {
-    if (!data.hasPracticum) continue;
-    for (const assistantId of data.assistantIds ?? []) assistantIds.add(assistantId);
+  for (const course of courses) {
+    if (!course.hasPracticum) continue;
+    for (const assistantId of course.assistantIds ?? []) assistantIds.add(assistantId);
   }
 
   const memberIds = new Set(

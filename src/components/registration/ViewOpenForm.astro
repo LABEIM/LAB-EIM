@@ -157,8 +157,8 @@ for (let i = 0; i < standardDocs.length; i += 2) {
   </div>
 
   {/* Status Alerts */}
-  <div id="status-alert-error" class="status-alert-error"></div>
-  <div id="status-alert-success" class="status-alert-success"></div>
+  <div id="status-alert-error" class="status-alert-error" role="alert" aria-live="assertive"></div>
+  <div id="status-alert-success" class="status-alert-success" role="status" aria-live="polite"></div>
 
   {/* Countdown Timer */}
   <div class="registration-timer reg-timer-mb" id="registration-timer">
@@ -186,9 +186,10 @@ for (let i = 0; i < standardDocs.length; i += 2) {
     <input type="text" id="website_hp" name="website_hp" class="reg-honeypot-input" tabindex="-1" autocomplete="off" aria-hidden="true" />
 
     {/* Section 1: Data Diri */}
-    <div class="form-section-heading">
+    <fieldset class="reg-fieldset">
+    <legend class="form-section-heading">
       <i class="fa-solid fa-user reg-icon-mr-sm"></i> 1. Data Diri & Akademik
-    </div>
+    </legend>
 
     <div class="form-group">
       <label for="nama_lengkap">{t('form.fullName', locale)} <span class="required-asterisk">*</span></label>
@@ -242,10 +243,13 @@ for (let i = 0; i < standardDocs.length; i += 2) {
       </div>
     )}
 
+    </fieldset>
+
     {/* Section 2: Pemilihan Divisi */}
-    <div class="form-section-heading">
+    <fieldset class="reg-fieldset">
+    <legend class="form-section-heading">
       <i class="fa-solid fa-layer-group reg-icon-mr-sm"></i> 2. Pemilihan Divisi & Alasan
-    </div>
+    </legend>
 
     {div2State !== 'disabled' ? (
       <div class="form-row">
@@ -341,11 +345,14 @@ for (let i = 0; i < standardDocs.length; i += 2) {
       </div>
     )}
 
+    </fieldset>
+
     {/* Section 3: Berkas Pendaftaran */}
+    <fieldset class="reg-fieldset">
     {hasSection3Files && (
-      <div class="form-section-heading">
+      <legend class="form-section-heading">
         <i class="fa-solid fa-folder-open reg-icon-mr-sm"></i> 3. Unggah Berkas Pendaftaran
-      </div>
+      </legend>
     )}
 
     {docRows.map((row, rIdx) => (
@@ -355,8 +362,10 @@ for (let i = 0; i < standardDocs.length; i += 2) {
             <label for={doc.id}>
               {doc.label} <span class="reg-file-label-small">({doc.extsDisplay} • Max {doc.maxMb}MB)</span>
               {doc.state === 'required' ? <span class="required-asterisk">*</span> : <span class="reg-file-label-small">(Opsional)</span>}
+              <span class="reg-file-cta">{t('form.chooseFile', locale)}</span>
             </label>
-            <input type="file" class="form-control" id={doc.id} accept={doc.accept} data-allowed-exts={doc.exts} data-max-mb={doc.maxMb} required={doc.state === 'required'} />
+            <input type="file" class="form-control reg-file-input" id={doc.id} accept={doc.accept} data-allowed-exts={doc.exts} data-max-mb={doc.maxMb} required={doc.state === 'required'} />
+            <span class="reg-file-name" data-file-name={doc.id} data-empty-label={t('form.noFile', locale)}>{t('form.noFile', locale)}</span>
           </div>
         ))}
       </div>
@@ -368,6 +377,7 @@ for (let i = 0; i < standardDocs.length; i += 2) {
           <label for="file_pi" class="reg-mb-0">
             {t('form.pi', locale)} <span class="reg-file-label-small">({piExtsDisplay} • Max {docLimits.piMb}MB)</span>
             {piState === 'required' ? <span class="required-asterisk">*</span> : <span class="reg-file-label-small">(Opsional)</span>}
+            <span class="reg-file-cta">{t('form.chooseFile', locale)}</span>
           </label>
           {piTemplateUrl && (
             <a href={piTemplateUrl} target="_blank" rel="noopener noreferrer" class="reg-pi-link-inline">
@@ -376,14 +386,14 @@ for (let i = 0; i < standardDocs.length; i += 2) {
             </a>
           )}
         </div>
-        <input type="file" class="form-control" id="file_pi" accept={piAccept} data-allowed-exts={piExts} data-max-mb={docLimits.piMb} required={piState === 'required'} />
-        {piTemplateUrl && (
-          <small class="reg-small-desc">
-            <span>Belum punya template? <a href={piTemplateUrl} target="_blank" rel="noopener noreferrer" class="reg-pi-sublink">{t('form.downloadPiTemplate', locale)}</a>.</span>
-          </small>
-        )}
+        <input type="file" class="form-control reg-file-input" id="file_pi" accept={piAccept} data-allowed-exts={piExts} data-max-mb={docLimits.piMb} required={piState === 'required'} />
+        <span class="reg-file-name" data-file-name="file_pi" data-empty-label={t('form.noFile', locale)}>{t('form.noFile', locale)}</span>
       </div>
     )}
+
+    </fieldset>
+
+    <p class="reg-data-use">{t('form.dataUse', locale)}</p>
 
     <div class="form-actions form-actions-submit">
       <button type="submit" id="submit-btn" class="btn btn-primary btn-submit-registration">

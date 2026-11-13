@@ -68,7 +68,7 @@ export function initRegistrationDraft(
         counter1El.classList.add('word-count-valid');
       } else {
         counter1El.classList.remove('word-count-valid');
-        counter1El.classList.add('word-count-invalid');
+        counter1El.classList.toggle('word-count-invalid', formElement?.dataset.submitAttempted === 'true');
       }
     }
 
@@ -80,7 +80,7 @@ export function initRegistrationDraft(
         counter2El.classList.add('word-count-valid');
       } else {
         counter2El.classList.remove('word-count-valid');
-        counter2El.classList.add('word-count-invalid');
+        counter2El.classList.toggle('word-count-invalid', formElement?.dataset.submitAttempted === 'true');
       }
     }
   };
@@ -236,8 +236,18 @@ export function initRegistrationDraft(
     } catch (e) { }
   };
 
+  const syncFileNames = () => {
+    if (!formElement) return;
+    formElement.querySelectorAll<HTMLInputElement>('input[type="file"]').forEach((input) => {
+      const out = formElement.querySelector<HTMLElement>(`[data-file-name="${input.id}"]`);
+      if (!out) return;
+      out.textContent = input.files?.[0]?.name || out.dataset.emptyLabel || '';
+    });
+  };
+
   const handleFormInput = () => {
     saveDraft();
+    syncFileNames();
     updateWordCounters();
   };
 
@@ -294,6 +304,7 @@ export function initRegistrationDraft(
       formElement.setAttribute('data-draft-bound', 'true');
       formElement.addEventListener('input', handleFormInput);
       formElement.addEventListener('change', handleFormInput);
+      formElement.addEventListener('eim:submit-attempted', updateWordCounters);
     }
   }
 

@@ -1283,3 +1283,68 @@ input[type='file'].form-control::file-selector-button:hover {
     transform: none;
   }
 }
+
+/* Fieldset grouping, localised file picker, data-use note */
+.reg-fieldset {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  min-width: 0;
+}
+
+.reg-fieldset > legend.form-section-heading {
+  width: 100%;
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.reg-file-input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  clip-path: inset(50%);
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.reg-file-cta {
+  display: inline-flex;
+  align-items: center;
+  margin-top: var(--space-8);
+  padding: 6px 12px;
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-pill);
+  background: var(--white);
+  font-family: var(--font-ui);
+  font-size: var(--text-13);
+  font-weight: 500;
+  color: var(--color-foreground);
+  cursor: pointer;
+}
+
+.reg-file-cta:hover {
+  border-color: var(--accent-cyan);
+  color: var(--accent-cyan-hover);
+}
+
+.reg-file-input:focus-visible + .reg-file-name {
+  outline: 2px solid var(--accent-cyan);
+  outline-offset: 2px;
+}
+
+.reg-file-name {
+  display: block;
+  margin-top: var(--space-4-8);
+  font-family: var(--font-ui);
+  font-size: var(--text-12);
+  color: var(--text-secondary);
+  overflow-wrap: anywhere;
+}
+
+.reg-data-use {
+  margin: var(--space-24) 0 var(--space-8);
+  font-family: var(--font-ui);
+  font-size: var(--text-13);
+  line-height: 1.5;
+  color: var(--text-secondary);
+}

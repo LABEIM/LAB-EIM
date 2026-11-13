@@ -1,0 +1,13 @@
+.share-wrap {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-8);
+}
+
+.share-status {
+  font-family: var(--font-mono);
+  font-size: var(--text-11);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-muted-ink);
+}

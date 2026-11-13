@@ -12,5 +12,6 @@ const ROLE_LABELS: Record<string, string> = {
 
 /** Display label for a member role; unknown roles pass through unchanged. */
 export function roleLabel(role: string): string {
-  return ROLE_LABELS[role] ?? role;
+  const clean = role.trim();
+  return ROLE_LABELS[clean] ?? ROLE_LABELS[clean.toLowerCase()] ?? clean;
 }

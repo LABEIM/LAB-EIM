@@ -336,6 +336,10 @@ html {
   transform: translateY(-2px);
 }
 
+.eim-cta-secondary[hidden] {
+  display: none;
+}
+
 .eim-cta-secondary {
   display: inline-flex;
   align-items: center;

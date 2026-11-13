@@ -89,14 +89,6 @@
   color: var(--color-foreground);
 }
 
-.kegiatan-media-fallback-date {
-  font-family: var(--font-mono);
-  font-size: var(--text-11);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--color-muted-ink);
-}
-
 .kegiatan-card-meta {
   display: flex;
   flex-wrap: wrap;
@@ -544,13 +536,4 @@
   .kegiatan-card-media img {
     transition: none;
   }
-}
-
-.share-status {
-  margin-left: var(--space-8);
-  font-family: var(--font-mono);
-  font-size: var(--text-11);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--color-muted-ink);
 }

@@ -622,8 +622,8 @@ const filterOrderBefore = filterCards.map(card => card.searchText).join('|');
 sel(filterCards, { search: '', sort: 'asc', page: 1, perPage: 99 });
 assert(filterCards.map(card => card.searchText).join('|') === filterOrderBefore, 'selection does not mutate the input order');
 
-// 14. Role labels and stage CTA
-console.log('\n14. Testing Role Labels And Stage CTA:');
+// 13. Role labels and stage CTA
+console.log('\n13. Testing Role Labels And Stage CTA:');
 assert(roleLabel('Secretary') === 'Sekretaris', 'Secretary maps to Sekretaris');
 assert(roleLabel('Treasurer') === 'Bendahara', 'Treasurer maps to Bendahara');
 assert(roleLabel('Staff') === 'Staf', 'Staff maps to Staf');

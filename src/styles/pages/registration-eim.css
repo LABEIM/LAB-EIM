@@ -573,31 +573,6 @@ textarea.form-control {
   resize: vertical;
 }
 
-input[type='file'].form-control {
-  min-height: 46px;
-  padding: var(--space-8-8) var(--space-12);
-  font-size: var(--text-13);
-  background: var(--color-surface);
-}
-
-input[type='file'].form-control::file-selector-button {
-  margin-right: var(--space-12);
-  padding: var(--space-5-6) var(--space-12);
-  border: 1px solid var(--color-line);
-  border-radius: var(--radius-pill);
-  background: var(--color-background);
-  font-family: var(--font-body);
-  font-size: var(--text-12);
-  font-weight: 500;
-  color: var(--color-brand);
-  cursor: pointer;
-}
-
-input[type='file'].form-control::file-selector-button:hover {
-  border-color: var(--color-brand);
-  background: var(--color-brand-soft);
-}
-
 .medhum-porto-container {
   margin-top: var(--space-16);
   padding: var(--space-16);
@@ -660,14 +635,7 @@ input[type='file'].form-control::file-selector-button:hover {
   text-decoration: none;
 }
 
-.reg-pi-link-inline:hover,
-.reg-pi-sublink:hover {
-  text-decoration: underline;
-  text-underline-offset: 0.25em;
-}
-
-.reg-pi-sublink {
-  color: var(--color-brand);
+.reg-pi-link-inline:hover {
   text-decoration: underline;
   text-underline-offset: 0.25em;
 }
@@ -1314,7 +1282,7 @@ input[type='file'].form-control::file-selector-button:hover {
   padding: 6px 12px;
   border: 1px solid var(--color-line);
   border-radius: var(--radius-pill);
-  background: var(--white);
+  background: var(--color-background);
   font-family: var(--font-ui);
   font-size: var(--text-13);
   font-weight: 500;
@@ -1323,12 +1291,12 @@ input[type='file'].form-control::file-selector-button:hover {
 }
 
 .reg-file-cta:hover {
-  border-color: var(--accent-cyan);
-  color: var(--accent-cyan-hover);
+  border-color: var(--color-brand);
+  color: var(--color-brand-bright);
 }
 
-.reg-file-input:focus-visible + .reg-file-name {
-  outline: 2px solid var(--accent-cyan);
+.form-group:focus-within .reg-file-cta {
+  outline: 2px solid var(--color-brand);
   outline-offset: 2px;
 }
 
@@ -1337,7 +1305,7 @@ input[type='file'].form-control::file-selector-button:hover {
   margin-top: var(--space-4-8);
   font-family: var(--font-ui);
   font-size: var(--text-12);
-  color: var(--text-secondary);
+  color: var(--color-muted-ink);
   overflow-wrap: anywhere;
 }
 

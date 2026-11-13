@@ -71,7 +71,6 @@ const alasan2State = fieldStates.alasan_divisi_2 || 'required';
 const bersediaState = fieldStates.bersedia_dipindah || 'required';
 const portoState = fieldStates.portofolio || 'required';
 
-const hasSection3Files = ksmState !== 'disabled' || khsState !== 'disabled' || mlState !== 'disabled' || cvState !== 'disabled' || piState !== 'disabled';
 
 const rawDocs = [
   ksmState !== 'disabled' && {
@@ -188,7 +187,7 @@ for (let i = 0; i < standardDocs.length; i += 2) {
     {/* Section 1: Data Diri */}
     <fieldset class="reg-fieldset">
     <legend class="form-section-heading">
-      <i class="fa-solid fa-user reg-icon-mr-sm"></i> 1. Data Diri & Akademik
+      <i class="fa-solid fa-user reg-icon-mr-sm" aria-hidden="true"></i> 1. Data Diri & Akademik
     </legend>
 
     <div class="form-group">
@@ -248,7 +247,7 @@ for (let i = 0; i < standardDocs.length; i += 2) {
     {/* Section 2: Pemilihan Divisi */}
     <fieldset class="reg-fieldset">
     <legend class="form-section-heading">
-      <i class="fa-solid fa-layer-group reg-icon-mr-sm"></i> 2. Pemilihan Divisi & Alasan
+      <i class="fa-solid fa-layer-group reg-icon-mr-sm" aria-hidden="true"></i> 2. Pemilihan Divisi & Alasan
     </legend>
 
     {div2State !== 'disabled' ? (
@@ -349,11 +348,9 @@ for (let i = 0; i < standardDocs.length; i += 2) {
 
     {/* Section 3: Berkas Pendaftaran */}
     <fieldset class="reg-fieldset">
-    {hasSection3Files && (
-      <legend class="form-section-heading">
-        <i class="fa-solid fa-folder-open reg-icon-mr-sm"></i> 3. Unggah Berkas Pendaftaran
-      </legend>
-    )}
+    <legend class="form-section-heading">
+      <i class="fa-solid fa-folder-open reg-icon-mr-sm" aria-hidden="true"></i> 3. Unggah Berkas Pendaftaran
+    </legend>
 
     {docRows.map((row, rIdx) => (
       <div class={`form-row ${rIdx > 0 ? 'reg-form-row-mt' : ''}`}>

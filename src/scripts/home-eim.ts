@@ -7,7 +7,7 @@
  * static `STAGE_LABELS` map AFTER the shared sync runs. Registration order
  * guarantees this is the final write on load and on `eim:stage-changed`.
  */
-import { STAGE_LABELS } from '../utils/constants';
+import { resolveStageCta } from '../utils/constants';
 import { internalHref } from '../utils/safe-link';
 
 type StageLabel = { label: string; href: string };
@@ -16,8 +16,7 @@ export function initHomeCTA(initialStage: string): void {
   const btn = document.getElementById('hero-recruitment-btn') as HTMLAnchorElement | null;
   if (!btn) return;
 
-  const resolve = (stage: string): StageLabel | undefined =>
-    STAGE_LABELS[stage] ?? (stage === 'closed' ? STAGE_LABELS.closed : STAGE_LABELS.selection);
+  const resolve = (stage: string): StageLabel => resolveStageCta(stage);
 
   const apply = (stage: string): void => {
     const entry = resolve(stage);

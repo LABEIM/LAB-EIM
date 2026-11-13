@@ -4,7 +4,7 @@ import Layout from '../layouts/Layout.astro';
 import '../styles/pages/home-eim.css';
 import { getCurrentRecruitmentStage } from '../utils/recruitment';
 import { parseDivisions, toDivisionPanels } from '../utils/division-mapper';
-import { STAGE_LABELS } from '../utils/constants';
+import { resolveStageCta } from '../utils/constants';
 import type { AboutData, Member } from '../utils/types';
 import EventPosterModal from '../components/events/EventPosterModal.astro';
 import EimHero from '../components/home/EimHero.astro';
@@ -63,12 +63,9 @@ const upcomingEvents = events.filter((event) => event.data.status === 'upcoming'
 
 // Hero CTA: server-rendered Indonesian label; initHomeCTA keeps it fresh at runtime.
 const currentStage = getCurrentRecruitmentStage(registrationConfig);
-const stageEntry =
-  currentStage === 'closed'
-    ? STAGE_LABELS.closed
-    : STAGE_LABELS[currentStage] ?? STAGE_LABELS.selection;
-const primaryLabel = stageEntry?.label ?? 'Gabung EIM';
-const primaryHref = stageEntry?.href ?? '/registration';
+const stageEntry = resolveStageCta(currentStage);
+const primaryLabel = stageEntry.label;
+const primaryHref = stageEntry.href;
 ---
 
 <Layout title={`EIM Research Lab · Riset infrastruktur untuk dunia nyata`} homeSkin skipLink>

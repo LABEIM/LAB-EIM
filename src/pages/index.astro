@@ -3,15 +3,13 @@ import { getCollection } from 'astro:content';
 import Layout from '../layouts/Layout.astro';
 import '../styles/pages/home-eim.css';
 import { getCurrentRecruitmentStage } from '../utils/recruitment';
-import { parseDivisions, toDivisionPanels } from '../utils/division-mapper';
 import { resolveStageCta } from '../utils/constants';
-import type { AboutData, Member } from '../utils/types';
+import type { AboutData } from '../utils/types';
 import EventPosterModal from '../components/events/EventPosterModal.astro';
 import EimHero from '../components/home/EimHero.astro';
 import EimReveal from '../components/home/EimReveal.astro';
 import EimFocus from '../components/home/EimFocus.astro';
 import EimVisiMisi from '../components/home/EimVisiMisi.astro';
-import EimDivisions from '../components/home/EimDivisions.astro';
 import EimNews from '../components/home/EimNews.astro';
 import EimEvents from '../components/home/EimEvents.astro';
 import EimSectionNav from '../components/home/EimSectionNav.astro';
@@ -23,14 +21,8 @@ import {
 import { filterAuditContent } from '../utils/content-helpers';
 
 const locale = getLocaleFromUrl(Astro.url);
-const divisionsData = await getLocalizedJsonData<any>('divisions', locale);
 const registrationConfig = await getLocalizedJsonData<any>('registration', locale);
 const about = await getLocalizedJsonData<AboutData>('about', locale);
-const membersData = await getLocalizedJsonData<{ list: Member[] }>('members', locale);
-
-const divisions = parseDivisions(divisionsData);
-const members = membersData?.list ?? [];
-const divisionPanels = toDivisionPanels(divisions, members);
 
 // Fetch and filter news for active locale
 const rawNews = await getCollection('news');
@@ -76,7 +68,6 @@ const primaryHref = stageEntry.href;
     <EimReveal />
     <EimFocus />
     <EimVisiMisi about={about} />
-    <EimDivisions panels={divisionPanels} />
     <EimEvents events={events} locale={locale} />
     <EimNews news={latestNews} locale={locale} />
   </main>

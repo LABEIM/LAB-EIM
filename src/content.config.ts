@@ -36,7 +36,24 @@ const eventsCollection = defineCollection({
   }),
 });
 
+const coursesCollection = defineCollection({
+  loader: glob({ pattern: '[^_]*.{md,mdx}', base: './src/content/courses' }),
+  schema: z.object({
+    title: z.string(),
+    code: z.string().optional(),
+    semester: z.number().optional(),
+    hasPracticum: z.boolean(),
+    modules: z
+      .array(z.object({ title: z.string(), topics: z.string() }))
+      .default([]),
+    coordinatorId: z.string(),
+    assistantIds: z.array(z.number()).default([]),
+    order: z.number(),
+  }),
+});
+
 export const collections = {
   news: newsCollection,
   events: eventsCollection,
+  courses: coursesCollection,
 };

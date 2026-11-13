@@ -274,6 +274,28 @@ export interface PositionSection<T> {
   people: T[];
 }
 
+export interface CourseModule {
+  title: string;
+  topics: string;
+}
+
+export interface CourseData {
+  title: string;
+  code?: string;
+  semester?: number;
+  hasPracticum: boolean;
+  modules: CourseModule[];
+  coordinatorId: string;
+  assistantIds: number[];
+  order: number;
+}
+
+export interface CourseView extends CourseData {
+  id: string;
+  coordinator: Lecturer | null;
+  assistants: Member[];
+}
+
 export interface Member {
   id: number;
   name: string;

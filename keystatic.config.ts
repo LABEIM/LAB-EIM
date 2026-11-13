@@ -1,5 +1,11 @@
 import { config, fields, collection, singleton } from '@keystatic/core';
 import positionsData from './src/data/positions.json';
+import lecturersData from './src/data/lecturers.json';
+
+const lecturerOptions = lecturersData.list.map((lecturer) => ({
+  label: lecturer.name || lecturer.id,
+  value: lecturer.id,
+}));
 
 const positionOptions = positionsData.list.map((position) => ({
   label: position.label,
@@ -401,6 +407,42 @@ export default config({
           label: 'Requirements',
           itemLabel: props => props.value,
         }),
+      },
+    }),
+    courses: collection({
+      label: 'Courses',
+      slugField: 'title',
+      path: 'src/content/courses/*',
+      format: { contentField: 'content' },
+      schema: {
+        title: fields.slug({ name: { label: 'Title' } }),
+        code: fields.text({ label: 'Course Code (optional)' }),
+        semester: fields.integer({
+          label: 'Semester (optional)',
+          validation: { isRequired: false },
+        }),
+        hasPracticum: fields.checkbox({ label: 'Has practicum', defaultValue: false }),
+        modules: fields.array(
+          fields.object({
+            title: fields.text({ label: 'Module title' }),
+            topics: fields.text({ label: 'Topics', multiline: true }),
+          }),
+          {
+            label: 'Practicum modules',
+            itemLabel: (props) => props.fields.title.value || 'Module',
+          }
+        ),
+        coordinatorId: fields.select({
+          label: 'Course coordinator',
+          options: lecturerOptions,
+          defaultValue: lecturerOptions[0]?.value ?? '',
+        }),
+        assistantIds: fields.array(fields.integer({ label: 'Member ID' }), {
+          label: 'Practicum assistants',
+          itemLabel: (props) => String(props.value),
+        }),
+        order: fields.integer({ label: 'Order', defaultValue: 0 }),
+        content: fields.markdoc({ label: 'Description', extension: 'md' }),
       },
     }),
   },

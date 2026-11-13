@@ -1,0 +1,37 @@
+import type { CourseData, CourseModule, CourseView, Lecturer, Member } from './types';
+
+/** Join course records with the people they reference, ordered by `order` then title. */
+export function resolveCourses(
+  entries: Array<{ id: string; data: CourseData }>,
+  lecturers: Lecturer[],
+  members: Member[],
+): CourseView[] {
+  const lecturerById = new Map(lecturers.map((lecturer) => [lecturer.id, lecturer]));
+  const memberById = new Map(members.map((member) => [member.id, member]));
+
+  return entries
+    .map(({ id, data }) => {
+      const assistantIds = [...new Set(data.assistantIds ?? [])];
+      return {
+        ...data,
+        id,
+        coordinator: lecturerById.get(data.coordinatorId) ?? null,
+        assistants: assistantIds
+          .map((assistantId) => memberById.get(assistantId))
+          .filter((member): member is Member => Boolean(member)),
+      };
+    })
+    .sort((a, b) => a.order - b.order || a.title.localeCompare(b.title));
+}
+
+/**
+ * Modules and assistants only exist for a practicum. A course without one
+ * renders neither, even when stale data is still attached to it.
+ */
+export function courseHasContent(course: CourseView): {
+  modules: CourseModule[];
+  assistants: Member[];
+} {
+  if (!course.hasPracticum) return { modules: [], assistants: [] };
+  return { modules: course.modules, assistants: course.assistants };
+}

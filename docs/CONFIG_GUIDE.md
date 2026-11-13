@@ -328,3 +328,40 @@ Configures the `/contact` page. Manage it via **Keystatic Admin > Singletons > C
 
 
 
+
+---
+
+## 11. Course Catalog (`src/content/courses/`)
+One Markdown file per course. The `/courses` page lists every entry, and the Beranda course band shows the first three courses that have a practicum. Manage it via **Keystatic Admin > Collections > Courses**.
+
+> The three files in the repository are placeholders (`Mata Kuliah Contoh 1–3`). Replace them with real courses before publishing.
+
+### Fields Explanation
+* **`title`** (String, required): Course name.
+* **`code`** (String, optional): Course code, shown when present.
+* **`semester`** (Number, optional): Semester number, shown when present.
+* **`hasPracticum`** (Boolean, required): Whether the course has a practicum. When `false`, modules and assistants are not rendered even if data is still attached.
+* **`modules`** (Array, optional): `title` plus a `topics` line. Module files cannot be shared, so only the topic list is published.
+* **`coordinatorId`** (String, required): `id` of an entry in `lecturers.json`.
+* **`assistantIds`** (Array of Numbers, optional): `id` values from `members.json`. Missing ids are skipped.
+* **`order`** (Number, required): Sort order on the page, ties broken by title.
+* Markdown body: the course description.
+
+### Course Template
+```markdown
+---
+title: Nama Mata Kuliah
+code: SI2xxx
+semester: 4
+hasPracticum: true
+modules:
+  - title: Modul 1 — Nama Modul
+    topics: Topik pertama, topik kedua.
+coordinatorId: dosen-koordinator-matkul-1
+assistantIds:
+  - 1
+order: 1
+---
+
+Deskripsi singkat mata kuliah dan cakupan praktikumnya.
+```

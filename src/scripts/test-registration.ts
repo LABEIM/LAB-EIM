@@ -12,6 +12,7 @@ import { selectVisibleCards, type FilterCard, type FilterState, type FilterResul
 import { resolveStageCta } from '../utils/constants';
 import { parsePositions, buildPositionIndex, positionLabel, groupPeople, STRUCTURE_TREE, type Position } from '../utils/position-mapper';
 import positionsData from '../data/positions.json';
+import { resolveCourses, courseHasContent } from '../utils/course-helpers';
 
 let passed = 0;
 let failed = 0;
@@ -665,6 +666,28 @@ assert(realPositions.length === 8, 'positions.json holds eight positions');
 const treeIds = STRUCTURE_TREE.flatMap(node => [node.id, ...node.children]);
 assert(treeIds.every(id => realPositions.some(position => position.id === id)), 'every chart node resolves to a position in positions.json');
 assert(STRUCTURE_TREE[0].id === 'ketua-lab', 'tree starts at ketua-lab');
+
+// 15. Course resolution
+console.log('\n15. Testing Course Helpers:');
+const courseLecturers = [{ id: 'dosen-koordinator-matkul-1', name: 'Dosen A', role: 'koordinator-matkul', image: '', scale: '1', position: 'center' }];
+const courseMembers = [
+  { id: 1, name: 'Asisten A', role: 'mahasiswa-anggota', image: '', scale: '1', position: 'center' },
+  { id: 2, name: 'Asisten B', role: 'mahasiswa-anggota', image: '', scale: '1', position: 'center' },
+];
+const courseEntries = [
+  { id: 'b', data: { title: 'Kedua', hasPracticum: true, modules: [{ title: 'Modul 1', topics: 'Topik' }], coordinatorId: 'dosen-koordinator-matkul-1', assistantIds: [1, 1, 2, 99], order: 2 } },
+  { id: 'a', data: { title: 'Pertama', hasPracticum: false, modules: [{ title: 'Stale', topics: 'Stale' }], coordinatorId: 'missing', assistantIds: [2], order: 1 } },
+];
+const resolvedCourses = resolveCourses(courseEntries, courseLecturers, courseMembers);
+assert(resolvedCourses.length === 2, 'every course resolves');
+assert(resolvedCourses[0].id === 'a', 'courses sort by order');
+assert(resolvedCourses[0].coordinator === null, 'missing coordinator resolves to null');
+assert(resolvedCourses[0].modules.length === 1, 'resolution keeps raw data');
+assert(courseHasContent(resolvedCourses[1]).modules.length === 1, 'practicum course exposes modules');
+assert(courseHasContent(resolvedCourses[0]).modules.length === 0, 'non-practicum course exposes no modules');
+assert(courseHasContent(resolvedCourses[0]).assistants.length === 0, 'non-practicum course exposes no assistants');
+assert(resolvedCourses[1].assistants.length === 2, 'assistant ids resolve, dedupe, and drop missing');
+assert(courseHasContent(resolvedCourses[1]).assistants[0].name === 'Asisten A', 'assistants keep member order');
 
 console.log(`\n${passed} passed, ${failed} failed`);
 if (failed > 0) process.exitCode = 1;

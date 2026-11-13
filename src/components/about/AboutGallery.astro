@@ -11,6 +11,10 @@ const locale = getLocaleFromUrl(Astro.url);
 
 // A CMS row can exist before its upload lands; skip those instead of a broken image.
 const items = photos.filter((photo) => photo.image);
+// Two full rows at desktop; the rest waits behind the control in a closed <details>.
+const FIRST_BATCH = 6;
+const firstBatch = items.slice(0, FIRST_BATCH);
+const remaining = items.slice(FIRST_BATCH);
 ---
 
 {items.length > 0 && (
@@ -25,7 +29,7 @@ const items = photos.filter((photo) => photo.image);
       </div>
 
       <ul class="e-reveal-group mt-10 grid list-none gap-6 sm:grid-cols-2 lg:grid-cols-3" role="list">
-        {items.map((photo, index) => (
+        {firstBatch.map((photo, index) => (
           <li style={`--i:${index}`}>
             <figure>
               <div class="aspect-[4/3] overflow-hidden rounded-[var(--radius-media)] border border-line bg-surface">
@@ -42,6 +46,34 @@ const items = photos.filter((photo) => photo.image);
           </li>
         ))}
       </ul>
+
+      {remaining.length > 0 && (
+        <details class="group mt-8">
+          <summary class="inline-flex cursor-pointer list-none items-center gap-2 font-mono text-xs uppercase tracking-[0.08em] text-brand [&::-webkit-details-marker]:hidden">
+            <span class="group-open:hidden">{t('about.galleryShowAll', locale)}</span>
+            <span class="hidden group-open:inline">{t('about.galleryHideAll', locale)}</span>
+            <span aria-hidden="true" class="transition-transform group-open:rotate-45">+</span>
+          </summary>
+          <ul class="mt-8 grid list-none gap-6 sm:grid-cols-2 lg:grid-cols-3" role="list">
+            {remaining.map((photo, index) => (
+              <li style={`--i:${index}`}>
+                <figure>
+                  <div class="aspect-[4/3] overflow-hidden rounded-[var(--radius-media)] border border-line bg-surface">
+                    <img
+                      class="h-full w-full object-cover"
+                      src={photo.image}
+                      alt={photo.alt || photo.caption}
+                      loading="lazy"
+                      decoding="async"
+                    />
+                  </div>
+                  <figcaption class="mt-3 font-mono text-xs uppercase tracking-[0.08em] text-muted-ink">{photo.caption}</figcaption>
+                </figure>
+              </li>
+            ))}
+          </ul>
+        </details>
+      )}
     </div>
   </section>
 )}

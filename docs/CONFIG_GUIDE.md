@@ -389,7 +389,7 @@ Photos shown on the Tentang Kami page. The featured studio portrait renders as a
   * **`image`** (String): Photo path. Upload through Keystatic; files are written to `public/image/gallery/`.
   * **`alt`** (String): Alt text for screen readers. Required.
   * **`caption`** (String): Caption shown under the band.
-* **`photos`** (Array): Activity photos, each with `image`, `alt`, and `caption`. Three across at desktop, two at tablet, one at phone.
+* **`photos`** (Array): Activity photos, each with `image`, `alt`, and `caption`. Three across at desktop, two at tablet, one at phone. The first six are shown; any extras wait behind a "Lihat semua foto" control that expands them in place.
 
 ### Notes
 * The shipped entry points at `public/image/gallery/placeholder.svg` so the layout is visible. Replace it with the real portrait and activity photos in Keystatic; the placeholder can stay in the repo.

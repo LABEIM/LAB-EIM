@@ -344,13 +344,14 @@ Configures the `/contact` page. Manage it via **Keystatic Admin > Singletons > C
 ---
 
 ## 11. Course Catalog (`src/content/courses/`)
-One Markdown file per course. The `/courses` page lists every entry, and the Beranda course band shows the first three courses that have a practicum. Manage it via **Keystatic Admin > Collections > Courses**.
+One Markdown file per course. The `/courses` page lists every entry (code, SKS, title, status, coordinator); `/courses/<slug>` holds the description, the module topics, and the full assistant list. The Beranda band shows the first three courses that have a practicum. Manage it via **Keystatic Admin > Collections > Courses**.
 
 > The three files in the repository are placeholders (`Mata Kuliah Contoh 1–3`). Replace them with real courses before publishing.
 
 ### Fields Explanation
 * **`title`** (String, required): Course name.
-* **`code`** (String, optional): Course code, shown when present.
+* **`code`** (String, required): Course code, shown on the list and detail page.
+* **`sks`** (Number, required): Credit units, shown as "N SKS".
 * **`semester`** (Number, optional): Semester number, shown when present.
 * **`hasPracticum`** (Boolean, required): Whether the course has a practicum. When `false`, modules and assistants are not rendered even if data is still attached.
 * **`modules`** (Array, optional): `title` plus a `topics` line. Module files cannot be shared, so only the topic list is published.

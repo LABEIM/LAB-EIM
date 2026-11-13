@@ -242,7 +242,7 @@ export const uiTranslations: Record<Locale, Record<string, string>> = {
     'about.factProgramValue': 'S1 Sistem Informasi',
     'about.statsLabel': 'EIM dalam angka',
     'about.statMembers': 'Anggota & asisten',
-    'about.statPositions': 'Peran laboratorium',
+    'about.statCourses': 'Mata kuliah',
     'about.statFocus': 'Fokus riset',
     'about.teamEyebrow': 'Orang-orang',
     'about.teamTitle': 'Dosen, asisten, dan anggota.',

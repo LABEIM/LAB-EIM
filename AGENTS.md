@@ -64,7 +64,7 @@ Before ending a session, the agent must perform these tasks:
 - `src/content/`: Static Markdown content files (`news/`, `events/`, `courses/`).
 - `src/data/`: JSON configuration (`site.json`, `contact.json`, `members.json`, `lecturers.json`, `positions.json`, `divisions.json`, `registration.json`) and the guide in `docs/CONFIG_GUIDE.md`.
 - `src/components/`: Reusable Astro and React UI components (Navbar, Footer, cards, forms, plus homepage, about-page, structure-page, and event-page sections under `home/`, `about/`, `structure/`, and `kegiatan/`).
-- `src/pages/`: File-system routes (including `/courses`), the `/keystatic` admin, and API endpoints.
+- `src/pages/`: File-system routes (including `/courses` and `/courses/[id]`), the `/keystatic` admin, and API endpoints.
 - `src/layouts/Layout.astro`: Base wrapper page layout.
 - `src/styles/`: Modular design system and stylesheets (`variables.css`, `base.css`, `globals.css`, `mobile.css`, `icons.css`, plus `components/` and `pages/`).
 - `src/utils/`: Business logic, i18n helpers, content filtering, event helpers, registration logic, and interfaces (`i18n.ts`, `content-helpers.ts`, `event-helpers.ts`, `registration-config.ts`, `recruitment.ts`, `division-mapper.ts`, `position-mapper.ts`, `course-helpers.ts`, `safe-link.ts`, `types.ts`, `constants.ts`).

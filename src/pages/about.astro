@@ -1,4 +1,5 @@
 ---
+import { getCollection } from 'astro:content';
 import Layout from '../layouts/Layout.astro';
 import '../styles/pages/home-eim.css';
 import { getLocaleFromUrl, getLocalizedJsonData, t } from '../utils/i18n';
@@ -25,6 +26,7 @@ const lecturers: Lecturer[] = lecturersData?.list ?? [];
 const people = [...lecturers, ...members];
 const sections = groupPeople(people, positions);
 const groupCounts = countPeopleByGroup(people, positions);
+const courses = await getCollection('courses');
 
 const sectionItems = [
   { id: 'profil', label: t('about.navDotProfile', locale) },
@@ -42,7 +44,7 @@ const sectionItems = [
     <AboutProfile about={aboutData} site={siteData} />
     <AboutStats
       membersCount={groupCounts.asisten + groupCounts.mahasiswa}
-      positionCount={positions.length}
+      courseCount={courses.length}
       focusCount={4}
     />
     <EimVisiMisi about={aboutData} />

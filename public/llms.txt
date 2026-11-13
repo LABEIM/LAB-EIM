@@ -23,7 +23,8 @@
 - `/assets` : Brand and email asset hub
 - `/contact` : Contact information
 - `/structure` : Laboratory role hierarchy (lecturers, assistants, student members, adhoc team) and staff profiles
-- `/courses` : Courses in the lab's field of study, practicum modules, course coordinator, and practicum assistants
+- `/courses` : Courses in the lab's field of study with code and SKS
+- `/courses/<slug>` : One course: description, practicum modules, coordinator, and assistants
 - `/news`, `/news/[id]` : News listing and article detail
 - `/event`, `/event/[id]` : Event listing and detail
 - `/registration` : Recruitment registration form

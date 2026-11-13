@@ -81,7 +81,8 @@ The EIM Research Lab Website is the official public site of the Enterprise Infra
 | `GET` | `/assets` | Brand and email asset hub | No |
 | `GET` | `/contact` | Contact information | No |
 | `GET` | `/structure` | Laboratory role hierarchy and staff profiles | No |
-| `GET` | `/courses` | Courses, practicum modules, coordinator and assistants | No |
+| `GET` | `/courses` | Courses with code, SKS, practicum status, coordinator | No |
+| `GET` | `/courses/<slug>` | One course: modules, coordinator, assistants | No |
 | `GET` | `/news` | News listing | No |
 | `GET` | `/news/[id]` | News article detail | No |
 | `GET` | `/event` | Event listing | No |

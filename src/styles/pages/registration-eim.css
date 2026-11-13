@@ -51,7 +51,7 @@ body.home-skin {
   margin-bottom: clamp(1.5rem, 4vh, 2.5rem);
   padding: clamp(1.1rem, 3vw, 1.5rem);
   border: 1px solid var(--color-line);
-  border-left: 3px solid var(--color-brand-bright);
+  border-left: 1px solid var(--color-brand-bright);
   border-radius: var(--radius-card);
   background: var(--color-surface);
 }
@@ -602,7 +602,7 @@ input[type='file'].form-control::file-selector-button:hover {
   margin-top: var(--space-16);
   padding: var(--space-16);
   border: 1px solid color-mix(in srgb, var(--color-brand) 20%, transparent);
-  border-left: 3px solid var(--color-brand-bright);
+  border-left: 1px solid var(--color-brand-bright);
   border-radius: var(--radius-card);
   background: var(--color-surface);
 }

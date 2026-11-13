@@ -64,6 +64,7 @@
 }
 
 .footer-desc {
+    text-wrap: pretty;
     color: var(--text-secondary);
     margin-top: var(--space-20);
     font-size: var(--text-14-4);

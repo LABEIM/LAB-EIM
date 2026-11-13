@@ -568,7 +568,9 @@ body.home-skin :is(a, button):focus-visible {
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  /* 24x24 minimum target (WCAG 2.2); the visual dot stays 8px. */
+  /* 44px target; the visual dot stays 8px. */
+  min-width: 44px;
+  min-height: 44px;
   padding: var(--space-8);
 }
 

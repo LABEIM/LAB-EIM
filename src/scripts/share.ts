@@ -12,8 +12,19 @@ export function initShareButtons(itemType: string = 'Link') {
           // Ignore share cancellation
         }
       } else {
-        await navigator.clipboard.writeText(window.location.href);
-        alert(`Tautan ${itemType.toLowerCase()} disalin ke clipboard!`);
+        let status = btn.parentElement?.querySelector<HTMLElement>('.share-status');
+        if (!status) {
+          status = document.createElement('span');
+          status.className = 'share-status';
+          status.setAttribute('role', 'status');
+          btn.insertAdjacentElement('afterend', status);
+        }
+        try {
+          await navigator.clipboard.writeText(window.location.href);
+          status.textContent = `Tautan ${itemType.toLowerCase()} disalin.`;
+        } catch {
+          status.textContent = 'Tautan tidak dapat disalin otomatis.';
+        }
       }
     });
   });

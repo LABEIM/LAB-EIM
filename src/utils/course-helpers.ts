@@ -50,10 +50,9 @@ export function summarizePracticumAssistants(
     for (const assistantId of course.assistantIds ?? []) assistantIds.add(assistantId);
   }
 
+  // Every assistant is a member; count the ones the roster actually holds.
   const memberIds = new Set(
-    members
-      .filter((member) => member.role === 'mahasiswa-anggota' && assistantIds.has(member.id))
-      .map((member) => member.id),
+    members.filter((member) => assistantIds.has(member.id)).map((member) => member.id),
   );
 
   return { distinctCount: assistantIds.size, memberCount: memberIds.size };

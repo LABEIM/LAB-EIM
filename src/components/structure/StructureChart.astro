@@ -28,7 +28,7 @@ for (const person of [...lecturers, ...members]) {
   holders.set(person.role, (holders.get(person.role) ?? 0) + 1);
 }
 
-const students = holders.get('mahasiswa-anggota') ?? 0;
+const roster = members.length;
 const assistantSummary = summarizePracticumAssistants(courses, members);
 
 const notesFor = (id: string): string | undefined => {
@@ -36,12 +36,7 @@ const notesFor = (id: string): string | undefined => {
   if (id === 'mahasiswa-anggota') {
     return t('struct.memberAssistantNote', locale, {
       n: String(assistantSummary.memberCount),
-      total: String(students),
-    });
-  }
-  if (id === PRACTICUM_ASSISTANT_ID) {
-    return t('struct.assistantMemberNote', locale, {
-      n: String(assistantSummary.memberCount),
+      total: String(roster),
     });
   }
   return undefined;

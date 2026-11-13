@@ -188,7 +188,6 @@ export const uiTranslations: Record<Locale, Record<string, string>> = {
     'struct.positionCount': '{n} orang',
     'struct.practicumAssistant': 'Asisten Praktikum',
     'struct.memberAssistantNote': '{n} dari {total} juga Asisten Praktikum',
-    'struct.assistantMemberNote': '{n} di antaranya Mahasiswa Anggota',
 
     'home.numbersLabel': 'Laboratorium dalam angka',
     'home.numbersDosen': 'Dosen',

@@ -281,7 +281,8 @@ export interface CourseModule {
 
 export interface CourseData {
   title: string;
-  code?: string;
+  code: string;
+  sks: number;
   semester?: number;
   hasPracticum: boolean;
   modules: CourseModule[];

@@ -40,7 +40,8 @@ const coursesCollection = defineCollection({
   loader: glob({ pattern: '[^_]*.{md,mdx}', base: './src/content/courses' }),
   schema: z.object({
     title: z.string(),
-    code: z.string().optional(),
+    code: z.string(),
+    sks: z.number(),
     semester: z.number().optional(),
     hasPracticum: z.boolean(),
     modules: z

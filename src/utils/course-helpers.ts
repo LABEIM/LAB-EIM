@@ -35,3 +35,26 @@ export function courseHasContent(course: CourseView): {
   if (!course.hasPracticum) return { modules: [], assistants: [] };
   return { modules: course.modules, assistants: course.assistants };
 }
+
+/**
+ * Distinct practicum assistants across every practicum course, and how many of
+ * them are student members (the same people, listed from the other end).
+ */
+export function summarizePracticumAssistants(
+  entries: Array<{ id: string; data: CourseData }>,
+  members: Member[],
+): { distinctCount: number; memberCount: number } {
+  const assistantIds = new Set<number>();
+  for (const { data } of entries) {
+    if (!data.hasPracticum) continue;
+    for (const assistantId of data.assistantIds ?? []) assistantIds.add(assistantId);
+  }
+
+  const memberIds = new Set(
+    members
+      .filter((member) => member.role === 'mahasiswa-anggota' && assistantIds.has(member.id))
+      .map((member) => member.id),
+  );
+
+  return { distinctCount: assistantIds.size, memberCount: memberIds.size };
+}

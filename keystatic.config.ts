@@ -420,7 +420,8 @@ export default config({
       format: { contentField: 'content' },
       schema: {
         title: fields.slug({ name: { label: 'Title' } }),
-        code: fields.text({ label: 'Course Code (optional)' }),
+        code: fields.text({ label: 'Course Code' }),
+        sks: fields.integer({ label: 'SKS' }),
         semester: fields.integer({
           label: 'Semester (optional)',
           validation: { isRequired: false },

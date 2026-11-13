@@ -12,7 +12,7 @@ import { selectVisibleCards, type FilterCard, type FilterState, type FilterResul
 import { resolveStageCta } from '../utils/constants';
 import { parsePositions, buildPositionIndex, positionLabel, groupPeople, countPeopleByGroup, STRUCTURE_TREE, type Position } from '../utils/position-mapper';
 import positionsData from '../data/positions.json';
-import { resolveCourses, courseHasContent } from '../utils/course-helpers';
+import { resolveCourses, courseHasContent, summarizePracticumAssistants } from '../utils/course-helpers';
 
 let passed = 0;
 let failed = 0;
@@ -683,8 +683,8 @@ const courseMembers = [
   { id: 2, name: 'Asisten B', role: 'mahasiswa-anggota', image: '', scale: '1', position: 'center' },
 ];
 const courseEntries = [
-  { id: 'b', data: { title: 'Kedua', hasPracticum: true, modules: [{ title: 'Modul 1', topics: 'Topik' }], coordinatorId: 'dosen-koordinator-matkul-1', assistantIds: [1, 1, 2, 99], order: 2 } },
-  { id: 'a', data: { title: 'Pertama', hasPracticum: false, modules: [{ title: 'Stale', topics: 'Stale' }], coordinatorId: 'missing', assistantIds: [2], order: 1 } },
+  { id: 'b', data: { title: 'Kedua', code: 'B', sks: 3, hasPracticum: true, modules: [{ title: 'Modul 1', topics: 'Topik' }], coordinatorId: 'dosen-koordinator-matkul-1', assistantIds: [1, 1, 2, 99], order: 2 } },
+  { id: 'a', data: { title: 'Pertama', code: 'A', sks: 2, hasPracticum: false, modules: [{ title: 'Stale', topics: 'Stale' }], coordinatorId: 'missing', assistantIds: [2], order: 1 } },
 ];
 const resolvedCourses = resolveCourses(courseEntries, courseLecturers, courseMembers);
 assert(resolvedCourses.length === 2, 'every course resolves');
@@ -696,6 +696,27 @@ assert(courseHasContent(resolvedCourses[0]).modules.length === 0, 'non-practicum
 assert(courseHasContent(resolvedCourses[0]).assistants.length === 0, 'non-practicum course exposes no assistants');
 assert(resolvedCourses[1].assistants.length === 2, 'assistant ids resolve, dedupe, and drop missing');
 assert(courseHasContent(resolvedCourses[1]).assistants[0].name === 'Asisten A', 'assistants keep member order');
+
+// 16. Practicum assistant overlap
+console.log('\n16. Testing Practicum Assistant Summary:');
+const overlapCourses = [
+  { id: 'a', data: { title: 'A', code: 'X', sks: 3, hasPracticum: true, modules: [], coordinatorId: 'x', assistantIds: [1, 2], order: 1 } },
+  { id: 'b', data: { title: 'B', code: 'Y', sks: 3, hasPracticum: true, modules: [], coordinatorId: 'x', assistantIds: [2, 3], order: 2 } },
+  { id: 'c', data: { title: 'C', code: 'Z', sks: 2, hasPracticum: false, modules: [], coordinatorId: 'x', assistantIds: [4], order: 3 } },
+];
+const overlapMembers = [
+  { id: 1, name: 'A', role: 'mahasiswa-anggota', image: '', scale: '1', position: 'center' },
+  { id: 2, name: 'B', role: 'koordinator-asisten', image: '', scale: '1', position: 'center' },
+];
+const overlap = summarizePracticumAssistants(overlapCourses, overlapMembers);
+assert(overlap.distinctCount === 3, 'distinct assistants span practicum courses and dedupe');
+assert(overlap.memberCount === 1, 'only mahasiswa-anggota assistants count as members with a dual role');
+assert(!overlapCourses.filter((course) => course.data.hasPracticum).some((course) => course.data.assistantIds.includes(4)), 'non-practicum assistants are excluded');
+const noPracticum = summarizePracticumAssistants(
+  [{ id: 'd', data: { title: 'D', code: 'W', sks: 2, hasPracticum: false, modules: [], coordinatorId: 'x', assistantIds: [1], order: 1 } }],
+  overlapMembers,
+);
+assert(noPracticum.distinctCount === 0 && noPracticum.memberCount === 0, 'no practicum yields zero assistants');
 
 console.log(`\n${passed} passed, ${failed} failed`);
 if (failed > 0) process.exitCode = 1;

@@ -1,4 +1,6 @@
 ---
+code: SI2xxx
+sks: 3
 title: Mata Kuliah Contoh 2
 hasPracticum: true
 modules:

@@ -63,7 +63,7 @@ export const STAGE_LABELS: Record<string, { label: string; href: string }> = {
   technical_test: { label: 'Cek Status Seleksi', href: '/registration' },
   technical_test_results: { label: 'Cek Status Seleksi', href: '/registration' },
   interview: { label: 'Cek Status Seleksi', href: '/registration' },
-  closed: { label: 'Hubungi Kami', href: '/contact' },
+  closed: { label: 'Kontak', href: '/contact' },
 };
 
 /** Primary action for a recruitment stage; unknown stages fall back to closed. */

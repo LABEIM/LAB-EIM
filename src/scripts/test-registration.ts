@@ -627,7 +627,7 @@ assert(filterCards.map(card => card.searchText).join('|') === filterOrderBefore,
 // 13. Role labels and stage CTA
 console.log('\n13. Testing Stage CTA:');
 assert(resolveStageCta('open').href === '/registration', 'open stage points at registration');
-assert(resolveStageCta('closed').label === 'Hubungi Kami', 'closed stage points at contact');
+assert(resolveStageCta('closed').label === 'Kontak', 'closed stage points at contact');
 assert(resolveStageCta('nope').href === '/contact', 'unknown stage falls back to contact');
 
 // 14. Positions

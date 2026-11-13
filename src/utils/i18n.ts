@@ -53,7 +53,7 @@ export const uiTranslations: Record<Locale, Record<string, string>> = {
     'badge.completed': 'Selesai',
 
     // Footer
-    'footer.description': 'Laboratorium Riset Enterprise Infrastructure Management Telkom University.',
+    'footer.description': 'Laboratorium Enterprise Infrastructure Management Telkom University.',
     'footer.quickLinks': 'Jelajahi',
     'footer.contact': 'Kontak',
     'footer.resources': 'Tautan',
@@ -115,7 +115,7 @@ export const uiTranslations: Record<Locale, Record<string, string>> = {
     'form.chooseFile': 'Pilih berkas',
     'form.noFile': 'Belum ada berkas',
     'form.requirementsTitle': 'Persyaratan:',
-    'form.dataUse': 'Berkas dan data yang Anda kirim hanya digunakan untuk seleksi asisten EIM Research Lab.',
+    'form.dataUse': 'Berkas dan data yang Anda kirim hanya digunakan untuk seleksi asisten EIM Lab.',
     'form.uploadNotice': 'Format berkas yang diperbolehkan: {exts}. Perhatikan batas ukuran maksimum per berkas.',
     'form.termsAgree': 'Saya menyatakan bahwa seluruh data dan dokumen yang saya unggah adalah benar, valid, dan dapat dipertanggungjawabkan.',
     'form.submit': 'Kirim Pendaftaran',
@@ -167,10 +167,10 @@ export const uiTranslations: Record<Locale, Record<string, string>> = {
 
     // Structure Page
     'struct.title': 'Struktur Organisasi Lab',
-    'struct.metaDescription': 'Struktur organisasi EIM Research Lab: dosen, koordinator asisten, mahasiswa anggota, dan asisten praktikum.',
+    'struct.metaDescription': 'Struktur organisasi EIM Lab: dosen, koordinator asisten, mahasiswa anggota, dan asisten praktikum.',
     'struct.heroEyebrow': 'Struktur organisasi',
     'struct.heroTitle': 'Satu lab,\nsatu tim.',
-    'struct.heroDesc': 'Dosen, koordinator asisten, dan mahasiswa anggota yang menjalankan riset, praktikum, dan pengabdian di EIM Research Lab.',
+    'struct.heroDesc': 'Dosen, koordinator asisten, dan mahasiswa anggota yang menjalankan riset, praktikum, dan pengabdian di EIM Lab.',
     'struct.heroPrimary': 'Jelajahi bagan',
     'struct.heroSecondary': 'Mata kuliah',
     'struct.heroMeta': '{members} anggota laboratorium · {dosen} dosen · {positions} peran',
@@ -202,10 +202,10 @@ export const uiTranslations: Record<Locale, Record<string, string>> = {
     // Courses Page
     'courses.heroEyebrow': 'Pengajaran',
     'courses.heroTitle': 'Mata kuliah\ndan praktikum.',
-    'courses.heroDesc': 'Daftar mata kuliah di bidang studi EIM Research Lab, lengkap dengan status praktikum, modul, dosen koordinator, dan asisten praktikumnya.',
+    'courses.heroDesc': 'Daftar mata kuliah di bidang studi EIM Lab, lengkap dengan status praktikum, modul, dosen koordinator, dan asisten praktikumnya.',
     'courses.heroPrimary': 'Lihat daftar',
     'courses.heroSecondary': 'Kegiatan',
-    'courses.metaDescription': 'Mata kuliah dan praktikum di bidang studi EIM Research Lab: modul, koordinator mata kuliah, dan asisten praktikum.',
+    'courses.metaDescription': 'Mata kuliah dan praktikum di bidang studi EIM Lab: modul, koordinator mata kuliah, dan asisten praktikum.',
     'courses.summary': '{n} mata kuliah · {p} dengan praktikum',
     'courses.listEyebrow': 'Katalog',
     'courses.listTitle': 'Daftar mata kuliah.',
@@ -219,7 +219,7 @@ export const uiTranslations: Record<Locale, Record<string, string>> = {
     'courses.sksLabel': '{n} SKS',
     'courses.backToList': 'Semua mata kuliah',
     'courses.noPracticumNote': 'Mata kuliah ini tidak memiliki praktikum, sehingga tidak ada modul maupun asisten praktikum.',
-    'courses.detailDescription': '{title} di EIM Research Lab: status praktikum, modul, dosen koordinator, dan asisten praktikum.',
+    'courses.detailDescription': '{title} di EIM Lab: status praktikum, modul, dosen koordinator, dan asisten praktikum.',
     'courses.sectionNavLabel': 'Navigasi bagian halaman',
     'courses.navDotList': 'Daftar',
 
@@ -229,7 +229,7 @@ export const uiTranslations: Record<Locale, Record<string, string>> = {
     'about.values': 'Nilai-Nilai Utama',
     'about.heroEyebrow': 'Tentang Kami',
     'about.heroTitle': 'Kami mempelajari sistem yang menopang dunia digital.',
-    'about.heroDesc': 'Enterprise Infrastructure Management Research Lab Telkom University — tempat riset, pembelajaran, dan kolaborasi di bidang infrastruktur enterprise.',
+    'about.heroDesc': 'Enterprise Infrastructure Management Lab Telkom University — tempat riset, pembelajaran, dan kolaborasi di bidang infrastruktur enterprise.',
     'about.heroPrimary': 'Profil lab',
     'about.heroSecondary': 'Struktur',
     'about.heroMeta': 'Telkom University · Fakultas Rekayasa Industri · S1 Sistem Informasi',
@@ -254,11 +254,11 @@ export const uiTranslations: Record<Locale, Record<string, string>> = {
 
     // Events Page
     'events.title': 'Kegiatan & Acara',
-    'events.subtitle': 'Ikuti workshop, studi banding, webinar, dan kegiatan EIM Research Lab.',
-    'events.metaDescription': 'Kegiatan EIM Research Lab — workshop, seminar, studi banding, dan program laboratorium.',
+    'events.subtitle': 'Ikuti workshop, studi banding, webinar, dan kegiatan EIM Lab.',
+    'events.metaDescription': 'Kegiatan EIM Lab — workshop, seminar, studi banding, dan program laboratorium.',
     'events.heroEyebrow': 'Kegiatan',
     'events.heroTitle': 'Kegiatan\nlaboratorium.',
-    'events.heroDesc': 'Workshop, seminar, studi banding, dan program EIM Research Lab — lengkap dengan dokumentasinya.',
+    'events.heroDesc': 'Workshop, seminar, studi banding, dan program EIM Lab — lengkap dengan dokumentasinya.',
     'events.heroPrimary': 'Lihat kegiatan',
     'events.heroSecondary': 'Artikel',
     'events.heroMeta': '{events} kegiatan · {categories} kategori · terbaru {year}',
@@ -275,7 +275,7 @@ export const uiTranslations: Record<Locale, Record<string, string>> = {
     'events.listNoMatchDesc': 'Tidak ada kegiatan yang cocok dengan pencarian atau filter Anda. Coba kata kunci lain atau reset filter.',
     'events.backToList': 'Kembali ke kegiatan',
     'events.share': 'Bagikan',
-    'events.organizerFallback': 'EIM Research Lab',
+    'events.organizerFallback': 'EIM Lab',
     'events.contact': 'Hubungi kami',
     'events.dateTbd': 'Tanggal menyusul',
     'events.relatedEyebrow': 'Kegiatan lain',
@@ -289,7 +289,7 @@ export const uiTranslations: Record<Locale, Record<string, string>> = {
 
     // News Page
     'news.title': 'Artikel',
-    'news.subtitle': 'Tulisan riset, publikasi, dan pengumuman dari EIM Research Lab.',
+    'news.subtitle': 'Tulisan riset, publikasi, dan pengumuman dari EIM Lab.',
     'news.author': 'Penulis',
     'news.date': 'Tanggal',
     'news.featured': 'Artikel utama',
@@ -299,13 +299,13 @@ export const uiTranslations: Record<Locale, Record<string, string>> = {
     'news.backToIndex': 'Kembali ke daftar artikel',
     'news.relatedEyebrow': 'Artikel lain',
     'news.relatedTitle': 'Baca juga.',
-    'news.relatedIntro': 'Artikel lain dari EIM Research Lab yang mungkin Anda minati.',
+    'news.relatedIntro': 'Artikel lain dari EIM Lab yang mungkin Anda minati.',
 
     // News Index
-    'news.metaDescription': 'Artikel, publikasi, dan pengumuman dari EIM Research Lab.',
+    'news.metaDescription': 'Artikel, publikasi, dan pengumuman dari EIM Lab.',
     'news.heroEyebrow': 'Artikel',
     'news.heroTitle': 'Catatan\ndari lab.',
-    'news.heroDesc': 'Tulisan riset, publikasi, dan pengumuman dari EIM Research Lab.',
+    'news.heroDesc': 'Tulisan riset, publikasi, dan pengumuman dari EIM Lab.',
     'news.heroPrimary': 'Telusuri artikel',
     'news.heroSecondary': 'Kegiatan',
     'news.heroMeta': '{articles} artikel · {categories} kategori · terbaru {year}',
@@ -347,8 +347,8 @@ export const uiTranslations: Record<Locale, Record<string, string>> = {
     'contact.picsSubtitle': 'Pilih PIC sesuai kebutuhan: rekrutmen dan kegiatan, atau riset dan kolaborasi.',
 
     // Home Page v2 [PLACEHOLDER — draft]
-    'home.heroKicker': 'EIM Research Lab',
-    'home.heroTitle': 'Riset infrastruktur\nuntuk dunia nyata.',
+    'home.heroKicker': 'EIM Lab',
+    'home.heroTitle': 'Infrastruktur untuk\ndunia nyata.',
     'home.heroDesc': 'Laboratorium Enterprise Infrastructure Management Telkom University — jaringan, cloud, sistem operasi, keamanan siber.',
     'home.heroPrimary': 'Jelajahi lab',
     'home.heroSecondary': 'Tentang Kami',

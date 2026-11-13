@@ -1,6 +1,6 @@
 # ==============================================================================
-# Enterprise Infrastructure Management (EIM) Research Laboratory
-# Project: EIM Research Lab Website
+# Enterprise Infrastructure Management (EIM) Laboratory
+# Project: EIM Lab Website
 # Host: https://eimlab.org/
 # ==============================================================================
 

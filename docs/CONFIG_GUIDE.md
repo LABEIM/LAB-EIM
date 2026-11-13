@@ -1,4 +1,4 @@
-# EIM Research Lab - Configuration Guide & Templates
+# EIM Lab - Configuration Guide & Templates
 
 This guide explains how to update the laboratory positions, members, courses, and recruitment registration details using the JSON files in `src/data/` and the Markdown collections in `src/content/`.
 
@@ -126,7 +126,7 @@ News articles are stored as Markdown (`.md`) files in `src/content/news/`.
 ### Fields Explanation
 * **`title`** (String): The title of the news article.
 * **`category`** (String): The category tag (e.g., `"Beasiswa"`, `"Pengumuman"`, `"Riset"`).
-* **`author`** (String): The publisher or author name (e.g., `"EIM Research Lab"`, `"UK Government"`).
+* **`author`** (String): The publisher or author name (e.g., `"EIM Lab"`, `"UK Government"`).
 * **`news_date`** (String): Date of publication in `YYYY-MM-DD` format.
 * **`image`** (Array of Strings): Optional image URLs or paths to display as featured images.
 
@@ -160,7 +160,7 @@ Events are stored as Markdown (`.md`) files in `src/content/events/`.
 * **`poster`** (String, Optional): Poster image URL. Used as the list card cover, and on the detail page only as the cover fallback when `image` is empty.
 * **`image`** (Array of Strings, Optional): Optional image URLs/paths. The first non-blank image is used as the detail page cover; the remaining images render as the documentation gallery.
 * **`icon`** (String, Optional): FontAwesome icon class name (e.g., `"fa-building-columns"`, `"fa-solid fa-calendar-days"`).
-* **`organizer`** (String, Optional): Name of the organizer (defaults to `"EIM Research Lab"`).
+* **`organizer`** (String, Optional): Name of the organizer (defaults to `"EIM Lab"`).
 * **`benefits`** (Array of Strings, Optional): Accepted by the schema but not rendered on the detail page.
 * **`requirements`** (Array of Strings, Optional): Accepted by the schema but not rendered on the detail page.
 * **`audit`** (Boolean, Optional): Marks benchmark-only content. Audit entries are reachable by direct URL but hidden from production listings and related-event pools.
@@ -179,7 +179,7 @@ link: "https://example.com/optional-registration-link"
 image:
   - "https://images.unsplash.com/photo-1541701494587-cb58502866ab?auto=format&fit=crop&q=80&w=600"
 icon: "fa-solid fa-calendar-days"
-organizer: "EIM Research Lab"
+organizer: "EIM Lab"
 benefits:
   - "Benefit 1"
   - "Benefit 2"
@@ -199,8 +199,8 @@ This file configures the global branding, tab information, and social links of t
 
 ### Fields Explanation
 * **`name`** (String): Short name of the lab (e.g. `"EIM"`). Used in the Navbar logo and title.
-* **`subName`** (String): Subtitle suffix for the logo (e.g. `"Research Lab"`).
-* **`fullName`** (String): Complete formal name (e.g. `"Enterprise Infrastructure Management Research Laboratory"`). Used in copyright text and about summaries.
+* **`subName`** (String): Subtitle suffix for the logo (e.g. `"Lab"`).
+* **`fullName`** (String): Complete formal name (e.g. `"Enterprise Infrastructure Management Laboratory"`). Used in copyright text and about summaries.
 * **`defaultTitle`** (String): The default window/tab title for pages that do not override it.
 * **`defaultDescription`** (String): Fallback meta description for search engines.
 * **`defaultKeywords`** (String): Fallback meta keywords list for SEO.
@@ -219,11 +219,11 @@ This file configures the global branding, tab information, and social links of t
 ```json
 {
   "name": "EIM",
-  "subName": "Research Lab",
-  "fullName": "Enterprise Infrastructure Management Research Laboratory",
-  "defaultTitle": "EIM Research Lab - Enterprise Infrastructure Management",
-  "defaultDescription": "Website Resmi Enterprise Infrastructure Management (EIM) Research Lab Telkom University.",
-  "defaultKeywords": "EIM, EIM Research Lab, Telkom University, Enterprise Infrastructure Management, Laboratorium Jaringan, Cloud Computing, Riset Jaringan",
+  "subName": "Lab",
+  "fullName": "Enterprise Infrastructure Management Laboratory",
+  "defaultTitle": "EIM Lab - Enterprise Infrastructure Management",
+  "defaultDescription": "Website Resmi Enterprise Infrastructure Management (EIM) Lab Telkom University.",
+  "defaultKeywords": "EIM, EIM Lab, Telkom University, Enterprise Infrastructure Management, Laboratorium Jaringan, Cloud Computing, Praktikum Jaringan",
   "favicon": "/image/eim/logo_EIM.avif",
   "logo": "/image/eim/logo_EIM.avif",
   "timezone": "Asia/Jakarta",

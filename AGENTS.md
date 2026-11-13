@@ -72,7 +72,7 @@ Before ending a session, the agent must perform these tasks:
 - `public/`: Static assets, `robots.txt`, `sitemap.xml`, `manifest.webmanifest`, `llms.txt`, `llms-full.txt`, and `.well-known/security.txt`.
 
 ### 2.3 Role-Based Access Control & Scoping
-- **Authentication**: None. The EIM Research Lab website is a fully public, static application.
+- **Authentication**: None. The EIM Lab website is a fully public, static application.
 - **Authorization / RBAC**: Public read-only access. Keystatic CMS operates locally or through Keystatic Cloud; there is no database-backed auth layer.
 - **Protected Routes**: None. `/keystatic` is the CMS admin surface, not an authenticated application route.
 

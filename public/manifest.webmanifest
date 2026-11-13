@@ -1,7 +1,7 @@
 {
-  "name": "EIM Research Lab Website",
+  "name": "EIM Lab Website",
   "short_name": "EIM Lab",
-  "description": "Official website of the Enterprise Infrastructure Management (EIM) Research Laboratory, Telkom University.",
+  "description": "Official website of the Enterprise Infrastructure Management (EIM) Laboratory, Telkom University.",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#0B0F19",

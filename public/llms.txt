@@ -1,10 +1,10 @@
-# EIM Research Lab Website — Enterprise Infrastructure Management (EIM) Research Laboratory
+# EIM Lab Website — Enterprise Infrastructure Management (EIM) Laboratory
 
-> Official website of the Enterprise Infrastructure Management (EIM) Research Laboratory, Telkom University.
+> Official website of the Enterprise Infrastructure Management (EIM) Laboratory, Telkom University.
 
 ## Project Overview
-- **Project Name:** EIM Research Lab Website
-- **Organization:** Enterprise Infrastructure Management (EIM) Research Laboratory, Telkom University
+- **Project Name:** EIM Lab Website
+- **Organization:** Enterprise Infrastructure Management (EIM) Laboratory, Telkom University
 - **Repository:** https://github.com/LABEIM/LAB-EIM
 - **Production URL:** https://eimlab.org/
 - **Documentation:** https://github.com/LABEIM/LAB-EIM#readme

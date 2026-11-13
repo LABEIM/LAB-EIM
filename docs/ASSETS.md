@@ -1,6 +1,6 @@
 # EIM Brand & Email Assets Hub
 
-Official documentation for all visual assets, logos, emblems, banners, and social media icons for the **Enterprise Infrastructure Management (EIM) Research Lab**.
+Official documentation for all visual assets, logos, emblems, banners, and social media icons for the **Enterprise Infrastructure Management (EIM) Lab**.
 
 All assets are hosted publicly via the site's Cloudflare CDN so they can be accessed online by email clients (**Gmail**, **Outlook**, **Apple Mail**, **Yahoo**), web applications, and backend integrations.
 
@@ -25,7 +25,7 @@ Assets specifically designed and compressed for HTML emails, newsletters, regist
 | :--- | :--- | :--- | :--- | :--- | :--- |
 | `public/assets/email/logo.png` | PNG (Transparent) | 500 × 114 px | **8.4 KB** | Light / White | Main email header (horizontal version) |
 | `public/assets/email/logo-white.png` | PNG (Transparent) | 500 × 114 px | **8.9 KB** | Dark / Navy | Dark Mode email header (white text) |
-| `public/assets/email/logo-compact.png` | PNG (Transparent) | 500 × 172 px | **8.2 KB** | Light / White | Compact logo ("EIM Research Lab") |
+| `public/assets/email/logo-compact.png` | PNG (Transparent) | 500 × 172 px | **8.2 KB** | Light / White | Compact logo ("EIM Lab") |
 | `public/assets/email/logo-compact-white.png` | PNG (Transparent) | 500 × 172 px | **8.2 KB** | Dark / Navy | Compact logo with white text for dark themes |
 | `public/assets/email/logo-vertical.png` | PNG (Transparent) | 400 × 287 px | **9.6 KB** | Light / White | Classic vertical layout for footer/memo |
 | `public/assets/email/logo-vertical-white.png` | PNG (Transparent) | 400 × 287 px | **11 KB** | Dark / Navy | Vertical layout with white text |
@@ -58,7 +58,7 @@ Full resolution assets for publications, website, PDF documents, and presentatio
 | :--- | :--- | :--- | :--- | :--- |
 | `public/assets/brand/eim-logo.png` | PNG | 1600 × 365 px | 33 KB | Standard horizontal master logo |
 | `public/assets/brand/eim-logo-horizontal-white.png` | PNG | 1600 × 365 px | 31 KB | Master horizontal logo with white text |
-| `public/assets/brand/eim-logo-compact.png` | PNG | 1000 × 344 px | 46 KB | Compact master logo EIM Research Lab |
+| `public/assets/brand/eim-logo-compact.png` | PNG | 1000 × 344 px | 46 KB | Compact master logo EIM Lab |
 | `public/assets/brand/eim-logo-compact-white.png` | PNG | 1000 × 344 px | 45 KB | Compact master logo with white text |
 | `public/assets/brand/eim-logo-vertical.png` | PNG | 1200 × 862 px | 36 KB | Standard vertical master logo |
 | `public/assets/brand/eim-logo-vertical-white.png` | PNG | 1200 × 862 px | 35 KB | Master vertical logo with white text |
@@ -80,7 +80,7 @@ Full resolution assets for publications, website, PDF documents, and presentatio
       <a href="https://eimresearchlab.com" target="_blank">
         <img 
           src="https://eimresearchlab.com/assets/email/logo.png" 
-          alt="EIM Research Lab" 
+          alt="EIM Lab" 
           width="200" 
           style="display: block; width: 200px; max-width: 100%; height: auto; border: 0;"
         />
@@ -97,7 +97,7 @@ Full resolution assets for publications, website, PDF documents, and presentatio
 <div style="background-color: #0f172a; padding: 25px; text-align: center; border-radius: 8px 8px 0 0;">
   <img 
     src="https://eimresearchlab.com/assets/email/logo-white.png" 
-    alt="EIM Research Lab" 
+    alt="EIM Lab" 
     width="190" 
     style="display: inline-block; width: 190px; max-width: 100%; height: auto; border: 0;"
   />
@@ -112,7 +112,7 @@ In project `email-template-eim` (e.g. in `src/presets/newsletter.ts` or `staffMe
 header: {
   showLogo: true,
   logoUrl: 'https://eimresearchlab.com/assets/email/logo.png', // or logo-white.png
-  logoAlt: 'EIM Research Lab',
+  logoAlt: 'EIM Lab',
   logoWidth: 190,
 }
 ```

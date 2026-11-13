@@ -12,7 +12,7 @@ image:
   - "/assets/brand/eim-emblem.png"
 poster: "/assets/brand/eim-logo.png"
 icon: "fa-solid fa-flask"
-organizer: "EIM Research Lab"
+organizer: "EIM Lab"
 benefits:
   - "Pengalaman langsung dalam penelitian teknologi embedded systems"
   - "Akses ke infrastruktur cloud dan perangkat keras laboratorium"
@@ -44,6 +44,6 @@ Laboratorium EIM secara rutin menyelenggarakan berbagai kegiatan akademik dan pe
 
 ## Narahubung
 
-Untuk informasi lebih lanjut, silakan hubungi tim EIM Research Lab melalui halaman kontak resmi.
+Untuk informasi lebih lanjut, silakan hubungi tim EIM Lab melalui halaman kontak resmi.
 
 > **Catatan:** Halaman ini hanya dapat diakses melalui URL langsung dan tidak akan muncul di daftar kegiatan publik.

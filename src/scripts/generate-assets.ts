@@ -138,7 +138,7 @@ export async function generateAssets() {
   // Primary logo default
   fs.copyFileSync(path.join(brandDir, 'eim-logo-horizontal.png'), path.join(brandDir, 'eim-logo.png'));
 
-  // 7. Compact "EIM RESEARCH LAB" Lockup
+  // 7. Compact "EIM LAB" Lockup
   const compactEmblem = await sharp(emblemBuffer)
     .resize(300, 344)
     .toBuffer({ resolveWithObject: true });
@@ -146,7 +146,7 @@ export async function generateAssets() {
   const svgTextDark = `
     <svg width="650" height="344" viewBox="0 0 650 344" xmlns="http://www.w3.org/2000/svg">
       <text x="0" y="200" font-family="'Montserrat', 'Segoe UI', Arial, sans-serif" font-size="160" font-weight="900" fill="#0c535d" letter-spacing="2">EIM</text>
-      <text x="5" y="270" font-family="'Montserrat', 'Segoe UI', Arial, sans-serif" font-size="48" font-weight="700" fill="#06b6d4" letter-spacing="6">RESEARCH LAB</text>
+      <text x="5" y="270" font-family="'Montserrat', 'Segoe UI', Arial, sans-serif" font-size="48" font-weight="700" fill="#06b6d4" letter-spacing="6">LAB</text>
       <text x="6" y="320" font-family="'Montserrat', 'Segoe UI', Arial, sans-serif" font-size="28" font-weight="500" fill="#64748b" letter-spacing="3">TELKOM UNIVERSITY</text>
     </svg>
   `;
@@ -154,7 +154,7 @@ export async function generateAssets() {
   const svgTextWhite = `
     <svg width="650" height="344" viewBox="0 0 650 344" xmlns="http://www.w3.org/2000/svg">
       <text x="0" y="200" font-family="'Montserrat', 'Segoe UI', Arial, sans-serif" font-size="160" font-weight="900" fill="#ffffff" letter-spacing="2">EIM</text>
-      <text x="5" y="270" font-family="'Montserrat', 'Segoe UI', Arial, sans-serif" font-size="48" font-weight="700" fill="#38bdf8" letter-spacing="6">RESEARCH LAB</text>
+      <text x="5" y="270" font-family="'Montserrat', 'Segoe UI', Arial, sans-serif" font-size="48" font-weight="700" fill="#38bdf8" letter-spacing="6">LAB</text>
       <text x="6" y="320" font-family="'Montserrat', 'Segoe UI', Arial, sans-serif" font-size="28" font-weight="500" fill="#94a3b8" letter-spacing="3">TELKOM UNIVERSITY</text>
     </svg>
   `;

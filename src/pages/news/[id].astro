@@ -32,11 +32,11 @@ const relatedNews = getRelatedNews(item.id, allNews, 3);
 
 const formattedDate = formatGlobalDate(item.data.news_date);
 const readTime = calculateReadingTime(item.body);
-const metaDesc = item.data.excerpt || `${item.data.title} · EIM Research Lab`;
+const metaDesc = item.data.excerpt || `${item.data.title} · EIM Lab`;
 const newsIndexHref = getLocalizedPath('/news', locale);
 ---
 
-<Layout title={`${item.data.title} · EIM Research Lab`} description={metaDesc} homeSkin skipLink>
+<Layout title={`${item.data.title} · EIM Lab`} description={metaDesc} homeSkin skipLink>
   <main id="main-content" tabindex="-1">
     <section class="article-detail-hero" aria-labelledby="article-title">
       <div class="mx-auto max-w-[1200px] px-[clamp(1.25rem,4vw,4rem)]">

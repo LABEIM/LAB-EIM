@@ -1,7 +1,7 @@
 ---
 title: "Artikel Benchmark: Pengujian Performa Halaman Berita"
 category: "Benchmark"
-author: "EIM Research Lab"
+author: "EIM Lab"
 news_date: "2024-01-01"
 image:
   - "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&q=80&w=1200"
@@ -26,7 +26,7 @@ Dalam pengembangan perangkat lunak, pengukuran performa yang konsisten sangat pe
 - **Membandingkan skor** antar pull request secara adil
 - **Memvalidasi template halaman** dengan konten yang realistis dan stabil
 
-## Tentang EIM Research Lab
+## Tentang EIM Lab
 
 Laboratorium EIM (Electronics and Instrumentation) adalah unit riset yang berfokus pada pengembangan teknologi sensor, sistem embedded, dan infrastruktur komputasi awan. Laboratorium ini telah aktif sejak 2018 dan telah menghasilkan berbagai publikasi ilmiah di bidang IoT dan Cloud Computing.
 

@@ -77,6 +77,28 @@
     color: var(--text-primary);
 }
 
+.logo-brand {
+    display: none;
+    width: auto;
+    height: 40px;
+}
+
+.logo-mark {
+    display: block;
+    width: 40px;
+    height: 40px;
+}
+
+/* The wide wordmark needs ~221px; the nav links need the rest until 1100px. */
+@media (min-width: 1100px) {
+    .logo-brand {
+        display: block;
+    }
+    .logo-mark {
+        display: none;
+    }
+}
+
 .logo-icon {
     width: 40px;
     height: 40px;

@@ -8,7 +8,7 @@ link: "https://example.com/optional-registration-link"
 image:
   - "https://images.unsplash.com/photo-1541701494587-cb58502866ab?auto=format&fit=crop&q=80&w=600"
 icon: "fa-solid fa-calendar-days" # FontAwesome icon class name
-organizer: "EIM Research Lab"
+organizer: "EIM Lab"
 benefits:
   - "Benefit 1"
   - "Benefit 2"

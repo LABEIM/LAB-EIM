@@ -74,7 +74,7 @@ acceptedCandidates.forEach((candidate: any) => {
 });
 
 const heroTitle = registrationConfig.heroTitle || t('reg.title', locale);
-const heroDescription = registrationConfig.heroDescription || 'Join us and become a part of EIM Research Lab.';
+const heroDescription = registrationConfig.heroDescription || 'Join us and become a part of EIM Lab.';
 const heroEyebrow = registrationConfig.heroTag || t('reg.title', locale);
 const registrationPeriod = t('reg.period', locale, {
   start: formatGlobalDate(openDateStr),
@@ -82,7 +82,7 @@ const registrationPeriod = t('reg.period', locale, {
 });
 ---
 
-<Layout title={`${heroTitle} · EIM Research Lab`} description={heroDescription} homeSkin skipLink>
+<Layout title={`${heroTitle} · EIM Lab`} description={heroDescription} homeSkin skipLink>
   <main id="main-content" class="registration-page" tabindex="-1">
     <section id="registration-hero" class="eim-hero eim-subhero" aria-labelledby="registration-hero-title">
       <canvas class="eim-hero-canvas" aria-hidden="true"></canvas>

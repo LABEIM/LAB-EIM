@@ -1,6 +1,6 @@
 # Security Policy
 
-The **Enterprise Infrastructure Management (EIM) Research Laboratory**, Telkom University, takes the security of our software, data infrastructure, and user systems seriously. This Security Policy outlines the supported versions, vulnerability reporting procedures, response timelines, and responsible disclosure practices for **EIM Research Lab Website**.
+The **Enterprise Infrastructure Management (EIM) Laboratory**, Telkom University, takes the security of our software, data infrastructure, and user systems seriously. This Security Policy outlines the supported versions, vulnerability reporting procedures, response timelines, and responsible disclosure practices for **EIM Lab Website**.
 
 ---
 
@@ -20,7 +20,7 @@ We actively provide security patches, dependency updates, and vulnerability fixe
 > **Do not report security vulnerabilities through public GitHub issues, discussions, pull requests, or public chat channels.**  
 > Public disclosure exposes users and systems before a patch can be developed and safely distributed.
 
-If you suspect or confirm a security vulnerability in **EIM Research Lab Website**, please report it using one of the private reporting channels below:
+If you suspect or confirm a security vulnerability in **EIM Lab Website**, please report it using one of the private reporting channels below:
 
 ### Option 1: GitHub Private Vulnerability Reporting (Preferred)
 1. Go to the repository's [Security Tab](https://github.com/LABEIM/LAB-EIM/security).
@@ -30,7 +30,7 @@ If you suspect or confirm a security vulnerability in **EIM Research Lab Website
 ### Option 2: Private Security Email
 Send an email directly to our security team:
 - **Lab Administration:** [lab@eimlab.org](mailto:lab@eimlab.org)
-- **Subject:** `[SECURITY] Vulnerability Report in EIM Research Lab Website: <Brief Summary>`
+- **Subject:** `[SECURITY] Vulnerability Report in EIM Lab Website: <Brief Summary>`
 
 ---
 
@@ -64,7 +64,7 @@ We make every reasonable effort to meet the following response milestones:
 ## Scope & Guidelines
 
 ### In-Scope
-- Vulnerabilities in the core source code, APIs, and microservices of **EIM Research Lab Website**.
+- Vulnerabilities in the core source code, APIs, and microservices of **EIM Lab Website**.
 - Authentication, authorization, session management flaws, and token leakage.
 - Injections, memory corruption, remote execution, or data exposure vulnerabilities.
 - Cryptographic weaknesses or improper key/secret storage.
@@ -81,7 +81,7 @@ We make every reasonable effort to meet the following response milestones:
 
 ## Secure Development & Best Practices
 
-Contributors and maintainers of **EIM Research Lab Website** follow standard secure engineering practices:
+Contributors and maintainers of **EIM Lab Website** follow standard secure engineering practices:
 
 - **Secret Management:** Never commit API keys, private tokens, passwords, or database credentials. Use `.env.example` templates and secrets managers.
 - **Dependency Auditing:** Regularly scan dependencies for known CVEs (e.g., `npm audit`, `pip-audit`, GitHub Dependabot / Secret Scanning).
@@ -107,4 +107,4 @@ We value ethical security researchers and will gladly credit you by name, handle
 For general inquiries or questions regarding security policies:
 - **Lab Contact:** [lab@eimlab.org](mailto:lab@eimlab.org)
 - **Organization Website:** [eimlab.org](https://eimlab.org)
-- **Institution:** Enterprise Infrastructure Management (EIM) Research Laboratory, Telkom University
+- **Institution:** Enterprise Infrastructure Management (EIM) Laboratory, Telkom University

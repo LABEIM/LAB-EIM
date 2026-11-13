@@ -63,7 +63,7 @@ export function getRegistrationPageConfigs(
     subtitle: "Practical skills assessment and technical challenge in progress.",
     message: "Please check your registered email for your technical test instructions and submission brief.",
     scheduleInfo: "07 - 10 August 2026",
-    locationInfo: "EIM Research Lab / Online Submission",
+    locationInfo: "EIM Lab / Online Submission",
   };
 
   const technicalTestResultsCfg = config.technicalTestResultsConfig || {
@@ -75,16 +75,16 @@ export function getRegistrationPageConfigs(
 
   const interviewCfg = config.interviewConfig || {
     title: "Interview Phase In Progress",
-    subtitle: "Candidate interview sessions in progress with EIM Research Lab team.",
+    subtitle: "Candidate interview sessions in progress with EIM Lab team.",
     message: "Please check your registered email for your assigned interview time slot and Zoom call details.",
     scheduleInfo: "12 - 15 August 2026",
-    locationInfo: "EIM Research Lab / Online Zoom Room",
+    locationInfo: "EIM Lab / Online Zoom Room",
   };
 
   const finalSelectionCfg = config.finalSelectionConfig || {
     title: "Seleksi Akhir & Olah Nilai Sedang Berlangsung",
     subtitle: "Seluruh rangkaian seleksi dan sesi wawancara telah selesai.",
-    message: "Terima kasih kepada seluruh kandidat yang telah mengikuti seluruh rangkaian seleksi. Tim EIM Research Lab saat ini sedang melakukan rekapitulasi nilai dan verifikasi kelulusan akhir. Pengumuman kelulusan akhir akan dipublikasikan pada 9 September 2026.",
+    message: "Terima kasih kepada seluruh kandidat yang telah mengikuti seluruh rangkaian seleksi. Tim EIM Lab saat ini sedang melakukan rekapitulasi nilai dan verifikasi kelulusan akhir. Pengumuman kelulusan akhir akan dipublikasikan pada 9 September 2026.",
     estimatedAnnouncementDate: "9 September 2026",
   };
 

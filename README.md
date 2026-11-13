@@ -1,4 +1,4 @@
-# EIM Research Lab Website
+# EIM Lab Website
 
 [![License: All Rights Reserved](https://img.shields.io/badge/License-All_Rights_Reserved-red.svg)](LICENSE)
 [![CI/CD](https://github.com/LABEIM/LAB-EIM/actions/workflows/ci-cd.yml/badge.svg)](https://github.com/LABEIM/LAB-EIM/actions)
@@ -7,15 +7,15 @@
 [![Website](https://img.shields.io/badge/Website-eimlab.org-0284c7.svg)](https://eimlab.org)
 [![Organization](https://img.shields.io/badge/Org-LABEIM-6366f1.svg)](https://eimlab.org)
 
-Official website of the Enterprise Infrastructure Management (EIM) Research Laboratory, Faculty of Industrial Engineering, Telkom University — presenting laboratory news, events, divisions, staff profiles, and recruitment announcements.
+Official website of the Enterprise Infrastructure Management (EIM) Laboratory, Faculty of Industrial Engineering, Telkom University — presenting laboratory news, events, divisions, staff profiles, and recruitment announcements.
 
-[**Live Website**](https://eimlab.org) · [**EIM Research Lab**](https://eimlab.org) · [**Report Issue**](https://github.com/LABEIM/LAB-EIM/issues)
+[**Live Website**](https://eimlab.org) · [**EIM Lab**](https://eimlab.org) · [**Report Issue**](https://github.com/LABEIM/LAB-EIM/issues)
 
 ---
 
 ## About This Project
 
-The EIM Research Lab website is a statically generated, Indonesian-language public site built with Astro and managed through Keystatic CMS. Content is stored as Markdown collections and JSON data files, so the site can be maintained without a database. It is deployed to Cloudflare Workers as the primary host, with Vercel available as a static backup host.
+The EIM Lab website is a statically generated, Indonesian-language public site built with Astro and managed through Keystatic CMS. Content is stored as Markdown collections and JSON data files, so the site can be maintained without a database. It is deployed to Cloudflare Workers as the primary host, with Vercel available as a static backup host.
 
 - **Primary Host:** [eimlab.org](https://eimlab.org)
 - **Secondary Host:** [backup.eimlab.org](https://backup.eimlab.org)
@@ -70,7 +70,7 @@ For concerns or incident reports, please contact the project team or laboratory 
 
 ## License & Ownership
 
-Copyright (c) 2026 **Enterprise Infrastructure Management (EIM) Research Laboratory**, Telkom University.  
+Copyright (c) 2026 **Enterprise Infrastructure Management (EIM) Laboratory**, Telkom University.  
 **All Rights Reserved.**
 
-This repository, its source code, website design, assets, and documentation are proprietary and confidential to Enterprise Infrastructure Management (EIM) Research Laboratory. Unauthorized copying, modification, distribution, public display, or re-hosting is strictly prohibited without prior written consent. See [LICENSE](LICENSE) for full terms.
+This repository, its source code, website design, assets, and documentation are proprietary and confidential to Enterprise Infrastructure Management (EIM) Laboratory. Unauthorized copying, modification, distribution, public display, or re-hosting is strictly prohibited without prior written consent. See [LICENSE](LICENSE) for full terms.

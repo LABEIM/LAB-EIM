@@ -228,7 +228,7 @@ export const uiTranslations: Record<Locale, Record<string, string>> = {
     'about.mission': 'Misi',
     'about.values': 'Nilai-Nilai Utama',
     'about.heroEyebrow': 'Tentang Kami',
-    'about.heroTitle': 'Kami mempelajari sistem\nyang menopang dunia digital.',
+    'about.heroTitle': 'Kami mempelajari sistem yang menopang dunia digital.',
     'about.heroDesc': 'Enterprise Infrastructure Management Research Lab Telkom University — tempat riset, pembelajaran, dan kolaborasi di bidang infrastruktur enterprise.',
     'about.heroPrimary': 'Profil lab',
     'about.heroSecondary': 'Struktur',

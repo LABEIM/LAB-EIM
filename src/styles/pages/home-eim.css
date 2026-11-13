@@ -156,6 +156,7 @@ html {
   line-height: 0.98;
   letter-spacing: -0.01em;
   color: var(--color-foreground);
+  text-wrap: balance;
 }
 
 .eim-hero-title-line {
@@ -276,7 +277,8 @@ html {
 }
 
 .eim-subhero .eim-hero-title {
-  max-width: 20ch;
+  /* `ch` measures the 0 glyph, not this face: it orphaned the last word. */
+  max-width: 14em;
 }
 
 .eim-subhero .eim-hero-desc {

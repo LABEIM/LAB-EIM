@@ -41,6 +41,9 @@ const sectionItems = [
         <p class="eim-hero-desc">{t('courses.heroDesc', locale)}</p>
         <div class="eim-hero-actions">
           <a class="eim-hero-cta" href="#daftar">{t('courses.heroPrimary', locale)}</a>
+          <a class="eim-hero-secondary" href="/event">
+            {t('courses.heroSecondary', locale)} <span aria-hidden="true">→</span>
+          </a>
         </div>
         {courses.length > 0 && (
           <p class="eim-subhero-meta">

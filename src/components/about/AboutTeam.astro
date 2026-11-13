@@ -1,16 +1,17 @@
 ---
-import { roleLabel } from '../../utils/roles';
-import type { DivisionConfig, Member } from '../../utils/types';
-import { getDivisionInfo } from '../../utils/division-mapper';
+import type { Lecturer, Member, PositionSection } from '../../utils/types';
 import { getLocaleFromUrl, t } from '../../utils/i18n';
 
 interface Props {
-  coordinators: Member[];
-  divisions: DivisionConfig[];
+  sections: PositionSection<Member | Lecturer>[];
 }
 
-const { coordinators, divisions } = Astro.props;
+const { sections } = Astro.props;
 const locale = getLocaleFromUrl(Astro.url);
+
+const people = sections.flatMap((section) =>
+  section.people.map((person) => ({ person, position: section.position })),
+);
 ---
 
 <section id="koordinator" class="py-[clamp(4.5rem,10vh,8.75rem)]" aria-labelledby="about-team-title">
@@ -26,28 +27,25 @@ const locale = getLocaleFromUrl(Astro.url);
         </h2>
       </div>
       <p class="e-reveal max-w-[52ch] text-[15px] leading-[1.55] text-muted-ink lg:justify-self-end">
-        {t('about.teamIntro', locale, { n: String(coordinators.length), d: String(divisions.length) })}
+        {t('about.teamIntro', locale, { n: String(people.length) })}
       </p>
     </div>
 
     <ul class="e-reveal-group mt-[clamp(2.5rem,6vh,4.5rem)] list-none border-t border-line">
-      {coordinators.map((member, index) => {
-        const divisionName = getDivisionInfo(member.division, divisions)?.displayName ?? member.division;
-        return (
-          <li
-            style={`--i:${index}`}
-            class="grid grid-cols-[2.5rem_minmax(0,1fr)] items-baseline gap-x-4 gap-y-1 border-b border-line py-6 md:grid-cols-[4rem_minmax(0,1.3fr)_minmax(0,1fr)] md:gap-x-8"
-          >
-            <span class="font-mono text-xs tracking-[0.08em] text-muted-ink" aria-hidden="true">
-              {String(index + 1).padStart(2, '0')}
-            </span>
-            <span class="font-display text-[clamp(1.4rem,2.4vw,2rem)] leading-[1.1]">{member.name}</span>
-            <span class="col-span-2 font-mono text-xs uppercase tracking-[0.08em] text-muted-ink md:col-span-1 md:justify-self-end">
-              {roleLabel(member.role)} · {divisionName}
-            </span>
-          </li>
-        );
-      })}
+      {people.map(({ person, position }, index) => (
+        <li
+          style={`--i:${index}`}
+          class="grid grid-cols-[2.5rem_minmax(0,1fr)] items-baseline gap-x-4 gap-y-1 border-b border-line py-6 md:grid-cols-[4rem_minmax(0,1.3fr)_minmax(0,1fr)] md:gap-x-8"
+        >
+          <span class="font-mono text-xs tracking-[0.08em] text-muted-ink" aria-hidden="true">
+            {String(index + 1).padStart(2, '0')}
+          </span>
+          <span class="font-display text-[clamp(1.4rem,2.4vw,2rem)] leading-[1.1]">{person.name}</span>
+          <span class="col-span-2 font-mono text-xs uppercase tracking-[0.08em] text-muted-ink md:col-span-1 md:justify-self-end">
+            {position.label}
+          </span>
+        </li>
+      ))}
     </ul>
 
     <a href="/structure" class="mt-8 inline-flex items-center gap-2 py-2 font-mono text-xs uppercase tracking-[0.08em] text-brand">

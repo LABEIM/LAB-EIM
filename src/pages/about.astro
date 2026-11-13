@@ -2,8 +2,8 @@
 import Layout from '../layouts/Layout.astro';
 import '../styles/pages/home-eim.css';
 import { getLocaleFromUrl, getLocalizedJsonData, t } from '../utils/i18n';
-import { parseDivisions } from '../utils/division-mapper';
-import type { AboutData, DivisionConfig, Member } from '../utils/types';
+import { groupPeople, parsePositions } from '../utils/position-mapper';
+import type { AboutData, Lecturer, Member } from '../utils/types';
 import AboutHero from '../components/about/AboutHero.astro';
 import AboutProfile from '../components/about/AboutProfile.astro';
 import AboutStats from '../components/about/AboutStats.astro';
@@ -16,13 +16,14 @@ const locale = getLocaleFromUrl(Astro.url);
 const aboutData = getLocalizedJsonData<AboutData>('about', locale);
 const siteData = getLocalizedJsonData<any>('site', locale);
 const membersData = getLocalizedJsonData<{ list: Member[] }>('members', locale);
-const divisionsData = getLocalizedJsonData<any>('divisions', locale);
+const lecturersData = getLocalizedJsonData<{ list: Lecturer[] }>('lecturers', locale);
+const positionsData = getLocalizedJsonData<{ list: unknown }>('positions', locale);
 
-const divisions: DivisionConfig[] = parseDivisions(divisionsData);
+const positions = parsePositions(positionsData);
 const members: Member[] = membersData?.list ?? [];
-const coordinators: Member[] = members
-  .filter((member) => member.division === 'core' || member.role.includes('Coordinator'))
-  .sort((a, b) => a.id - b.id);
+const lecturers: Lecturer[] = lecturersData?.list ?? [];
+const people = [...lecturers, ...members];
+const sections = groupPeople(people, positions);
 
 const sectionItems = [
   { id: 'profil', label: t('about.navDotProfile', locale) },
@@ -38,9 +39,9 @@ const sectionItems = [
     <EimSectionNav items={sectionItems} label={t('about.sectionNavLabel', locale)} />
     <AboutHero />
     <AboutProfile about={aboutData} site={siteData} />
-    <AboutStats membersCount={members.length} divisionsCount={divisions.length} focusCount={4} />
+    <AboutStats membersCount={people.length} positionCount={positions.length} focusCount={4} />
     <EimVisiMisi about={aboutData} />
-    <AboutTeam coordinators={coordinators} divisions={divisions} />
+    <AboutTeam sections={sections} />
     <EimCTA site={siteData} />
   </main>
 </Layout>

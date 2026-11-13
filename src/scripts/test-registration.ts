@@ -9,7 +9,6 @@ import {
 import { calculateStageFromDates } from './registration/stage';
 import { safeLink, internalHref } from '../utils/safe-link';
 import { selectVisibleCards, type FilterCard, type FilterState, type FilterResult } from './content-filter';
-import { roleLabel } from '../utils/roles';
 import { resolveStageCta } from '../utils/constants';
 import { parsePositions, buildPositionIndex, positionLabel, groupPeople, STRUCTURE_TREE, type Position } from '../utils/position-mapper';
 import positionsData from '../data/positions.json';
@@ -625,11 +624,7 @@ sel(filterCards, { search: '', sort: 'asc', page: 1, perPage: 99 });
 assert(filterCards.map(card => card.searchText).join('|') === filterOrderBefore, 'selection does not mutate the input order');
 
 // 13. Role labels and stage CTA
-console.log('\n13. Testing Role Labels And Stage CTA:');
-assert(roleLabel('Secretary') === 'Sekretaris', 'Secretary maps to Sekretaris');
-assert(roleLabel('Treasurer') === 'Bendahara', 'Treasurer maps to Bendahara');
-assert(roleLabel('Staff') === 'Staf', 'Staff maps to Staf');
-assert(roleLabel('Unknown Role') === 'Unknown Role', 'unknown roles pass through');
+console.log('\n13. Testing Stage CTA:');
 assert(resolveStageCta('open').href === '/registration', 'open stage points at registration');
 assert(resolveStageCta('closed').label === 'Hubungi Kami', 'closed stage points at contact');
 assert(resolveStageCta('nope').href === '/contact', 'unknown stage falls back to contact');

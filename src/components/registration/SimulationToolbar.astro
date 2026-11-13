@@ -47,19 +47,19 @@
 <style>
   .sim-toolbar-container {
     position: fixed;
-    bottom: 24px;
-    right: 24px;
-    z-index: 99999;
+    bottom: var(--space-24);
+    right: var(--space-24);
+    z-index: var(--z-top);
     width: 320px;
-    padding: 16px;
-    border-radius: 16px;
-    background: rgba(15, 23, 42, 0.92);
+    padding: var(--space-16);
+    border-radius: var(--radius-card);
+    background: rgba(var(--neutral-900-rgb), 0.92);
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
     border: 1px solid rgba(255, 255, 255, 0.15);
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5), 0 0 20px rgba(99, 102, 241, 0.2);
+    box-shadow: 0 20px 40px rgba(var(--black-rgb), 0.5), 0 0 20px rgba(var(--color-toolbar-rgb), 0.2);
     font-family: inherit;
-    color: #f8fafc;
+    color: var(--neutral-50);
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
@@ -67,64 +67,64 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 8px;
+    gap: var(--space-8);
   }
 
   .sim-title {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: var(--space-8);
     font-weight: 700;
-    font-size: 0.9rem;
-    color: #a5b4fc;
+    font-size: var(--text-14-4);
+    color: var(--color-toolbar-light);
   }
 
   .sim-badge {
-    font-size: 0.65rem;
+    font-size: var(--text-10-4);
     font-weight: 800;
     letter-spacing: 0.05em;
-    padding: 3px 8px;
+    padding: var(--space-3) var(--space-8);
     border-radius: 999px;
     text-transform: uppercase;
   }
 
   .sim-badge.active {
-    background: rgba(16, 185, 129, 0.2);
-    color: #34d399;
-    border: 1px solid rgba(52, 211, 153, 0.4);
+    background: rgba(var(--color-success-rgb), 0.2);
+    color: var(--color-success-light);
+    border: 1px solid rgba(var(--color-success-light-rgb), 0.4);
     animation: pulseGlow 2s infinite;
   }
 
   .sim-badge.inactive {
-    background: rgba(148, 163, 184, 0.15);
-    color: #94a3b8;
-    border: 1px solid rgba(148, 163, 184, 0.2);
+    background: rgba(var(--neutral-400-rgb), 0.15);
+    color: var(--neutral-400);
+    border: 1px solid rgba(var(--neutral-400-rgb), 0.2);
   }
 
   @keyframes pulseGlow {
-    0%, 100% { box-shadow: 0 0 5px rgba(52, 211, 153, 0.4); }
-    50% { box-shadow: 0 0 15px rgba(52, 211, 153, 0.8); }
+    0%, 100% { box-shadow: 0 0 5px rgba(var(--color-success-light-rgb), 0.4); }
+    50% { box-shadow: 0 0 15px rgba(var(--color-success-light-rgb), 0.8); }
   }
 
   .sim-minimize-btn {
     background: none;
     border: none;
-    color: #94a3b8;
+    color: var(--neutral-400);
     cursor: pointer;
-    padding: 4px;
-    font-size: 0.85rem;
+    padding: var(--space-4);
+    font-size: var(--text-13-6);
     transition: color 0.2s ease;
   }
 
   .sim-minimize-btn:hover {
-    color: #ffffff;
+    color: var(--white);
   }
 
   .sim-toolbar-body {
-    margin-top: 14px;
+    margin-top: var(--space-14);
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: var(--space-12);
   }
 
   .sim-toolbar-container.is-minimized .sim-toolbar-body {
@@ -133,27 +133,27 @@
 
   .sim-toolbar-container.is-minimized {
     width: auto;
-    padding: 10px 16px;
+    padding: var(--space-10) var(--space-16);
   }
 
   .sim-control-group {
     display: flex;
     flex-direction: column;
-    gap: 6px;
+    gap: var(--space-6);
   }
 
   .sim-label {
-    font-size: 0.75rem;
+    font-size: var(--text-12);
     font-weight: 600;
-    color: #cbd5e1;
+    color: var(--neutral-300);
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: var(--space-6);
   }
 
   .sim-btn-row {
     display: flex;
-    gap: 8px;
+    gap: var(--space-8);
   }
 
   .sim-btn {
@@ -161,10 +161,10 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 6px;
-    padding: 8px 12px;
-    border-radius: 8px;
-    font-size: 0.75rem;
+    gap: var(--space-6);
+    padding: var(--space-8) var(--space-12);
+    border-radius: var(--border-radius-sm);
+    font-size: var(--text-12);
     font-weight: 600;
     cursor: pointer;
     border: none;
@@ -172,58 +172,58 @@
   }
 
   .btn-primary-sim {
-    background: linear-gradient(135deg, #6366f1, #4f46e5);
-    color: #ffffff;
-    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+    background: linear-gradient(135deg, var(--color-toolbar-base), var(--color-toolbar-strong));
+    color: var(--white);
+    box-shadow: 0 4px 12px rgba(var(--color-toolbar-rgb), 0.3);
   }
 
   .btn-primary-sim:hover {
     transform: translateY(-1px);
-    box-shadow: 0 6px 16px rgba(99, 102, 241, 0.4);
+    box-shadow: 0 6px 16px rgba(var(--color-toolbar-rgb), 0.4);
   }
 
   .btn-secondary-sim {
     background: rgba(255, 255, 255, 0.08);
-    color: #e2e8f0;
+    color: var(--neutral-200);
     border: 1px solid rgba(255, 255, 255, 0.15);
   }
 
   .btn-secondary-sim:hover {
     background: rgba(255, 255, 255, 0.15);
-    color: #ffffff;
+    color: var(--white);
   }
 
   .sim-select {
     width: 100%;
-    padding: 8px 10px;
-    border-radius: 8px;
-    background: rgba(15, 23, 42, 0.8);
+    padding: var(--space-8) var(--space-10);
+    border-radius: var(--border-radius-sm);
+    background: rgba(var(--neutral-900-rgb), 0.8);
     border: 1px solid rgba(255, 255, 255, 0.15);
-    color: #f8fafc;
-    font-size: 0.8rem;
+    color: var(--neutral-50);
+    font-size: var(--text-12-8);
     cursor: pointer;
     outline: none;
   }
 
   .sim-select option {
-    background: #0f172a;
-    color: #f8fafc;
+    background: var(--neutral-900);
+    color: var(--neutral-50);
   }
 
   .sim-footer-row {
-    margin-top: 4px;
+    margin-top: var(--space-4);
   }
 
   .btn-reset {
     width: 100%;
-    background: rgba(239, 68, 68, 0.15);
-    color: #fca5a5;
-    border: 1px solid rgba(239, 68, 68, 0.3);
+    background: rgba(var(--color-danger-rgb), 0.15);
+    color: var(--color-danger-lighter);
+    border: 1px solid rgba(var(--color-danger-rgb), 0.3);
   }
 
   .btn-reset:hover {
-    background: rgba(239, 68, 68, 0.25);
-    color: #ffffff;
+    background: rgba(var(--color-danger-rgb), 0.25);
+    color: var(--white);
   }
 </style>
 

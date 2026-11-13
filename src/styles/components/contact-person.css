@@ -11,7 +11,7 @@
 }
 
 .cp-box.compact {
-  margin-top: 1.5rem;
+  margin-top: var(--space-24);
   padding: clamp(1.25rem, 3vw, 1.75rem);
 }
 
@@ -25,8 +25,8 @@
 
 .cp-subtitle {
   max-width: 56ch;
-  margin: 0.5rem 0 1.5rem;
-  font-size: 14px;
+  margin: var(--space-8) 0 var(--space-24);
+  font-size: var(--text-14);
   line-height: 1.55;
   color: var(--color-muted-ink);
 }
@@ -34,13 +34,13 @@
 .cp-cards-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
-  gap: 0.75rem;
+  gap: var(--space-12);
 }
 
 .cp-card {
   display: flex;
   flex-direction: column;
-  padding: 1rem;
+  padding: var(--space-16);
   border: 1px solid var(--color-line);
   border-radius: var(--radius-card);
   background: var(--color-background);
@@ -57,18 +57,18 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 0.5rem;
-  margin-bottom: 0.75rem;
+  gap: var(--space-8);
+  margin-bottom: var(--space-12);
 }
 
 .cp-role-badge {
   min-width: 0;
-  padding: 0.25rem 0.55rem;
+  padding: var(--space-4) var(--space-8-8);
   border: 1px solid var(--color-line);
   border-radius: var(--radius-pill);
   background: var(--color-surface);
   font-family: var(--font-mono);
-  font-size: 0.6875rem;
+  font-size: var(--text-11);
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--color-muted-ink);
@@ -83,13 +83,13 @@
   border-radius: var(--radius-pill);
   background: var(--color-brand-soft);
   color: var(--color-brand);
-  font-size: 0.95rem;
+  font-size: var(--text-15-2);
 }
 
 .cp-name {
-  margin-bottom: 0.2rem;
+  margin-bottom: var(--space-3-2);
   font-family: var(--font-body);
-  font-size: 15px;
+  font-size: var(--text-15);
   font-weight: 500;
   line-height: 1.35;
   color: var(--color-foreground);
@@ -99,7 +99,7 @@
 .cp-id {
   margin: 0;
   font-family: var(--font-mono);
-  font-size: 0.8125rem;
+  font-size: var(--text-13);
   letter-spacing: 0.02em;
   color: var(--color-brand);
   overflow-wrap: anywhere;
@@ -109,14 +109,14 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 0.5rem;
+  gap: var(--space-8);
   min-height: 44px;
-  margin-top: 1rem;
-  padding: 0.5rem 0.8rem;
+  margin-top: var(--space-16);
+  padding: var(--space-8) var(--space-12-8);
   border: 1px solid var(--color-line);
   border-radius: var(--radius-pill);
   background: transparent;
-  font-size: 12px;
+  font-size: var(--text-12);
   font-weight: 500;
   color: var(--color-brand);
   text-decoration: none;

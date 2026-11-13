@@ -2,19 +2,19 @@
    Requires the Antigravity tokens from pages/home-eim.css. */
 
 .eim-prose {
-  font-size: 16px;
+  font-size: var(--text-16);
   line-height: 1.7;
   color: var(--color-muted-ink);
   overflow-wrap: break-word;
 }
 
 .eim-prose > * + * {
-  margin-top: 1rem;
+  margin-top: var(--space-16);
 }
 
 .eim-prose h2,
 .eim-prose h3 {
-  margin-top: 2rem;
+  margin-top: var(--space-32);
   font-family: var(--font-display);
   font-weight: 400;
   line-height: 1.15;
@@ -36,17 +36,17 @@
 
 .eim-prose p,
 .eim-prose li {
-  font-size: 16px;
+  font-size: var(--text-16);
   line-height: 1.7;
 }
 
 .eim-prose ul,
 .eim-prose ol {
-  padding-left: 1.25rem;
+  padding-left: var(--space-20);
 }
 
 .eim-prose li + li {
-  margin-top: 0.35rem;
+  margin-top: var(--space-5-6);
 }
 
 .eim-prose strong {
@@ -71,7 +71,7 @@
 }
 
 .eim-prose blockquote {
-  margin-block: 2rem;
+  margin-block: var(--space-32);
   padding-left: clamp(1rem, 2.5vw, 1.5rem);
   border-left: 3px solid var(--color-brand-bright);
   font-family: var(--font-display);
@@ -96,7 +96,7 @@
 
 .eim-prose pre {
   max-width: 100%;
-  padding: 1rem;
+  padding: var(--space-16);
   border: 1px solid var(--color-line);
   border-radius: var(--radius-card);
   background: var(--color-surface);
@@ -105,7 +105,7 @@
 }
 
 .eim-prose pre code {
-  font-size: 0.8125rem;
+  font-size: var(--text-13);
 }
 
 .eim-prose table {
@@ -115,19 +115,19 @@
   border-collapse: collapse;
   overflow-x: auto;
   overscroll-behavior-x: contain;
-  font-size: 14px;
+  font-size: var(--text-14);
 }
 
 .eim-prose th,
 .eim-prose td {
-  padding: 0.6rem 0.75rem;
+  padding: var(--space-9-6) var(--space-12);
   border: 1px solid var(--color-line);
   text-align: left;
 }
 
 .eim-prose th {
   font-family: var(--font-mono);
-  font-size: 0.6875rem;
+  font-size: var(--text-11);
   font-weight: 500;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -145,7 +145,7 @@
 }
 
 .eim-prose hr {
-  margin: 2rem 0;
+  margin: var(--space-32) 0;
   border: 0;
   border-top: 1px solid var(--color-line);
 }

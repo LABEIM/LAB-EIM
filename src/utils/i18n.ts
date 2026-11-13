@@ -186,6 +186,12 @@ export const uiTranslations: Record<Locale, Record<string, string>> = {
     'struct.emptyPosition': 'Belum ada anggota',
     'struct.positionIntro': '{n} orang pada peran ini.',
 
+    'home.coursesEyebrow': 'Pengajaran',
+    'home.coursesTitle': 'Mata kuliah & praktikum.',
+    'home.coursesIntro': 'Mata kuliah di bidang studi lab, lengkap dengan modul praktikum dan pengampunya.',
+    'home.coursesLink': 'Lihat semua mata kuliah',
+    'home.navDotCourses': 'Mata Kuliah',
+
     // Courses Page
     'courses.heroEyebrow': 'Pengajaran',
     'courses.heroTitle': 'Mata kuliah\ndan praktikum.',

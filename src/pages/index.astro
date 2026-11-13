@@ -12,6 +12,7 @@ import EimFocus from '../components/home/EimFocus.astro';
 import EimVisiMisi from '../components/home/EimVisiMisi.astro';
 import EimNews from '../components/home/EimNews.astro';
 import EimEvents from '../components/home/EimEvents.astro';
+import EimCourses from '../components/home/EimCourses.astro';
 import EimSectionNav from '../components/home/EimSectionNav.astro';
 import {
   getLocaleFromUrl,
@@ -19,8 +20,12 @@ import {
   getCollectionEntriesForLocale
 } from '../utils/i18n';
 import { filterAuditContent } from '../utils/content-helpers';
+import { resolveCourses } from '../utils/course-helpers';
+import type { Lecturer, Member } from '../utils/types';
 
 const locale = getLocaleFromUrl(Astro.url);
+const lecturersData = getLocalizedJsonData<{ list: Lecturer[] }>('lecturers', locale);
+const membersData = getLocalizedJsonData<{ list: Member[] }>('members', locale);
 const registrationConfig = await getLocalizedJsonData<any>('registration', locale);
 const about = await getLocalizedJsonData<AboutData>('about', locale);
 
@@ -58,6 +63,16 @@ const currentStage = getCurrentRecruitmentStage(registrationConfig);
 const stageEntry = resolveStageCta(currentStage);
 const primaryLabel = stageEntry.label;
 const primaryHref = stageEntry.href;
+
+// Beranda course band: first three courses that actually run a practicum.
+const courseEntries = await getCollection('courses');
+const bandCourses = resolveCourses(
+  courseEntries,
+  lecturersData?.list ?? [],
+  membersData?.list ?? [],
+)
+  .filter((course) => course.hasPracticum)
+  .slice(0, 3);
 ---
 
 <Layout title={`EIM Research Lab · Riset infrastruktur untuk dunia nyata`} homeSkin skipLink>
@@ -68,6 +83,7 @@ const primaryHref = stageEntry.href;
     <EimReveal />
     <EimFocus />
     <EimVisiMisi about={about} />
+    <EimCourses courses={bandCourses} />
     <EimEvents events={events} locale={locale} />
     <EimNews news={latestNews} locale={locale} />
   </main>

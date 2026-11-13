@@ -11,6 +11,8 @@ import { safeLink, internalHref } from '../utils/safe-link';
 import { selectVisibleCards, type FilterCard, type FilterState, type FilterResult } from './content-filter';
 import { roleLabel } from '../utils/roles';
 import { resolveStageCta } from '../utils/constants';
+import { parsePositions, buildPositionIndex, positionLabel, groupPeople, STRUCTURE_TREE, type Position } from '../utils/position-mapper';
+import positionsData from '../data/positions.json';
 
 let passed = 0;
 let failed = 0;
@@ -631,6 +633,43 @@ assert(roleLabel('Unknown Role') === 'Unknown Role', 'unknown roles pass through
 assert(resolveStageCta('open').href === '/registration', 'open stage points at registration');
 assert(resolveStageCta('closed').label === 'Hubungi Kami', 'closed stage points at contact');
 assert(resolveStageCta('nope').href === '/contact', 'unknown stage falls back to contact');
+
+// 14. Positions
+console.log('\n14. Testing Position Mapper:');
+const positionFixtures: Position[] = [
+  { id: 'ketua-lab', label: 'Dosen Ketua Laboratorium', group: 'dosen', order: 1 },
+  { id: 'wakil-ketua-lab', label: 'Dosen Wakil Ketua Laboratorium', group: 'dosen', order: 2 },
+  { id: 'koordinator-asisten', label: 'Koordinator Asisten Laboratorium', group: 'asisten', order: 5 },
+  { id: 'mahasiswa-anggota', label: 'Mahasiswa Anggota Laboratorium', group: 'mahasiswa', order: 7 },
+  { id: 'tim-adhoc', label: 'Tim Adhoc', group: 'mahasiswa', order: 8 },
+  { id: 'dup-a', label: 'Dup A', group: 'mahasiswa', order: 9 },
+  { id: 'dup-b', label: 'Dup B', group: 'mahasiswa', order: 9 },
+];
+assert(parsePositions({ list: positionFixtures }).length === 7, 'parsePositions reads the list array');
+assert(parsePositions({ list: positionFixtures })[5].id === 'dup-a', 'equal order keeps array order');
+assert(parsePositions(null).length === 0, 'missing positions data yields an empty list');
+
+const positionIndex = buildPositionIndex(positionFixtures);
+assert(positionLabel(positionIndex, 'ketua-lab') === 'Dosen Ketua Laboratorium', 'known position returns its label');
+assert(positionLabel(positionIndex, 'nope') === 'nope', 'unknown position falls back to the raw id');
+
+const grouped = groupPeople([
+  { name: 'A', role: 'ketua-lab' },
+  { name: 'B', role: 'mahasiswa-anggota' },
+  { name: 'C', role: 'not-a-position' },
+  { name: 'D', role: 'ketua-lab' },
+], positionFixtures);
+assert(grouped.length === 2, 'only occupied positions form sections');
+assert(grouped[0].position.id === 'ketua-lab' && grouped[0].people.length === 2, 'sections follow position order and keep all holders');
+assert(grouped[1].position.id === 'mahasiswa-anggota', 'later occupied position follows');
+assert(!grouped.some(section => section.position.id === 'tim-adhoc'), 'unoccupied position is skipped');
+assert(!grouped.some(section => section.people.some(person => person.role === 'not-a-position')), 'unknown role is excluded, not thrown');
+
+const realPositions = parsePositions(positionsData);
+assert(realPositions.length === 8, 'positions.json holds eight positions');
+const treeIds = STRUCTURE_TREE.flatMap(node => [node.id, ...node.children]);
+assert(treeIds.every(id => realPositions.some(position => position.id === id)), 'every chart node resolves to a position in positions.json');
+assert(STRUCTURE_TREE[0].id === 'ketua-lab', 'tree starts at ketua-lab');
 
 console.log(`\n${passed} passed, ${failed} failed`);
 if (failed > 0) process.exitCode = 1;

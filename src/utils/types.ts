@@ -260,6 +260,20 @@ export interface CandidateResult {
 
 /** Homepage v2 — Antigravity Light */
 
+export type PositionGroup = 'dosen' | 'asisten' | 'mahasiswa';
+
+export interface Position {
+  id: string;
+  label: string;
+  group: PositionGroup;
+  order: number;
+}
+
+export interface PositionSection<T> {
+  position: Position;
+  people: T[];
+}
+
 export interface Member {
   id: number;
   name: string;

@@ -1,0 +1,52 @@
+{
+  "list": [
+    {
+      "id": "ketua-lab",
+      "label": "Dosen Ketua Laboratorium",
+      "group": "dosen",
+      "order": 1
+    },
+    {
+      "id": "wakil-ketua-lab",
+      "label": "Dosen Wakil Ketua Laboratorium",
+      "group": "dosen",
+      "order": 2
+    },
+    {
+      "id": "dosen-anggota",
+      "label": "Dosen Anggota Laboratorium",
+      "group": "dosen",
+      "order": 3
+    },
+    {
+      "id": "koordinator-matkul",
+      "label": "Dosen PIC / Koordinator Mata Kuliah",
+      "group": "dosen",
+      "order": 4
+    },
+    {
+      "id": "koordinator-asisten",
+      "label": "Koordinator Asisten Laboratorium",
+      "group": "asisten",
+      "order": 5
+    },
+    {
+      "id": "asisten-koordinator-praktikum",
+      "label": "Asisten Koordinator Praktikum",
+      "group": "asisten",
+      "order": 6
+    },
+    {
+      "id": "mahasiswa-anggota",
+      "label": "Mahasiswa Anggota Laboratorium",
+      "group": "mahasiswa",
+      "order": 7
+    },
+    {
+      "id": "tim-adhoc",
+      "label": "Tim Adhoc",
+      "group": "mahasiswa",
+      "order": 8
+    }
+  ]
+}

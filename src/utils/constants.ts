@@ -26,7 +26,6 @@ export const DEFAULT_RECRUITMENT_DATES = {
 /**
  * Default fallback cover image for events and news items when no specific image is provided.
  */
-export const DEFAULT_COVER_IMAGE = "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&q=80&w=600";
 
 /**
  * Action button configuration for hero section based on current recruitment stage.

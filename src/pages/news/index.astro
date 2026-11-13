@@ -10,7 +10,6 @@ import { getCleanSlug, getCollectionEntriesForLocale, getLocaleFromUrl, getLocal
 import { filterAuditContent } from '../../utils/content-helpers';
 import { calculateReadingTime } from '../../utils/news-helpers';
 import { formatGlobalDate, parseGlobalDateStr } from '../../utils/date';
-import { DEFAULT_COVER_IMAGE } from '../../utils/constants';
 
 const locale = getLocaleFromUrl(Astro.url);
 
@@ -112,7 +111,7 @@ const sectionItems = [
 
             <ul id="news-list-grid" class="news-list-grid e-reveal-group">
               {news.map((item, index) => {
-                const cover = item.data.image?.[0] || DEFAULT_COVER_IMAGE;
+                const cover = item.data.image?.[0];
                 const excerptText = item.data.excerpt || item.body || '';
                 const tagsText = (item.data.tags || []).join(' ');
                 const searchText = `${item.data.title} ${item.data.category} ${item.data.author || ''} ${excerptText} ${tagsText}`.toLowerCase();
@@ -129,7 +128,14 @@ const sectionItems = [
                   >
                     <a class="news-list-card" href={getLocalizedPath(`/news/${getCleanSlug(item.id)}`, locale)}>
                       <span class="news-list-media">
-                        <img src={cover} alt="" width="800" height="500" loading="lazy" decoding="async" />
+                        {cover ? (
+                          <img src={cover} alt="" width="800" height="500" loading="lazy" decoding="async" />
+                        ) : (
+                          <span class="news-list-fallback">
+                            <span class="news-list-fallback-category">{item.data.category}</span>
+                            <span class="news-list-fallback-title">{item.data.title}</span>
+                          </span>
+                        )}
                         {item.data.featured && (
                           <span class="news-list-featured">{t('news.featured', locale)}</span>
                         )}

@@ -32,8 +32,7 @@ export function positionLabel(index: Map<string, Position>, positionId: string):
   return index.get(positionId)?.label ?? positionId;
 }
 
-/** People grouped under their position, skipping positions nobody holds. */
-export function groupPeople<T extends { role: string }>(
+/** People grouped under their position, skipping positions nobody holds. */export function groupPeople<T extends { role: string }>(
   people: T[],
   positions: Position[],
 ): PositionSection<T>[] {
@@ -47,6 +46,28 @@ export function groupPeople<T extends { role: string }>(
   return positions
     .map((position) => ({ position, people: byPosition.get(position.id) ?? [] }))
     .filter((section) => section.people.length > 0);
+}
+
+/** Count people per group; roles outside positions.json are not counted. */
+export function countPeopleByGroup<T extends { role: string }>(
+  people: T[],
+  positions: Position[],
+): Record<PositionGroup, number> {
+  const index = buildPositionIndex(positions);
+  const counts: Record<PositionGroup, number> = { dosen: 0, asisten: 0, mahasiswa: 0 };
+
+  for (const person of people) {
+    const position = index.get(person.role);
+    if (position) counts[position.group] += 1;
+  }
+
+  return counts;
+}
+
+export interface StructureOutlineNode {
+  position: Position;
+  count: number;
+  children: StructureOutlineNode[];
 }
 
 /**

@@ -17,7 +17,8 @@ import EimSectionNav from '../components/home/EimSectionNav.astro';
 import {
   getLocaleFromUrl,
   getLocalizedJsonData,
-  getCollectionEntriesForLocale
+  getCollectionEntriesForLocale,
+  t
 } from '../utils/i18n';
 import { filterAuditContent } from '../utils/content-helpers';
 import { resolveCourses } from '../utils/course-helpers';
@@ -78,7 +79,19 @@ const bandCourses = resolveCourses(
 <Layout title={`EIM Research Lab · Riset infrastruktur untuk dunia nyata`} homeSkin skipLink>
   <EventPosterModal upcomingEvents={upcomingEvents} locale={locale} />
   <main id="main-content" tabindex="-1">
-    <EimSectionNav />
+    <EimSectionNav
+      items={[
+        { id: 'reveal', label: t('home.navDotMedia', locale) },
+        { id: 'fokus', label: t('home.navDotFocus', locale) },
+        { id: 'visi-misi', label: t('home.navDotVision', locale) },
+        ...(bandCourses.length > 0
+          ? [{ id: 'mata-kuliah', label: t('home.navDotCourses', locale) }]
+          : []),
+        { id: 'kegiatan', label: t('home.navDotEvents', locale) },
+        { id: 'berita', label: t('home.navDotArticles', locale) },
+      ]}
+      label={t('home.sectionNavLabel', locale)}
+    />
     <EimHero primaryLabel={primaryLabel} primaryHref={primaryHref} />
     <EimReveal />
     <EimFocus />

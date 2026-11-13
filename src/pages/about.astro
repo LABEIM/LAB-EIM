@@ -2,7 +2,7 @@
 import Layout from '../layouts/Layout.astro';
 import '../styles/pages/home-eim.css';
 import { getLocaleFromUrl, getLocalizedJsonData, t } from '../utils/i18n';
-import { groupPeople, parsePositions } from '../utils/position-mapper';
+import { countPeopleByGroup, groupPeople, parsePositions } from '../utils/position-mapper';
 import type { AboutData, Lecturer, Member } from '../utils/types';
 import AboutHero from '../components/about/AboutHero.astro';
 import AboutProfile from '../components/about/AboutProfile.astro';
@@ -24,6 +24,7 @@ const members: Member[] = membersData?.list ?? [];
 const lecturers: Lecturer[] = lecturersData?.list ?? [];
 const people = [...lecturers, ...members];
 const sections = groupPeople(people, positions);
+const groupCounts = countPeopleByGroup(people, positions);
 
 const sectionItems = [
   { id: 'profil', label: t('about.navDotProfile', locale) },
@@ -39,7 +40,11 @@ const sectionItems = [
     <EimSectionNav items={sectionItems} label={t('about.sectionNavLabel', locale)} />
     <AboutHero />
     <AboutProfile about={aboutData} site={siteData} />
-    <AboutStats membersCount={people.length} positionCount={positions.length} focusCount={4} />
+    <AboutStats
+      membersCount={groupCounts.asisten + groupCounts.mahasiswa}
+      positionCount={positions.length}
+      focusCount={4}
+    />
     <EimVisiMisi about={aboutData} />
     <AboutTeam sections={sections} />
     <EimCTA site={siteData} />

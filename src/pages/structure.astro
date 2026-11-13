@@ -7,7 +7,7 @@ import EimCTA from '../components/home/EimCTA.astro';
 import StructureHero from '../components/structure/StructureHero.astro';
 import StructureChart from '../components/structure/StructureChart.astro';
 import StructureRoles from '../components/structure/StructureRoles.astro';
-import { buildPositionIndex, groupPeople, parsePositions } from '../utils/position-mapper';
+import { buildPositionIndex, countPeopleByGroup, groupPeople, parsePositions } from '../utils/position-mapper';
 import { getLocaleFromUrl, getLocalizedJsonData, t } from '../utils/i18n';
 import type { Lecturer, Member } from '../utils/types';
 
@@ -24,9 +24,10 @@ const lecturers = lecturersData?.list ?? [];
 const people = [...lecturers, ...members];
 
 const sections = groupPeople(people, positions);
-const dosenCount = people.filter(
-  (person) => positionIndex.get(person.role)?.group === 'dosen',
-).length;
+const groupCounts = countPeopleByGroup(people, positions);
+const dosenCount = groupCounts.dosen;
+// "Anggota" excludes dosen, who are counted separately in the hero meta.
+const assistantCount = groupCounts.asisten + groupCounts.mahasiswa;
 
 const sectionItems = [
   { id: 'struktur', label: t('struct.navDotChart', locale) },
@@ -44,11 +45,16 @@ const sectionItems = [
   <main id="main-content" tabindex="-1">
     <EimSectionNav items={sectionItems} label={t('struct.sectionNavLabel', locale)} />
     <StructureHero
-      memberCount={people.length}
+      memberCount={assistantCount}
       dosenCount={dosenCount}
       positionCount={positions.length}
     />
-    <StructureChart positions={positions} locale={locale} />
+    <StructureChart
+      positions={positions}
+      members={members}
+      lecturers={lecturers}
+      locale={locale}
+    />
     {sections.map((section, index) => (
       <StructureRoles
         section={section}

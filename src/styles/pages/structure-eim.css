@@ -601,6 +601,7 @@
   }
 
   .org-branch--three,
+  .org-stem,
   .org-tier--three > .org-node::before,
   .org-tier--three > .org-column > .org-node::before {
     display: none;

@@ -10,7 +10,7 @@ import { calculateStageFromDates } from './registration/stage';
 import { safeLink, internalHref } from '../utils/safe-link';
 import { selectVisibleCards, type FilterCard, type FilterState, type FilterResult } from './content-filter';
 import { resolveStageCta } from '../utils/constants';
-import { parsePositions, buildPositionIndex, positionLabel, groupPeople, STRUCTURE_TREE, type Position } from '../utils/position-mapper';
+import { parsePositions, buildPositionIndex, positionLabel, groupPeople, countPeopleByGroup, STRUCTURE_TREE, type Position } from '../utils/position-mapper';
 import positionsData from '../data/positions.json';
 import { resolveCourses, courseHasContent } from '../utils/course-helpers';
 
@@ -660,6 +660,14 @@ assert(grouped[0].position.id === 'ketua-lab' && grouped[0].people.length === 2,
 assert(grouped[1].position.id === 'mahasiswa-anggota', 'later occupied position follows');
 assert(!grouped.some(section => section.position.id === 'tim-adhoc'), 'unoccupied position is skipped');
 assert(!grouped.some(section => section.people.some(person => person.role === 'not-a-position')), 'unknown role is excluded, not thrown');
+
+const groupCounts = countPeopleByGroup(
+  [{ role: 'ketua-lab' }, { role: 'mahasiswa-anggota' }, { role: 'mahasiswa-anggota' }, { role: 'nope' }],
+  positionFixtures,
+);
+assert(groupCounts.dosen === 1, 'dosen count follows the position group');
+assert(groupCounts.mahasiswa === 2, 'mahasiswa count follows the position group');
+assert(groupCounts.asisten === 0, 'unheld group counts zero');
 
 const realPositions = parsePositions(positionsData);
 assert(realPositions.length === 8, 'positions.json holds eight positions');

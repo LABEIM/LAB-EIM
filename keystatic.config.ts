@@ -11,10 +11,14 @@ const positionOptions = positionsData.list.map((position) => ({
   label: position.label,
   value: position.id,
 }));
+const defaultPosition =
+  positionOptions.find((option) => option.value === 'mahasiswa-anggota')?.value ??
+  positionOptions[0]?.value ??
+  '';
 const positionField = fields.select({
   label: 'Position',
   options: positionOptions,
-  defaultValue: positionOptions[0]?.value ?? 'mahasiswa-anggota',
+  defaultValue: defaultPosition,
 });
 
 const contactPersonsField = fields.array(

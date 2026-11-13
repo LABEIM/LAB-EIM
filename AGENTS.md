@@ -60,7 +60,7 @@ Before ending a session, the agent must perform these tasks:
 - `astro.config.mjs`: Astro configuration; the Cloudflare adapter is applied to builds only (dev runs on Node so Keystatic local storage can read the filesystem), with a Node prerender environment and sessions disabled.
 - `wrangler.json`: Cloudflare Worker name and compatibility flags (`nodejs_compat`, `assets_navigation_has_no_effect`); deploys use the adapter-generated `dist/server/wrangler.json`.
 - `keystatic.config.ts`: Keystatic CMS singletons (e.g. recruitment settings), collections, and storage (Keystatic Cloud in production, local in development).
-- `src/content.config.ts`: Collection loaders and Zod schemas (`news`, `events`).
+- `src/content.config.ts`: Collection loaders and Zod schemas (`news`, `events`, `courses`).
 - `src/content/`: Static Markdown content files (`news/`, `events/`, `courses/`).
 - `src/data/`: JSON configuration (`site.json`, `contact.json`, `members.json`, `lecturers.json`, `positions.json`, `divisions.json`, `registration.json`) and the guide in `docs/CONFIG_GUIDE.md`.
 - `src/components/`: Reusable Astro and React UI components (Navbar, Footer, cards, forms, plus homepage, about-page, structure-page, and event-page sections under `home/`, `about/`, `structure/`, and `kegiatan/`).

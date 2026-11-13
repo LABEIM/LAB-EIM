@@ -43,14 +43,14 @@ const sectionItems = [
         <div class="eim-hero-actions">
           <a class="eim-hero-cta" href="#daftar">{t('courses.heroPrimary', locale)}</a>
         </div>
-        <p class="eim-subhero-meta">
-          {courses.length === 0
-            ? t('courses.empty', locale)
-            : t('courses.summary', locale, {
-                n: String(courses.length),
-                p: String(practicumCount),
-              })}
-        </p>
+        {courses.length > 0 && (
+          <p class="eim-subhero-meta">
+            {t('courses.summary', locale, {
+              n: String(courses.length),
+              p: String(practicumCount),
+            })}
+          </p>
+        )}
       </div>
     </section>
 

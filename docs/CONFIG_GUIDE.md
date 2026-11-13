@@ -30,6 +30,18 @@ Sections render only for positions that hold at least one person; the chart alwa
 
 ---
 
+## 1b. Registration Divisions (`src/data/divisions.json`)
+The recruitment form still uses divisions as a dropdown and as the trigger for the portfolio requirement. This file is not used by `/structure`, `/about`, or Beranda any more; it only feeds `/registration`.
+
+* **`id`**: lowercase identifier used by `aliases` and by the old `?div=` links.
+* **`registrationLabel`** / **`registrationValue`**: dropdown text and the value sent to the registration sheet.
+* **`aliases`**: alternative keys accepted when importing recruitment results (e.g. `core` → `inti`, `community` → `care`).
+* **`borderColor`** / **`roleColor`**: unused by the current pages; kept so the schema stays stable.
+
+Do not delete this file without also changing the registration form.
+
+---
+
 ## 2. Members Directory (`src/data/members.json`)
 This file lists student members and assistants. On `/structure` each person renders under their position section; on `/about` the whole roster is listed with its position label. Photos still live in `/image/division/...`; those folder names are historical and unrelated to the current structure.
 

@@ -185,6 +185,7 @@ export const uiTranslations: Record<Locale, Record<string, string>> = {
     'struct.groupMahasiswa': 'Mahasiswa',
     'struct.emptyPosition': 'Belum ada anggota',
     'struct.positionIntro': '{n} orang pada peran ini.',
+    'struct.positionCount': '{n} orang',
 
     'home.coursesEyebrow': 'Pengajaran',
     'home.coursesTitle': 'Mata kuliah & praktikum.',

@@ -321,7 +321,7 @@ export const uiTranslations: Record<Locale, Record<string, string>> = {
     'contact.socialsEyebrow': 'Media sosial',
     'contact.socialsTitle': 'Ikuti kami.',
     'contact.socialsIntro': 'Perkembangan kegiatan riset, pelatihan, dan pengumuman rekrutmen terbaru di media sosial EIM.',
-    'contact.routingNote': 'Rekrutmen → PIC 1. Riset & kolaborasi → PIC 2. Pertanyaan umum & dokumen administrasi → email.',
+    'contact.routingNote': 'Rekrutmen, riset, kolaborasi, dan dokumen administrasi → email.',
     'contact.copyEmail': 'Salin email',
     'contact.copied': 'Tersalin!',
     'contact.copyFailed': 'Gagal menyalin',

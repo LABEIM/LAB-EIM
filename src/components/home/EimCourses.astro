@@ -31,7 +31,13 @@ const locale = getLocaleFromUrl(Astro.url);
         </p>
       </div>
 
-      <ul class="e-reveal-group mt-[clamp(2.5rem,6vh,4rem)] grid list-none gap-6 p-0 sm:grid-cols-2 lg:grid-cols-3">
+      <ul
+        class:list={[
+          'e-reveal-group mt-[clamp(2.5rem,6vh,4rem)] grid list-none gap-6 p-0',
+          courses.length === 1 ? 'sm:grid-cols-1' : 'sm:grid-cols-2',
+          courses.length >= 3 && 'lg:grid-cols-3',
+        ]}
+      >
         {courses.map((course, index) => (
           <li
             class="flex flex-col gap-3 border border-line bg-background p-6"

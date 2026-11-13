@@ -170,7 +170,7 @@ export const uiTranslations: Record<Locale, Record<string, string>> = {
     'struct.heroDesc': 'Dosen, koordinator asisten, dan mahasiswa anggota yang menjalankan riset, praktikum, dan pengabdian di EIM Research Lab.',
     'struct.heroPrimary': 'Jelajahi bagan',
     'struct.heroSecondary': 'Gabung EIM',
-    'struct.heroMeta': '{members} anggota · {dosen} dosen · {positions} peran',
+    'struct.heroMeta': '{members} asisten & mahasiswa · {dosen} dosen · {positions} peran',
     'struct.sectionNavLabel': 'Navigasi bagian halaman',
     'struct.navDotChart': 'Bagan',
     'struct.navDotJoin': 'Gabung',
@@ -189,7 +189,7 @@ export const uiTranslations: Record<Locale, Record<string, string>> = {
 
     'home.coursesEyebrow': 'Pengajaran',
     'home.coursesTitle': 'Mata kuliah & praktikum.',
-    'home.coursesIntro': 'Mata kuliah di bidang studi lab, lengkap dengan modul praktikum dan pengampunya.',
+    'home.coursesIntro': 'Mata kuliah di bidang studi lab yang punya praktikum, beserta dosen koordinatornya.',
     'home.coursesLink': 'Lihat semua mata kuliah',
     'home.navDotCourses': 'Mata Kuliah',
 
@@ -201,8 +201,8 @@ export const uiTranslations: Record<Locale, Record<string, string>> = {
     'courses.metaDescription': 'Mata kuliah dan praktikum di bidang studi EIM Research Lab: modul, koordinator mata kuliah, dan asisten praktikum.',
     'courses.summary': '{n} mata kuliah · {p} dengan praktikum',
     'courses.listEyebrow': 'Katalog',
-    'courses.listTitle': 'Mata kuliah.',
-    'courses.listIntro': 'Modul praktikum hanya tersedia sebagai daftar topik; berkas modul tidak dipublikasikan.',
+    'courses.listTitle': 'Daftar mata kuliah.',
+    'courses.listIntro': 'Tiap entri memuat status praktikum, topik modul, dosen koordinator, dan asisten praktikumnya.',
     'courses.practicumYes': 'Praktikum',
     'courses.practicumNo': 'Tanpa praktikum',
     'courses.modulesTitle': 'Modul praktikum',

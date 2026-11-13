@@ -37,7 +37,9 @@ const sectionItems = [
       <div class="eim-hero-inner">
         <p class="eim-eyebrow">{t('courses.heroEyebrow', locale)}</p>
         <h1 id="courses-hero-title" class="eim-hero-title">
-          {titleLines.map((line) => <span class="eim-hero-title-line">{line}</span>)}
+          {titleLines.map((line, index) => (
+            <span class="eim-hero-title-line">{line}{index < titleLines.length - 1 ? ' ' : ''}</span>
+          ))}
         </h1>
         <p class="eim-hero-desc">{t('courses.heroDesc', locale)}</p>
         <div class="eim-hero-actions">
@@ -90,6 +92,16 @@ const sectionItems = [
                       {String(index + 1).padStart(2, '0')}
                       {course.code && <span> · {course.code}</span>}
                       {course.semester && <span> · Semester {course.semester}</span>}
+                      <span
+                        class:list={[
+                          'ml-2',
+                          course.hasPracticum ? 'text-brand' : 'text-muted-ink line-through',
+                        ]}
+                      >
+                        · {course.hasPracticum
+                          ? t('courses.practicumYes', locale)
+                          : t('courses.practicumNo', locale)}
+                      </span>
                     </p>
                     <h3 class="mt-3 font-display text-[clamp(1.5rem,2.6vw,2.25rem)] leading-[1.1]">
                       {course.title}
@@ -102,10 +114,6 @@ const sectionItems = [
                   </div>
 
                   <div class="flex flex-col gap-4">
-                    <p class="font-mono text-xs uppercase tracking-[0.08em] text-brand">
-                      {course.hasPracticum ? t('courses.practicumYes', locale) : t('courses.practicumNo', locale)}
-                    </p>
-
                     <p class="text-[15px] leading-[1.55]">
                       <span class="text-muted-ink">{t('courses.coordinatorLabel', locale)}: </span>
                       {course.coordinator?.name.trim() || '—'}

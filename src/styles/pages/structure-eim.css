@@ -166,6 +166,9 @@
 
 .org-tree {
   --org-gap: 1rem;
+  /* Connectors at --color-line are ~1.1:1 on the panel; muted ink keeps the
+     hierarchy readable without competing with the boxes. */
+  --org-connector: color-mix(in srgb, var(--color-muted-ink) 55%, transparent);
 
   display: flex;
   flex-direction: column;
@@ -262,7 +265,7 @@
   top: 50%;
   width: 2rem;
   height: 1px;
-  background: var(--color-line);
+  background: var(--org-connector);
 }
 
 .org-top {
@@ -360,7 +363,7 @@
   display: block;
   width: 1px;
   height: clamp(1.5rem, 3vh, 2.5rem);
-  background: var(--color-line);
+  background: var(--org-connector);
 }
 
 /* Pair branch: stem -> bus -> drops into the two cards. Bus width = card width + gap. */
@@ -377,7 +380,7 @@
   top: 0;
   width: 1px;
   height: 50%;
-  background: var(--color-line);
+  background: var(--org-connector);
 }
 
 .org-branch--pair::after {
@@ -387,7 +390,7 @@
   right: 0;
   top: 50%;
   height: 1px;
-  background: var(--color-line);
+  background: var(--org-connector);
 }
 
 .org-tier--pair {
@@ -401,7 +404,7 @@
   top: calc(-1 * clamp(1.5rem, 3vh, 2.5rem) / 2);
   width: 1px;
   height: calc(clamp(1.5rem, 3vh, 2.5rem) / 2);
-  background: var(--color-line);
+  background: var(--org-connector);
 }
 
 /* Division branch: stem -> bus spanning first-to-last card centres (5 equal columns). */
@@ -418,7 +421,7 @@
   top: 0;
   width: 1px;
   height: 50%;
-  background: var(--color-line);
+  background: var(--org-connector);
 }
 
 .org-branch--divisions::after {
@@ -430,7 +433,7 @@
   left: calc(100% / 10 - 4 * var(--org-gap) / 10);
   right: calc(100% / 10 - 4 * var(--org-gap) / 10);
   height: 1px;
-  background: var(--color-line);
+  background: var(--org-connector);
 }
 
 .org-tier--divisions {
@@ -447,7 +450,7 @@
   top: calc(-1 * clamp(1.5rem, 3vh, 2.5rem) / 2);
   width: 1px;
   height: calc(clamp(1.5rem, 3vh, 2.5rem) / 2);
-  background: var(--color-line);
+  background: var(--org-connector);
 }
 
 .org-tier-label {
@@ -557,6 +560,19 @@
   gap: var(--space-12);
 }
 
+.org-tier--lead > .org-node {
+  width: min(100%, 24rem);
+}
+
+/* Siblings under Koordinator Asisten: a left spine says "group", where a
+   centre stem read as another level of command. */
+.org-subtree {
+  margin-top: var(--space-12);
+  margin-left: var(--space-16);
+  padding-left: var(--space-16);
+  border-left: 1px solid var(--org-connector);
+}
+
 /* Bus over three equal columns: same maths as .org-branch--divisions. */
 .org-branch--three {
   position: relative;
@@ -571,7 +587,7 @@
   top: 0;
   width: 1px;
   height: 50%;
-  background: var(--color-line);
+  background: var(--org-connector);
 }
 
 .org-branch--three::after {
@@ -581,7 +597,7 @@
   left: calc(100% / 6 - 2 * var(--org-gap) / 6);
   right: calc(100% / 6 - 2 * var(--org-gap) / 6);
   height: 1px;
-  background: var(--color-line);
+  background: var(--org-connector);
 }
 
 .org-tier--three > .org-node::before,
@@ -592,7 +608,7 @@
   top: calc(-1 * clamp(1.5rem, 3vh, 2.5rem) / 2);
   width: 1px;
   height: calc(clamp(1.5rem, 3vh, 2.5rem) / 2);
-  background: var(--color-line);
+  background: var(--org-connector);
 }
 
 @media (max-width: 767px) {

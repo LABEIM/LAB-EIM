@@ -61,14 +61,14 @@ const praktikum = branch[2]?.children ?? [];
         class="mt-[clamp(2.5rem,6vh,4rem)] rounded-media border border-line bg-surface p-[clamp(1.25rem,4vw,3rem)]"
       >
         <div class="org-tree e-reveal" aria-hidden="true">
-          <div class="org-tier">
+          <div class="org-tier org-tier--lead">
             <StructureNode position={root.position} count={root.count} locale={locale} />
           </div>
 
           {deputy && (
             <>
               <span class="org-stem"></span>
-              <div class="org-tier">
+              <div class="org-tier org-tier--lead">
                 <StructureNode position={deputy.position} count={deputy.count} locale={locale} />
               </div>
             </>
@@ -92,8 +92,7 @@ const praktikum = branch[2]?.children ?? [];
                     />
                   )}
                   {praktikum.length > 0 && (
-                    <>
-                      <span class="org-stem"></span>
+                    <div class="org-subtree">
                       <div class="org-tier org-tier--stack">
                         {praktikum.map((node) => (
                           <StructureNode
@@ -103,7 +102,7 @@ const praktikum = branch[2]?.children ?? [];
                           />
                         ))}
                       </div>
-                    </>
+                    </div>
                   )}
                 </div>
               </div>

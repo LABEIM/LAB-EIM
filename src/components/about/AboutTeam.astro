@@ -9,9 +9,7 @@ interface Props {
 const { sections } = Astro.props;
 const locale = getLocaleFromUrl(Astro.url);
 
-const people = sections.flatMap((section) =>
-  section.people.map((person) => ({ person, position: section.position })),
-);
+const total = sections.reduce((sum, section) => sum + section.people.length, 0);
 ---
 
 <section id="koordinator" class="py-[clamp(4.5rem,10vh,8.75rem)]" aria-labelledby="about-team-title">
@@ -27,28 +25,37 @@ const people = sections.flatMap((section) =>
         </h2>
       </div>
       <p class="e-reveal max-w-[52ch] text-[15px] leading-[1.55] text-muted-ink lg:justify-self-end">
-        {t('about.teamIntro', locale, { n: String(people.length) })}
+        {t('about.teamIntro', locale, { n: String(total) })}
       </p>
     </div>
 
-    <ul class="e-reveal-group mt-[clamp(2.5rem,6vh,4.5rem)] list-none border-t border-line">
-      {people.map(({ person, position }, index) => (
-        <li
-          style={`--i:${index}`}
-          class="grid grid-cols-[2.5rem_minmax(0,1fr)] items-baseline gap-x-4 gap-y-1 border-b border-line py-6 md:grid-cols-[4rem_minmax(0,1.3fr)_minmax(0,1fr)] md:gap-x-8"
-        >
-          <span class="font-mono text-xs tracking-[0.08em] text-muted-ink" aria-hidden="true">
-            {String(index + 1).padStart(2, '0')}
-          </span>
-          <span class="font-display text-[clamp(1.4rem,2.4vw,2rem)] leading-[1.1]">{person.name}</span>
-          <span class="col-span-2 font-mono text-xs uppercase tracking-[0.08em] text-muted-ink md:col-span-1 md:justify-self-end">
-            {position.label}
-          </span>
-        </li>
+    <div class="e-reveal-group mt-[clamp(2.5rem,6vh,4rem)] border-t border-line">
+      {sections.map((section, sectionIndex) => (
+        <section class="py-8" aria-labelledby={`about-role-${section.position.id}`}>
+          <h3
+            id={`about-role-${section.position.id}`}
+            class="font-mono text-xs uppercase tracking-[0.08em] text-brand"
+          >
+            {section.position.label} · {section.people.length}
+          </h3>
+          <ul class="mt-4 list-none border-t border-line p-0">
+            {section.people.map((person, index) => (
+              <li
+                style={`--i:${sectionIndex + index}`}
+                class="grid grid-cols-[2.5rem_minmax(0,1fr)] items-baseline gap-x-4 border-b border-line py-4 md:grid-cols-[4rem_minmax(0,1fr)] md:gap-x-8"
+              >
+                <span class="font-mono text-xs tracking-[0.08em] text-muted-ink" aria-hidden="true">
+                  {String(index + 1).padStart(2, '0')}
+                </span>
+                <span class="font-display text-[clamp(1.2rem,2vw,1.6rem)] leading-[1.15]">{person.name}</span>
+              </li>
+            ))}
+          </ul>
+        </section>
       ))}
-    </ul>
+    </div>
 
-    <a href="/structure" class="mt-8 inline-flex items-center gap-2 py-2 font-mono text-xs uppercase tracking-[0.08em] text-brand">
+    <a href="/structure" class="mt-4 inline-flex items-center gap-2 py-2 font-mono text-xs uppercase tracking-[0.08em] text-brand">
       {t('about.teamLink', locale)} <span aria-hidden="true">→</span>
     </a>
   </div>

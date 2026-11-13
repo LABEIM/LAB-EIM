@@ -28,6 +28,8 @@ The hierarchy is fixed in code (`STRUCTURE_TREE` in `src/utils/position-mapper.t
 ```
 Sections render only for positions that hold at least one person; the chart always shows every position.
 
+The numbers on Beranda ("Laboratorium dalam angka") and Tentang Kami are derived — dosen and anggota counts come from `positions.json` plus `members.json`/`lecturers.json`, and the asisten praktikum count from the assistants listed in `src/content/courses/`. Nothing is typed in, so the numbers follow the data automatically.
+
 ---
 
 ## 1b. Registration Divisions (`src/data/divisions.json`)

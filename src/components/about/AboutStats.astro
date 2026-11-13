@@ -4,15 +4,15 @@ import { getLocaleFromUrl, t } from '../../utils/i18n';
 interface Props {
   membersCount: number;
   courseCount: number;
-  focusCount: number;
+  dosenCount: number;
 }
 
-const { membersCount, courseCount, focusCount } = Astro.props;
+const { membersCount, courseCount, dosenCount } = Astro.props;
 const locale = getLocaleFromUrl(Astro.url);
 const stats = [
   { label: t('about.statMembers', locale), value: membersCount },
   { label: t('about.statCourses', locale), value: courseCount },
-  { label: t('about.statFocus', locale), value: focusCount },
+  { label: t('about.statDosen', locale), value: dosenCount },
 ];
 ---
 

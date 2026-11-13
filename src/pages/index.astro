@@ -11,6 +11,7 @@ import EimVisiMisi from '../components/home/EimVisiMisi.astro';
 import EimNews from '../components/home/EimNews.astro';
 import EimEvents from '../components/home/EimEvents.astro';
 import EimCourses from '../components/home/EimCourses.astro';
+import EimLabNumbers from '../components/home/EimLabNumbers.astro';
 import EimSectionNav from '../components/home/EimSectionNav.astro';
 import {
   getLocaleFromUrl,
@@ -19,12 +20,14 @@ import {
   t
 } from '../utils/i18n';
 import { filterAuditContent } from '../utils/content-helpers';
-import { resolveCourses } from '../utils/course-helpers';
+import { resolveCourses, summarizePracticumAssistants } from '../utils/course-helpers';
+import { countPeopleByGroup, parsePositions } from '../utils/position-mapper';
 import type { Lecturer, Member } from '../utils/types';
 
 const locale = getLocaleFromUrl(Astro.url);
 const lecturersData = getLocalizedJsonData<{ list: Lecturer[] }>('lecturers', locale);
 const membersData = getLocalizedJsonData<{ list: Member[] }>('members', locale);
+const positionsData = getLocalizedJsonData<{ list: unknown }>('positions', locale);
 const about = await getLocalizedJsonData<AboutData>('about', locale);
 
 // Fetch and filter news for active locale
@@ -56,15 +59,16 @@ const events = filterAuditContent(rawEvents)
 
 const upcomingEvents = events.filter((event) => event.data.status === 'upcoming');
 
+// Lab numbers, derived — never typed in.
+const positions = parsePositions(positionsData);
+const people = [...(lecturersData?.list ?? []), ...(membersData?.list ?? [])];
+const groupCounts = countPeopleByGroup(people, positions);
+
 // Beranda course band: first three courses that actually run a practicum.
 const courseEntries = await getCollection('courses');
-const bandCourses = resolveCourses(
-  courseEntries,
-  lecturersData?.list ?? [],
-  membersData?.list ?? [],
-)
-  .filter((course) => course.hasPracticum)
-  .slice(0, 3);
+const allCourses = resolveCourses(courseEntries, lecturersData?.list ?? [], membersData?.list ?? []);
+const bandCourses = allCourses.filter((course) => course.hasPracticum).slice(0, 3);
+const assistantCount = summarizePracticumAssistants(allCourses, membersData?.list ?? []).distinctCount;
 ---
 
 <Layout title={`EIM Research Lab · Riset infrastruktur untuk dunia nyata`} homeSkin skipLink>
@@ -92,6 +96,11 @@ const bandCourses = resolveCourses(
     <EimReveal />
     <EimFocus />
     <EimVisiMisi about={about} />
+    <EimLabNumbers
+      dosen={groupCounts.dosen}
+      anggota={groupCounts.asisten + groupCounts.mahasiswa}
+      asisten={assistantCount}
+    />
     <EimCourses courses={bandCourses} />
     <EimEvents events={events} locale={locale} />
     <EimNews news={latestNews} locale={locale} />

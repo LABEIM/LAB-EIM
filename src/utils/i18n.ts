@@ -137,28 +137,16 @@ export const uiTranslations: Record<Locale, Record<string, string>> = {
     'stage.fallback': 'Formulir Cadangan',
 
     // Courses Page
-    'courses.heroEyebrow': 'Pengajaran',
-    'courses.heroTitle': 'Mata kuliah\ndan praktikum.',
-    'courses.heroDesc': 'Daftar mata kuliah di bidang studi EIM Lab, lengkap dengan status praktikum, modul, dosen koordinator, dan asisten praktikumnya.',
-    'courses.heroPrimary': 'Lihat daftar',
-    'courses.heroSecondary': 'Kegiatan',
-    'courses.metaDescription': 'Mata kuliah dan praktikum di bidang studi EIM Lab: modul, koordinator mata kuliah, dan asisten praktikum.',
     'courses.summary': '{n} mata kuliah · {p} dengan praktikum',
-    'courses.listEyebrow': 'Katalog',
-    'courses.listTitle': 'Daftar mata kuliah.',
-    'courses.listIntro': 'Tiap entri memuat kode, SKS, status praktikum, dan dosen koordinator. Modul serta asisten praktikum ada di halaman detail mata kuliah.',
     'courses.practicumYes': 'Praktikum',
     'courses.practicumNo': 'Tanpa praktikum',
     'courses.modulesTitle': 'Modul praktikum',
     'courses.coordinatorLabel': 'Koordinator mata kuliah',
     'courses.assistantsLabel': 'Asisten praktikum',
-    'courses.empty': 'Belum ada data mata kuliah.',
     'courses.sksLabel': '{n} SKS',
     'courses.backToList': 'Semua mata kuliah',
     'courses.noPracticumNote': 'Mata kuliah ini tidak memiliki praktikum, sehingga tidak ada modul maupun asisten praktikum.',
     'courses.detailDescription': '{title} di EIM Lab: status praktikum, modul, dosen koordinator, dan asisten praktikum.',
-    'courses.sectionNavLabel': 'Navigasi bagian halaman',
-    'courses.navDotList': 'Daftar',
 
     // Events Page
     'events.title': 'Kegiatan & Acara',

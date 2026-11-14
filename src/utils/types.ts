@@ -501,6 +501,31 @@ export interface StructurePageData {
   };
 }
 
+export interface CoursesPageData {
+  meta: {
+    title: string;
+    description: string;
+  };
+  sectionLabel: string;
+  navDots: {
+    list: string;
+  };
+  hero: {
+    eyebrow: string;
+    lines: string[];
+    description: string;
+    primaryLabel: string;
+    secondaryLabel: string;
+  };
+  list: {
+    enabled: boolean;
+    eyebrow: string;
+    title: string;
+    intro: string;
+    empty: string;
+  };
+}
+
 export interface AboutData {
   title: string;
   description: string;

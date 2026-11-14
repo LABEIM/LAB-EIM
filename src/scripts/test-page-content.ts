@@ -2,7 +2,7 @@ import { existsSync, readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { sectionOn } from '../utils/page-content';
-import type { AboutData, ChromeData, HomePageData, StructurePageData } from '../utils/types';
+import type { AboutData, ChromeData, CoursesPageData, HomePageData, StructurePageData } from '../utils/types';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '../..');
 const dataDir = join(root, 'src/data');
@@ -231,6 +231,43 @@ assert(
   'structure.chart.memberAssistantNote keeps {n} and {total}'
 );
 assert(Boolean(structure.roles?.positionIntro?.includes('{n}')), 'structure.roles.positionIntro keeps {n}');
+
+console.log('\n7️⃣ Testing pages/courses.json:');
+const coursesPagePath = join(dataDir, 'pages/courses.json');
+const coursesPageExists = existsSync(coursesPagePath);
+assert(coursesPageExists, 'pages/courses.json exists');
+const coursesPage = (coursesPageExists ? JSON.parse(readFileSync(coursesPagePath, 'utf8')) : {}) as Partial<CoursesPageData>;
+
+for (const key of ['hero', 'list'] as const) {
+  const section = coursesPage[key];
+  assert(Boolean(section) && typeof section === 'object', `courses.${key} exists`);
+}
+assert(typeof coursesPage.list?.enabled === 'boolean', 'courses.list.enabled is a boolean');
+assert(Boolean(coursesPage.hero) && !('enabled' in (coursesPage.hero as object)), 'courses.hero has no enabled toggle');
+
+const coursesHero = coursesPage.hero;
+for (const key of ['eyebrow', 'description', 'primaryLabel', 'secondaryLabel'] as const) {
+  const value = coursesHero?.[key];
+  assert(typeof value === 'string' && value.trim().length > 0, `courses.hero.${key} is a non-empty string`);
+}
+assert(
+  Array.isArray(coursesHero?.lines) && coursesHero.lines.length >= 1 && coursesHero.lines.length <= 3,
+  'courses.hero.lines has 1 to 3 lines'
+);
+
+const coursesList = coursesPage.list;
+for (const key of ['eyebrow', 'title', 'intro', 'empty'] as const) {
+  const value = coursesList?.[key];
+  assert(typeof value === 'string' && value.trim().length > 0, `courses.list.${key} is a non-empty string`);
+}
+
+for (const key of ['list'] as const) {
+  const value = coursesPage.navDots?.[key];
+  assert(typeof value === 'string' && value.trim().length > 0, `courses.navDots.${key} is a non-empty string`);
+}
+assert(Boolean(coursesPage.sectionLabel?.trim()), 'courses.sectionLabel is a non-empty string');
+assert(Boolean(coursesPage.meta?.title?.trim()), 'courses.meta.title is a non-empty string');
+assert(Boolean(coursesPage.meta?.description?.trim()), 'courses.meta.description is a non-empty string');
 
 console.log(`\n${passed} passed, ${failed} failed`);
 if (failed > 0) process.exitCode = 1;

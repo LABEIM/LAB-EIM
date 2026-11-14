@@ -704,6 +704,63 @@ export default config({
         ),
       },
     }),
+    page_courses: singleton({
+      label: 'Mata Kuliah',
+      path: 'src/data/pages/courses',
+      format: { data: 'json' },
+      schema: {
+        meta: fields.object(
+          {
+            title: fields.text({
+              label: 'Judul halaman',
+              description: 'Tampil di tab browser dan hasil pencarian.',
+              validation: { isRequired: true },
+            }),
+            description: fields.text({
+              label: 'Deskripsi meta',
+              description: 'Tampil di hasil pencarian.',
+              multiline: true,
+            }),
+          },
+          { label: 'Meta halaman' }
+        ),
+        sectionLabel: fields.text({ label: 'Label navigasi bagian halaman' }),
+        navDots: fields.object(
+          {
+            list: fields.text({ label: 'Label titik daftar' }),
+          },
+          {
+            label: 'Navigasi titik bagian',
+            description: 'Titik navigasi di tepi halaman. Titik ikut hilang saat bagiannya dimatikan.',
+          }
+        ),
+        hero: fields.object(
+          {
+            eyebrow: fields.text({ label: 'Teks kecil di atas judul' }),
+            lines: fields.array(fields.text({ label: 'Baris judul', validation: { isRequired: true } }), {
+              label: 'Judul utama',
+              description: 'Satu item per baris, maksimal tiga baris.',
+              validation: { length: { min: 1, max: 3 } },
+              itemLabel: (props) => props.value,
+            }),
+            description: fields.text({ label: 'Deskripsi', multiline: true }),
+            primaryLabel: fields.text({ label: 'Label tombol utama' }),
+            secondaryLabel: fields.text({ label: 'Label tautan kedua' }),
+          },
+          { label: 'Hero', description: 'Markup hero ada langsung di halaman Mata Kuliah.' }
+        ),
+        list: fields.object(
+          {
+            enabled: fields.checkbox({ label: 'Tampilkan bagian ini', defaultValue: true }),
+            eyebrow: fields.text({ label: 'Teks kecil di atas judul' }),
+            title: fields.text({ label: 'Judul bagian' }),
+            intro: fields.text({ label: 'Paragraf pengantar', multiline: true }),
+            empty: fields.text({ label: 'Teks saat belum ada mata kuliah', multiline: true }),
+          },
+          { label: 'Daftar mata kuliah', description: 'Entri daftar dibaca dari koleksi Courses.' }
+        ),
+      },
+    }),
     chrome: singleton({
       label: 'Navbar, Footer & Brand',
       path: 'src/data/chrome',
@@ -1168,7 +1225,7 @@ export default config({
   },
   ui: {
     navigation: {
-      Halaman: ['page_home', 'page_structure', 'about', 'contact'],
+      Halaman: ['page_home', 'page_structure', 'page_courses', 'about', 'contact'],
       Koleksi: ['news', 'events', 'courses'],
       Pengaturan: [
         'site',

@@ -1,0 +1,27 @@
+{
+  "meta": {
+    "title": "Mata Kuliah · EIM Lab",
+    "description": "Mata kuliah dan praktikum di bidang studi EIM Lab: modul, koordinator mata kuliah, dan asisten praktikum."
+  },
+  "sectionLabel": "Navigasi bagian halaman",
+  "navDots": {
+    "list": "Daftar"
+  },
+  "hero": {
+    "eyebrow": "Pengajaran",
+    "lines": [
+      "Mata kuliah",
+      "dan praktikum."
+    ],
+    "description": "Daftar mata kuliah di bidang studi EIM Lab, lengkap dengan status praktikum, modul, dosen koordinator, dan asisten praktikumnya.",
+    "primaryLabel": "Lihat daftar",
+    "secondaryLabel": "Kegiatan"
+  },
+  "list": {
+    "enabled": true,
+    "eyebrow": "Katalog",
+    "title": "Daftar mata kuliah.",
+    "intro": "Tiap entri memuat kode, SKS, status praktikum, dan dosen koordinator. Modul serta asisten praktikum ada di halaman detail mata kuliah.",
+    "empty": "Belum ada data mata kuliah."
+  }
+}

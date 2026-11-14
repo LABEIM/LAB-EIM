@@ -27,7 +27,7 @@ const chromeGroups: Record<keyof ChromeData, string[]> = {
   footer: ['description', 'quickLinks', 'contact', 'resources', 'assets', 'linkHub', 'rights', 'backToTop'],
   cta: ['title', 'description', 'contactLabel'],
   brand: ['logoHorizontal', 'logoIcon'],
-  labels: ['upcoming', 'details', 'learnMore', 'statsDosen', 'statsMembers', 'statsCourses', 'organizerFallback', 'coordinator', 'sks', 'practicumYes', 'practicumNo', 'featured', 'search', 'close', 'vision', 'mission', 'values'],
+  labels: ['upcoming', 'details', 'learnMore', 'statsDosen', 'statsMembers', 'statsCourses', 'organizerFallback', 'sectionNav', 'coordinator', 'sks', 'practicumYes', 'practicumNo', 'featured', 'search', 'close', 'vision', 'mission', 'values'],
 };
 
 console.log('🧪 Running Page Content Guard Tests...\n');
@@ -81,7 +81,7 @@ for (const key of ['hero', 'meta', 'navDots'] as const) {
   assert(Boolean(section) && !('enabled' in (section as object)), `home.${key} has no enabled toggle`);
 }
 
-for (const key of ['reveal', 'focus', 'vision', 'courses', 'events', 'articles', 'sectionLabel'] as const) {
+for (const key of ['reveal', 'focus', 'vision', 'courses', 'events', 'articles'] as const) {
   const value = home.navDots?.[key];
   assert(typeof value === 'string' && value.trim().length > 0, `home.navDots.${key} is a non-empty string`);
 }
@@ -106,7 +106,6 @@ for (const key of [
   'overviewContent2',
   'overviewImage',
   'vision',
-  'sectionLabel',
 ] as const) {
   const value = about[key];
   assert(typeof value === 'string' && value.trim().length > 0, `about.${key} is a non-empty string`);
@@ -219,12 +218,13 @@ for (const key of ['chart', 'join'] as const) {
   const value = structure.navDots?.[key];
   assert(typeof value === 'string' && value.trim().length > 0, `structure.navDots.${key} is a non-empty string`);
 }
-assert(Boolean(structure.sectionLabel?.trim()), 'structure.sectionLabel is a non-empty string');
 assert(Boolean(structure.meta?.title?.trim()), 'structure.meta.title is a non-empty string');
 assert(Boolean(structure.meta?.description?.trim()), 'structure.meta.description is a non-empty string');
 
 // The copy still carries its placeholders, so editors cannot drop the counts.
-assert(Boolean(structureHero?.meta?.includes('{members}')), 'structure.hero.meta keeps {members}');
+for (const token of ['{members}', '{dosen}', '{positions}'] as const) {
+  assert(Boolean(structureHero?.meta?.includes(token)), `structure.hero.meta keeps ${token}`);
+}
 assert(Boolean(structureChart?.positionCount?.includes('{n}')), 'structure.chart.positionCount keeps {n}');
 assert(
   Boolean(structureChart?.memberAssistantNote?.includes('{n}') && structureChart?.memberAssistantNote?.includes('{total}')),
@@ -273,7 +273,6 @@ for (const key of ['list'] as const) {
   const value = coursesPage.navDots?.[key];
   assert(typeof value === 'string' && value.trim().length > 0, `courses.navDots.${key} is a non-empty string`);
 }
-assert(Boolean(coursesPage.sectionLabel?.trim()), 'courses.sectionLabel is a non-empty string');
 assert(Boolean(coursesPage.meta?.title?.trim()), 'courses.meta.title is a non-empty string');
 assert(Boolean(coursesPage.meta?.description?.trim()), 'courses.meta.description is a non-empty string');
 
@@ -294,8 +293,9 @@ for (const key of ['description', 'modules', 'assistants', 'backLink'] as const)
 }
 
 assert(Boolean(courseDetail.meta?.title?.trim()), 'courseDetail.meta.title is a non-empty string');
+assert(Boolean(courseDetail.meta?.description?.trim()), 'courseDetail.meta.description is a non-empty string');
 
-for (const key of ['description', 'modules', 'assistants'] as const) {
+for (const key of ['modules', 'assistants'] as const) {
   const value = courseDetail[key]?.heading;
   assert(typeof value === 'string' && value.trim().length > 0, `courseDetail.${key}.heading is a non-empty string`);
 }
@@ -308,10 +308,10 @@ assert(
   'courseDetail.backLink.label is a non-empty string'
 );
 
-// The heading doubles as the Layout meta description, so the placeholder must survive.
+// The meta description carries the course title, so the placeholder must survive.
 assert(
-  Boolean(courseDetail.description?.heading?.includes('{title}')),
-  'courseDetail.description.heading keeps {title}'
+  Boolean(courseDetail.meta?.description?.includes('{title}')),
+  'courseDetail.meta.description keeps {title}'
 );
 
 console.log(`\n${passed} passed, ${failed} failed`);

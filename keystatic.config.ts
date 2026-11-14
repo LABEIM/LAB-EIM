@@ -486,7 +486,6 @@ export default config({
             courses: fields.text({ label: 'Label titik mata kuliah' }),
             events: fields.text({ label: 'Label titik kegiatan' }),
             articles: fields.text({ label: 'Label titik artikel' }),
-            sectionLabel: fields.text({ label: 'Label navigasi bagian halaman' }),
           },
           {
             label: 'Navigasi titik bagian',
@@ -625,7 +624,6 @@ export default config({
           },
           { label: 'Meta halaman' }
         ),
-        sectionLabel: fields.text({ label: 'Label navigasi bagian halaman' }),
         navDots: fields.object(
           {
             chart: fields.text({ label: 'Label titik bagan' }),
@@ -724,7 +722,6 @@ export default config({
           },
           { label: 'Meta halaman' }
         ),
-        sectionLabel: fields.text({ label: 'Label navigasi bagian halaman' }),
         navDots: fields.object(
           {
             list: fields.text({ label: 'Label titik daftar' }),
@@ -777,17 +774,17 @@ export default config({
               description: 'Diapit judul mata kuliah di tab browser dan hasil pencarian.',
               validation: { isRequired: true },
             }),
+            description: fields.text({
+              label: 'Deskripsi meta',
+              description: 'Tampil di hasil pencarian. Jangan hapus {title}.',
+              multiline: true,
+            }),
           },
           { label: 'Meta halaman' }
         ),
         description: fields.object(
           {
             enabled: fields.checkbox({ label: 'Tampilkan bagian ini', defaultValue: true }),
-            heading: fields.text({
-              label: 'Judul bagian deskripsi',
-              description: 'Juga dipakai sebagai deskripsi halaman di hasil pencarian. Jangan hapus {title}.',
-              multiline: true,
-            }),
           },
           { label: 'Deskripsi mata kuliah', description: 'Isi deskripsi dibaca dari koleksi Courses.' }
         ),
@@ -883,6 +880,7 @@ export default config({
             statsMembers: fields.text({ label: 'Label statistik anggota' }),
             statsCourses: fields.text({ label: 'Label statistik mata kuliah' }),
             organizerFallback: fields.text({ label: 'Label penyelenggara cadangan' }),
+            sectionNav: fields.text({ label: 'Label navigasi bagian halaman' }),
             coordinator: fields.text({ label: 'Label koordinator mata kuliah' }),
             sks: fields.text({ label: 'Label SKS', description: 'Gunakan {n} untuk jumlah SKS.' }),
             practicumYes: fields.text({ label: 'Label dengan praktikum' }),
@@ -1039,7 +1037,6 @@ export default config({
           },
           { label: 'Meta halaman' }
         ),
-        sectionLabel: fields.text({ label: 'Label navigasi bagian halaman' }),
         navDots: fields.object(
           {
             profile: fields.text({ label: 'Label titik profil' }),

@@ -37,7 +37,7 @@ const positionsData = getLocalizedJsonData<{ list: unknown }>('positions', local
 const positionIndex = buildPositionIndex(parsePositions(positionsData));
 const { Content } = await render(entry);
 const { modules, assistants } = courseHasContent(course);
-const pageDescription = page.description.heading.replaceAll('{title}', course.title);
+const pageDescription = page.meta.description.replaceAll('{title}', course.title);
 ---
 
 <Layout
@@ -103,12 +103,9 @@ const pageDescription = page.description.heading.replaceAll('{title}', course.ti
       </header>
 
       {sectionOn(page.description) && (
-        <section class="mt-8 max-w-[65ch] text-[16px] leading-[1.7] text-muted-ink" aria-labelledby="course-description">
-          <h2 id="course-description" class="sr-only">
-            {pageDescription}
-          </h2>
+        <div class="mt-8 max-w-[65ch] text-[16px] leading-[1.7] text-muted-ink">
           <Content />
-        </section>
+        </div>
       )}
 
       {sectionOn(page.modules) && modules.length > 0 && (

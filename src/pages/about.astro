@@ -58,7 +58,7 @@ const sectionItems = [
 
 <Layout title={aboutData.meta.title} description={aboutData.description} homeSkin skipLink>
   <main id="main-content" tabindex="-1">
-    <EimSectionNav items={sectionItems} label={aboutData.sectionLabel} />
+    <EimSectionNav items={sectionItems} label={chrome.labels.sectionNav} />
     <AboutHero content={sections.hero} />
     {sectionOn(sections.profile) && (
       <AboutProfile about={aboutData} content={sections.profile} site={siteData} />

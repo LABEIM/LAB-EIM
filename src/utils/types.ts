@@ -376,6 +376,7 @@ export interface ChromeData {
     statsMembers: string;
     statsCourses: string;
     organizerFallback: string;
+    sectionNav: string;
     coordinator: string;
     sks: string;
     practicumYes: string;
@@ -401,7 +402,6 @@ export interface HomePageData {
     courses: string;
     events: string;
     articles: string;
-    sectionLabel: string;
   };
   hero: {
     kicker: string;
@@ -464,7 +464,6 @@ export interface StructurePageData {
     title: string;
     description: string;
   };
-  sectionLabel: string;
   navDots: {
     chart: string;
     join: string;
@@ -506,7 +505,6 @@ export interface CoursesPageData {
     title: string;
     description: string;
   };
-  sectionLabel: string;
   navDots: {
     list: string;
   };
@@ -530,10 +528,10 @@ export interface CoursesPageData {
 export interface CourseDetailPageData {
   meta: {
     title: string;
+    description: string;
   };
   description: {
     enabled: boolean;
-    heading: string;
   };
   modules: {
     enabled: boolean;
@@ -563,7 +561,6 @@ export interface AboutData {
   meta: {
     title: string;
   };
-  sectionLabel: string;
   navDots: {
     profile: string;
     stats: string;

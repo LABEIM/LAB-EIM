@@ -531,6 +531,11 @@ export interface HomePageData {
     caption: string;
     pending: string;
     pendingCta: string;
+    mediaKind: 'none' | 'image' | 'video';
+    image?: string;
+    video?: string;
+    poster?: string;
+    mediaAlt?: string;
   };
   focus: {
     enabled: boolean;

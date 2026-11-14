@@ -3,7 +3,7 @@ import { dirname, join, resolve, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { sectionNumber, sectionOn } from '../utils/page-content';
 import type { RecruitmentConfig } from '../utils/types';
-import type { AboutData, ChromeData, ContactData, CourseDetailPageData, CoursesPageData, EventDetailPageData, EventsPageData, GalleryData, HomePageData, NewsDetailPageData, NewsPageData, StructurePageData } from '../utils/types';
+import type { AboutData, ChromeData, ContactData, CourseDetailPageData, CoursesPageData, EventDetailPageData, EventsPageData, GalleryData, HomePageData, Lecturer, Member, NewsDetailPageData, NewsPageData, StructurePageData } from '../utils/types';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '../..');
 const dataDir = join(root, 'src/data');
@@ -202,6 +202,29 @@ galleryImages.forEach((image, index) => {
   );
 });
 
+console.log('\n3️⃣c Testing member and lecturer portraits:');
+// Placeholder rows ("Nama Asisten" / "Nama Dosen") ship with an empty image and
+// fall back to initials or the placeholder avatar, so only set paths must resolve.
+const membersData = JSON.parse(readFileSync(join(dataDir, 'members.json'), 'utf8')) as { list: Member[] };
+assert(Array.isArray(membersData.list) && membersData.list.length > 0, 'members.json has a non-empty list');
+membersData.list.forEach((member, index) => {
+  const label = `member ${index} (${member.name || member.id})`;
+  assert(typeof member.image === 'string', `${label} image is a string`);
+  if (member.image.trim()) {
+    assert(existsSync(publicFile(member.image)), `${label} image resolves under public/`);
+  }
+});
+
+const lecturersData = JSON.parse(readFileSync(join(dataDir, 'lecturers.json'), 'utf8')) as { list: Lecturer[] };
+assert(Array.isArray(lecturersData.list) && lecturersData.list.length > 0, 'lecturers.json has a non-empty list');
+lecturersData.list.forEach((lecturer, index) => {
+  const label = `lecturer ${index} (${lecturer.id})`;
+  assert(typeof lecturer.image === 'string', `${label} image is a string`);
+  if (lecturer.image.trim()) {
+    assert(existsSync(publicFile(lecturer.image)), `${label} image resolves under public/`);
+  }
+});
+
 console.log('\n4️⃣ Testing pages/home.json:');
 const homePath = join(dataDir, 'pages/home.json');
 const homeExists = existsSync(homePath);
@@ -233,6 +256,27 @@ assert(
   Array.isArray(home.hero?.lines) && home.hero.lines.length >= 1 && home.hero.lines.length <= 3,
   'home.hero.lines has 1 to 3 lines'
 );
+
+console.log('\n4️⃣b Testing home.reveal media:');
+const reveal = home.reveal;
+assert(
+  reveal?.mediaKind === 'none' || reveal?.mediaKind === 'image' || reveal?.mediaKind === 'video',
+  'home.reveal.mediaKind is none, image, or video'
+);
+if (reveal?.mediaKind === 'image' || reveal?.mediaKind === 'video') {
+  assert(Boolean(reveal.mediaAlt?.trim()), `home.reveal.mediaAlt is set for ${reveal.mediaKind} media`);
+}
+if (reveal?.mediaKind === 'image') {
+  assert(typeof reveal.image === 'string' && reveal.image.trim().length > 0, 'home.reveal.image is a non-empty string');
+  assert(existsSync(publicFile(reveal.image)), 'home.reveal.image resolves under public/');
+}
+if (reveal?.mediaKind === 'video') {
+  assert(typeof reveal.video === 'string' && reveal.video.trim().length > 0, 'home.reveal.video is a non-empty string');
+  assert(existsSync(publicFile(reveal.video)), 'home.reveal.video resolves under public/');
+}
+if (reveal?.poster) {
+  assert(existsSync(publicFile(reveal.poster)), 'home.reveal.poster resolves under public/');
+}
 
 console.log('\n5️⃣ Testing about.json:');
 const aboutPath = join(dataDir, 'about.json');

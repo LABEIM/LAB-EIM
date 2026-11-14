@@ -572,6 +572,38 @@ export default config({
             caption: fields.text({ label: 'Keterangan media' }),
             pending: fields.text({ label: 'Teks saat media belum tersedia' }),
             pendingCta: fields.text({ label: 'Label tautan saat media belum tersedia' }),
+            mediaKind: fields.select({
+              label: 'Jenis media',
+              description: 'Pilih "Tanpa media" untuk menampilkan teks pengantar di tempat media.',
+              options: [
+                { label: 'Tanpa media', value: 'none' },
+                { label: 'Gambar', value: 'image' },
+                { label: 'Video', value: 'video' },
+              ],
+              defaultValue: 'none',
+            }),
+            image: fields.image({
+              label: 'Gambar pengantar',
+              description: 'Dipakai saat jenis media "Gambar".',
+              directory: 'public/assets/media',
+              publicPath: '/assets/media/',
+            }),
+            video: fields.file({
+              label: 'Video pengantar',
+              description: 'Dipakai saat jenis media "Video".',
+              directory: 'public/assets/media',
+              publicPath: '/assets/media/',
+            }),
+            poster: fields.image({
+              label: 'Poster video',
+              description: 'Gambar yang tampil sebelum video diputar.',
+              directory: 'public/assets/media',
+              publicPath: '/assets/media/',
+            }),
+            mediaAlt: fields.text({
+              label: 'Teks alternatif media',
+              description: 'Wajib diisi saat jenis media bukan "Tanpa media".',
+            }),
           },
           { label: 'Media pengantar' }
         ),
@@ -1458,9 +1490,21 @@ export default config({
             id: fields.number({ label: 'ID' }),
             name: fields.text({ label: 'Name' }),
             role: positionField,
-            image: fields.text({ label: 'Image Path' }),
-            scale: fields.text({ label: 'Scale Factor' }),
-            position: fields.text({ label: 'Position' }),
+            image: fields.image({
+              label: 'Foto',
+              description:
+                'Potong foto ke rasio bingkai sebelum diunggah. Kosongkan untuk memakai inisial nama. Untuk berkas yang sudah dipotong, atur Scale ke 1 dan Position ke center.',
+              directory: 'public/image/division',
+              publicPath: '/image/division/',
+            }),
+            scale: fields.text({
+              label: 'Scale Factor',
+              description: 'Hanya untuk unggahan yang belum dipotong: perbesar foto di dalam bingkai. Isi 1 bila foto sudah dipotong.',
+            }),
+            position: fields.text({
+              label: 'Position',
+              description: 'Hanya untuk unggahan yang belum dipotong: titik fokus foto, mis. "center 32%". Isi center bila foto sudah dipotong.',
+            }),
           }),
           {
             label: 'Members List',
@@ -1479,9 +1523,21 @@ export default config({
             id: fields.text({ label: 'ID' }),
             name: fields.text({ label: 'Name' }),
             role: positionField,
-            image: fields.text({ label: 'Image Path' }),
-            scale: fields.text({ label: 'Scale Factor' }),
-            position: fields.text({ label: 'Position' }),
+            image: fields.image({
+              label: 'Foto',
+              description:
+                'Potong foto ke rasio bingkai sebelum diunggah. Kosongkan untuk memakai avatar cadangan. Untuk berkas yang sudah dipotong, atur Scale ke 1 dan Position ke center.',
+              directory: 'public/image/division',
+              publicPath: '/image/division/',
+            }),
+            scale: fields.text({
+              label: 'Scale Factor',
+              description: 'Hanya untuk unggahan yang belum dipotong: perbesar foto di dalam bingkai. Isi 1 bila foto sudah dipotong.',
+            }),
+            position: fields.text({
+              label: 'Position',
+              description: 'Hanya untuk unggahan yang belum dipotong: titik fokus foto, mis. "center 32%". Isi center bila foto sudah dipotong.',
+            }),
           }),
           {
             label: 'Lecturers List',

@@ -25,7 +25,12 @@
     "enabled": true,
     "caption": "Lebih dekat dengan EIM.",
     "pending": "Video pengantar sedang disiapkan.",
-    "pendingCta": "Kenali lab kami"
+    "pendingCta": "Kenali lab kami",
+    "mediaKind": "none",
+    "image": "",
+    "video": "",
+    "poster": "",
+    "mediaAlt": ""
   },
   "focus": {
     "enabled": true,

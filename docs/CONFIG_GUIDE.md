@@ -26,6 +26,8 @@ Every page's visible copy lives in JSON, editable under **Halaman** in Keystatic
 
 **Hiding a section:** every non-hero section object has an `enabled` boolean. Set it to `false` in Keystatic to remove the section from the page; section nav dots read the same flag, so the dot disappears too. Numbered sections (`01 — …`) count only the visible sections, so hiding one leaves no gap in the sequence. Hero sections have no toggle because they hold the page `<h1>`. Upload fields on detail pages are collection fields, not page copy; only their headings and enabled switches live in the `*-detail.json` files.
 
+**Intro media (Beranda):** the `reveal` section shows one of three states chosen by `mediaKind` — `none` keeps the placeholder text, `image` shows the uploaded image, `video` shows the uploaded video with its poster. Uploads land in `public/assets/media/`, and `mediaAlt` is required for both media states.
+
 **Empty states and filter nouns:** each listing page has its own `list` copy. Mata Kuliah uses `list.emptyTitle` with `list.empty` as the description; Artikel and Kegiatan use `list.emptyTitle` / `list.emptyDesc`. Artikel and Kegiatan also name their content type in `list.item` ("Artikel", "Kegiatan"), which fills the filter results line ("Menampilkan 1-6 dari 12 Artikel").
 
 **Shared strings:** navigation, footer, the closing CTA, brand assets, and cross-page labels (for example "Lihat Detail", "Mendatang", statistics labels, coordinator/SKS/practicum labels) live once in `chrome.json`. Change them there rather than in a page file.
@@ -81,9 +83,9 @@ This file lists student members and assistants. On `/structure` each person rend
 * **`id`** (Number): A unique numeric ID for the member. Course assistant lists reference these ids.
 * **`name`** (String): Full name of the assistant.
 * **`role`** (String): A position id from `positions.json` (Keystatic shows it as a Position dropdown).
-* **`image`** (String): Path to the member's avatar image starting from `/image/`.
-* **`scale`** (String, Optional): CSS transform scale value for positioning adjustments in the square avatar frame (e.g. `"2.5"`, `"3"`, `"1"`).
-* **`position`** (String, Optional): CSS transform-origin values to focus/center the avatar face inside the square avatar crop (e.g. `"center 32%"`, `"50% 15%"`).
+* **`image`** (String): Path to the member's avatar image starting from `/image/`. Upload it through Keystatic's **Foto** field (files are written to `public/image/division/`); an empty value falls back to the member's initials. Crop the photo to the avatar tile's aspect ratio before uploading.
+* **`scale`** (String, Optional): CSS transform scale value for positioning adjustments in the square avatar frame (e.g. `"2.5"`, `"3"`, `"1"`). Only needed for an un-cropped upload; a pre-cropped photo uses `"1"`.
+* **`position`** (String, Optional): CSS transform-origin values to focus/center the avatar face inside the square avatar crop (e.g. `"center 32%"`, `"50% 15%"`). Only needed for an un-cropped upload; a pre-cropped photo uses `"center"`.
 
 ### Member Template
 ```json
@@ -320,7 +322,7 @@ Site administrators can toggle and configure a top global announcement banner th
 ## 9. Lecturers (`src/data/lecturers.json`)
 This file holds the dosen entries. Each entry's `role` is a position id from `positions.json`, so a lecturer appears in the matching `/structure` section.
 
-Manage it via **Keystatic Admin > Singletons > Lecturers**. Entries with an empty `image` fall back to the placeholder avatar.
+Manage it via **Keystatic Admin > Singletons > Lecturers**. Upload the portrait through the **Foto** field (files are written to `public/image/division/`); entries with an empty `image` fall back to the placeholder avatar.
 
 ### Fields Explanation
 * **`id`** (String): Unique id. Course `coordinatorId` values reference these ids.

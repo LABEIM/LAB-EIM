@@ -32,6 +32,11 @@ function parseHttps(raw: string | undefined | null): URL | null {
   return url;
 }
 
+// mute=1 is required for autoplay; loop=1 only loops when playlist repeats the id.
+function youtubeEmbed(id: string): string {
+  return `https://www.youtube-nocookie.com/embed/${id}?autoplay=1&mute=1&loop=1&playlist=${id}`;
+}
+
 export function resolveVideoUrl(raw: string | undefined | null): ResolvedMedia | null {
   if (typeof raw !== 'string') return null;
   const url = parseHttps(raw);
@@ -43,7 +48,7 @@ export function resolveVideoUrl(raw: string | undefined | null): ResolvedMedia |
   if (YOUTU_BE_HOSTS.has(host)) {
     const id = segments[0];
     if (id && YOUTUBE_ID.test(id)) {
-      return { kind: 'iframe', provider: 'youtube', src: `https://www.youtube-nocookie.com/embed/${id}` };
+      return { kind: 'iframe', provider: 'youtube', src: youtubeEmbed(id) };
     }
     return null;
   }
@@ -55,7 +60,7 @@ export function resolveVideoUrl(raw: string | undefined | null): ResolvedMedia |
         ? segments[1]
         : null;
     if (id && YOUTUBE_ID.test(id)) {
-      return { kind: 'iframe', provider: 'youtube', src: `https://www.youtube-nocookie.com/embed/${id}` };
+      return { kind: 'iframe', provider: 'youtube', src: youtubeEmbed(id) };
     }
     return null;
   }

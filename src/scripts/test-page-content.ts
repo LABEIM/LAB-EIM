@@ -317,6 +317,15 @@ assert(
   revealComponent.includes("content.mediaKind ?? 'none'"),
   "EimReveal treats a missing mediaKind as 'none'"
 );
+assert(
+  revealComponent.includes('allow="autoplay; encrypted-media; picture-in-picture; fullscreen"'),
+  'EimReveal iframe allows fullscreen in its allow list'
+);
+assert(/\ballowfullscreen\b/.test(revealComponent), 'EimReveal iframe keeps allowfullscreen');
+assert(
+  /<video\b[^>]*\bcontrols\b/.test(revealComponent),
+  'EimReveal native video keeps controls so uploads stay interactive'
+);
 
 // Pasted links win over uploads, so a broken link must not slip into a built src.
 if (reveal?.videoUrl) {
@@ -327,13 +336,15 @@ if (reveal?.imageUrl) {
 }
 
 console.log('\n4️⃣c Testing external media URL resolution:');
+const youtubeEmbedSrc = (id: string) =>
+  `https://www.youtube-nocookie.com/embed/${id}?autoplay=1&mute=1&loop=1&playlist=${id}`;
 const youtubeCases: [string, string][] = [
-  ['https://www.youtube.com/watch?v=dQw4w9WgXcQ', 'https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ'],
-  ['https://youtube.com/watch?v=dQw4w9WgXcQ&t=10', 'https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ'],
-  ['https://m.youtube.com/watch?v=dQw4w9WgXcQ', 'https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ'],
-  ['https://youtu.be/dQw4w9WgXcQ', 'https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ'],
-  ['https://www.youtube.com/shorts/dQw4w9WgXcQ', 'https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ'],
-  ['https://www.youtube.com/embed/dQw4w9WgXcQ', 'https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ'],
+  ['https://www.youtube.com/watch?v=dQw4w9WgXcQ', youtubeEmbedSrc('dQw4w9WgXcQ')],
+  ['https://youtube.com/watch?v=dQw4w9WgXcQ&t=10', youtubeEmbedSrc('dQw4w9WgXcQ')],
+  ['https://m.youtube.com/watch?v=dQw4w9WgXcQ', youtubeEmbedSrc('dQw4w9WgXcQ')],
+  ['https://youtu.be/dQw4w9WgXcQ', youtubeEmbedSrc('dQw4w9WgXcQ')],
+  ['https://www.youtube.com/shorts/dQw4w9WgXcQ', youtubeEmbedSrc('dQw4w9WgXcQ')],
+  ['https://www.youtube.com/embed/dQw4w9WgXcQ', youtubeEmbedSrc('dQw4w9WgXcQ')],
 ];
 for (const [input, expected] of youtubeCases) {
   const resolved = resolveVideoUrl(input);
@@ -342,6 +353,15 @@ for (const [input, expected] of youtubeCases) {
     `youtube URL resolves: ${input}`
   );
 }
+
+// Autoplay needs mute, and loop needs playlist to repeat the same video. The
+// default player keeps play/pause, seek, mute and fullscreen, so controls stay on.
+const youtubeResolved = resolveVideoUrl('https://youtu.be/dQw4w9WgXcQ');
+const youtubeSrc = youtubeResolved?.kind === 'iframe' ? youtubeResolved.src : '';
+for (const fragment of ['autoplay=1', 'mute=1', 'loop=1', 'playlist=dQw4w9WgXcQ']) {
+  assert(youtubeSrc.includes(fragment), `youtube embed keeps ${fragment}`);
+}
+assert(!youtubeSrc.includes('controls=0'), 'youtube embed keeps the default interactive controls');
 
 const vimeoCases: [string, string][] = [
   ['https://vimeo.com/76979871', 'https://player.vimeo.com/video/76979871'],

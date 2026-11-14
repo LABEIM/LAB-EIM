@@ -39,7 +39,7 @@ const chrome = getLocalizedJsonData<ChromeData>('chrome', getLocaleFromUrl(Astro
         src={iframeMedia.src}
         title={content.mediaAlt}
         loading="lazy"
-        allow="autoplay; encrypted-media; picture-in-picture"
+        allow="autoplay; encrypted-media; picture-in-picture; fullscreen"
         allowfullscreen
         sandbox="allow-scripts allow-same-origin allow-presentation allow-popups"
         referrerpolicy="strict-origin-when-cross-origin"
@@ -55,6 +55,7 @@ const chrome = getLocalizedJsonData<ChromeData>('chrome', getLocaleFromUrl(Astro
         loop
         playsinline
         autoplay
+        controls
         preload="metadata"
         aria-label={content.mediaAlt}
       ></video>

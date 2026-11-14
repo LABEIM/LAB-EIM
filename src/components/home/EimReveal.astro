@@ -2,23 +2,20 @@
 import { Image } from 'astro:assets';
 import emblem from '../../../public/assets/brand/eim-emblem.png';
 import { getLocaleFromUrl, getLocalizedJsonData } from '../../utils/i18n';
-import {
-  buildBackgroundEmbed,
-  buildPlayerEmbed,
-  resolveExternalImageUrl,
-  resolveVideoUrl,
-} from '../../utils/media';
+import { planRevealVideo, resolveExternalImageUrl } from '../../utils/media';
 import type { ChromeData, HomePageData } from '../../utils/types';
 
 /**
  * Intro media comes from the Beranda singleton (`reveal` section):
  *
- *   mediaKind: 'video' → pasted link (iframe or direct file), else `video` with `poster`
+ *   mediaKind: 'video' → `video`/direct `.mp4` link as the background loop,
+ *                        `videoUrl` provider link as the click-to-open player
  *   mediaKind: 'image' → pasted `imageUrl`, else uploaded `image`
  *   mediaKind: 'none'  → the placeholder below
  *
- * An embed autoplays muted inside the stage; its overlay opens a sound-on player
- * in a modal. Uploads and direct video files stay inline and get no modal.
+ * An upload or direct file plays muted and looping behind the stage. A provider
+ * link (YouTube/Vimeo/Drive) adds an overlay that opens a sound-on player in a
+ * modal; with no upload or direct file, that link's embed is the background too.
  */
 interface Props {
   content: HomePageData['reveal'];
@@ -26,55 +23,40 @@ interface Props {
 
 const { content } = Astro.props;
 const mediaKind = content.mediaKind ?? 'none';
-const externalVideo = resolveVideoUrl(content.videoUrl);
-const iframeMedia = mediaKind === 'video' && externalVideo?.kind === 'iframe' ? externalVideo : null;
-const backgroundSrc = iframeMedia ? buildBackgroundEmbed(iframeMedia) : null;
-const playerSrc = iframeMedia ? buildPlayerEmbed(iframeMedia) : null;
-const nativeVideo =
-  mediaKind === 'video' && externalVideo?.kind === 'video'
-    ? externalVideo.src
-    : mediaKind === 'video' && !iframeMedia && content.video
-      ? content.video
-      : null;
+const videoPlan = mediaKind === 'video' ? planRevealVideo(content.video, content.videoUrl) : null;
+const nativeVideo = videoPlan?.nativeSrc ?? null;
+const backgroundSrc = videoPlan?.backgroundSrc ?? null;
+const playerSrc = videoPlan?.playerSrc ?? null;
 const imageSrc = mediaKind === 'image' ? resolveExternalImageUrl(content.imageUrl) ?? content.image : null;
-const showPlaceholder = !iframeMedia && !nativeVideo && !imageSrc;
+const showPlaceholder = !nativeVideo && !backgroundSrc && !imageSrc;
 const chrome = getLocalizedJsonData<ChromeData>('chrome', getLocaleFromUrl(Astro.url));
 ---
 
 <section id="reveal" class:list={['e-reveal-stage', mediaKind === 'none' && 'is-pending']} aria-label={chrome.ui.aria.mediaIntro}>
   <figure class="e-reveal-stage-figure">
-    {iframeMedia && backgroundSrc && playerSrc && (
-      <>
-        <iframe
-          class="e-reveal-stage-media e-reveal-embed"
-          src={backgroundSrc}
-          title={content.mediaAlt}
-          loading="lazy"
-          allow="autoplay; encrypted-media; picture-in-picture; fullscreen"
-          allowfullscreen
-          sandbox="allow-scripts allow-same-origin allow-presentation allow-popups"
-          referrerpolicy="strict-origin-when-cross-origin"
-        ></iframe>
-        <button type="button" class="e-reveal-open" aria-label="Buka pemutar video">
-          <span class="e-reveal-open-glyph" aria-hidden="true">
-            <svg viewBox="0 0 24 24" focusable="false">
-              <path d="M8 5v14l11-7z" fill="currentColor"></path>
-            </svg>
-          </span>
-        </button>
-      </>
+    {backgroundSrc && (
+      <iframe
+        class="e-reveal-stage-media e-reveal-embed"
+        src={backgroundSrc}
+        title={content.mediaAlt}
+        loading="lazy"
+        allow="autoplay; encrypted-media; picture-in-picture; fullscreen"
+        allowfullscreen
+        sandbox="allow-scripts allow-same-origin allow-presentation allow-popups"
+        referrerpolicy="strict-origin-when-cross-origin"
+      ></iframe>
     )}
 
     {nativeVideo && (
       <video
-        class="e-reveal-stage-media"
+        class:list={['e-reveal-stage-media', playerSrc && 'e-reveal-passive']}
         src={nativeVideo}
         poster={content.poster}
         muted
         loop
         playsinline
         autoplay
-        controls
+        controls={videoPlan?.controls}
         preload="metadata"
         aria-label={content.mediaAlt}
       ></video>
@@ -89,6 +71,16 @@ const chrome = getLocalizedJsonData<ChromeData>('chrome', getLocaleFromUrl(Astro
         decoding="async"
         referrerpolicy="no-referrer"
       />
+    )}
+
+    {playerSrc && (
+      <button type="button" class="e-reveal-open" aria-label="Buka pemutar video">
+        <span class="e-reveal-open-glyph" aria-hidden="true">
+          <svg viewBox="0 0 24 24" focusable="false">
+            <path d="M8 5v14l11-7z" fill="currentColor"></path>
+          </svg>
+        </span>
+      </button>
     )}
 
     {showPlaceholder && (
@@ -113,7 +105,7 @@ const chrome = getLocalizedJsonData<ChromeData>('chrome', getLocaleFromUrl(Astro
   </figure>
 </section>
 
-{iframeMedia && playerSrc && (
+{playerSrc && (
   <div
     class="e-reveal-modal"
     id="e-reveal-modal"
@@ -143,9 +135,9 @@ const chrome = getLocalizedJsonData<ChromeData>('chrome', getLocaleFromUrl(Astro
 
   initMediaReveal();
 
-  // The stage iframe only paints the muted background; this overlay opens the
-  // sound-on player in a dialog whose iframe is built on demand (and removed on
-  // close, which stops playback).
+  // The stage media (native loop or embed) only paints the muted background;
+  // this overlay opens the sound-on player in a dialog whose iframe is built on
+  // demand (and removed on close, which stops playback).
   const modal = document.getElementById('e-reveal-modal');
   const trigger = document.querySelector<HTMLButtonElement>('.e-reveal-open');
   const closeBtn = modal?.querySelector<HTMLButtonElement>('.e-reveal-modal-close');

@@ -402,6 +402,12 @@ html {
   pointer-events: none;
 }
 
+/* Hybrid intro: the native loop sits behind the overlay button, so it is inert
+   too. An upload-only video never gets this class and stays clickable. */
+.e-reveal-passive {
+  pointer-events: none;
+}
+
 .e-reveal-open {
   position: absolute;
   inset: 0;

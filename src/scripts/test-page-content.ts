@@ -1,7 +1,7 @@
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { dirname, join, resolve, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { buildBackgroundEmbed, buildPlayerEmbed, resolveExternalImageUrl, resolveVideoUrl } from '../utils/media';
+import { buildBackgroundEmbed, buildPlayerEmbed, planRevealVideo, resolveExternalImageUrl, resolveVideoUrl } from '../utils/media';
 import { sectionNumber, sectionOn, splitWordCount } from '../utils/page-content';
 import type { RecruitmentConfig } from '../utils/types';
 import type { AboutData, ChromeData, ContactData, CourseDetailPageData, CoursesPageData, EventDetailPageData, EventsPageData, GalleryData, HomePageData, Lecturer, Member, NewsDetailPageData, NewsPageData, StructurePageData } from '../utils/types';
@@ -286,8 +286,9 @@ assert(
   'home.reveal.mediaKind is none, image, or video'
 );
 
-// Pasted links win over uploads (`EimReveal`), so an upload is only required when
-// the matching URL field is empty. The URL itself is checked further down.
+// The pasted image link wins over the upload, and a pasted video link may stand
+// in for the upload, so a file is only required when the matching URL is empty.
+// The URL itself is checked further down.
 type RevealMedia = Pick<HomePageData['reveal'], 'mediaKind' | 'mediaAlt' | 'image' | 'video' | 'poster' | 'imageUrl' | 'videoUrl'>;
 function assertRevealMedia(value: RevealMedia | undefined) {
   if (value?.mediaKind === 'image' || value?.mediaKind === 'video') {
@@ -323,12 +324,56 @@ assert(
 );
 assert(/\ballowfullscreen\b/.test(revealComponent), 'EimReveal iframe keeps allowfullscreen');
 assert(
-  /<video\b[^>]*\bcontrols\b/.test(revealComponent),
-  'EimReveal native video keeps controls so uploads stay interactive'
+  revealComponent.includes('controls={videoPlan?.controls}'),
+  'EimReveal native video takes its controls from the reveal plan'
+);
+assert(
+  revealComponent.includes('{playerSrc && (') && revealComponent.includes('class="e-reveal-open"'),
+  'EimReveal overlay and modal render only when the link provides a player'
+);
+
+// The two roles: an uploaded or direct file loops as the background; an
+// embeddable link is the click-to-open player. These plans mirror the rendered
+// matrix (controls, background iframe, overlay, modal).
+const hybridPlan = planRevealVideo('/assets/media/intro.mp4', 'https://youtu.be/dQw4w9WgXcQ');
+assert(hybridPlan.nativeSrc === '/assets/media/intro.mp4', 'hybrid: the upload is the native background');
+assert(hybridPlan.controls === false, 'hybrid: the native background drops controls and is passive');
+assert(hybridPlan.backgroundSrc === null, 'hybrid: no background iframe next to the native video');
+assert(
+  hybridPlan.playerSrc?.includes('/embed/dQw4w9WgXcQ') === true,
+  'hybrid: the overlay opens the modal player'
+);
+
+const uploadPlan = planRevealVideo('/assets/media/intro.mp4', '');
+assert(uploadPlan.nativeSrc === '/assets/media/intro.mp4', 'upload only: the file is the native video');
+assert(uploadPlan.controls === true, 'upload only: the native video keeps its own controls');
+assert(uploadPlan.playerSrc === null && uploadPlan.backgroundSrc === null, 'upload only: no overlay, modal, or background iframe');
+
+const embedPlan = planRevealVideo('', 'https://youtu.be/dQw4w9WgXcQ');
+assert(embedPlan.nativeSrc === null, 'youtube only: no native video');
+assert(
+  embedPlan.backgroundSrc?.includes('controls=0') === true,
+  'youtube only: the link becomes the muted background embed'
+);
+assert(embedPlan.playerSrc !== null, 'youtube only: the overlay and modal accompany the background');
+
+const directPlan = planRevealVideo('', 'https://cdn.example.com/intro.mp4');
+assert(directPlan.nativeSrc === 'https://cdn.example.com/intro.mp4', 'direct mp4: the link is the native background');
+assert(directPlan.controls === true && directPlan.playerSrc === null, 'direct mp4: inline player, no modal');
+
+const driveOnlyPlan = planRevealVideo('', 'https://drive.google.com/file/d/1AbCdEfGhIjK/view');
+assert(
+  driveOnlyPlan.backgroundSrc !== null && driveOnlyPlan.backgroundSrc === driveOnlyPlan.playerSrc,
+  'drive only: the preview serves as both background and modal player'
+);
+const driveHybridPlan = planRevealVideo('/assets/media/intro.mp4', 'https://drive.google.com/file/d/1AbCdEfGhIjK/view');
+assert(
+  driveHybridPlan.nativeSrc === '/assets/media/intro.mp4' && driveHybridPlan.playerSrc !== null,
+  'drive hybrid: upload loops behind the drive modal'
 );
 
 // Embeds autoplay muted in the stage and open a sound-on player in a modal;
-// uploads and direct video files keep their inline native player and no modal.
+// a file with no link keeps its inline native player and no modal.
 const youtubeMedia = resolveVideoUrl('https://youtu.be/dQw4w9WgXcQ');
 const vimeoMedia = resolveVideoUrl('https://vimeo.com/76979871');
 const driveMedia = resolveVideoUrl('https://drive.google.com/file/d/1AbCdEfGhIjK/view');
@@ -389,7 +434,8 @@ for (const fragment of [
   assert(modalScript.includes(fragment), `EimReveal modal script includes ${fragment}`);
 }
 
-// Pasted links win over uploads, so a broken link must not slip into a built src.
+// Pasted links feed the modal (and stand in for a missing file), so a broken
+// link must not slip into a built src.
 if (reveal?.videoUrl) {
   assert(resolveVideoUrl(reveal.videoUrl) !== null, 'home.reveal.videoUrl resolves to a supported provider or video file');
 }

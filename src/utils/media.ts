@@ -127,6 +127,36 @@ export function buildPlayerEmbed(media: IframeMedia): string {
   return media.src;
 }
 
+export interface RevealVideoPlan {
+  /** Native <video> src; the uploaded file wins over a direct file link. */
+  nativeSrc: string | null;
+  /** Controls stay only when no embed provides the click-to-open modal. */
+  controls: boolean;
+  /** Muted background iframe; set only when the link is the sole source. */
+  backgroundSrc: string | null;
+  /** Click-to-open player src; also gates the overlay and modal. */
+  playerSrc: string | null;
+}
+
+// The intro has two roles: an uploaded or direct file loops as the background,
+// and an embeddable link opens in the modal. A link-only intro uses the embed
+// for both, so it still autoplays muted behind the overlay.
+export function planRevealVideo(
+  video: string | undefined | null,
+  videoUrl: string | undefined | null
+): RevealVideoPlan {
+  const resolved = resolveVideoUrl(videoUrl);
+  const embed = resolved?.kind === 'iframe' ? resolved : null;
+  const upload = typeof video === 'string' && video.trim() ? video : null;
+  const nativeSrc = upload ?? (resolved?.kind === 'video' ? resolved.src : null);
+  return {
+    nativeSrc,
+    controls: !embed,
+    backgroundSrc: !nativeSrc && embed ? buildBackgroundEmbed(embed) : null,
+    playerSrc: embed ? buildPlayerEmbed(embed) : null,
+  };
+}
+
 export function resolveExternalImageUrl(raw: string | undefined | null): string | null {
   if (typeof raw !== 'string') return null;
   const url = parseHttps(raw);

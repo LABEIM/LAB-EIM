@@ -1356,9 +1356,16 @@ if (!existsSync(clientDir)) {
       assert(false, `${file} string renders in built HTML: ${path} "${value.trim()}"`);
     }
     assert(checked > 0, `${file} has at least one rendered string checked`);
-    // Ignore inline scripts and styles: regex literals such as \d{2} are not copy.
+    // Ignore inline scripts, styles and data-* attributes: regex literals such as
+    // \d{2} and client-side templates such as {item} are not unresolved copy.
     const visibleHaystack = htmlFiles
-      .map((html) => normaliseHtml(readFileSync(html, 'utf8').replace(/<(script|style)\b[^>]*>[\s\S]*?<\/\1>/gi, ' ')))
+      .map((html) =>
+        normaliseHtml(
+          readFileSync(html, 'utf8')
+            .replace(/<(script|style)\b[^>]*>[\s\S]*?<\/\1>/gi, ' ')
+            .replace(/\sdata-[\w-]+="[^"]*"/gi, ' ')
+        )
+      )
       .join('\n');
     assert(!/\{\w+\}/.test(visibleHaystack), `${file} built HTML has no unresolved {placeholder}`);
     console.log(`  ✅ ${file}: ${checked} strings rendered${skipped.length ? `, ${skipped.length} state-dependent skipped` : ''}`);

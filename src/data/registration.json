@@ -52,6 +52,8 @@
     "submit": "Kirim Pendaftaran",
     "submitting": "Mengirim Pendaftaran...",
     "sendingTitle": "Mengirim Pendaftaran",
+    "closeError": "Tutup & Periksa Form",
+    "done": "Selesai",
     "saveDraft": "Simpan Draf",
     "draftSaved": "Draf pendaftaran berhasil disimpan di browser Anda."
   },

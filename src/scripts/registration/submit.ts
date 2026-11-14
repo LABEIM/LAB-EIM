@@ -121,7 +121,7 @@ export function initRegistrationSubmit(
       modalActions.classList.remove('is-hidden');
       modalActions.style.display = 'block';
     }
-    if (modalCloseBtn) modalCloseBtn.innerText = isEn ? 'Close & Edit Form' : (modalCloseBtn.dataset.labelClose || 'Tutup & Periksa Form');
+    if (modalCloseBtn) modalCloseBtn.innerText = isEn ? 'Close & Edit Form' : (modalCloseBtn.dataset.labelCloseError || 'Tutup & Periksa Form');
   };
 
   const showModalSuccess = (isRevision: boolean) => {
@@ -154,7 +154,7 @@ export function initRegistrationSubmit(
       modalActions.classList.remove('is-hidden');
       modalActions.style.display = 'block';
     }
-    if (modalCloseBtn) modalCloseBtn.innerText = isEn ? 'Done' : (modalCloseBtn.dataset.labelClose || 'Selesai');
+    if (modalCloseBtn) modalCloseBtn.innerText = isEn ? 'Done' : (modalCloseBtn.dataset.labelDone || 'Selesai');
   };
 
   const hideProgressModal = () => {

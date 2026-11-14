@@ -107,6 +107,8 @@ const registrationSchema = {
       submit: fields.text({ label: 'Label tombol kirim', validation: { isRequired: true } }),
       submitting: fields.text({ label: 'Label saat mengirim', validation: { isRequired: true } }),
       sendingTitle: fields.text({ label: 'Judul modal saat mengirim', validation: { isRequired: true } }),
+      closeError: fields.text({ label: 'Label tombol tutup saat gagal', validation: { isRequired: true } }),
+      done: fields.text({ label: 'Label tombol selesai saat berhasil', validation: { isRequired: true } }),
       saveDraft: fields.text({ label: 'Label tombol simpan draf', validation: { isRequired: true } }),
       draftSaved: fields.text({ label: 'Label draf tersimpan', validation: { isRequired: true } }),
     },

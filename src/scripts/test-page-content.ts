@@ -641,6 +641,8 @@ for (const key of [
   'submit',
   'submitting',
   'sendingTitle',
+  'closeError',
+  'done',
   'saveDraft',
   'draftSaved',
 ] as const) {

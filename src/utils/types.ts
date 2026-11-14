@@ -176,6 +176,8 @@ export interface RecruitmentLabels {
   submit: string;
   submitting: string;
   sendingTitle: string;
+  closeError: string;
+  done: string;
   saveDraft: string;
   draftSaved: string;
 }

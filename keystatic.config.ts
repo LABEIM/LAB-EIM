@@ -816,6 +816,75 @@ export default config({
         ),
       },
     }),
+    page_news: singleton({
+      label: 'Artikel',
+      path: 'src/data/pages/news',
+      format: { data: 'json' },
+      schema: {
+        meta: fields.object(
+          {
+            title: fields.text({
+              label: 'Judul halaman',
+              description: 'Tampil di tab browser dan hasil pencarian.',
+              validation: { isRequired: true },
+            }),
+            description: fields.text({
+              label: 'Deskripsi meta',
+              description: 'Tampil di hasil pencarian.',
+              multiline: true,
+            }),
+          },
+          { label: 'Meta halaman' }
+        ),
+        navDots: fields.object(
+          {
+            list: fields.text({ label: 'Label titik daftar' }),
+          },
+          {
+            label: 'Navigasi titik bagian',
+            description: 'Titik navigasi di tepi halaman. Titik ikut hilang saat bagiannya dimatikan.',
+          }
+        ),
+        hero: fields.object(
+          {
+            eyebrow: fields.text({ label: 'Teks kecil di atas judul' }),
+            lines: fields.array(fields.text({ label: 'Baris judul', validation: { isRequired: true } }), {
+              label: 'Judul utama',
+              description: 'Satu item per baris, maksimal tiga baris.',
+              validation: { length: { min: 1, max: 3 } },
+              itemLabel: (props) => props.value,
+            }),
+            description: fields.text({ label: 'Deskripsi', multiline: true }),
+            meta: fields.text({
+              label: 'Teks kecil di bawah tombol',
+              description: 'Jumlah artikel, kategori, dan tahun diisi otomatis. Jangan hapus {articles}, {categories}, atau {year}.',
+            }),
+            metaEmpty: fields.text({
+              label: 'Teks saat belum ada artikel',
+              description: 'Tampil menggantikan jumlah artikel saat koleksi kosong.',
+              multiline: true,
+            }),
+            primaryLabel: fields.text({ label: 'Label tombol utama' }),
+            secondaryLabel: fields.text({ label: 'Label tautan kedua' }),
+          },
+          { label: 'Hero' }
+        ),
+        list: fields.object(
+          {
+            enabled: fields.checkbox({ label: 'Tampilkan bagian ini', defaultValue: true }),
+            eyebrow: fields.text({ label: 'Teks kecil di atas judul' }),
+            title: fields.text({ label: 'Judul bagian' }),
+            intro: fields.text({ label: 'Paragraf pengantar', multiline: true }),
+            emptyTitle: fields.text({ label: 'Judul saat belum ada artikel', multiline: true }),
+            emptyDesc: fields.text({ label: 'Penjelasan saat belum ada artikel', multiline: true }),
+            noMatchTitle: fields.text({ label: 'Judul saat pencarian tidak ditemukan', multiline: true }),
+            noMatchDesc: fields.text({ label: 'Penjelasan saat pencarian tidak ditemukan', multiline: true }),
+            searchPlaceholder: fields.text({ label: 'Teks placeholder kolom pencarian' }),
+          },
+          { label: 'Daftar artikel', description: 'Entri daftar dibaca dari koleksi News. Label filter diambil dari Navbar, Footer & Brand.' }
+        ),
+      },
+    }),
     chrome: singleton({
       label: 'Navbar, Footer & Brand',
       path: 'src/data/chrome',
@@ -1280,7 +1349,7 @@ export default config({
   },
   ui: {
     navigation: {
-      Halaman: ['page_home', 'page_structure', 'page_courses', 'page_courseDetail', 'about', 'contact'],
+      Halaman: ['page_home', 'page_structure', 'page_courses', 'page_courseDetail', 'page_news', 'about', 'contact'],
       Koleksi: ['news', 'events', 'courses'],
       Pengaturan: [
         'site',

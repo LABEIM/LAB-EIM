@@ -177,7 +177,6 @@ export const uiTranslations: Record<Locale, Record<string, string>> = {
     'events.recapEmpty': 'Dokumentasi kegiatan ini belum tersedia.',
 
     // News Page
-    'news.title': 'Artikel',
     'news.subtitle': 'Tulisan riset, publikasi, dan pengumuman dari EIM Lab.',
     'news.author': 'Penulis',
     'news.date': 'Tanggal',
@@ -193,24 +192,6 @@ export const uiTranslations: Record<Locale, Record<string, string>> = {
     // News Index
     'news.galleryEyebrow': 'Dokumentasi',
     'news.galleryTitle': 'Foto artikel.',
-    'news.metaDescription': 'Artikel, publikasi, dan pengumuman dari EIM Lab.',
-    'news.heroEyebrow': 'Artikel',
-    'news.heroTitle': 'Catatan\ndari lab.',
-    'news.heroDesc': 'Tulisan riset, publikasi, dan pengumuman dari EIM Lab.',
-    'news.heroPrimary': 'Telusuri artikel',
-    'news.heroSecondary': 'Kegiatan',
-    'news.heroMeta': '{articles} artikel · {categories} kategori · terbaru {year}',
-    'news.heroMetaEmpty': 'Belum ada artikel yang dipublikasikan.',
-    'news.sectionNavLabel': 'Navigasi bagian halaman',
-    'news.navDotList': 'Daftar',
-    'news.listEyebrow': 'Daftar',
-    'news.listTitle': 'Semua artikel.',
-    'news.listIntro': 'Telusuri tulisan, publikasi, dan pengumuman EIM berdasarkan judul atau kategori.',
-    'news.searchPlaceholder': 'Cari judul artikel, penulis, atau kata kunci...',
-    'news.listEmptyTitle': 'Belum ada artikel yang dipublikasikan.',
-    'news.listEmptyDesc': 'Artikel akan tampil di sini setelah dipublikasikan.',
-    'news.listNoMatchTitle': 'Artikel tidak ditemukan.',
-    'news.listNoMatchDesc': 'Tidak ada artikel yang cocok dengan pencarian atau filter Anda. Coba kata kunci lain atau reset filter.',
     'news.contact': 'Hubungi kami',
 
     // Contact Page

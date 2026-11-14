@@ -525,6 +525,36 @@ export interface CoursesPageData {
   };
 }
 
+export interface NewsPageData {
+  meta: {
+    title: string;
+    description: string;
+  };
+  navDots: {
+    list: string;
+  };
+  hero: {
+    eyebrow: string;
+    lines: string[];
+    description: string;
+    meta: string;
+    metaEmpty: string;
+    primaryLabel: string;
+    secondaryLabel: string;
+  };
+  list: {
+    enabled: boolean;
+    eyebrow: string;
+    title: string;
+    intro: string;
+    emptyTitle: string;
+    emptyDesc: string;
+    noMatchTitle: string;
+    noMatchDesc: string;
+    searchPlaceholder: string;
+  };
+}
+
 export interface CourseDetailPageData {
   meta: {
     title: string;

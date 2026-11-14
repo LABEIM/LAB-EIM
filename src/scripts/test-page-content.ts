@@ -2,7 +2,7 @@ import { existsSync, readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { sectionOn } from '../utils/page-content';
-import type { AboutData, ChromeData, CourseDetailPageData, CoursesPageData, HomePageData, StructurePageData } from '../utils/types';
+import type { AboutData, ChromeData, CourseDetailPageData, CoursesPageData, HomePageData, NewsPageData, StructurePageData } from '../utils/types';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '../..');
 const dataDir = join(root, 'src/data');
@@ -313,6 +313,56 @@ assert(
   Boolean(courseDetail.meta?.description?.includes('{title}')),
   'courseDetail.meta.description keeps {title}'
 );
+
+console.log('\n9️⃣ Testing pages/news.json:');
+const newsPagePath = join(dataDir, 'pages/news.json');
+const newsPageExists = existsSync(newsPagePath);
+assert(newsPageExists, 'pages/news.json exists');
+const newsPage = (newsPageExists ? JSON.parse(readFileSync(newsPagePath, 'utf8')) : {}) as Partial<NewsPageData>;
+
+for (const key of ['hero', 'list'] as const) {
+  const section = newsPage[key];
+  assert(Boolean(section) && typeof section === 'object', `news.${key} exists`);
+}
+assert(typeof newsPage.list?.enabled === 'boolean', 'news.list.enabled is a boolean');
+assert(Boolean(newsPage.hero) && !('enabled' in (newsPage.hero as object)), 'news.hero has no enabled toggle');
+
+const newsHero = newsPage.hero;
+for (const key of ['eyebrow', 'description', 'meta', 'metaEmpty', 'primaryLabel', 'secondaryLabel'] as const) {
+  const value = newsHero?.[key];
+  assert(typeof value === 'string' && value.trim().length > 0, `news.hero.${key} is a non-empty string`);
+}
+assert(
+  Array.isArray(newsHero?.lines) && newsHero.lines.length >= 1 && newsHero.lines.length <= 3,
+  'news.hero.lines has 1 to 3 lines'
+);
+
+const newsList = newsPage.list;
+for (const key of [
+  'eyebrow',
+  'title',
+  'intro',
+  'emptyTitle',
+  'emptyDesc',
+  'noMatchTitle',
+  'noMatchDesc',
+  'searchPlaceholder',
+] as const) {
+  const value = newsList?.[key];
+  assert(typeof value === 'string' && value.trim().length > 0, `news.list.${key} is a non-empty string`);
+}
+
+for (const key of ['list'] as const) {
+  const value = newsPage.navDots?.[key];
+  assert(typeof value === 'string' && value.trim().length > 0, `news.navDots.${key} is a non-empty string`);
+}
+assert(Boolean(newsPage.meta?.title?.trim()), 'news.meta.title is a non-empty string');
+assert(Boolean(newsPage.meta?.description?.trim()), 'news.meta.description is a non-empty string');
+
+// The hero meta carries the counts, so the placeholders must survive.
+for (const token of ['{articles}', '{categories}', '{year}'] as const) {
+  assert(Boolean(newsHero?.meta?.includes(token)), `news.hero.meta keeps ${token}`);
+}
 
 console.log(`\n${passed} passed, ${failed} failed`);
 if (failed > 0) process.exitCode = 1;

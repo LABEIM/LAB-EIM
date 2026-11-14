@@ -144,6 +144,41 @@ export interface FieldStates {
   portofolio?: PortfolioFieldState;
 }
 
+export interface RecruitmentLabels {
+  fullName: string;
+  fullNamePlaceholder: string;
+  nim: string;
+  nimPlaceholder: string;
+  email: string;
+  emailPlaceholder: string;
+  phone: string;
+  phonePlaceholder: string;
+  classYear: string;
+  selectClassYear: string;
+  div1: string;
+  selectDiv1: string;
+  div2: string;
+  selectDiv2: string;
+  reason: string;
+  reasonPlaceholder: string;
+  portfolioLink: string;
+  portfolioPlaceholder: string;
+  ksm: string;
+  khs: string;
+  ml: string;
+  cv: string;
+  pi: string;
+  downloadPiTemplate: string;
+  chooseFile: string;
+  noFile: string;
+  requirementsTitle: string;
+  dataUse: string;
+  submit: string;
+  submitting: string;
+  saveDraft: string;
+  draftSaved: string;
+}
+
 export interface RecruitmentConfig {
   status?: string;
   autoCloseAfterDeadline?: boolean;
@@ -162,6 +197,7 @@ export interface RecruitmentConfig {
   formDescriptionTitle?: string;
   formDescription?: string;
   formDescriptionItems?: string[];
+  labels?: RecruitmentLabels;
   studentYears?: string[];
   fieldStates?: FieldStates;
   documentLimits?: DocumentLimits;

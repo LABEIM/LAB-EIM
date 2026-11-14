@@ -3,7 +3,6 @@ import TimelineSteps from './TimelineSteps.astro';
 import StageInfoPanel from './StageInfoPanel.astro';
 import NimSearchBox from './NimSearchBox.astro';
 import BackToHomeButton from './BackToHomeButton.astro';
-import { getLocaleFromUrl, t } from '../../utils/i18n';
 import type { SelectionStepConfig } from '../../utils/types';
 
 interface Props {
@@ -14,7 +13,6 @@ interface Props {
   selectionSteps?: SelectionStepConfig[];
 }
 
-const locale = getLocaleFromUrl(Astro.url);
 const { step, initialStage, isResultsView = false, selectionSteps = [] } = Astro.props;
 
 const viewId = isResultsView ? `view-${step.id}-results` : `view-${step.id}`;
@@ -60,7 +58,6 @@ const resultsCfg = step.resultsConfig || {
         inputId={`search-${step.id}-nim-input`}
         buttonId={`search-${step.id}-nim-btn`}
         resultBoxId={`search-${step.id}-result-box`}
-        buttonLabel={t('btn.search', locale)}
       />
 
       {(resultsCfg.newsUrl || resultsCfg.documentUrl) && (

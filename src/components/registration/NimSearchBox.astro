@@ -1,5 +1,6 @@
 ---
-import { getLocaleFromUrl, t } from '../../utils/i18n';
+import { getLocaleFromUrl, getLocalizedJsonData, t } from '../../utils/i18n';
+import type { ChromeData } from '../../utils/types';
 
 interface Props {
   title: string;
@@ -11,13 +12,14 @@ interface Props {
 }
 
 const locale = getLocaleFromUrl(Astro.url);
+const chrome = getLocalizedJsonData<ChromeData>('chrome', locale);
 
 const {
   title,
   inputId,
   buttonId,
   resultBoxId,
-  buttonLabel = t('btn.search', locale),
+  buttonLabel = chrome.labels.search,
   containerClass = ""
 } = Astro.props;
 ---

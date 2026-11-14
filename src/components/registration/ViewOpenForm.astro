@@ -1,7 +1,7 @@
 ---
 import type { DivisionConfig } from '../../utils/division-mapper';
-import { getLocaleFromUrl, t } from '../../utils/i18n';
-import type { FieldStates } from '../../utils/types';
+import { getLocaleFromUrl, getLocalizedJsonData } from '../../utils/i18n';
+import type { ChromeData, FieldStates, RecruitmentLabels } from '../../utils/types';
 import FormDescriptionCard from './FormDescriptionCard.astro';
 
 interface Props {
@@ -27,7 +27,10 @@ interface Props {
 }
 
 const locale = getLocaleFromUrl(Astro.url);
+const chrome = getLocalizedJsonData<ChromeData>('chrome', locale);
 const { initialStage, registrationConfig, extendedCfg, studentYears, docLimits, divisions, piTemplateUrl, minReasonWords = 30, fieldStates = {} } = Astro.props;
+
+const labels = registrationConfig.labels as RecruitmentLabels;
 
 const allowedExtsCfg = (registrationConfig as any).allowedFileExtensions || {};
 const formatAccept = (extsStr?: string) => (extsStr || "pdf, png, jpg, jpeg")
@@ -75,7 +78,7 @@ const portoState = fieldStates.portofolio || 'required';
 const rawDocs = [
   ksmState !== 'disabled' && {
     id: 'file_ksm',
-    label: t('form.ksm', locale),
+    label: labels.ksm,
     maxMb: docLimits.ksmMb,
     accept: ksmAccept,
     exts: ksmExts,
@@ -84,7 +87,7 @@ const rawDocs = [
   },
   khsState !== 'disabled' && {
     id: 'file_khs',
-    label: t('form.khs', locale),
+    label: labels.khs,
     maxMb: docLimits.khsMb,
     accept: khsAccept,
     exts: khsExts,
@@ -93,7 +96,7 @@ const rawDocs = [
   },
   mlState !== 'disabled' && {
     id: 'file_ml',
-    label: t('form.motivationLetter', locale),
+    label: labels.ml,
     maxMb: docLimits.mlMb,
     accept: mlAccept,
     exts: mlExts,
@@ -102,7 +105,7 @@ const rawDocs = [
   },
   cvState !== 'disabled' && {
     id: 'file_cv',
-    label: t('form.cv', locale),
+    label: labels.cv,
     maxMb: docLimits.cvMb,
     accept: cvAccept,
     exts: cvExts,
@@ -139,7 +142,7 @@ for (let i = 0; i < standardDocs.length; i += 2) {
   </div>
 
   <FormDescriptionCard 
-    title={registrationConfig.formDescriptionTitle} 
+    title={registrationConfig.formDescriptionTitle || labels.requirementsTitle} 
     description={registrationConfig.formDescription} 
     items={registrationConfig.formDescriptionItems} 
   />
@@ -191,23 +194,23 @@ for (let i = 0; i < standardDocs.length; i += 2) {
     </legend>
 
     <div class="form-group">
-      <label for="nama_lengkap">{t('form.fullName', locale)} <span class="required-asterisk">*</span></label>
-      <input type="text" class="form-control" id="nama_lengkap" placeholder={t('form.fullNamePlaceholder', locale)} required />
+      <label for="nama_lengkap">{labels.fullName} <span class="required-asterisk">*</span></label>
+      <input type="text" class="form-control" id="nama_lengkap" placeholder={labels.fullNamePlaceholder} required />
     </div>
 
     {angkatanState !== 'disabled' ? (
       <div class="form-row reg-form-row-mt">
         <div class="form-group">
-          <label for="nim">{t('form.nim', locale)} <span class="required-asterisk">*</span></label>
-          <input type="text" class="form-control" id="nim" placeholder={t('form.nimPlaceholder', locale)} pattern="[0-9]+" required />
+          <label for="nim">{labels.nim} <span class="required-asterisk">*</span></label>
+          <input type="text" class="form-control" id="nim" placeholder={labels.nimPlaceholder} pattern="[0-9]+" required />
         </div>
         <div class="form-group">
           <label for="angkatan">
-            {t('form.classYear', locale)}
+            {labels.classYear}
             {angkatanState === 'required' ? <span class="required-asterisk">*</span> : <span class="reg-file-label-small">(Opsional)</span>}
           </label>
           <select class="form-control" id="angkatan" required={angkatanState === 'required'}>
-            <option value="" disabled selected>{t('form.selectClassYear', locale)}</option>
+            <option value="" disabled selected>{labels.selectClassYear}</option>
             {studentYears.map(yr => (
               <option value={yr}>{yr}</option>
             ))}
@@ -216,29 +219,29 @@ for (let i = 0; i < standardDocs.length; i += 2) {
       </div>
     ) : (
       <div class="form-group reg-form-row-mt">
-        <label for="nim">{t('form.nim', locale)} <span class="required-asterisk">*</span></label>
-        <input type="text" class="form-control" id="nim" placeholder={t('form.nimPlaceholder', locale)} pattern="[0-9]+" required />
+        <label for="nim">{labels.nim} <span class="required-asterisk">*</span></label>
+        <input type="text" class="form-control" id="nim" placeholder={labels.nimPlaceholder} pattern="[0-9]+" required />
       </div>
     )}
 
     {telpState !== 'disabled' ? (
       <div class="form-row reg-form-row-mt">
         <div class="form-group">
-          <label for="email">{t('form.email', locale)} <span class="required-asterisk">*</span></label>
-          <input type="email" class="form-control" id="email" placeholder={t('form.emailPlaceholder', locale)} required />
+          <label for="email">{labels.email} <span class="required-asterisk">*</span></label>
+          <input type="email" class="form-control" id="email" placeholder={labels.emailPlaceholder} required />
         </div>
         <div class="form-group">
           <label for="nomor_telp">
-            {t('form.phone', locale)}
+            {labels.phone}
             {telpState === 'required' ? <span class="required-asterisk">*</span> : <span class="reg-file-label-small">(Opsional)</span>}
           </label>
-          <input type="tel" class="form-control" id="nomor_telp" placeholder={t('form.phonePlaceholder', locale)} pattern="[0-9]+" required={telpState === 'required'} />
+          <input type="tel" class="form-control" id="nomor_telp" placeholder={labels.phonePlaceholder} pattern="[0-9]+" required={telpState === 'required'} />
         </div>
       </div>
     ) : (
       <div class="form-group reg-form-row-mt">
-        <label for="email">{t('form.email', locale)} <span class="required-asterisk">*</span></label>
-        <input type="email" class="form-control" id="email" placeholder={t('form.emailPlaceholder', locale)} required />
+        <label for="email">{labels.email} <span class="required-asterisk">*</span></label>
+        <input type="email" class="form-control" id="email" placeholder={labels.emailPlaceholder} required />
       </div>
     )}
 
@@ -253,9 +256,9 @@ for (let i = 0; i < standardDocs.length; i += 2) {
     {div2State !== 'disabled' ? (
       <div class="form-row">
         <div class="form-group">
-          <label for="divisi_1">{t('form.div1', locale)} <span class="required-asterisk">*</span></label>
+          <label for="divisi_1">{labels.div1} <span class="required-asterisk">*</span></label>
           <select class="form-control" id="divisi_1" required>
-            <option value="" disabled selected>{t('form.selectDiv1', locale)}</option>
+            <option value="" disabled selected>{labels.selectDiv1}</option>
             {divisions.map(div => (
               <option value={div.registrationValue || div.id}>{div.registrationLabel || div.name}</option>
             ))}
@@ -263,11 +266,11 @@ for (let i = 0; i < standardDocs.length; i += 2) {
         </div>
         <div class="form-group">
           <label for="divisi_2">
-            {t('form.div2', locale)}
+            {labels.div2}
             {div2State === 'required' ? <span class="required-asterisk">*</span> : <span class="reg-file-label-small">(Opsional)</span>}
           </label>
           <select class="form-control" id="divisi_2" required={div2State === 'required'}>
-            <option value="" disabled selected>{t('form.selectDiv2', locale)}</option>
+            <option value="" disabled selected>{labels.selectDiv2}</option>
             {divisions.map(div => (
               <option value={div.registrationValue || div.id}>{div.registrationLabel || div.name}</option>
             ))}
@@ -276,9 +279,9 @@ for (let i = 0; i < standardDocs.length; i += 2) {
       </div>
     ) : (
       <div class="form-group">
-        <label for="divisi_1">{t('form.div1', locale)} <span class="required-asterisk">*</span></label>
+        <label for="divisi_1">{labels.div1} <span class="required-asterisk">*</span></label>
         <select class="form-control" id="divisi_1" required>
-          <option value="" disabled selected>{t('form.selectDiv1', locale)}</option>
+          <option value="" disabled selected>{labels.selectDiv1}</option>
           {divisions.map(div => (
             <option value={div.registrationValue || div.id}>{div.registrationLabel || div.name}</option>
           ))}
@@ -287,8 +290,8 @@ for (let i = 0; i < standardDocs.length; i += 2) {
     )}
 
     <div class="form-group reg-form-row-mt">
-      <label for="alasan_divisi_1">Alasan Memilih Divisi 1 <span class="required-asterisk">*</span></label>
-      <textarea class="form-control" id="alasan_divisi_1" rows="3" placeholder={t('form.reasonPlaceholder', locale)} required></textarea>
+      <label for="alasan_divisi_1">{labels.reason} 1 <span class="required-asterisk">*</span></label>
+      <textarea class="form-control" id="alasan_divisi_1" rows="3" placeholder={labels.reasonPlaceholder} required></textarea>
       <small class="reg-small-desc word-count-info" id="alasan_divisi_1_counter" data-min-words={minReasonWords}>
         Jumlah kata: <span class="word-count-val" id="alasan_divisi_1_count">0</span> / {minReasonWords} kata minimal
       </small>
@@ -297,10 +300,10 @@ for (let i = 0; i < standardDocs.length; i += 2) {
     {alasan2State !== 'disabled' && (
       <div class="form-group reg-form-row-mt">
         <label for="alasan_divisi_2">
-          Alasan Memilih Divisi 2
+          {labels.reason} 2
           {alasan2State === 'required' ? <span class="required-asterisk">*</span> : <span class="reg-file-label-small">(Opsional)</span>}
         </label>
-        <textarea class="form-control" id="alasan_divisi_2" rows="3" placeholder={t('form.reasonPlaceholder', locale)} required={alasan2State === 'required'}></textarea>
+        <textarea class="form-control" id="alasan_divisi_2" rows="3" placeholder={labels.reasonPlaceholder} required={alasan2State === 'required'}></textarea>
         <small class="reg-small-desc word-count-info" id="alasan_divisi_2_counter" data-min-words={minReasonWords}>
           Jumlah kata: <span class="word-count-val" id="alasan_divisi_2_count">0</span> / {minReasonWords} kata minimal
         </small>
@@ -316,12 +319,12 @@ for (let i = 0; i < standardDocs.length; i += 2) {
         style={portoState === 'only_trigger' ? 'display: none;' : 'display: block;'}
       >
         <label for="portofolio_medhum" class="medhum-porto-label" id="label-medhum-porto">
-          <i class="fa-solid fa-palette reg-icon-mr"></i> {t('form.portfolioLink', locale)}{' '}
+          <i class="fa-solid fa-palette reg-icon-mr"></i> {labels.portfolioLink}{' '}
           <span id="porto-required-indicator">
             <span class="reg-file-label-small">(Opsional)</span>
           </span>
         </label>
-        <input type="url" class="form-control" id="portofolio_medhum" placeholder={t('form.portfolioPlaceholder', locale)} required={false} />
+        <input type="url" class="form-control" id="portofolio_medhum" placeholder={labels.portfolioPlaceholder} required={false} />
         <small class="reg-small-desc" id="porto-help-text">
           {(locale as string) === 'en'
             ? 'Include a link to your public portfolio, best work, or certificates.'
@@ -359,10 +362,10 @@ for (let i = 0; i < standardDocs.length; i += 2) {
             <label for={doc.id}>
               {doc.label} <span class="reg-file-label-small">({doc.extsDisplay} • Max {doc.maxMb}MB)</span>
               {doc.state === 'required' ? <span class="required-asterisk">*</span> : <span class="reg-file-label-small">(Opsional)</span>}
-              <span class="reg-file-cta">{t('form.chooseFile', locale)}</span>
+              <span class="reg-file-cta">{labels.chooseFile}</span>
             </label>
             <input type="file" class="form-control reg-file-input" id={doc.id} accept={doc.accept} data-allowed-exts={doc.exts} data-max-mb={doc.maxMb} required={doc.state === 'required'} />
-            <span class="reg-file-name" data-file-name={doc.id} data-empty-label={t('form.noFile', locale)}>{t('form.noFile', locale)}</span>
+            <span class="reg-file-name" data-file-name={doc.id} data-empty-label={labels.noFile}>{labels.noFile}</span>
           </div>
         ))}
       </div>
@@ -372,32 +375,32 @@ for (let i = 0; i < standardDocs.length; i += 2) {
       <div class="form-group reg-form-row-mt">
         <div class="reg-pi-label-row">
           <label for="file_pi" class="reg-mb-0">
-            {t('form.pi', locale)} <span class="reg-file-label-small">({piExtsDisplay} • Max {docLimits.piMb}MB)</span>
+            {labels.pi} <span class="reg-file-label-small">({piExtsDisplay} • Max {docLimits.piMb}MB)</span>
             {piState === 'required' ? <span class="required-asterisk">*</span> : <span class="reg-file-label-small">(Opsional)</span>}
-            <span class="reg-file-cta">{t('form.chooseFile', locale)}</span>
+            <span class="reg-file-cta">{labels.chooseFile}</span>
           </label>
           {piTemplateUrl && (
             <a href={piTemplateUrl} target="_blank" rel="noopener noreferrer" class="reg-pi-link-inline">
               <i class="fa-solid fa-file-arrow-down"></i>
-              <span>{t('form.downloadPiTemplate', locale)}</span>
+              <span>{labels.downloadPiTemplate}</span>
             </a>
           )}
         </div>
         <input type="file" class="form-control reg-file-input" id="file_pi" accept={piAccept} data-allowed-exts={piExts} data-max-mb={docLimits.piMb} required={piState === 'required'} />
-        <span class="reg-file-name" data-file-name="file_pi" data-empty-label={t('form.noFile', locale)}>{t('form.noFile', locale)}</span>
+        <span class="reg-file-name" data-file-name="file_pi" data-empty-label={labels.noFile}>{labels.noFile}</span>
       </div>
     )}
 
     </fieldset>
 
-    <p class="reg-data-use">{t('form.dataUse', locale)}</p>
+    <p class="reg-data-use">{labels.dataUse}</p>
 
     <div class="form-actions form-actions-submit">
       <button type="submit" id="submit-btn" class="btn btn-primary btn-submit-registration">
-        <span id="btn-text">{t('form.submit', locale)} <i class="fa-solid fa-paper-plane reg-icon-ml-xs"></i></span>
+        <span id="btn-text">{labels.submit} <i class="fa-solid fa-paper-plane reg-icon-ml-xs"></i></span>
       </button>
       <button type="button" id="clear-draft-btn" class="btn btn-clear-draft is-hidden">
-        <i class="fa-solid fa-rotate-left"></i> {t('form.saveDraft', locale)}
+        <i class="fa-solid fa-rotate-left"></i> {labels.saveDraft}
       </button>
     </div>
   </form>
@@ -405,7 +408,7 @@ for (let i = 0; i < standardDocs.length; i += 2) {
   <!-- Floating Draft Auto-Save Toast Notification -->
   <div id="draft-toast" class="draft-toast-container is-hidden">
     <i id="draft-toast-icon" class="fa-solid fa-cloud-arrow-up draft-toast-icon"></i>
-    <span id="draft-toast-text">{t('form.draftSaved', locale)}</span>
+    <span id="draft-toast-text">{labels.draftSaved}</span>
   </div>
 
   <!-- Clear Draft Confirmation Modal Overlay -->
@@ -435,7 +438,7 @@ for (let i = 0; i < standardDocs.length; i += 2) {
         <div id="progress-modal-icon" class="progress-modal-icon-wrapper">
           <i class="fa-solid fa-cloud-arrow-up fa-bounce footer-icon-cyan"></i>
         </div>
-        <h3 id="progress-modal-title" class="progress-modal-title">{t('form.submitting', locale)}</h3>
+        <h3 id="progress-modal-title" class="progress-modal-title">{labels.submitting}</h3>
         <p id="progress-modal-subtitle" class="progress-modal-subtitle">
           Mohon tetap di halaman ini selagi sistem memproses dokumen dan mengirim data Anda.
         </p>
@@ -474,7 +477,7 @@ for (let i = 0; i < standardDocs.length; i += 2) {
 
       <!-- Modal Action Buttons -->
       <div id="progress-modal-actions" class="progress-modal-actions is-hidden">
-        <button type="button" id="modal-close-btn" class="btn btn-primary reg-modal-btn-w">{t('btn.close', locale)}</button>
+        <button type="button" id="modal-close-btn" class="btn btn-primary reg-modal-btn-w">{chrome.labels.close}</button>
       </div>
     </div>
   </div>

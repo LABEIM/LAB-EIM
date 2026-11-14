@@ -601,5 +601,51 @@ for (const key of [
 }
 assert(Array.isArray(contactPage.contactPersons), 'contact.contactPersons is an array');
 
+console.log('\n1️⃣4️⃣ Testing registration.json labels:');
+const registrationPath = join(dataDir, 'registration.json');
+const registrationExists = existsSync(registrationPath);
+assert(registrationExists, 'registration.json exists');
+const registration = (registrationExists ? JSON.parse(readFileSync(registrationPath, 'utf8')) : {}) as {
+  labels?: Record<string, unknown>;
+};
+
+for (const key of [
+  'fullName',
+  'fullNamePlaceholder',
+  'nim',
+  'nimPlaceholder',
+  'email',
+  'emailPlaceholder',
+  'phone',
+  'phonePlaceholder',
+  'classYear',
+  'selectClassYear',
+  'div1',
+  'selectDiv1',
+  'div2',
+  'selectDiv2',
+  'reason',
+  'reasonPlaceholder',
+  'portfolioLink',
+  'portfolioPlaceholder',
+  'ksm',
+  'khs',
+  'ml',
+  'cv',
+  'pi',
+  'downloadPiTemplate',
+  'chooseFile',
+  'noFile',
+  'requirementsTitle',
+  'dataUse',
+  'submit',
+  'submitting',
+  'saveDraft',
+  'draftSaved',
+] as const) {
+  const value = registration.labels?.[key];
+  assert(typeof value === 'string' && value.trim().length > 0, `registration.labels.${key} is a non-empty string`);
+}
+
 console.log(`\n${passed} passed, ${failed} failed`);
 if (failed > 0) process.exitCode = 1;

@@ -276,7 +276,7 @@ const registrationPeriod = t('reg.period', locale, {
             } catch(e) {}
           })();
         </script>
-        <ViewUpcoming initialStage={initialStage} upcomingCfg={upcomingCfg} docLimits={docLimits} studentYears={studentYears} piTemplateUrl={piTemplateUrl} fieldStates={fieldStates} allowedFileExtensions={registrationConfig.allowedFileExtensions} formDescriptionTitle={formDescriptionTitle} formDescription={formDescription} formDescriptionItems={formDescriptionItems} />
+        <ViewUpcoming initialStage={initialStage} upcomingCfg={upcomingCfg} docLimits={docLimits} studentYears={studentYears} piTemplateUrl={piTemplateUrl} fieldStates={fieldStates} labels={registrationConfig.labels} allowedFileExtensions={registrationConfig.allowedFileExtensions} formDescriptionTitle={formDescriptionTitle} formDescription={formDescription} formDescriptionItems={formDescriptionItems} />
         <ViewOpenForm initialStage={initialStage} registrationConfig={registrationConfig} extendedCfg={extendedCfg} studentYears={studentYears} docLimits={docLimits} divisions={divisions} piTemplateUrl={piTemplateUrl} minReasonWords={minReasonWords} fieldStates={fieldStates} />
         
         {/* Dynamic Selection Steps View Rendering */}

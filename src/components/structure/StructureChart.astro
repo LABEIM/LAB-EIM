@@ -95,7 +95,7 @@ const root = buildNode(STRUCTURE_TREE[0].id);
       <div
         class="mt-[clamp(2.5rem,6vh,4rem)] rounded-media border border-line bg-surface p-[clamp(1.25rem,4vw,2.5rem)]"
       >
-        <ol class="chart-tree e-reveal" role="list">
+        <ol class="chart-tree e-reveal" role="list" aria-label={content.ariaLabel}>
           <ChartBranch node={root} content={content} labels={labels} />
         </ol>
       </div>

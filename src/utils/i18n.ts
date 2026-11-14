@@ -136,17 +136,6 @@ export const uiTranslations: Record<Locale, Record<string, string>> = {
     'stage.closed': 'Ditutup',
     'stage.fallback': 'Formulir Cadangan',
 
-    // Structure Page
-    'struct.title': 'Struktur Organisasi Lab',
-    'struct.navDotDosen': 'Dosen',
-    'struct.navDotAsisten': 'Asisten',
-    'struct.navDotMahasiswa': 'Mahasiswa',
-    'struct.chartLabel': 'Bagan struktur: Dosen Ketua Laboratorium membawahi Dosen Wakil Ketua Laboratorium, yang membawahi Dosen Anggota Laboratorium, Koordinator Mata Kuliah, dan Koordinator Asisten Laboratorium. Koordinator Asisten Laboratorium membawahi Asisten Koordinator Praktikum dan Mahasiswa Anggota Laboratorium, dan Asisten Koordinator Praktikum membawahi Asisten Praktikum.',
-    'struct.groupDosen': 'Dosen',
-    'struct.groupAsisten': 'Asisten',
-    'struct.groupMahasiswa': 'Mahasiswa',
-
-
     // Courses Page
     'courses.heroEyebrow': 'Pengajaran',
     'courses.heroTitle': 'Mata kuliah\ndan praktikum.',

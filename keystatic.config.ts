@@ -636,6 +636,14 @@ export default config({
             description: 'Titik navigasi di tepi halaman. Titik ikut hilang saat bagiannya dimatikan.',
           }
         ),
+        groups: fields.object(
+          {
+            dosen: fields.text({ label: 'Label kelompok dosen' }),
+            asisten: fields.text({ label: 'Label kelompok asisten' }),
+            mahasiswa: fields.text({ label: 'Label kelompok mahasiswa' }),
+          },
+          { label: 'Label kelompok peran', description: 'Dipakai di bagan dan di judul tiap peran.' }
+        ),
         hero: fields.object(
           {
             eyebrow: fields.text({ label: 'Teks kecil di atas judul' }),
@@ -660,6 +668,11 @@ export default config({
             enabled: fields.checkbox({ label: 'Tampilkan bagian ini', defaultValue: true }),
             title: fields.text({ label: 'Judul bagian' }),
             intro: fields.text({ label: 'Paragraf pengantar', multiline: true }),
+            ariaLabel: fields.text({
+              label: 'Label bagan untuk pembaca layar',
+              description: 'Menjelaskan susunan peran dari ketua laboratorium sampai asisten praktikum.',
+              multiline: true,
+            }),
             memberAssistantNote: fields.text({
               label: 'Catatan asisten praktikum',
               description: 'Jumlah diisi otomatis. Jangan hapus {n} atau {total}.',

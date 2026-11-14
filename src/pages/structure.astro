@@ -62,21 +62,21 @@ const sectionItems = [
     {sectionOn(page.chart) && (
       <StructureChart
         content={page.chart}
+        labels={page.groups}
         positions={positions}
         members={members}
         lecturers={lecturers}
         courses={courses}
-        locale={locale}
       />
     )}
     {sectionOn(page.roles) &&
       sections.map((section, index) => (
         <StructureRoles
           content={page.roles}
+          labels={page.groups}
           section={section}
           index={index}
           positionIndex={positionIndex}
-          locale={locale}
         />
       ))}
     {sectionOn(page.cta) && (

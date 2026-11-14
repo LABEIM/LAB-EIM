@@ -204,9 +204,14 @@ assert(
 );
 
 const structureChart = structure.chart;
-for (const key of ['title', 'intro', 'memberAssistantNote', 'practicumAssistant', 'emptyPosition', 'positionCount'] as const) {
+for (const key of ['title', 'intro', 'ariaLabel', 'memberAssistantNote', 'practicumAssistant', 'emptyPosition', 'positionCount'] as const) {
   const value = structureChart?.[key];
   assert(typeof value === 'string' && value.trim().length > 0, `structure.chart.${key} is a non-empty string`);
+}
+const structureGroups = structure.groups;
+for (const key of ['dosen', 'asisten', 'mahasiswa'] as const) {
+  const value = structureGroups?.[key];
+  assert(typeof value === 'string' && value.trim().length > 0, `structure.groups.${key} is a non-empty string`);
 }
 assert(Boolean(structure.roles?.positionIntro?.trim()), 'structure.roles.positionIntro is a non-empty string');
 

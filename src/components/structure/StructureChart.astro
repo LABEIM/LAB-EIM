@@ -1,6 +1,5 @@
 ---
 import type { CourseView, Lecturer, Member, Position, StructurePageData } from '../../utils/types';
-import type { Locale } from '../../utils/i18n';
 import {
   PRACTICUM_ASSISTANT_ID,
   STRUCTURE_TREE,
@@ -11,14 +10,14 @@ import ChartBranch from './ChartBranch.astro';
 
 interface Props {
   content: StructurePageData['chart'];
+  labels: StructurePageData['groups'];
   positions: Position[];
   members: Member[];
   lecturers: Lecturer[];
   courses: CourseView[];
-  locale: Locale;
 }
 
-const { content, positions, members, lecturers, courses, locale } = Astro.props;
+const { content, labels, positions, members, lecturers, courses } = Astro.props;
 
 const byId = new Map(positions.map((position) => [position.id, position]));
 const treeById = new Map(STRUCTURE_TREE.map((node) => [node.id, node]));
@@ -97,7 +96,7 @@ const root = buildNode(STRUCTURE_TREE[0].id);
         class="mt-[clamp(2.5rem,6vh,4rem)] rounded-media border border-line bg-surface p-[clamp(1.25rem,4vw,2.5rem)]"
       >
         <ol class="chart-tree e-reveal" role="list">
-          <ChartBranch node={root} content={content} locale={locale} />
+          <ChartBranch node={root} content={content} labels={labels} />
         </ol>
       </div>
     )}

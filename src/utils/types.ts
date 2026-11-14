@@ -469,6 +469,11 @@ export interface StructurePageData {
     chart: string;
     join: string;
   };
+  groups: {
+    dosen: string;
+    asisten: string;
+    mahasiswa: string;
+  };
   hero: {
     eyebrow: string;
     lines: string[];
@@ -481,6 +486,7 @@ export interface StructurePageData {
     enabled: boolean;
     title: string;
     intro: string;
+    ariaLabel: string;
     memberAssistantNote: string;
     practicumAssistant: string;
     emptyPosition: string;

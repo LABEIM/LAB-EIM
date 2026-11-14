@@ -765,6 +765,60 @@ export default config({
         ),
       },
     }),
+    page_courseDetail: singleton({
+      label: 'Detail Mata Kuliah',
+      path: 'src/data/pages/course-detail',
+      format: { data: 'json' },
+      schema: {
+        meta: fields.object(
+          {
+            title: fields.text({
+              label: 'Judul halaman',
+              description: 'Diapit judul mata kuliah di tab browser dan hasil pencarian.',
+              validation: { isRequired: true },
+            }),
+          },
+          { label: 'Meta halaman' }
+        ),
+        description: fields.object(
+          {
+            enabled: fields.checkbox({ label: 'Tampilkan bagian ini', defaultValue: true }),
+            heading: fields.text({
+              label: 'Judul bagian deskripsi',
+              description: 'Juga dipakai sebagai deskripsi halaman di hasil pencarian. Jangan hapus {title}.',
+              multiline: true,
+            }),
+          },
+          { label: 'Deskripsi mata kuliah', description: 'Isi deskripsi dibaca dari koleksi Courses.' }
+        ),
+        modules: fields.object(
+          {
+            enabled: fields.checkbox({ label: 'Tampilkan bagian ini', defaultValue: true }),
+            heading: fields.text({ label: 'Judul bagian' }),
+          },
+          { label: 'Modul praktikum', description: 'Daftar modul dibaca dari koleksi Courses.' }
+        ),
+        assistants: fields.object(
+          {
+            enabled: fields.checkbox({ label: 'Tampilkan bagian ini', defaultValue: true }),
+            heading: fields.text({ label: 'Judul bagian' }),
+            note: fields.text({
+              label: 'Catatan tanpa praktikum',
+              description: 'Tampil saat mata kuliah tidak memiliki praktikum.',
+              multiline: true,
+            }),
+          },
+          { label: 'Asisten praktikum', description: 'Daftar asisten dibaca dari koleksi Courses dan Members.' }
+        ),
+        backLink: fields.object(
+          {
+            enabled: fields.checkbox({ label: 'Tampilkan bagian ini', defaultValue: true }),
+            label: fields.text({ label: 'Label tautan kembali ke daftar' }),
+          },
+          { label: 'Tautan kembali', description: 'Tautan diarahkan ke halaman Mata Kuliah.' }
+        ),
+      },
+    }),
     chrome: singleton({
       label: 'Navbar, Footer & Brand',
       path: 'src/data/chrome',
@@ -1229,7 +1283,7 @@ export default config({
   },
   ui: {
     navigation: {
-      Halaman: ['page_home', 'page_structure', 'page_courses', 'about', 'contact'],
+      Halaman: ['page_home', 'page_structure', 'page_courses', 'page_courseDetail', 'about', 'contact'],
       Koleksi: ['news', 'events', 'courses'],
       Pengaturan: [
         'site',

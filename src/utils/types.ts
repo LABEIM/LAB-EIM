@@ -527,6 +527,29 @@ export interface CoursesPageData {
   };
 }
 
+export interface CourseDetailPageData {
+  meta: {
+    title: string;
+  };
+  description: {
+    enabled: boolean;
+    heading: string;
+  };
+  modules: {
+    enabled: boolean;
+    heading: string;
+  };
+  assistants: {
+    enabled: boolean;
+    heading: string;
+    note: string;
+  };
+  backLink: {
+    enabled: boolean;
+    label: string;
+  };
+}
+
 export interface AboutData {
   title: string;
   description: string;

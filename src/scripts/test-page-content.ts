@@ -2,7 +2,7 @@ import { existsSync, readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { sectionOn } from '../utils/page-content';
-import type { AboutData, ChromeData, CoursesPageData, HomePageData, StructurePageData } from '../utils/types';
+import type { AboutData, ChromeData, CourseDetailPageData, CoursesPageData, HomePageData, StructurePageData } from '../utils/types';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '../..');
 const dataDir = join(root, 'src/data');
@@ -276,6 +276,43 @@ for (const key of ['list'] as const) {
 assert(Boolean(coursesPage.sectionLabel?.trim()), 'courses.sectionLabel is a non-empty string');
 assert(Boolean(coursesPage.meta?.title?.trim()), 'courses.meta.title is a non-empty string');
 assert(Boolean(coursesPage.meta?.description?.trim()), 'courses.meta.description is a non-empty string');
+
+console.log('\n8️⃣ Testing pages/course-detail.json:');
+const courseDetailPath = join(dataDir, 'pages/course-detail.json');
+const courseDetailExists = existsSync(courseDetailPath);
+assert(courseDetailExists, 'pages/course-detail.json exists');
+const courseDetail = (courseDetailExists ? JSON.parse(readFileSync(courseDetailPath, 'utf8')) : {}) as Partial<CourseDetailPageData>;
+
+// The header carries the course title, so it stays course data and has no section here.
+for (const key of ['meta', 'description', 'modules', 'assistants', 'backLink'] as const) {
+  const section = courseDetail[key];
+  assert(Boolean(section) && typeof section === 'object', `courseDetail.${key} exists`);
+}
+
+for (const key of ['description', 'modules', 'assistants', 'backLink'] as const) {
+  assert(typeof courseDetail[key]?.enabled === 'boolean', `courseDetail.${key}.enabled is a boolean`);
+}
+
+assert(Boolean(courseDetail.meta?.title?.trim()), 'courseDetail.meta.title is a non-empty string');
+
+for (const key of ['description', 'modules', 'assistants'] as const) {
+  const value = courseDetail[key]?.heading;
+  assert(typeof value === 'string' && value.trim().length > 0, `courseDetail.${key}.heading is a non-empty string`);
+}
+assert(
+  typeof courseDetail.assistants?.note === 'string' && courseDetail.assistants.note.trim().length > 0,
+  'courseDetail.assistants.note is a non-empty string'
+);
+assert(
+  typeof courseDetail.backLink?.label === 'string' && courseDetail.backLink.label.trim().length > 0,
+  'courseDetail.backLink.label is a non-empty string'
+);
+
+// The heading doubles as the Layout meta description, so the placeholder must survive.
+assert(
+  Boolean(courseDetail.description?.heading?.includes('{title}')),
+  'courseDetail.description.heading keeps {title}'
+);
 
 console.log(`\n${passed} passed, ${failed} failed`);
 if (failed > 0) process.exitCode = 1;

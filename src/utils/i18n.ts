@@ -28,7 +28,6 @@ export function getLocalizedPath(path: string, _locale?: string): string {
 export const uiTranslations: Record<Locale, Record<string, string>> = {
   id: {
     // Navigation (page-title call sites remain until each page task migrates them)
-    'nav.courses': 'Mata Kuliah',
     'nav.event': 'Kegiatan',
 
     // Common Buttons & Badges
@@ -136,16 +135,11 @@ export const uiTranslations: Record<Locale, Record<string, string>> = {
     'stage.closed': 'Ditutup',
     'stage.fallback': 'Formulir Cadangan',
 
-    // Courses Page
+    // Courses Page (coordinator/sks/practicum keys owned by Task 13)
     'courses.practicumYes': 'Praktikum',
     'courses.practicumNo': 'Tanpa praktikum',
-    'courses.modulesTitle': 'Modul praktikum',
     'courses.coordinatorLabel': 'Koordinator mata kuliah',
-    'courses.assistantsLabel': 'Asisten praktikum',
     'courses.sksLabel': '{n} SKS',
-    'courses.backToList': 'Semua mata kuliah',
-    'courses.noPracticumNote': 'Mata kuliah ini tidak memiliki praktikum, sehingga tidak ada modul maupun asisten praktikum.',
-    'courses.detailDescription': '{title} di EIM Lab: status praktikum, modul, dosen koordinator, dan asisten praktikum.',
 
     // Events Page
     'events.title': 'Kegiatan & Acara',

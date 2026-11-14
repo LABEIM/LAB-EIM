@@ -1,0 +1,22 @@
+{
+  "meta": {
+    "title": "Mata Kuliah · EIM Lab"
+  },
+  "description": {
+    "enabled": true,
+    "heading": "{title} di EIM Lab: status praktikum, modul, dosen koordinator, dan asisten praktikum."
+  },
+  "modules": {
+    "enabled": true,
+    "heading": "Modul praktikum"
+  },
+  "assistants": {
+    "enabled": true,
+    "heading": "Asisten praktikum",
+    "note": "Mata kuliah ini tidak memiliki praktikum, sehingga tidak ada modul maupun asisten praktikum."
+  },
+  "backLink": {
+    "enabled": true,
+    "label": "Semua mata kuliah"
+  }
+}

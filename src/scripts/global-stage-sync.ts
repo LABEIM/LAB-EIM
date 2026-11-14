@@ -1,8 +1,9 @@
 import { calculateStageFromDates, getEffectiveNowMs, updateGlobalAnnouncementBanner } from './registration/stage';
-import { STAGE_ACTION_CONFIG, STAGE_LABELS } from '../utils/constants';
+import { resolveStageCta } from '../utils/constants';
+import { internalHref } from '../utils/safe-link';
 
 /**
- * Synchronizes the Navbar CTA button (Kontak vs Join Us) dynamically based on current recruitment stage.
+ * Synchronizes the Navbar CTA and every `[data-stage-primary]` action from the current stage.
  */
 export function syncNavbarCTA(activeStage: string): void {
   const navbar = document.getElementById('navbar');
@@ -11,16 +12,21 @@ export function syncNavbarCTA(activeStage: string): void {
   const ctaLink = navbar.querySelector<HTMLAnchorElement>('.nav-cta');
   if (!ctaLink) return;
 
-  const joinLabel = navbar.getAttribute('data-join-label') || 'Join Us';
-  const contactLabel = navbar.getAttribute('data-contact-label') || 'Kontak';
+  const stageCta = resolveStageCta(activeStage);
   // Routes are compile-time constants; never copy a URL out of the DOM.
-  const joinHref = '/registration';
-  const contactHref = '/contact';
+  const targetHref = internalHref(stageCta.href, '/contact');
+  const targetLabel = stageCta.label;
+  const isRecruitmentActive = targetHref === '/registration';
 
-  const isRecruitmentActive = activeStage === 'open' || activeStage === 'extended';
-
-  const targetHref = isRecruitmentActive ? joinHref : contactHref;
-  const targetLabel = isRecruitmentActive ? joinLabel : contactLabel;
+  document.querySelectorAll<HTMLAnchorElement>('[data-stage-primary]').forEach((el) => {
+    el.setAttribute('href', targetHref);
+    // A block may prefer its own wording for the contact action.
+    const contactLabel = el.dataset.contactLabel;
+    el.textContent = targetHref === '/contact' && contactLabel ? contactLabel : targetLabel;
+  });
+  document.querySelectorAll<HTMLAnchorElement>('[data-stage-secondary]').forEach((el) => {
+    el.hidden = targetHref === el.getAttribute('href');
+  });
 
   ctaLink.setAttribute('href', targetHref);
 
@@ -55,38 +61,6 @@ export function syncNavbarCTA(activeStage: string): void {
   } else {
     ctaLink.classList.remove('active');
   }
-}
-
-/**
- * Synchronizes the Homepage Hero recruitment action button text, icon, and href dynamically.
- */
-export function syncHeroRecruitmentBtn(activeStage: string): void {
-  const heroBtn = document.getElementById('hero-recruitment-btn') as HTMLAnchorElement | null;
-  if (!heroBtn) return;
-
-  let actionConfig = (STAGE_ACTION_CONFIG as Record<string, any>)[activeStage];
-  if (!actionConfig) {
-    if (activeStage.endsWith('_results')) {
-      actionConfig = { label: 'Check Selection Results', icon: 'fa-square-poll-vertical' };
-    } else if (activeStage !== 'closed') {
-      actionConfig = { label: 'Check Selection Phase Info', icon: 'fa-info-circle' };
-    } else {
-      actionConfig = { label: 'Recruitment Information', icon: 'fa-info-circle' };
-    }
-  }
-
-  const span = heroBtn.querySelector('.hero-btn-text') || heroBtn.querySelector('span');
-  const icon = heroBtn.querySelector('i');
-
-  if (span) {
-    span.textContent = actionConfig.label;
-  }
-  if (icon && actionConfig.icon) {
-    icon.className = `fa-solid ${actionConfig.icon}`;
-  }
-
-  const joinHref = STAGE_LABELS[activeStage]?.href || '/registration';
-  heroBtn.setAttribute('href', joinHref);
 }
 
 /**
@@ -136,7 +110,6 @@ export function initGlobalStageSync(overrideStage?: string): string {
 
   syncNavbarCTA(stageToApply);
   updateGlobalAnnouncementBanner(stageToApply);
-  syncHeroRecruitmentBtn(stageToApply);
 
   return stageToApply;
 }

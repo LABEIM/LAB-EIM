@@ -9,31 +9,33 @@ const navLinks = [
   { href: '/', key: 'nav.home' },
   { href: '/about', key: 'nav.about' },
   { href: '/structure', key: 'nav.structure' },
+  { href: '/courses', key: 'nav.courses' },
   { href: '/event', key: 'nav.event' },
   { href: '/news', key: 'nav.news' },
   { href: '/registration', key: 'nav.register' },
+  { href: '/contact', key: 'nav.contact' },
 ];
 ---
 
 <footer class="footer">
-  <div class="container">
+  <div class="site-container">
     <div class="footer-grid">
       <div class="footer-about">
         <a href={getLocalizedPath('/', locale)} class="footer-brand" aria-label={`${siteData.name} — Beranda`}>
-          <span class="logo-icon logo-icon-sm">
-            <img src={siteData.logo} alt="" width="32" height="32" />
-          </span>
-          <span class="logo-text">
-            <span class="logo-name logo-name-sm">{siteData.name}</span>
-            <span class="logo-sub logo-sub-sm">{siteData.subName}</span>
-          </span>
+          <img
+            src="/assets/brand/eim-logo-horizontal-640.avif"
+            alt=""
+            width="221"
+            height="40"
+            decoding="async"
+          />
         </a>
 
-        <p class="footer-desc">{siteData.fullName} — {t('footer.description', locale)}</p>
+        <p class="footer-desc">{t('footer.description', locale)}</p>
 
         <div class="footer-connect-list">
           {siteData.socials.instagram && (
-            <a href={siteData.socials.instagram} target="_blank" rel="noopener noreferrer" class="footer-connect-btn" aria-label="Instagram EIM Research Lab" title="Instagram @eimresearchlab">
+            <a href={siteData.socials.instagram} target="_blank" rel="noopener noreferrer" class="footer-connect-btn" aria-label="Instagram EIM Lab" title="Instagram @eimresearchlab">
               <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                 <rect x="2" y="2" width="28" height="28" rx="6" fill="url(#paint0_radial_87_7153)" />
                 <rect x="2" y="2" width="28" height="28" rx="6" fill="url(#paint1_radial_87_7153)" />
@@ -63,14 +65,14 @@ const navLinks = [
             </a>
           )}
           {siteData.socials.linkedin && (
-            <a href={siteData.socials.linkedin} target="_blank" rel="noopener noreferrer" class="footer-connect-btn" aria-label="LinkedIn EIM Research Lab" title="LinkedIn EIM Research Lab">
+            <a href={siteData.socials.linkedin} target="_blank" rel="noopener noreferrer" class="footer-connect-btn" aria-label="LinkedIn EIM Lab" title="LinkedIn EIM Lab">
               <svg viewBox="0 0 44 44" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                 <path d="M44 40 L34.2754 40 L34.2754 25.9384 C34.2754 22.2578 32.7542 19.7452 29.4092 19.7452 C26.8507 19.7452 25.4278 21.4407 24.7655 23.0749 C24.5172 23.6614 24.556 24.4785 24.556 25.2955 L24.556 40 L14.9219 40 C14.9219 40 15.0461 15.0912 14.9219 12.827 L24.556 12.827 L24.556 17.0916 C25.1251 15.227 28.2037 12.5658 33.1164 12.5658 C39.2114 12.5658 44 16.4744 44 24.8908 L44 40 Z M5.17921 9.42819 L5.11712 9.42819 C2.0127 9.42819 0 7.35096 0 4.71794 C0 2.03368 2.0722 0 5.23871 0 C8.40263 0 10.3481 2.02856 10.4102 4.71025 C10.4102 7.34328 8.40263 9.42819 5.17921 9.42819 Z M1.10983 12.827 L9.6858 12.827 L9.6858 40 L1.10983 40 Z" fill="#007EBB" />
               </svg>
             </a>
           )}
           {siteData.socials.github && (
-            <a href={siteData.socials.github} target="_blank" rel="noopener noreferrer" class="footer-connect-btn" aria-label="GitHub EIM Research Lab" title="GitHub EIM Research Lab">
+            <a href={siteData.socials.github} target="_blank" rel="noopener noreferrer" class="footer-connect-btn" aria-label="GitHub EIM Lab" title="GitHub EIM Lab">
               <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="currentColor" aria-hidden="true">
                 <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
               </svg>
@@ -80,7 +82,7 @@ const navLinks = [
       </div>
 
       <nav class="footer-col" aria-label={t('footer.quickLinks', locale)}>
-        <h4 class="footer-title">{t('footer.quickLinks', locale)}</h4>
+        <h3 class="footer-title">{t('footer.quickLinks', locale)}</h3>
         <ul class="footer-links">
           {navLinks.map((link) => (
             <li>
@@ -91,7 +93,7 @@ const navLinks = [
       </nav>
 
       <div class="footer-col">
-        <h4 class="footer-title">{t('footer.contact', locale)}</h4>
+        <h3 class="footer-title">{t('footer.contact', locale)}</h3>
         <ul class="footer-links footer-contact-list">
           <li><i class="fa-solid fa-location-dot" aria-hidden="true"></i><span>{siteData.contact.location}</span></li>
           <li><i class="fa-solid fa-university" aria-hidden="true"></i><span>{siteData.contact.university}</span></li>
@@ -100,7 +102,7 @@ const navLinks = [
       </div>
 
       <nav class="footer-col" aria-label={t('footer.resources', locale)}>
-        <h4 class="footer-title">{t('footer.resources', locale)}</h4>
+        <h3 class="footer-title">{t('footer.resources', locale)}</h3>
         <ul class="footer-links">
           <li>
             <a href={getLocalizedPath('/assets', locale)}>{t('footer.assets', locale)}</a>

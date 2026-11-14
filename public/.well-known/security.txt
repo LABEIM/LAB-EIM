@@ -1,6 +1,6 @@
 # ==============================================================================
-# Enterprise Infrastructure Management (EIM) Research Laboratory
-# Project: EIM Research Lab Website — RFC 9116 Security Disclosure Standard
+# Enterprise Infrastructure Management (EIM) Laboratory
+# Project: EIM Lab Website — RFC 9116 Security Disclosure Standard
 # ==============================================================================
 
 Contact: mailto:lab@eimlab.org

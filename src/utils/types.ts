@@ -260,11 +260,47 @@ export interface CandidateResult {
 
 /** Homepage v2 — Antigravity Light */
 
+export type PositionGroup = 'dosen' | 'asisten' | 'mahasiswa';
+
+export interface Position {
+  id: string;
+  label: string;
+  group: PositionGroup;
+  order: number;
+}
+
+export interface PositionSection<T> {
+  position: Position;
+  people: T[];
+}
+
+export interface CourseModule {
+  title: string;
+  topics: string;
+}
+
+export interface CourseData {
+  title: string;
+  code: string;
+  sks: number;
+  semester?: number;
+  hasPracticum: boolean;
+  modules: CourseModule[];
+  coordinatorId: string;
+  assistantIds: number[];
+  order: number;
+}
+
+export interface CourseView extends CourseData {
+  id: string;
+  coordinator: Lecturer | null;
+  assistants: Member[];
+}
+
 export interface Member {
   id: number;
   name: string;
   role: string;
-  division: string;
   image: string;
   scale?: string;
   position?: string;
@@ -284,19 +320,21 @@ export interface HeroPortrait {
   image: string;
 }
 
-export interface DivisionPanel {
-  id: string;
-  displayName: string;
-  description: string;
-  memberCount: number;
-  coordinator: Member | null;
-  href: string;
-}
-
 export interface DivisionSection {
   division: DivisionConfig;
   coordinator: Member | null;
   staff: Member[];
+}
+
+export interface GalleryItem {
+  image: string;
+  alt: string;
+  caption: string;
+}
+
+export interface GalleryData {
+  featured?: GalleryItem;
+  photos?: GalleryItem[];
 }
 
 export interface AboutData {

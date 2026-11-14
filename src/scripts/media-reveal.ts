@@ -17,7 +17,7 @@ const END_RATIO = 0.3;
 export function initMediaReveal(): void {
   const stageQuery = document.querySelector<HTMLElement>('.e-reveal-stage');
   const figureQuery = document.querySelector<HTMLElement>('.e-reveal-stage-figure');
-  if (!stageQuery || !figureQuery) return;
+  if (!stageQuery || !figureQuery || stageQuery.classList.contains('is-pending')) return;
   // Non-nullable aliases for the hoisted closures below.
   const stage: HTMLElement = stageQuery;
   const figure: HTMLElement = figureQuery;

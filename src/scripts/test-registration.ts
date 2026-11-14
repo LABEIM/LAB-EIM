@@ -8,11 +8,21 @@ import {
 } from './registration/validation';
 import { calculateStageFromDates } from './registration/stage';
 import { safeLink, internalHref } from '../utils/safe-link';
+import { selectVisibleCards, type FilterCard, type FilterState, type FilterResult } from './content-filter';
+import { resolveStageCta } from '../utils/constants';
+import { parsePositions, buildPositionIndex, positionLabel, groupPeople, countPeopleByGroup, STRUCTURE_TREE, type Position } from '../utils/position-mapper';
+import positionsData from '../data/positions.json';
+import { resolveCourses, courseHasContent, summarizePracticumAssistants } from '../utils/course-helpers';
+
+let passed = 0;
+let failed = 0;
 
 function assert(condition: boolean, testName: string) {
   if (condition) {
+    passed++;
     console.log(`  ✅ PASSED: ${testName}`);
   } else {
+    failed++;
     console.error(`  ❌ FAILED: ${testName}`);
     process.exitCode = 1;
   }
@@ -486,12 +496,12 @@ assert(
   'Final announcement search for candidate 102022400023 -> Renders accepted search result'
 );
 
-// Test 9.6: Screening search for candidate with failed status (102022400119)
+// Test 9.6: Screening search for a candidate rejected at the final stage
 selectionInput.value = '102022400119';
 selectionBtn.dispatchEvent({ type: 'click' });
 assert(
-  selectionResultBox.className.includes('status-muted') && selectionResultBox.innerHTML.includes('102022400119'),
-  'Screening search for failed candidate -> Renders muted result with NIM'
+  selectionResultBox.className.includes('status-passed') && selectionResultBox.innerHTML.includes('102022400119'),
+  'Screening search for candidate rejected at final -> renders passed screening'
 );
 
 // 9.7: Testing Rich-Text Formatting for Candidate Notes
@@ -576,6 +586,145 @@ assert(internalHref('javascript:alert(1)', '/fallback') === '/fallback', 'javasc
 assert(internalHref('https://evil.com', '/fallback') === '/fallback', 'Absolute URL should be rejected');
 assert(internalHref(null, '/fallback') === '/fallback', 'Missing value should fall back');
 
-console.log('\n✨ All Automated Registration Unit Tests Execution Completed Successfully!');
+// 12. Content Filter Selection Helper
+console.log('\n1️⃣2️⃣ Testing Content Filter Selection Helper:');
+const mkCard = (category: string, status: string, searchText: string, date: string, audit = false): FilterCard => ({
+  el: {} as HTMLElement,
+  category,
+  status,
+  searchText,
+  dateMs: Number.isNaN(Date.parse(date)) ? 0 : Date.parse(date),
+  audit,
+});
+const filterCards: FilterCard[] = [
+  mkCard('Berita', 'published', 'alpha rilis satu', '2026-01-01'),
+  mkCard('Berita', 'published', 'beta rilis dua', '2026-01-02'),
+  mkCard('Berita', 'published', 'gamma rilis tiga', '2026-01-03'),
+  mkCard('Berita', 'published', 'delta arsip', '2026-01-04', true),
+  mkCard('Kegiatan', 'published', 'alpha acara satu', '2026-01-05'),
+  mkCard('Kegiatan', 'draft', 'beta acara dua', '2026-01-06'),
+  mkCard('Kegiatan', 'published', 'acara tanpa tanggal', 'not-a-date'),
+];
+const sel = (items: FilterCard[], over: Partial<FilterState>): FilterResult =>
+  selectVisibleCards(items, {
+    search: '', category: 'all', status: 'all', sort: 'desc', page: 1, perPage: 6,
+    forceEmpty: false, hideAudit: false, ...over,
+  });
+
+assert(sel(filterCards, { search: '  ALPHA ' }).total === 2, 'search is trimmed and case-insensitive');
+assert(sel(filterCards, { category: 'Kegiatan' }).total === 3, 'category filter is exact and case-insensitive');
+assert(sel(filterCards, { search: 'zzzz' }).total === 0, 'no-match query returns nothing');
+assert(sel(filterCards, { search: '', page: 1, perPage: 99 }).pageItems.at(-1)!.dateMs === 0, 'desc puts an invalid date last');
+assert(sel(filterCards, { search: '', sort: 'asc', page: 1, perPage: 99 }).pageItems[0].dateMs === 0, 'asc puts an invalid date first');
+assert((() => { const p = sel(filterCards, { page: 99, perPage: 3 }); return p.totalPages === 3 && p.page === 3 && p.pageItems.length === 1; })(), 'pagination clamps an out-of-range page');
+assert(sel(filterCards, { forceEmpty: true }).total === 0, 'forceEmpty empties the grid');
+assert(sel(filterCards, { hideAudit: true }).total === 6, 'hideAudit drops audit cards');
+assert(sel(filterCards, { status: 'draft' }).total === 1, 'status filter is exact and case-insensitive');
+const filterOrderBefore = filterCards.map(card => card.searchText).join('|');
+sel(filterCards, { search: '', sort: 'asc', page: 1, perPage: 99 });
+assert(filterCards.map(card => card.searchText).join('|') === filterOrderBefore, 'selection does not mutate the input order');
+
+// 13. Role labels and stage CTA
+console.log('\n13. Testing Stage CTA:');
+assert(resolveStageCta('open').href === '/registration', 'open stage points at registration');
+assert(resolveStageCta('closed').label === 'Kontak', 'closed stage points at contact');
+assert(resolveStageCta('nope').href === '/contact', 'unknown stage falls back to contact');
+
+// 14. Positions
+console.log('\n14. Testing Position Mapper:');
+const positionFixtures: Position[] = [
+  { id: 'ketua-lab', label: 'Dosen Ketua Laboratorium', group: 'dosen', order: 1 },
+  { id: 'wakil-ketua-lab', label: 'Dosen Wakil Ketua Laboratorium', group: 'dosen', order: 2 },
+  { id: 'koordinator-asisten', label: 'Koordinator Asisten Laboratorium', group: 'asisten', order: 5 },
+  { id: 'mahasiswa-anggota', label: 'Mahasiswa Anggota Laboratorium', group: 'mahasiswa', order: 7 },
+  { id: 'tim-adhoc', label: 'Tim Adhoc', group: 'mahasiswa', order: 8 },
+  { id: 'dup-a', label: 'Dup A', group: 'mahasiswa', order: 9 },
+  { id: 'dup-b', label: 'Dup B', group: 'mahasiswa', order: 9 },
+];
+assert(parsePositions({ list: positionFixtures }).length === 7, 'parsePositions reads the list array');
+assert(parsePositions({ list: positionFixtures })[5].id === 'dup-a', 'equal order keeps array order');
+assert(parsePositions(null).length === 0, 'missing positions data yields an empty list');
+
+const positionIndex = buildPositionIndex(positionFixtures);
+assert(positionLabel(positionIndex, 'ketua-lab') === 'Dosen Ketua Laboratorium', 'known position returns its label');
+assert(positionLabel(positionIndex, 'nope') === 'nope', 'unknown position falls back to the raw id');
+
+const grouped = groupPeople([
+  { name: 'A', role: 'ketua-lab' },
+  { name: 'B', role: 'mahasiswa-anggota' },
+  { name: 'C', role: 'not-a-position' },
+  { name: 'D', role: 'ketua-lab' },
+], positionFixtures);
+assert(grouped.length === 2, 'only occupied positions form sections');
+assert(grouped[0].position.id === 'ketua-lab' && grouped[0].people.length === 2, 'sections follow position order and keep all holders');
+assert(grouped[1].position.id === 'mahasiswa-anggota', 'later occupied position follows');
+assert(!grouped.some(section => section.position.id === 'tim-adhoc'), 'unoccupied position is skipped');
+assert(!grouped.some(section => section.people.some(person => person.role === 'not-a-position')), 'unknown role is excluded, not thrown');
+
+const groupCounts = countPeopleByGroup(
+  [{ role: 'ketua-lab' }, { role: 'mahasiswa-anggota' }, { role: 'mahasiswa-anggota' }, { role: 'nope' }],
+  positionFixtures,
+);
+assert(groupCounts.dosen === 1, 'dosen count follows the position group');
+assert(groupCounts.mahasiswa === 2, 'mahasiswa count follows the position group');
+assert(groupCounts.asisten === 0, 'unheld group counts zero');
+
+const realPositions = parsePositions(positionsData);
+assert(realPositions.length > 0, 'positions.json holds at least one position');
+const treeIds = STRUCTURE_TREE.flatMap(node => [node.id, ...node.children]);
+assert(treeIds.every(id => realPositions.some(position => position.id === id)), 'every chart node resolves to a position in positions.json');
+assert(STRUCTURE_TREE[0].id === 'ketua-lab', 'tree starts at ketua-lab');
+
+// 15. Course resolution
+console.log('\n15. Testing Course Helpers:');
+const courseLecturers = [{ id: 'dosen-koordinator-matkul-1', name: 'Dosen A', role: 'koordinator-matkul', image: '', scale: '1', position: 'center' }];
+const courseMembers = [
+  { id: 1, name: 'Asisten A', role: 'mahasiswa-anggota', image: '', scale: '1', position: 'center' },
+  { id: 2, name: 'Asisten B', role: 'mahasiswa-anggota', image: '', scale: '1', position: 'center' },
+];
+const courseEntries = [
+  { id: 'b', data: { title: 'Kedua', code: 'B', sks: 3, hasPracticum: true, modules: [{ title: 'Modul 1', topics: 'Topik' }], coordinatorId: 'dosen-koordinator-matkul-1', assistantIds: [1, 1, 2, 99], order: 2 } },
+  { id: 'a', data: { title: 'Pertama', code: 'A', sks: 2, hasPracticum: false, modules: [{ title: 'Stale', topics: 'Stale' }], coordinatorId: 'missing', assistantIds: [2], order: 1 } },
+];
+const resolvedCourses = resolveCourses(courseEntries, courseLecturers, courseMembers);
+assert(resolvedCourses.length === 2, 'every course resolves');
+assert(resolvedCourses[0].id === 'a', 'courses sort by order');
+assert(resolvedCourses[0].coordinator === null, 'missing coordinator resolves to null');
+assert(resolvedCourses[0].modules.length === 1, 'resolution keeps raw data');
+assert(courseHasContent(resolvedCourses[1]).modules.length === 1, 'practicum course exposes modules');
+assert(courseHasContent(resolvedCourses[0]).modules.length === 0, 'non-practicum course exposes no modules');
+assert(courseHasContent(resolvedCourses[0]).assistants.length === 0, 'non-practicum course exposes no assistants');
+assert(resolvedCourses[1].assistants.length === 2, 'assistant ids resolve, dedupe, and drop missing');
+assert(courseHasContent(resolvedCourses[1]).assistants[0].name === 'Asisten A', 'assistants keep member order');
+
+// 16. Practicum assistant overlap
+console.log('\n16. Testing Practicum Assistant Summary:');
+const overlapCourses = [
+  { id: 'a', data: { title: 'A', code: 'X', sks: 3, hasPracticum: true, modules: [], coordinatorId: 'x', assistantIds: [1, 2], order: 1 } },
+  { id: 'b', data: { title: 'B', code: 'Y', sks: 3, hasPracticum: true, modules: [], coordinatorId: 'x', assistantIds: [2, 3], order: 2 } },
+  { id: 'c', data: { title: 'C', code: 'Z', sks: 2, hasPracticum: false, modules: [], coordinatorId: 'x', assistantIds: [4], order: 3 } },
+];
+const overlapMembers = [
+  { id: 1, name: 'A', role: 'mahasiswa-anggota', image: '', scale: '1', position: 'center' },
+  { id: 2, name: 'B', role: 'koordinator-asisten', image: '', scale: '1', position: 'center' },
+];
+const overlap = summarizePracticumAssistants(
+  overlapCourses.map((course) => course.data),
+  overlapMembers,
+);
+assert(overlap.distinctCount === 3, 'distinct assistants span practicum courses and dedupe');
+assert(overlap.memberCount === 1, 'the note counts student members who also assist');
+assert(
+  overlap.memberCount <= overlapMembers.filter((member) => member.role === 'mahasiswa-anggota').length,
+  'the note numerator never exceeds its denominator',
+);
+const noPracticum = summarizePracticumAssistants(
+  [{ title: 'D', code: 'W', sks: 2, hasPracticum: false, modules: [], coordinatorId: 'x', assistantIds: [1], order: 1 }],
+  overlapMembers,
+);
+assert(noPracticum.distinctCount === 0 && noPracticum.memberCount === 0, 'no practicum yields zero assistants');
+
+console.log(`\n${passed} passed, ${failed} failed`);
+if (failed > 0) process.exitCode = 1;
 
 

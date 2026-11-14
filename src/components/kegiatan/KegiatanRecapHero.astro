@@ -17,7 +17,10 @@ const dateLabel = getEventDateLabel(event, locale).trim();
 const category = event.data.category.trim();
 const organizer = (event.data.organizer ?? '').trim() || t('events.organizerFallback', locale);
 const hasStandfirst = event.data.description.trim().length > 0;
-const metaParts = [dateLabel, category, organizer].filter(Boolean);
+// The eyebrow already carries the date and category; keep the meta line for the organiser only.
+const metaParts = [organizer].filter(Boolean);
+const poster = (event.data.poster ?? '').trim();
+const coverIsPoster = poster !== '' && cover === poster;
 ---
 
 <section id="kegiatan-detail" class="kegiatan-recap-hero" aria-labelledby="kegiatan-detail-title">
@@ -67,6 +70,7 @@ const metaParts = [dateLabel, category, organizer].filter(Boolean);
           loading="eager"
           fetchpriority="high"
           decoding="async"
+          class:list={[coverIsPoster && 'kegiatan-recap-cover-poster']}
         />
       ) : (
         <span class="kegiatan-recap-fallback">

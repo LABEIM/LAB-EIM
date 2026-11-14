@@ -1,0 +1,25 @@
+---
+interface Props {
+  image: string;
+  alt: string;
+  caption: string;
+  label: string;
+}
+
+const { image, alt, caption, label } = Astro.props;
+---
+
+<section aria-label={label}>
+  <figure class="e-reveal w-full">
+    <img
+      class="h-[clamp(220px,45vh,560px)] w-full object-cover"
+      src={image}
+      alt={alt || caption}
+      loading="lazy"
+      decoding="async"
+    />
+    <figcaption class="mx-auto mt-4 max-w-[1200px] px-[clamp(1.25rem,4vw,4rem)] font-mono text-xs uppercase tracking-[0.08em] text-muted-ink">
+      {caption}
+    </figcaption>
+  </figure>
+</section>

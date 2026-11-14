@@ -156,6 +156,7 @@ html {
   line-height: 0.98;
   letter-spacing: -0.01em;
   color: var(--color-foreground);
+  text-wrap: balance;
 }
 
 .eim-hero-title-line {
@@ -167,7 +168,8 @@ html {
   margin-top: clamp(1.25rem, 3vh, 2rem);
   font-size: clamp(1rem, 1.2vw, 1.125rem);
   line-height: 1.55;
-  color: var(--color-muted-ink);
+  /* Dark enough to hold 4.5:1 where the canvas paints behind the text. */
+  color: var(--color-foreground);
 }
 
 .eim-hero-actions {
@@ -275,10 +277,6 @@ html {
   );
 }
 
-.eim-subhero .eim-hero-title {
-  max-width: 20ch;
-}
-
 .eim-subhero .eim-hero-desc {
   max-width: 56ch;
 }
@@ -334,6 +332,10 @@ html {
 .eim-cta-primary:hover {
   background: var(--color-background);
   transform: translateY(-2px);
+}
+
+.eim-cta-secondary[hidden] {
+  display: none;
 }
 
 .eim-cta-secondary {
@@ -421,6 +423,17 @@ html {
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--color-surface-strong);
+}
+
+.e-reveal-stage-link {
+  margin-top: var(--space-16);
+  font-family: var(--font-mono);
+  font-size: var(--text-12);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-brand-bright);
+  text-decoration: underline;
+  text-underline-offset: 4px;
 }
 
 .e-reveal-stage-caption {
@@ -568,7 +581,9 @@ body.home-skin :is(a, button):focus-visible {
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  /* 24x24 minimum target (WCAG 2.2); the visual dot stays 8px. */
+  /* 44px target; the visual dot stays 8px. */
+  min-width: 44px;
+  min-height: 44px;
   padding: var(--space-8);
 }
 
@@ -692,4 +707,39 @@ body.home-skin :is(a, button):focus-visible {
   body.home-skin .nav-cta.nav-cta-contact:hover {
     transform: none;
   }
+}
+
+/* Compact pending state: the media slot is not a promise of future content. */
+.e-reveal-stage.is-pending {
+  height: auto;
+}
+
+.e-reveal-stage.is-pending .e-reveal-stage-figure {
+  position: static;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.75rem;
+  height: auto;
+  min-height: 9rem;
+  padding: clamp(1.25rem, 3vw, 2rem);
+  transform: none;
+}
+
+.e-reveal-stage.is-pending .e-reveal-stage-pending {
+  position: static;
+  flex-direction: row;
+  justify-content: flex-start;
+  padding: 0;
+  text-align: left;
+}
+
+.e-reveal-stage.is-pending .e-reveal-stage-emblem {
+  width: 3rem;
+}
+
+.e-reveal-stage.is-pending .e-reveal-stage-caption {
+  position: static;
+  bottom: auto;
+  left: auto;
 }

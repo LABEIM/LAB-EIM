@@ -13,7 +13,7 @@ interface Props {
 const { news = [], locale } = Astro.props;
 
 const featured: CollectionEntry<'news'> | undefined = news[0];
-const secondary = news.slice(1, 3);
+const secondary = news.slice(1, 5);
 
 const newsIndexHref = getLocalizedPath('/news', locale);
 const featuredHref = featured ? getLocalizedPath(`/news/${getCleanSlug(featured.id)}`, locale) : '';
@@ -51,7 +51,7 @@ const featuredImage = featured?.data.image?.[0];
       >
         <a href={featuredHref} class="news-featured group block">
           {featuredImage && (
-            <span class="block overflow-hidden rounded-card border border-line bg-surface">
+            <span class:list={['block overflow-hidden rounded-card border border-line bg-surface', secondary.length === 0 && 'lg:max-w-[820px]']}>
               <Image
                 src={featuredImage}
                 alt=""

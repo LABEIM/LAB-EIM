@@ -1,0 +1,142 @@
+---
+import { getCollection, render } from 'astro:content';
+import Layout from '../layouts/Layout.astro';
+import '../styles/pages/home-eim.css';
+import EimSectionNav from '../components/home/EimSectionNav.astro';
+import { resolveCourses } from '../utils/course-helpers';
+import { getLocaleFromUrl, getLocalizedJsonData, t } from '../utils/i18n';
+import type { Lecturer, Member } from '../utils/types';
+
+const locale = getLocaleFromUrl(Astro.url);
+const membersData = getLocalizedJsonData<{ list: Member[] }>('members', locale);
+const lecturersData = getLocalizedJsonData<{ list: Lecturer[] }>('lecturers', locale);
+
+const entries = await getCollection('courses');
+const courses = resolveCourses(entries, lecturersData?.list ?? [], membersData?.list ?? []);
+const rendered = new Map(
+  await Promise.all(entries.map(async (entry) => [entry.id, await render(entry)] as const)),
+);
+
+const practicumCount = courses.filter((course) => course.hasPracticum).length;
+const titleLines = t('courses.heroTitle', locale).split('\n');
+
+const sectionItems = [
+  { id: 'daftar', label: t('courses.navDotList', locale) },
+];
+---
+
+<Layout title={`${t('nav.courses', locale)} · EIM Lab`} description={t('courses.metaDescription', locale)} homeSkin skipLink>
+  <main id="main-content" tabindex="-1">
+    <EimSectionNav items={sectionItems} label={t('courses.sectionNavLabel', locale)} />
+
+    <section class="eim-hero eim-subhero" aria-labelledby="courses-hero-title">
+      <canvas class="eim-hero-canvas" aria-hidden="true"></canvas>
+      <div class="eim-hero-inner">
+        <p class="eim-eyebrow">{t('courses.heroEyebrow', locale)}</p>
+        <h1 id="courses-hero-title" class="eim-hero-title">
+          {titleLines.map((line, index) => (
+            <span class="eim-hero-title-line">{line}{index < titleLines.length - 1 ? ' ' : ''}</span>
+          ))}
+        </h1>
+        <p class="eim-hero-desc">{t('courses.heroDesc', locale)}</p>
+        <div class="eim-hero-actions">
+          <a class="eim-hero-cta" href="#daftar">{t('courses.heroPrimary', locale)}</a>
+          <a class="eim-hero-secondary" href="/event">
+            {t('courses.heroSecondary', locale)} <span aria-hidden="true">→</span>
+          </a>
+        </div>
+        {courses.length > 0 && (
+          <p class="eim-subhero-meta">
+            {t('courses.summary', locale, {
+              n: String(courses.length),
+              p: String(practicumCount),
+            })}
+          </p>
+        )}
+      </div>
+    </section>
+
+    <section id="daftar" class="py-[clamp(4.5rem,10vh,8.75rem)]" aria-labelledby="courses-list-title">
+      <div class="mx-auto max-w-[1200px] px-[clamp(1.25rem,4vw,4rem)]">
+        <div class="grid gap-6 lg:grid-cols-2 lg:items-end">
+          <div>
+            <p class="e-reveal font-mono text-xs uppercase tracking-[0.08em] text-brand">
+              01 — {t('courses.listEyebrow', locale)}
+            </p>
+            <h2
+              id="courses-list-title"
+              class="e-reveal mt-4 font-display text-[clamp(2rem,4vw,3.5rem)] leading-[1.05] tracking-[-0.01em]"
+            >
+              {t('courses.listTitle', locale)}
+            </h2>
+          </div>
+          <p class="e-reveal max-w-[52ch] text-[15px] leading-[1.55] text-muted-ink lg:justify-self-end">
+            {t('courses.listIntro', locale)}
+          </p>
+        </div>
+
+        {courses.length === 0 ? (
+          <p class="mt-12 text-[15px] text-muted-ink">{t('courses.empty', locale)}</p>
+        ) : (
+          <ul class="mt-[clamp(2.5rem,6vh,4rem)] list-none border-t border-line p-0">
+            {courses.map((course, index) => {
+              const Content = rendered.get(course.id)?.Content;
+              return (
+                <li
+                  class="grid gap-6 border-b border-line py-8 md:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)] md:gap-12"
+                  style={`--i:${index}`}
+                >
+                  <div>
+                    <p class="font-mono text-xs uppercase tracking-[0.08em] text-muted-ink">
+                      {String(index + 1).padStart(2, '0')}
+                      <span> · {course.code}</span>
+                      <span> · {t('courses.sksLabel', locale, { n: String(course.sks) })}</span>
+                      {course.semester && <span> · Semester {course.semester}</span>}
+                      <span
+                        class:list={[
+                          'ml-2',
+                          course.hasPracticum ? 'text-brand' : 'text-muted-ink line-through',
+                        ]}
+                      >
+                        · {course.hasPracticum
+                          ? t('courses.practicumYes', locale)
+                          : t('courses.practicumNo', locale)}
+                      </span>
+                    </p>
+                    <h3 class="mt-3 font-display text-[clamp(1.5rem,2.6vw,2.25rem)] leading-[1.1]">
+                      <a href={`/courses/${course.id}`} class="hover:text-brand">
+                        {course.title}
+                      </a>
+                    </h3>
+                    {Content && (
+                      <div class="mt-4 max-w-[58ch] text-[15px] leading-[1.6] text-muted-ink">
+                        <Content />
+                      </div>
+                    )}
+                  </div>
+
+                  <div class="flex flex-col gap-4">
+                    <p class="text-[15px] leading-[1.55]">
+                      <span class="text-muted-ink">{t('courses.coordinatorLabel', locale)}: </span>
+                      {course.coordinator?.name.trim() || '—'}
+                    </p>
+                    <a
+                      href={`/courses/${course.id}`}
+                      class="font-mono text-xs uppercase tracking-[0.08em] text-brand"
+                    >
+                      {t('btn.details', locale)}
+                      <span class="sr-only">: {course.title}</span>
+                      <span aria-hidden="true">→</span>
+                    </a>
+
+                  </div>
+                </li>
+              );
+            })}
+          </ul>
+        )}
+      </div>
+    </section>
+
+  </main>
+</Layout>

@@ -44,8 +44,7 @@ const { events, locale } = Astro.props;
                   ) : (
                     <span>{dateLabel}</span>
                   )}
-                  <span aria-hidden="true">·</span>
-                  <span>{event.data.category}</span>
+                  <span class="kegiatan-related-category">{event.data.category}</span>
                 </span>
                 <h3 class="kegiatan-related-title">{event.data.title}</h3>
                 <span class="kegiatan-related-arrow" aria-hidden="true">→</span>

@@ -57,15 +57,15 @@ const eventsIndexHref = getLocalizedPath('/event', locale);
                       height={1000}
                       loading="lazy"
                       decoding="async"
-                      class="aspect-[4/5] w-full object-cover"
+                      class={`aspect-[4/5] w-full ${item.data.poster ? 'object-contain' : 'object-cover'}`}
                     />
                   ) : (
                     <span class="flex aspect-[4/5] w-full flex-col justify-between bg-surface-strong p-5">
                       <span class="font-mono text-xs uppercase tracking-[0.08em] text-brand">
                         {item.data.category}
                       </span>
-                      <span class="font-mono text-xs uppercase tracking-[0.08em] text-muted-ink">
-                        {formatGlobalDate(item.data.event_date)}
+                      <span class="font-display text-[clamp(1.25rem,2.2vw,1.6rem)] leading-[1.1]">
+                        {item.data.title}
                       </span>
                     </span>
                   )}

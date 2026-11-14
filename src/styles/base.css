@@ -121,32 +121,11 @@ h1, h2, h3, h4, h5, h6 {
     color: var(--text-primary);
 }
 
-.text-gradient-cyan {
-    background: var(--accent-cyan-gradient);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-}
-
-.text-gradient-red {
-    background: var(--accent-red-gradient);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-}
-
-.text-gradient-dual {
-    background: linear-gradient(90deg, var(--accent-red) 0%, var(--accent-cyan) 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-}
-
 .section-padding {
     padding: var(--space-100) 0;
 }
 
-.container {
+.site-container {
     width: 90%;
     max-width: var(--max-width);
     margin: 0 auto;

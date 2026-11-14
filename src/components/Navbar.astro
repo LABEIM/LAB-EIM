@@ -1,6 +1,4 @@
 ---
-import { Image } from 'astro:assets';
-import logoImg from '../../public/image/eim/logo_EIM_crop.avif';
 import { getLocaleFromUrl, getLocalizedPath, getLocalizedJsonData, t } from '../utils/i18n';
 import { getCurrentRecruitmentStage } from '../utils/recruitment';
 
@@ -28,6 +26,7 @@ const rawLinks = [
   { href: '/', key: 'nav.home' },
   { href: '/about', key: 'nav.about' },
   { href: '/structure', key: 'nav.structure' },
+  { href: '/courses', key: 'nav.courses' },
   { href: '/event', key: 'nav.event' },
   { href: '/news', key: 'nav.news' },
 ];
@@ -62,15 +61,24 @@ const isActive = (rawHref: string) => {
   data-join-label={t('nav.joinUs', locale)}
   data-contact-label={t('nav.contact', locale)}
 >
-  <div class="container">
+  <div class="site-container">
     <a href={getLocalizedPath('/', locale)} class="logo-container">
-      <div class="logo-icon">
-        <Image src={logoImg} alt={`${siteData.name} Logo`} width={62} height={70} />
-      </div>
-      <div class="logo-text">
-        <span class="logo-name">{siteData.name}</span>
-        <span class="logo-sub">{siteData.subName}</span>
-      </div>
+      <img
+        class="logo-brand"
+        src="/assets/brand/eim-logo-horizontal-640.avif"
+        alt={`${siteData.name} ${siteData.subName}`}
+        width="221"
+        height="40"
+        decoding="async"
+      />
+      <img
+        class="logo-mark"
+        src="/assets/brand/eim-logo-icon.png"
+        alt={`${siteData.name} ${siteData.subName}`}
+        width="40"
+        height="40"
+        decoding="async"
+      />
     </a>
 
     <ul class="nav-links" id="nav-links">

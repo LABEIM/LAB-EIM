@@ -1,0 +1,169 @@
+---
+import { getCollection, render, type CollectionEntry } from 'astro:content';
+import Layout from '../../layouts/Layout.astro';
+import '../../styles/pages/home-eim.css';
+import { courseHasContent, resolveCourses } from '../../utils/course-helpers';
+import { getLocaleFromUrl, getLocalizedJsonData, t } from '../../utils/i18n';
+import { buildPositionIndex, parsePositions, positionLabel } from '../../utils/position-mapper';
+import { getInitials } from '../../utils/initials';
+import type { CourseView, Lecturer, Member } from '../../utils/types';
+
+export async function getStaticPaths() {
+  const locale = 'id';
+  const entries = await getCollection('courses');
+  const membersData = getLocalizedJsonData<{ list: Member[] }>('members', locale);
+  const lecturersData = getLocalizedJsonData<{ list: Lecturer[] }>('lecturers', locale);
+  const courses = resolveCourses(entries, lecturersData?.list ?? [], membersData?.list ?? []);
+  const entryById = new Map(entries.map((item) => [item.id, item]));
+
+  return courses.flatMap((course) => {
+    const entry = entryById.get(course.id);
+    return entry ? [{ params: { id: course.id }, props: { course, entry } }] : [];
+  });
+}
+
+interface Props {
+  course: CourseView;
+  entry: CollectionEntry<'courses'>;
+}
+
+const { course, entry } = Astro.props;
+const locale = getLocaleFromUrl(Astro.url);
+
+const positionsData = getLocalizedJsonData<{ list: unknown }>('positions', locale);
+const positionIndex = buildPositionIndex(parsePositions(positionsData));
+const { Content } = await render(entry);
+const { modules, assistants } = courseHasContent(course);
+---
+
+<Layout
+  title={`${course.title} · ${t('nav.courses', locale)} · EIM Lab`}
+  description={t('courses.detailDescription', locale, { title: course.title })}
+  homeSkin
+  skipLink
+>
+  <main id="main-content" tabindex="-1">
+    <article class="mx-auto max-w-[1200px] px-[clamp(1.25rem,4vw,4rem)] pt-[clamp(6rem,12vh,9rem)] pb-[clamp(4.5rem,10vh,8.75rem)]">
+      <a
+        href="/courses"
+        class="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-[0.08em] text-brand"
+      >
+        <span aria-hidden="true">←</span> {t('courses.backToList', locale)}
+      </a>
+
+      <header class="mt-8 max-w-[46rem]">
+        <p class="font-mono text-xs uppercase tracking-[0.08em] text-muted-ink">
+          {course.code} · {t('courses.sksLabel', locale, { n: String(course.sks) })}
+          {course.semester && <span> · Semester {course.semester}</span>}
+          <span class:list={['ml-2', course.hasPracticum ? 'text-brand' : 'text-muted-ink']}>
+            · {course.hasPracticum
+              ? t('courses.practicumYes', locale)
+              : t('courses.practicumNo', locale)}
+          </span>
+        </p>
+        <h1 class="mt-4 font-display text-[clamp(2.25rem,5vw,4rem)] leading-[1.03] tracking-[-0.01em]">
+          {course.title}
+        </h1>
+        <div class="mt-6 flex items-center gap-4">
+          <span class="h-16 w-16 shrink-0 overflow-hidden rounded-card bg-surface-strong">
+            {course.coordinator?.image ? (
+              <img
+                src={course.coordinator.image}
+                alt=""
+                loading="eager"
+                fetchpriority="high"
+                decoding="async"
+                class="h-full w-full object-cover"
+                style={`transform: scale(${course.coordinator.scale || '1'}); transform-origin: ${course.coordinator.position || 'center'};`}
+              />
+            ) : (
+              <span class="grid h-full w-full place-items-center font-display text-[18px] text-muted-ink" aria-hidden="true">
+                {getInitials(course.coordinator?.name?.trim() || '—')}
+              </span>
+            )}
+          </span>
+          <span class="flex flex-col gap-1">
+            <span class="font-mono text-[11px] uppercase tracking-[0.08em] text-muted-ink">
+              {t('courses.coordinatorLabel', locale)}
+            </span>
+            <span class="font-display text-[1.15rem] leading-[1.2]">
+              {course.coordinator?.name.trim() || '—'}
+            </span>
+            {course.coordinator && (
+              <span class="font-mono text-[11px] uppercase tracking-[0.08em] text-muted-ink">
+                {positionLabel(positionIndex, course.coordinator.role)}
+              </span>
+            )}
+          </span>
+        </div>
+      </header>
+
+      <div class="mt-8 max-w-[65ch] text-[16px] leading-[1.7] text-muted-ink">
+        <Content />
+      </div>
+
+      {modules.length > 0 && (
+        <section class="mt-[clamp(2.5rem,6vh,4rem)]" aria-labelledby="course-modules">
+          <h2 id="course-modules" class="font-mono text-xs uppercase tracking-[0.08em] text-brand">
+            {t('courses.modulesTitle', locale)}
+          </h2>
+          <ol class="mt-4 list-none border-t border-line p-0">
+            {modules.map((module, index) => (
+              <li class="grid grid-cols-[2.5rem_minmax(0,1fr)] gap-x-4 border-b border-line py-5 md:grid-cols-[4rem_minmax(0,1fr)] md:gap-x-8">
+                <span class="font-mono text-xs tracking-[0.08em] text-muted-ink" aria-hidden="true">
+                  {String(index + 1).padStart(2, '0')}
+                </span>
+                <span>
+                  <span class="block font-display text-[clamp(1.2rem,2vw,1.55rem)] leading-[1.2]">
+                    {module.title}
+                  </span>
+                  <span class="mt-1 block text-[15px] leading-[1.55] text-muted-ink">
+                    {module.topics}
+                  </span>
+                </span>
+              </li>
+            ))}
+          </ol>
+        </section>
+      )}
+
+      {assistants.length > 0 && (
+        <section class="mt-[clamp(2.5rem,6vh,4rem)]" aria-labelledby="course-assistants">
+          <h2 id="course-assistants" class="font-mono text-xs uppercase tracking-[0.08em] text-brand">
+            {t('courses.assistantsLabel', locale)} · {assistants.length}
+          </h2>
+          <ul class="mt-4 grid list-none gap-x-8 gap-y-1 p-0 sm:grid-cols-2 lg:grid-cols-3">
+            {assistants.map((assistant) => (
+              <li class="flex items-center gap-3 border-b border-line py-2">
+                <span class="h-10 w-10 shrink-0 overflow-hidden rounded-card bg-surface-strong">
+                  {assistant.image ? (
+                    <img
+                      src={assistant.image}
+                      alt=""
+                      loading="lazy"
+                      decoding="async"
+                      class="h-full w-full object-cover"
+                      style={`transform: scale(${assistant.scale || '1'}); transform-origin: ${assistant.position || 'center'};`}
+                    />
+                  ) : (
+                    <span class="grid h-full w-full place-items-center font-display text-[13px] text-muted-ink" aria-hidden="true">
+                      {getInitials(assistant.name)}
+                    </span>
+                  )}
+                </span>
+                <span class="text-[15px] leading-[1.4]">{assistant.name}</span>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
+
+      {!course.hasPracticum && (
+        <p class="mt-[clamp(2.5rem,6vh,4rem)] max-w-[52ch] text-[15px] leading-[1.6] text-muted-ink">
+          {t('courses.noPracticumNote', locale)}
+        </p>
+      )}
+    </article>
+
+  </main>
+</Layout>

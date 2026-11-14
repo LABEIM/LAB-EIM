@@ -1,0 +1,24 @@
+{
+  "featured": {
+    "image": "/image/gallery/placeholder.svg",
+    "alt": "Foto studio bersama Tim EIM Lab",
+    "caption": "Tim EIM Lab · Foto studio"
+  },
+  "photos": [
+    {
+      "image": "/image/gallery/placeholder.svg",
+      "alt": "Foto kegiatan contoh 1",
+      "caption": "Kegiatan contoh 1"
+    },
+    {
+      "image": "/image/gallery/placeholder.svg",
+      "alt": "Foto kegiatan contoh 2",
+      "caption": "Kegiatan contoh 2"
+    },
+    {
+      "image": "/image/gallery/placeholder.svg",
+      "alt": "Foto kegiatan contoh 3",
+      "caption": "Kegiatan contoh 3"
+    }
+  ]
+}

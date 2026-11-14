@@ -2,7 +2,7 @@ import { existsSync, readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { sectionOn } from '../utils/page-content';
-import type { AboutData, ChromeData, CourseDetailPageData, CoursesPageData, HomePageData, NewsPageData, StructurePageData } from '../utils/types';
+import type { AboutData, ChromeData, CourseDetailPageData, CoursesPageData, HomePageData, NewsDetailPageData, NewsPageData, StructurePageData } from '../utils/types';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '../..');
 const dataDir = join(root, 'src/data');
@@ -364,6 +364,57 @@ assert(Boolean(newsPage.meta?.description?.trim()), 'news.meta.description is a 
 for (const token of ['{articles}', '{categories}', '{year}'] as const) {
   assert(Boolean(newsHero?.meta?.includes(token)), `news.hero.meta keeps ${token}`);
 }
+
+console.log('\n🔟 Testing pages/news-detail.json:');
+const newsDetailPath = join(dataDir, 'pages/news-detail.json');
+const newsDetailExists = existsSync(newsDetailPath);
+assert(newsDetailExists, 'pages/news-detail.json exists');
+const newsDetail = (newsDetailExists ? JSON.parse(readFileSync(newsDetailPath, 'utf8')) : {}) as Partial<NewsDetailPageData>;
+
+// The header carries the article title, so it stays collection data and has no section here.
+for (const key of ['meta', 'body', 'gallery', 'related', 'backLink', 'share'] as const) {
+  const section = newsDetail[key];
+  assert(Boolean(section) && typeof section === 'object', `newsDetail.${key} exists`);
+}
+
+for (const key of ['body', 'gallery', 'related', 'backLink', 'share'] as const) {
+  assert(typeof newsDetail[key]?.enabled === 'boolean', `newsDetail.${key}.enabled is a boolean`);
+}
+
+for (const key of ['author', 'topics'] as const) {
+  const value = newsDetail[key];
+  assert(typeof value === 'string' && value.trim().length > 0, `newsDetail.${key} is a non-empty string`);
+}
+
+assert(Boolean(newsDetail.meta?.title?.trim()), 'newsDetail.meta.title is a non-empty string');
+assert(Boolean(newsDetail.meta?.description?.trim()), 'newsDetail.meta.description is a non-empty string');
+
+const newsDetailGallery = newsDetail.gallery;
+for (const key of ['eyebrow', 'title'] as const) {
+  const value = newsDetailGallery?.[key];
+  assert(typeof value === 'string' && value.trim().length > 0, `newsDetail.gallery.${key} is a non-empty string`);
+}
+
+const newsDetailRelated = newsDetail.related;
+for (const key of ['eyebrow', 'title', 'intro'] as const) {
+  const value = newsDetailRelated?.[key];
+  assert(typeof value === 'string' && value.trim().length > 0, `newsDetail.related.${key} is a non-empty string`);
+}
+
+assert(
+  typeof newsDetail.backLink?.label === 'string' && newsDetail.backLink.label.trim().length > 0,
+  'newsDetail.backLink.label is a non-empty string'
+);
+assert(
+  typeof newsDetail.share?.label === 'string' && newsDetail.share.label.trim().length > 0,
+  'newsDetail.share.label is a non-empty string'
+);
+
+// The meta description stands in for a missing excerpt, so the placeholder must survive.
+assert(
+  Boolean(newsDetail.meta?.description?.includes('{title}')),
+  'newsDetail.meta.description keeps {title}'
+);
 
 console.log(`\n${passed} passed, ${failed} failed`);
 if (failed > 0) process.exitCode = 1;

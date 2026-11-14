@@ -579,6 +579,37 @@ export interface CourseDetailPageData {
   };
 }
 
+export interface NewsDetailPageData {
+  meta: {
+    title: string;
+    description: string;
+  };
+  author: string;
+  topics: string;
+  body: {
+    enabled: boolean;
+  };
+  gallery: {
+    enabled: boolean;
+    eyebrow: string;
+    title: string;
+  };
+  related: {
+    enabled: boolean;
+    eyebrow: string;
+    title: string;
+    intro: string;
+  };
+  backLink: {
+    enabled: boolean;
+    label: string;
+  };
+  share: {
+    enabled: boolean;
+    label: string;
+  };
+}
+
 export interface AboutData {
   title: string;
   description: string;

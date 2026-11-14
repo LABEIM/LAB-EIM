@@ -5,10 +5,12 @@ import Layout from '../../layouts/Layout.astro';
 import PhotoGallery from '../../components/common/PhotoGallery.astro';
 import '../../styles/pages/home-eim.css';
 import '../../styles/pages/news-eim.css';
-import { getLocaleFromUrl, getCleanSlug, getLocalizedPath, getCollectionEntriesForLocale, t } from '../../utils/i18n';
+import { getLocaleFromUrl, getCleanSlug, getLocalizedPath, getLocalizedJsonData, getCollectionEntriesForLocale, t } from '../../utils/i18n';
 import { calculateReadingTime, getRelatedNews } from '../../utils/news-helpers';
 import { filterAuditContent } from '../../utils/content-helpers';
 import { formatGlobalDate } from '../../utils/date';
+import { sectionOn } from '../../utils/page-content';
+import type { ChromeData, NewsDetailPageData } from '../../utils/types';
 
 export async function getStaticPaths() {
   const news = await getCollection('news');
@@ -27,18 +29,21 @@ const images = item.data.image || [];
 const tags = item.data.tags || [];
 const { Content } = await render(item);
 
+const page = getLocalizedJsonData<NewsDetailPageData>('pages/news-detail', locale);
+const chrome = getLocalizedJsonData<ChromeData>('chrome', locale);
+
 const rawAllNews = await getCollection('news');
 const allNews = filterAuditContent(getCollectionEntriesForLocale(rawAllNews, locale));
 const relatedNews = getRelatedNews(item.id, allNews, 3);
 
 const formattedDate = formatGlobalDate(item.data.news_date);
 const readTime = calculateReadingTime(item.body);
-const metaDesc = item.data.excerpt || `${item.data.title} · EIM Lab`;
+const metaDesc = item.data.excerpt || page.meta.description.replaceAll('{title}', item.data.title);
 const newsIndexHref = getLocalizedPath('/news', locale);
 ---
 
 <Layout
-  title={`${item.data.title} · EIM Lab`}
+  title={`${item.data.title} · ${page.meta.title}`}
   description={metaDesc}
   homeSkin
   skipLink
@@ -51,11 +56,13 @@ const newsIndexHref = getLocalizedPath('/news', locale);
           <a class="article-back" href={newsIndexHref}>
             <span aria-hidden="true">←</span> {t('news.backToList', locale)}
           </a>
-          <button type="button" class="article-share share-btn">{t('news.share', locale)}</button>
+          {sectionOn(page.share) && (
+            <button type="button" class="article-share share-btn">{page.share.label}</button>
+          )}
         </div>
 
         <div class="article-eyebrow e-reveal">
-          {item.data.featured && <span class="article-featured">{t('news.featured', locale)}</span>}
+          {item.data.featured && <span class="article-featured">{chrome.labels.featured}</span>}
           <span>{item.data.category}</span>
           <span aria-hidden="true">·</span>
           <time datetime={item.data.news_date}>{formattedDate}</time>
@@ -66,7 +73,7 @@ const newsIndexHref = getLocalizedPath('/news', locale);
         {item.data.excerpt && <p class="article-standfirst e-reveal">{item.data.excerpt}</p>}
 
         <p class="article-meta e-reveal">
-          <span>{t('news.author', locale)}: {item.data.author}</span>
+          <span>{page.author}: {item.data.author}</span>
           <span aria-hidden="true">·</span>
           <span>{readTime}</span>
         </p>
@@ -87,44 +94,48 @@ const newsIndexHref = getLocalizedPath('/news', locale);
       </div>
     </section>
 
-    <article class="article-story">
-      <div class="article-story-inner">
-        <div class="eim-prose">
-          <Content />
-        </div>
-
-        {tags.length > 0 && (
-          <div class="article-tags">
-            <span class="article-tags-label">{t('news.topics', locale)}</span>
-            <ul class="article-tag-list">
-              {tags.map((tag: string) => <li class="article-tag">#{tag}</li>)}
-            </ul>
+    {sectionOn(page.body) && (
+      <article class="article-story">
+        <div class="article-story-inner">
+          <div class="eim-prose">
+            <Content />
           </div>
-        )}
-      </div>
-    </article>
 
-    <PhotoGallery
-      images={images.slice(1)}
-      eyebrow={t('news.galleryEyebrow', locale)}
-      title={t('news.galleryTitle', locale)}
-      altLabel={item.data.title}
-    />
+          {tags.length > 0 && (
+            <div class="article-tags">
+              <span class="article-tags-label">{page.topics}</span>
+              <ul class="article-tag-list">
+                {tags.map((tag: string) => <li class="article-tag">#{tag}</li>)}
+              </ul>
+            </div>
+          )}
+        </div>
+      </article>
+    )}
 
-    {relatedNews.length > 0 && (
+    {sectionOn(page.gallery) && (
+      <PhotoGallery
+        images={images.slice(1)}
+        eyebrow={page.gallery.eyebrow}
+        title={page.gallery.title}
+        altLabel={item.data.title}
+      />
+    )}
+
+    {sectionOn(page.related) && relatedNews.length > 0 && (
       <section class="article-related" aria-labelledby="article-related-title">
         <div class="mx-auto max-w-[1200px] px-[clamp(1.25rem,4vw,4rem)]">
           <p class="e-reveal font-mono text-xs uppercase tracking-[0.08em] text-brand">
-            {t('news.relatedEyebrow', locale)}
+            {page.related.eyebrow}
           </p>
           <h2
             id="article-related-title"
             class="e-reveal mt-4 font-display text-[clamp(2rem,4vw,3.5rem)] leading-[1.05] tracking-[-0.01em]"
           >
-            {t('news.relatedTitle', locale)}
+            {page.related.title}
           </h2>
           <p class="e-reveal mt-4 max-w-[52ch] text-[15px] leading-[1.55] text-muted-ink">
-            {t('news.relatedIntro', locale)}
+            {page.related.intro}
           </p>
 
           <ul class="article-related-list e-reveal-group">
@@ -145,11 +156,13 @@ const newsIndexHref = getLocalizedPath('/news', locale);
       </section>
     )}
 
-    <div class="article-end">
-      <a class="article-back" href={newsIndexHref}>
-        <span aria-hidden="true">←</span> {t('news.backToIndex', locale)}
-      </a>
-    </div>
+    {sectionOn(page.backLink) && (
+      <div class="article-end">
+        <a class="article-back" href={newsIndexHref}>
+          <span aria-hidden="true">←</span> {page.backLink.label}
+        </a>
+      </div>
+    )}
   </main>
 </Layout>
 

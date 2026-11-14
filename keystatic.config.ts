@@ -886,6 +886,67 @@ export default config({
         ),
       },
     }),
+    page_newsDetail: singleton({
+      label: 'Detail Artikel',
+      path: 'src/data/pages/news-detail',
+      format: { data: 'json' },
+      schema: {
+        meta: fields.object(
+          {
+            title: fields.text({
+              label: 'Judul halaman',
+              description: 'Diapit judul artikel di tab browser dan hasil pencarian.',
+              validation: { isRequired: true },
+            }),
+            description: fields.text({
+              label: 'Deskripsi meta',
+              description: 'Tampil di hasil pencarian saat artikel belum memiliki ringkasan. Jangan hapus {title}.',
+              multiline: true,
+            }),
+          },
+          { label: 'Meta halaman' }
+        ),
+        author: fields.text({ label: 'Label penulis' }),
+        topics: fields.text({ label: 'Label topik' }),
+        body: fields.object(
+          {
+            enabled: fields.checkbox({ label: 'Tampilkan bagian ini', defaultValue: true }),
+          },
+          { label: 'Isi artikel', description: 'Teks artikel, foto sampul, dan daftar topik dibaca dari koleksi News.' }
+        ),
+        gallery: fields.object(
+          {
+            enabled: fields.checkbox({ label: 'Tampilkan bagian ini', defaultValue: true }),
+            eyebrow: fields.text({ label: 'Teks kecil di atas judul' }),
+            title: fields.text({ label: 'Judul bagian' }),
+          },
+          { label: 'Galeri foto', description: 'Foto dibaca dari koleksi News, tidak termasuk foto sampul.' }
+        ),
+        related: fields.object(
+          {
+            enabled: fields.checkbox({ label: 'Tampilkan bagian ini', defaultValue: true }),
+            eyebrow: fields.text({ label: 'Teks kecil di atas judul' }),
+            title: fields.text({ label: 'Judul bagian' }),
+            intro: fields.text({ label: 'Paragraf pengantar', multiline: true }),
+          },
+          { label: 'Artikel terkait', description: 'Daftar artikel dibaca dari koleksi News.' }
+        ),
+        backLink: fields.object(
+          {
+            enabled: fields.checkbox({ label: 'Tampilkan bagian ini', defaultValue: true }),
+            label: fields.text({ label: 'Label tautan kembali ke daftar' }),
+          },
+          { label: 'Tautan kembali di akhir halaman', description: 'Tautan diarahkan ke halaman Artikel.' }
+        ),
+        share: fields.object(
+          {
+            enabled: fields.checkbox({ label: 'Tampilkan bagian ini', defaultValue: true }),
+            label: fields.text({ label: 'Label tombol bagikan' }),
+          },
+          { label: 'Tombol bagikan', description: 'Tombol di bagian atas halaman.' }
+        ),
+      },
+    }),
     chrome: singleton({
       label: 'Navbar, Footer & Brand',
       path: 'src/data/chrome',
@@ -1350,7 +1411,7 @@ export default config({
   },
   ui: {
     navigation: {
-      Halaman: ['page_home', 'page_structure', 'page_courses', 'page_courseDetail', 'page_news', 'about', 'contact'],
+      Halaman: ['page_home', 'page_structure', 'page_courses', 'page_courseDetail', 'page_news', 'page_newsDetail', 'about', 'contact'],
       Koleksi: ['news', 'events', 'courses'],
       Pengaturan: [
         'site',

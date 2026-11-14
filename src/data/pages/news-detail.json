@@ -1,0 +1,30 @@
+{
+  "meta": {
+    "title": "EIM Lab",
+    "description": "{title} · EIM Lab"
+  },
+  "author": "Penulis",
+  "topics": "Topik",
+  "body": {
+    "enabled": true
+  },
+  "gallery": {
+    "enabled": true,
+    "eyebrow": "Dokumentasi",
+    "title": "Foto artikel."
+  },
+  "related": {
+    "enabled": true,
+    "eyebrow": "Artikel lain",
+    "title": "Baca juga.",
+    "intro": "Artikel lain dari EIM Lab yang mungkin Anda minati."
+  },
+  "backLink": {
+    "enabled": true,
+    "label": "Kembali ke daftar artikel"
+  },
+  "share": {
+    "enabled": true,
+    "label": "Bagikan"
+  }
+}

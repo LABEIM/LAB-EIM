@@ -177,15 +177,8 @@ export const uiTranslations: Record<Locale, Record<string, string>> = {
     'events.recapEmpty': 'Dokumentasi kegiatan ini belum tersedia.',
 
     // News Page
-    'news.author': 'Penulis',
     'news.featured': 'Artikel utama',
-    'news.topics': 'Topik',
-    'news.share': 'Bagikan',
     'news.backToList': 'Kembali ke artikel',
-    'news.backToIndex': 'Kembali ke daftar artikel',
-    'news.relatedEyebrow': 'Artikel lain',
-    'news.relatedTitle': 'Baca juga.',
-    'news.relatedIntro': 'Artikel lain dari EIM Lab yang mungkin Anda minati.',
 
     // News Index
     'news.galleryEyebrow': 'Dokumentasi',

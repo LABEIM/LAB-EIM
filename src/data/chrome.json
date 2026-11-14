@@ -51,6 +51,7 @@
   "ui": {
     "backToHome": "Kembali ke Beranda",
     "titleSuffix": "· EIM Lab",
+    "revealPlay": "Putar intro",
     "pagination": {
       "previous": "Halaman Sebelumnya",
       "previousAria": "Halaman sebelumnya",

@@ -461,6 +461,7 @@ export interface ChromeData {
   ui: {
     backToHome: string;
     titleSuffix: string;
+    revealPlay: string;
     pagination: {
       previous: string;
       previousAria: string;

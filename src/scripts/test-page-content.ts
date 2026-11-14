@@ -115,6 +115,7 @@ const ui = chromeTyped.ui;
 const uiStrings: [string, unknown][] = [
   ['backToHome', ui?.backToHome],
   ['titleSuffix', ui?.titleSuffix],
+  ['revealPlay', ui?.revealPlay],
   ['pagination.previous', ui?.pagination?.previous],
   ['pagination.previousAria', ui?.pagination?.previousAria],
   ['pagination.next', ui?.pagination?.next],
@@ -446,8 +447,18 @@ assert(
   'EimReveal stage iframe carries the pointer-events class'
 );
 assert(
-  /<button\b[^>]*\bclass="e-reveal-open"[^>]*\baria-label="[^"]+"/.test(stageMarkup),
+  /<button\b[^>]*\bclass="e-reveal-open"[^>]*\baria-label=(?:"[^"]+"|\{[^}]+\})/.test(stageMarkup),
   'EimReveal overlay control is a button with a non-empty aria-label'
+);
+assert(
+  stageMarkup.includes('class="e-reveal-open-pill"') &&
+    stageMarkup.includes('class="e-reveal-open-label">{chrome.ui.revealPlay}</span>') &&
+    !stageMarkup.includes('Putar intro'),
+  'EimReveal play pill shows the label from the CMS value, not a literal'
+);
+assert(
+  /<span class="e-reveal-open-glyph" aria-hidden="true">/.test(stageMarkup),
+  'EimReveal play glyph is hidden from assistive tech'
 );
 
 const modalMarkup = revealComponent.slice(

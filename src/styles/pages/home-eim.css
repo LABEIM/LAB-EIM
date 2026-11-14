@@ -412,12 +412,11 @@ html {
   position: absolute;
   inset: 0;
   z-index: var(--z-raised);
-  display: grid;
-  place-items: center;
   padding: 0;
   border: 0;
   background: transparent;
   cursor: pointer;
+  text-align: left;
 }
 
 .e-reveal-open:focus-visible {
@@ -425,24 +424,50 @@ html {
   outline-offset: -3px;
 }
 
+/* The whole stage is the hit area; the pill only makes the affordance visible. */
+.e-reveal-open-pill {
+  position: absolute;
+  bottom: clamp(1rem, 3vw, 1.75rem);
+  left: clamp(1rem, 3vw, 1.75rem);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-8);
+  min-height: 44px;
+  padding: 0 var(--space-20);
+  border-radius: var(--radius-pill);
+  background: var(--color-background);
+  color: var(--color-foreground);
+  box-shadow: var(--shadow-md);
+  font-family: var(--font-mono);
+  font-size: var(--text-12);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.e-reveal-open:hover .e-reveal-open-pill {
+  background: var(--color-brand-soft);
+  transform: translateY(-1px);
+}
+
+.e-reveal-open:focus-visible .e-reveal-open-pill {
+  outline: 3px solid var(--color-brand-bright);
+  outline-offset: 3px;
+}
+
 .e-reveal-open-glyph {
   display: grid;
   place-items: center;
-  width: 3.5rem;
-  height: 3.5rem;
-  border-radius: var(--radius-pill);
-  background: rgba(var(--color-scrim-rgb), 0.55);
-  color: var(--color-background);
-  transition: background 0.2s ease;
-}
-
-.e-reveal-open:hover .e-reveal-open-glyph {
-  background: var(--color-brand);
 }
 
 .e-reveal-open-glyph svg {
-  width: 1.25rem;
-  height: 1.25rem;
+  width: 1rem;
+  height: 1rem;
+}
+
+/* Lift the caption clear of the pill instead of hiding either at narrow widths. */
+.e-reveal-stage-figure.has-player .e-reveal-stage-caption {
+  bottom: calc(clamp(1rem, 3vw, 1.75rem) + 44px + var(--space-12));
 }
 
 /* == Intro player modal == */

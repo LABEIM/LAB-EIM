@@ -1318,6 +1318,11 @@ export default config({
               description: 'Ditambahkan setelah judul halaman pendaftaran, misalnya "· EIM Lab".',
               validation: { isRequired: true },
             }),
+            revealPlay: fields.text({
+              label: 'Label tombol putar intro',
+              description: 'Tampil pada pil di atas media pengantar beranda.',
+              validation: { isRequired: true },
+            }),
             pagination: fields.object(
               {
                 previous: fields.text({ label: 'Judul tombol halaman sebelumnya', validation: { isRequired: true } }),

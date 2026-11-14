@@ -1,6 +1,7 @@
 ---
 import type { CollectionEntry } from 'astro:content';
-import { getCleanSlug, getLocalizedPath, t, type Locale } from '../../utils/i18n';
+import { getCleanSlug, getLocalizedJsonData, getLocalizedPath, type Locale } from '../../utils/i18n';
+import type { ChromeData } from '../../utils/types';
 
 interface Props {
   upcomingEvents: CollectionEntry<'events'>[];
@@ -8,6 +9,7 @@ interface Props {
 }
 
 const { upcomingEvents = [], locale = 'id' } = Astro.props;
+const chrome = getLocalizedJsonData<ChromeData>('chrome', locale);
 
 if (!upcomingEvents || upcomingEvents.length === 0) {
   // Render nothing if there are no upcoming events
@@ -39,7 +41,7 @@ const preparedEvents = upcomingEvents.map((event) => {
       <div class="event-modal-header">
         <div class="event-modal-header-info">
           <span class="event-modal-badge">
-            <i class="fa-solid fa-calendar-check"></i> {t('badge.upcoming', locale) || 'Upcoming Event'}
+            <i class="fa-solid fa-calendar-check"></i> {chrome.labels.upcoming}
           </span>
           <h3 id="modalEventTitle" class="event-modal-title">
             {preparedEvents[0].title}
@@ -121,7 +123,7 @@ const preparedEvents = upcomingEvents.map((event) => {
           href={preparedEvents[0].detailUrl}
           class="btn btn-primary event-modal-cta-btn"
         >
-          {t('btn.details', locale)} <i class="fa-solid fa-arrow-right"></i>
+          {chrome.labels.details} <i class="fa-solid fa-arrow-right"></i>
         </a>
       </div>
     </div>

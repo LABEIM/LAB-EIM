@@ -111,6 +111,7 @@ const registrationSchema = {
       done: fields.text({ label: 'Label tombol selesai saat berhasil', validation: { isRequired: true } }),
       saveDraft: fields.text({ label: 'Label tombol simpan draf', validation: { isRequired: true } }),
       draftSaved: fields.text({ label: 'Label draf tersimpan', validation: { isRequired: true } }),
+      resultsPlaceholder: fields.text({ label: 'Placeholder pencarian NIM', validation: { isRequired: true } }),
     },
     {
       label: 'Label kolom formulir',
@@ -120,6 +121,9 @@ const registrationSchema = {
   heroTag: fields.text({ label: 'Hero Tag', defaultValue: 'Assistant Recruitment' }),
   heroTitle: fields.text({ label: 'Hero Title', defaultValue: 'Assistant Lab Registration' }),
   heroDescription: fields.text({ label: 'Hero Description', defaultValue: 'Join us and become a part of EIM Lab. Develop your potential in IT infrastructure, networks, and technology research.' }),
+  heroPeriod: fields.text({ label: 'Hero periode pendaftaran', description: 'Gunakan {start} dan {end} untuk tanggal mulai dan batas akhir.' }),
+  heroPrimaryLabel: fields.text({ label: 'Label tombol utama hero' }),
+  heroSecondaryLabel: fields.text({ label: 'Label tombol sekunder hero' }),
   studentYears: fields.array(fields.text({ label: 'Year' }), {
     label: 'Eligible Student Years',
     itemLabel: props => props.value,
@@ -1196,7 +1200,6 @@ export default config({
           {
             upcoming: fields.text({ label: 'Label mendatang' }),
             details: fields.text({ label: 'Label lihat detail' }),
-            learnMore: fields.text({ label: 'Label pelajari selengkapnya' }),
             statsDosen: fields.text({ label: 'Label statistik dosen' }),
             statsMembers: fields.text({ label: 'Label statistik anggota' }),
             statsCourses: fields.text({ label: 'Label statistik mata kuliah' }),
@@ -1473,7 +1476,6 @@ export default config({
           },
           { label: 'Bagian halaman' }
         ),
-        title: fields.text({ label: 'Judul cadangan', description: 'Tidak tampil di halaman; dipertahankan agar nilai lama tidak hilang.' }),
         description: fields.text({ label: 'Deskripsi meta halaman', multiline: true }),
         overviewTitle: fields.text({ label: 'Judul ikhtisar' }),
         overviewContent1: fields.text({ label: 'Paragraf ikhtisar pertama', multiline: true }),

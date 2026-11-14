@@ -410,7 +410,6 @@ export interface ChromeData {
   labels: {
     upcoming: string;
     details: string;
-    learnMore: string;
     statsDosen: string;
     statsMembers: string;
     statsCourses: string;
@@ -771,7 +770,6 @@ export interface ContactData {
 }
 
 export interface AboutData {
-  title: string;
   description: string;
   overviewTitle: string;
   overviewContent1: string;

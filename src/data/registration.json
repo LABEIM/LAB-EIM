@@ -55,11 +55,15 @@
     "closeError": "Tutup & Periksa Form",
     "done": "Selesai",
     "saveDraft": "Simpan Draf",
-    "draftSaved": "Draf pendaftaran berhasil disimpan di browser Anda."
+    "draftSaved": "Draf pendaftaran berhasil disimpan di browser Anda.",
+    "resultsPlaceholder": "Masukkan NIM (contoh: 102022300301)"
   },
   "heroTag": "Rekrutmen Asisten",
   "heroTitle": "Pendaftaran Asisten Lab",
   "heroDescription": "Bergabunglah bersama kami menjadi bagian dari EIM Lab. Kembangkan potensi Anda dalam bidang infrastruktur IT, jaringan, dan riset teknologi.",
+  "heroPeriod": "Periode pendaftaran: {start} — {end}",
+  "heroPrimaryLabel": "Lihat formulir",
+  "heroSecondaryLabel": "Hubungi kami",
   "studentYears": [
     "2024"
   ],

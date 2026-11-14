@@ -1,4 +1,4 @@
-import { existsSync, readFileSync } from 'node:fs';
+import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { sectionOn } from '../utils/page-content';
@@ -22,12 +22,66 @@ function assert(condition: boolean, testName: string) {
   }
 }
 
+function collectFiles(dir: string, extensions: string[]): string[] {
+  return readdirSync(dir, { withFileTypes: true }).flatMap((entry) => {
+    const path = join(dir, entry.name);
+    if (entry.isDirectory()) return collectFiles(path, extensions);
+    return extensions.some((ext) => entry.name.endsWith(ext)) ? [path] : [];
+  });
+}
+
+function collectEntries(value: unknown, path = ''): { path: string; value: string }[] {
+  if (typeof value === 'string') return [{ path, value }];
+  if (Array.isArray(value)) return value.flatMap((item, index) => collectEntries(item, `${path}[${index}]`));
+  if (value && typeof value === 'object') {
+    return Object.entries(value).flatMap(([key, item]) => collectEntries(item, path ? `${path}.${key}` : key));
+  }
+  return [];
+}
+
+function decodeEntities(value: string): string {
+  return value
+    .replace(/&nbsp;/g, ' ')
+    .replace(/&amp;/g, '&')
+    .replace(/&#0?39;/g, "'")
+    .replace(/&quot;/g, '"')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>');
+}
+
+function normaliseHtml(html: string): string {
+  const withAttributes = decodeEntities(html).replace(/\s+/g, ' ');
+  const textOnly = decodeEntities(html.replace(/<[^>]*>/g, ' ')).replace(/\s+/g, ' ');
+  return `${withAttributes}\n${textOnly}`;
+}
+
+function skipReason(value: string): string | null {
+  if (/^\{\w+\}$/.test(value)) return 'placeholder only';
+  if (/^(?:https?:)?\/\//.test(value) || /^\/\S*$/.test(value)) return 'URL or path';
+  if (/^fa[srlb]? fa-/.test(value)) return 'icon class';
+  if (!/[A-Za-z]/.test(value)) return 'no letters';
+  return null;
+}
+
+function escapeRegExp(value: string): string {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+// Treat {placeholder} tokens as wildcards so interpolated copy still matches.
+function containsText(haystack: string, needle: string): boolean {
+  const pattern = needle
+    .split(/(\{\w+\})/)
+    .map((part) => (/^\{\w+\}$/.test(part) ? '[\\s\\S]+?' : escapeRegExp(part)))
+    .join('');
+  return new RegExp(pattern).test(haystack);
+}
+
 const chromeGroups: Record<keyof ChromeData, string[]> = {
   nav: ['home', 'about', 'structure', 'courses', 'event', 'news', 'register', 'contact', 'joinUs'],
   footer: ['description', 'quickLinks', 'contact', 'resources', 'assets', 'linkHub', 'rights', 'backToTop'],
   cta: ['title', 'description', 'contactLabel'],
   brand: ['logoHorizontal', 'logoIcon'],
-  labels: ['upcoming', 'details', 'learnMore', 'statsDosen', 'statsMembers', 'statsCourses', 'organizerFallback', 'sectionNav', 'coordinator', 'sks', 'practicumYes', 'practicumNo', 'featured', 'search', 'close', 'vision', 'mission', 'values'],
+  labels: ['upcoming', 'details', 'statsDosen', 'statsMembers', 'statsCourses', 'organizerFallback', 'sectionNav', 'coordinator', 'sks', 'practicumYes', 'practicumNo', 'featured', 'search', 'close', 'vision', 'mission', 'values'],
 };
 
 console.log('🧪 Running Page Content Guard Tests...\n');
@@ -99,7 +153,6 @@ assert(aboutExists, 'about.json exists');
 const about = (aboutExists ? JSON.parse(readFileSync(aboutPath, 'utf8')) : {}) as Partial<AboutData>;
 
 for (const key of [
-  'title',
   'description',
   'overviewTitle',
   'overviewContent1',
@@ -112,6 +165,7 @@ for (const key of [
 }
 assert(Array.isArray(about.missions) && about.missions.length > 0, 'about.missions is a non-empty array');
 assert(Array.isArray(about.values) && about.values.length > 0, 'about.values is a non-empty array');
+assert(!Object.prototype.hasOwnProperty.call(about, 'title'), 'about carries no dead title field');
 
 assert(Boolean(about.meta?.title?.trim()), 'about.meta.title is a non-empty string');
 
@@ -645,9 +699,138 @@ for (const key of [
   'done',
   'saveDraft',
   'draftSaved',
+  'resultsPlaceholder',
 ] as const) {
   const value = registration.labels?.[key];
   assert(typeof value === 'string' && value.trim().length > 0, `registration.labels.${key} is a non-empty string`);
+}
+
+for (const key of ['heroTag', 'heroTitle', 'heroPeriod', 'heroPrimaryLabel', 'heroSecondaryLabel'] as const) {
+  const value = (registration as Record<string, unknown>)[key];
+  assert(typeof value === 'string' && value.trim().length > 0, `registration.${key} is a non-empty string`);
+}
+assert(
+  String((registration as Record<string, unknown>).heroPeriod).includes('{start}') &&
+    String((registration as Record<string, unknown>).heroPeriod).includes('{end}'),
+  'registration.heroPeriod keeps {start} and {end}'
+);
+
+console.log('\n1️⃣5️⃣ Testing the dictionary is gone:');
+const sourceFiles = collectFiles(join(root, 'src'), ['.ts', '.tsx', '.astro']);
+const dictionaryCall = /\bt\(\s*['"]/;
+const dictionaryOffenders = sourceFiles.filter((file) => dictionaryCall.test(readFileSync(file, 'utf8')));
+assert(
+  dictionaryOffenders.length === 0,
+  `no legacy t() call sites remain under src/${
+    dictionaryOffenders.length ? ` (${dictionaryOffenders.map((file) => file.slice(root.length + 1)).join(', ')})` : ''
+  }`
+);
+const i18nSource = readFileSync(join(root, 'src/utils/i18n.ts'), 'utf8');
+assert(!/export\s+const\s+uiTranslations/.test(i18nSource), 'i18n.ts no longer exports uiTranslations');
+
+console.log('\n1️⃣6️⃣ Testing page copy renders in the built HTML (needs `pnpm run build` first):');
+const clientDir = join(root, 'dist/client');
+const htmlIndexFiles = (dir: string): string[] => {
+  const base = join(clientDir, dir);
+  return existsSync(base)
+    ? readdirSync(base, { withFileTypes: true })
+        .filter((entry) => entry.isDirectory())
+        .map((entry) => join(base, entry.name, 'index.html'))
+        .filter(existsSync)
+    : [];
+};
+const allHtml = existsSync(clientDir) ? collectFiles(clientDir, ['.html']).filter((file) => file.endsWith('index.html')) : [];
+
+const renderTargets: [string, string[]][] = [
+  ['chrome.json', allHtml],
+  ['about.json', [join(clientDir, 'about/index.html')]],
+  ['contact.json', [join(clientDir, 'contact/index.html')]],
+  ['registration.json', [join(clientDir, 'registration/index.html')]],
+  ['pages/home.json', [join(clientDir, 'index.html')]],
+  ['pages/structure.json', [join(clientDir, 'structure/index.html')]],
+  ['pages/courses.json', [join(clientDir, 'courses/index.html')]],
+  ['pages/news.json', [join(clientDir, 'news/index.html')]],
+  ['pages/events.json', [join(clientDir, 'event/index.html')]],
+  ['pages/course-detail.json', htmlIndexFiles('courses')],
+  ['pages/news-detail.json', htmlIndexFiles('news')],
+  ['pages/event-detail.json', htmlIndexFiles('event')],
+];
+
+// Copy that only renders in a state the sample content does not reach: empty lists,
+// collapsed gallery controls, disabled upload fields, or candidate-specific messages.
+const stateDependent: Record<string, RegExp[]> = {
+  'about.json': [/^sections\.gallery\.(showAll|hideAll)$/],
+  'contact.json': [/^details\.pics(Title|Subtitle)$/],
+  'registration.json': [
+    /^labels\.ksm$/,
+    /^contactPersons\[\d+\]\.role$/,
+    /^announcementConfig\.(accepted|rejected)Message$/,
+    /^selectionSteps\[\d+\]\.resultsConfig\.(passed|failed)Message$/,
+  ],
+  'pages/home.json': [/^events\.empty$/, /^news\.empty$/],
+  'pages/structure.json': [/^chart\.emptyPosition$/],
+  'pages/courses.json': [/^list\.empty$/],
+  'pages/news.json': [/^list\.(emptyTitle|emptyDesc|contactLabel)$/, /^hero\.metaEmpty$/],
+  'pages/events.json': [/^list\.(emptyTitle|emptyDesc|contactLabel)$/, /^hero\.metaEmpty$/],
+  'pages/event-detail.json': [/^gallery\.empty$/],
+  'chrome.json': [/^labels\.(featured|upcoming)$/],
+};
+
+if (!existsSync(clientDir)) {
+  console.log('  ⚠️ SKIPPED: dist/client is missing. Run `PUBLIC_SHOW_AUDIT_CONTENT=true pnpm run build` first to enable this guard.');
+} else {
+  // Production builds hide the audit sample content, so list pages only render their
+  // empty state; skip the copy that belongs to the other branch of that same page.
+  const contentBranch: Record<string, { marker: string; content: RegExp }> = {
+    'pages/news.json': {
+      marker: 'id="news-list-grid"',
+      content: /^(list\.(eyebrow|title|intro|searchPlaceholder|noMatchTitle|noMatchDesc)|hero\.meta)$/,
+    },
+    'pages/events.json': {
+      marker: 'id="kegiatan-list-grid"',
+      content: /^(list\.(eyebrow|title|intro|searchPlaceholder|noMatchTitle|noMatchDesc)|hero\.meta)$/,
+    },
+    'pages/news-detail.json': {
+      marker: 'id="article-related-title"',
+      content: /^related\./,
+    },
+    'pages/event-detail.json': {
+      marker: 'id="kegiatan-related-title"',
+      content: /^related\./,
+    },
+  };
+
+  for (const [file, htmlFiles] of renderTargets) {
+    const data = JSON.parse(readFileSync(join(dataDir, file), 'utf8')) as unknown;
+    const haystack = htmlFiles.map((html) => normaliseHtml(readFileSync(html, 'utf8'))).join('\n');
+    assert(htmlFiles.length > 0, `${file} has built HTML to compare against`);
+    const entries = collectEntries(data).filter(({ value }) => value.trim().length >= 12);
+    const branch = contentBranch[file];
+    const emptyBranch = Boolean(branch) && !haystack.includes(branch.marker);
+    let checked = 0;
+    const skipped: string[] = [];
+    for (const { path, value } of entries) {
+      if (skipReason(value.trim())) continue;
+      if (stateDependent[file]?.some((pattern) => pattern.test(path))) {
+        skipped.push(path);
+        continue;
+      }
+      if (emptyBranch && branch.content.test(path)) {
+        skipped.push(path);
+        continue;
+      }
+      if (containsText(haystack, value.trim())) {
+        checked++;
+        continue;
+      }
+      assert(false, `${file} string renders in built HTML: ${path} "${value.trim()}"`);
+    }
+    assert(checked > 0, `${file} has at least one rendered string checked`);
+    console.log(`  ✅ ${file}: ${checked} strings rendered${skipped.length ? `, ${skipped.length} state-dependent skipped` : ''}`);
+    if (skipped.length > 0) {
+      console.log(`  ⏭️  ${file}: skipped state-dependent copy at ${skipped.join(', ')}`);
+    }
+  }
 }
 
 console.log(`\n${passed} passed, ${failed} failed`);

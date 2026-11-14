@@ -4,7 +4,7 @@ import Layout from '../layouts/Layout.astro';
 import '../styles/pages/home-eim.css';
 import EimSectionNav from '../components/home/EimSectionNav.astro';
 import { resolveCourses } from '../utils/course-helpers';
-import { getLocaleFromUrl, getLocalizedJsonData, t } from '../utils/i18n';
+import { getLocaleFromUrl, getLocalizedJsonData } from '../utils/i18n';
 import { sectionOn } from '../utils/page-content';
 import type { ChromeData, CoursesPageData, Lecturer, Member } from '../utils/types';
 
@@ -126,7 +126,7 @@ const sectionItems = [
                         href={`/courses/${course.id}`}
                         class="font-mono text-xs uppercase tracking-[0.08em] text-brand"
                       >
-                        {t('btn.details', locale)}
+                        {chrome.labels.details}
                         <span class="sr-only">: {course.title}</span>
                         <span aria-hidden="true">→</span>
                       </a>

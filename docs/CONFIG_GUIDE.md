@@ -6,6 +6,32 @@ Admin Portal: https://lab-eim.vercel.app/keystatic
 
 ---
 
+## Halaman (page copy)
+Every page's visible copy lives in JSON, editable under **Halaman** in Keystatic. Edit the file directly only when Keystatic is unavailable.
+
+| Page | File |
+| --- | --- |
+| Beranda | `src/data/pages/home.json` |
+| Tentang Kami | `src/data/about.json` |
+| Struktur | `src/data/pages/structure.json` |
+| Mata Kuliah (list) | `src/data/pages/courses.json` |
+| Mata Kuliah (detail) | `src/data/pages/course-detail.json` |
+| Kegiatan (list) | `src/data/pages/events.json` |
+| Kegiatan (detail) | `src/data/pages/event-detail.json` |
+| Artikel (list) | `src/data/pages/news.json` |
+| Artikel (detail) | `src/data/pages/news-detail.json` |
+| Kontak | `src/data/contact.json` |
+| Pendaftaran | `src/data/registration.json` |
+| Shared chrome (nav, footer, CTA, labels) | `src/data/chrome.json` |
+
+**Hiding a section:** every non-hero section object has an `enabled` boolean. Set it to `false` in Keystatic to remove the section from the page; section nav dots read the same flag, so the dot disappears too. Hero sections have no toggle because they hold the page `<h1>`. Upload fields on detail pages are collection fields, not page copy; only their headings and enabled switches live in the `*-detail.json` files.
+
+**Shared strings:** navigation, footer, the closing CTA, brand assets, and cross-page labels (for example "Lihat Detail", "Mendatang", statistics labels, coordinator/SKS/practicum labels) live once in `chrome.json`. Change them there rather than in a page file.
+
+**`meta.title` on detail pages is only the brand suffix:** the page renders `${collection item title} · ${meta.title}`, so `"EIM Lab"` produces `Judul · EIM Lab`. On list pages `meta.title` is the whole title (`"Artikel · EIM Lab"`). Course detail's `meta.description` is a template and keeps `{title}`; that token is replaced with the course name.
+
+---
+
 ## 1. Positions Configuration (`src/data/positions.json`)
 This file defines the laboratory's role hierarchy. The `/structure` chart and role sections and the Keystatic `Position` dropdowns on members and lecturers all read from it.
 
@@ -28,7 +54,7 @@ The hierarchy is fixed in code (`STRUCTURE_TREE` in `src/utils/position-mapper.t
 ```
 Sections render only for positions that hold at least one person; the chart shows the positions in `STRUCTURE_TREE` (`src/utils/position-mapper.ts`), so add a position to that tree as well as to `positions.json` if it belongs in the chart.
 
-The numbers on Beranda ("Laboratorium dalam angka") and Tentang Kami are derived — dosen and anggota counts come from `positions.json` plus `members.json`/`lecturers.json`, and the third Beranda number is the course count from `src/content/courses/` (Tentang Kami shows the dosen count instead). Nothing is typed in, so the numbers follow the data automatically.
+The numbers on Beranda ("Laboratorium dalam angka") and Tentang Kami are derived by default — dosen and anggota counts come from `positions.json` plus `members.json`/`lecturers.json`, and the third Beranda number is the course count from `src/content/courses/` (Tentang Kami shows the dosen count instead). Tentang Kami also has optional override fields (`sections.stats.dosenValue`, `membersValue`, `coursesValue`) in Keystatic; leave them empty to keep following the data.
 
 ---
 

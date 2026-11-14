@@ -5,7 +5,7 @@ import '../styles/pages/registration-eim.css';
 import { getCurrentRecruitmentStage } from '../utils/recruitment';
 import { parseDivisions } from '../utils/division-mapper';
 import { getRegistrationPageConfigs } from '../utils/registration-config';
-import { getLocaleFromUrl, getLocalizedJsonData, t } from '../utils/i18n';
+import { getLocaleFromUrl, getLocalizedJsonData } from '../utils/i18n';
 import { formatGlobalDate } from '../utils/date';
 import { DEFAULT_RECRUITMENT_DATES } from '../utils/constants';
 
@@ -73,13 +73,12 @@ acceptedCandidates.forEach((candidate: any) => {
   candidatesByDivision[divisionKey].push(candidate);
 });
 
-const heroTitle = registrationConfig.heroTitle || t('reg.title', locale);
+const heroTitle = registrationConfig.heroTitle || 'Pendaftaran Asisten';
 const heroDescription = registrationConfig.heroDescription || 'Join us and become a part of EIM Lab.';
-const heroEyebrow = registrationConfig.heroTag || t('reg.title', locale);
-const registrationPeriod = t('reg.period', locale, {
-  start: formatGlobalDate(openDateStr),
-  end: formatGlobalDate(deadlineStr),
-});
+const heroEyebrow = registrationConfig.heroTag || 'Pendaftaran Asisten';
+const registrationPeriod = (registrationConfig.heroPeriod || 'Periode pendaftaran: {start} — {end}')
+  .replaceAll('{start}', formatGlobalDate(openDateStr))
+  .replaceAll('{end}', formatGlobalDate(deadlineStr));
 ---
 
 <Layout title={`${heroTitle} · EIM Lab`} description={heroDescription} homeSkin skipLink>
@@ -91,9 +90,9 @@ const registrationPeriod = t('reg.period', locale, {
         <h1 id="registration-hero-title" class="eim-hero-title">{heroTitle}</h1>
         <p class="eim-hero-desc">{heroDescription}</p>
         <div class="eim-hero-actions">
-          <a class="eim-hero-cta" href="#registration">{t('reg.heroPrimary', locale)}</a>
+          <a class="eim-hero-cta" href="#registration">{registrationConfig.heroPrimaryLabel || 'Lihat formulir'}</a>
           <a class="eim-hero-secondary" href="/contact">
-            {t('reg.heroSecondary', locale)} <span aria-hidden="true">→</span>
+            {registrationConfig.heroSecondaryLabel || 'Hubungi kami'} <span aria-hidden="true">→</span>
           </a>
         </div>
         <p class="eim-subhero-meta">{registrationPeriod}</p>

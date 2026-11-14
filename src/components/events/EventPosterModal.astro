@@ -64,6 +64,7 @@ const preparedEvents = upcomingEvents.map((event) => {
                   class="poster-img"
                   draggable="false"
                   data-detail-url={event.detailUrl}
+                  data-event-title={event.title}
                 />
               </div>
             </div>
@@ -143,6 +144,7 @@ const preparedEvents = upcomingEvents.map((event) => {
     const nextBtn = document.getElementById('carouselNextBtn');
     const dotsContainer = document.getElementById('carouselDots');
     const ctaBtn = document.getElementById('modalCtaBtn') as HTMLAnchorElement;
+    const modalTitle = document.getElementById('modalEventTitle');
 
     const zoomInBtn = document.getElementById('zoomInBtn');
     const zoomOutBtn = document.getElementById('zoomOutBtn');
@@ -222,6 +224,7 @@ const preparedEvents = upcomingEvents.map((event) => {
       // Update metadata in footer/header if target image exists
       const targetImg = images[currentIndex];
       if (targetImg) {
+        if (modalTitle) modalTitle.textContent = targetImg.dataset.eventTitle || '';
         if (ctaBtn) ctaBtn.href = internalHref(targetImg.dataset.detailUrl, '#');
       }
     }

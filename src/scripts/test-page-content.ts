@@ -1,7 +1,7 @@
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { dirname, join, resolve, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { sectionNumber, sectionOn } from '../utils/page-content';
+import { sectionNumber, sectionOn, splitWordCount } from '../utils/page-content';
 import type { RecruitmentConfig } from '../utils/types';
 import type { AboutData, ChromeData, ContactData, CourseDetailPageData, CoursesPageData, EventDetailPageData, EventsPageData, GalleryData, HomePageData, Lecturer, Member, NewsDetailPageData, NewsPageData, StructurePageData } from '../utils/types';
 
@@ -177,6 +177,19 @@ assert(sectionNumber([true, true, true], 1) === '02', 'sectionNumber numbers the
 assert(sectionNumber([false, true, true], 1) === '01', 'sectionNumber keeps numbers contiguous after a hidden first section');
 assert(sectionNumber([true, false, true], 2) === '02', 'sectionNumber keeps numbers contiguous after a hidden middle section');
 
+console.log('\n2️⃣c Testing the word-count template:');
+const wordCountBefore = splitWordCount('Jumlah kata: {min} minimal, {count} terisi', 30);
+assert(
+  wordCountBefore.prefix === 'Jumlah kata: 30 minimal, ' && wordCountBefore.suffix === ' terisi',
+  '{min} before {count} fills both tokens'
+);
+const wordCountAfter = splitWordCount('{count} dari {min}', 30);
+assert(wordCountAfter.prefix === '' && wordCountAfter.suffix === ' dari 30', '{min} after {count} still fills');
+assert(
+  splitWordCount('{count}', 30).prefix === '' && splitWordCount('{count}', 30).suffix === '',
+  'a template without {min} is unchanged'
+);
+
 console.log('\n3️⃣ Testing chrome.brand files:');
 for (const key of chromeGroups.brand) {
   const file = publicFile(chrome.brand?.[key]);
@@ -209,8 +222,8 @@ const membersData = JSON.parse(readFileSync(join(dataDir, 'members.json'), 'utf8
 assert(Array.isArray(membersData.list) && membersData.list.length > 0, 'members.json has a non-empty list');
 membersData.list.forEach((member, index) => {
   const label = `member ${index} (${member.name || member.id})`;
-  assert(typeof member.image === 'string', `${label} image is a string`);
-  if (member.image.trim()) {
+  assert(member.image == null || typeof member.image === 'string', `${label} image is a string when present`);
+  if (member.image?.trim()) {
     assert(existsSync(publicFile(member.image)), `${label} image resolves under public/`);
   }
 });
@@ -219,8 +232,8 @@ const lecturersData = JSON.parse(readFileSync(join(dataDir, 'lecturers.json'), '
 assert(Array.isArray(lecturersData.list) && lecturersData.list.length > 0, 'lecturers.json has a non-empty list');
 lecturersData.list.forEach((lecturer, index) => {
   const label = `lecturer ${index} (${lecturer.id})`;
-  assert(typeof lecturer.image === 'string', `${label} image is a string`);
-  if (lecturer.image.trim()) {
+  assert(lecturer.image == null || typeof lecturer.image === 'string', `${label} image is a string when present`);
+  if (lecturer.image?.trim()) {
     assert(existsSync(publicFile(lecturer.image)), `${label} image resolves under public/`);
   }
 });
@@ -252,6 +265,14 @@ for (const key of ['reveal', 'focus', 'vision', 'courses', 'events', 'articles']
 }
 
 assert(Boolean(home.meta?.title?.trim()), 'home.meta.title is a non-empty string');
+for (const key of ['primaryLabel', 'secondaryLabel'] as const) {
+  const value = home.hero?.[key];
+  assert(typeof value === 'string' && value.trim().length > 0, `home.hero.${key} is a non-empty string`);
+}
+assert(
+  typeof home.reveal?.pendingCta === 'string' && home.reveal.pendingCta.trim().length > 0,
+  'home.reveal.pendingCta is a non-empty string'
+);
 assert(
   Array.isArray(home.hero?.lines) && home.hero.lines.length >= 1 && home.hero.lines.length <= 3,
   'home.hero.lines has 1 to 3 lines'
@@ -277,6 +298,14 @@ if (reveal?.mediaKind === 'video') {
 if (reveal?.poster) {
   assert(existsSync(publicFile(reveal.poster)), 'home.reveal.poster resolves under public/');
 }
+
+// A hand-edited home.json may drop mediaKind entirely; the component must still
+// land on the placeholder state instead of an empty stage.
+const revealComponent = readFileSync(join(root, 'src/components/home/EimReveal.astro'), 'utf8');
+assert(
+  revealComponent.includes("content.mediaKind ?? 'none'"),
+  "EimReveal treats a missing mediaKind as 'none'"
+);
 
 console.log('\n5️⃣ Testing about.json:');
 const aboutPath = join(dataDir, 'about.json');
@@ -789,8 +818,8 @@ for (const key of [
   assert(typeof value === 'string' && value.trim().length > 0, `contact.${key} is a non-empty string`);
 }
 assert(
-  /^https:\/\/((www\.)?google\.com|maps\.google\.com)\/maps\/embed\?/.test(contactPage.mapsEmbedUrl ?? ''),
-  `contact.mapsEmbedUrl is a Google Maps embed URL (https://www.google.com/maps/embed?…) — got "${contactPage.mapsEmbedUrl ?? ''}"`
+  /^https:\/\/((www\.)?google\.com|maps\.google\.com)\/maps\/embed(\?|\/v1\/)/.test(contactPage.mapsEmbedUrl ?? ''),
+  `contact.mapsEmbedUrl is a Google Maps embed URL (https://www.google.com/maps/embed?… or /maps/embed/v1/…) — got "${contactPage.mapsEmbedUrl ?? ''}"`
 );
 assert(Array.isArray(contactPage.contactPersons), 'contact.contactPersons is an array');
 
@@ -982,6 +1011,11 @@ if (!existsSync(clientDir)) {
       assert(false, `${file} string renders in built HTML: ${path} "${value.trim()}"`);
     }
     assert(checked > 0, `${file} has at least one rendered string checked`);
+    // Ignore inline scripts and styles: regex literals such as \d{2} are not copy.
+    const visibleHaystack = htmlFiles
+      .map((html) => normaliseHtml(readFileSync(html, 'utf8').replace(/<(script|style)\b[^>]*>[\s\S]*?<\/\1>/gi, ' ')))
+      .join('\n');
+    assert(!/\{\w+\}/.test(visibleHaystack), `${file} built HTML has no unresolved {placeholder}`);
     console.log(`  ✅ ${file}: ${checked} strings rendered${skipped.length ? `, ${skipped.length} state-dependent skipped` : ''}`);
     if (skipped.length > 0) {
       console.log(`  ⏭️  ${file}: skipped state-dependent copy at ${skipped.join(', ')}`);

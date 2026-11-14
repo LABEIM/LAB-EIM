@@ -36,10 +36,10 @@ const { content, logo, primaryHref, secondaryHref, showPrimary = true } = Astro.
     <p class="eim-hero-desc">{content.description}</p>
 
     <div class="eim-hero-actions">
-      {showPrimary && <a class="eim-hero-cta" href={primaryHref}>{content.primaryLabel}</a>}
+      {showPrimary && <a class="eim-hero-cta" href={primaryHref}>{content.primaryLabel || 'Jelajahi lab'}</a>}
 
       <a class="eim-hero-secondary" href={secondaryHref}>
-        {content.secondaryLabel} <span aria-hidden="true">→</span>
+        {content.secondaryLabel || 'Tentang Kami'} <span aria-hidden="true">→</span>
       </a>
     </div>
   </div>

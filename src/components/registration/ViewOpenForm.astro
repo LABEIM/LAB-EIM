@@ -1,6 +1,7 @@
 ---
 import type { DivisionConfig } from '../../utils/division-mapper';
 import { getLocaleFromUrl, getLocalizedJsonData } from '../../utils/i18n';
+import { splitWordCount } from '../../utils/page-content';
 import type { ChromeData, FieldStates } from '../../utils/types';
 import FormDescriptionCard from './FormDescriptionCard.astro';
 
@@ -33,8 +34,7 @@ const { initialStage, registrationConfig, extendedCfg, studentYears, docLimits, 
 const labels = registrationConfig.labels;
 const ui = chrome.ui.registration;
 // {min} can sit before {count}, so substitute it across the whole template first.
-const wordCountTemplate = (ui.wordCount ?? '').replaceAll('{min}', String(minReasonWords));
-const [wordCountPrefix, wordCountSuffix] = wordCountTemplate.split('{count}');
+const { prefix: wordCountPrefix, suffix: wordCountSuffix } = splitWordCount(ui.wordCount ?? '', minReasonWords);
 const [draftRestoredPrefix, draftRestoredSuffix] = (labels.draftRestored ?? '').split('{time}');
 
 const allowedExtsCfg = (registrationConfig as any).allowedFileExtensions || {};

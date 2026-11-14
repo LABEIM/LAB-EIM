@@ -561,8 +561,8 @@ export default config({
               itemLabel: (props) => props.value,
             }),
             description: fields.text({ label: 'Deskripsi', multiline: true }),
-            primaryLabel: fields.text({ label: 'Label tombol utama' }),
-            secondaryLabel: fields.text({ label: 'Label tautan kedua' }),
+            primaryLabel: fields.text({ label: 'Label tombol utama', validation: { isRequired: true } }),
+            secondaryLabel: fields.text({ label: 'Label tautan kedua', validation: { isRequired: true } }),
           },
           { label: 'Hero' }
         ),
@@ -571,7 +571,7 @@ export default config({
             enabled: fields.checkbox({ label: 'Tampilkan bagian ini', defaultValue: true }),
             caption: fields.text({ label: 'Keterangan media' }),
             pending: fields.text({ label: 'Teks saat media belum tersedia' }),
-            pendingCta: fields.text({ label: 'Label tautan saat media belum tersedia' }),
+            pendingCta: fields.text({ label: 'Label tautan saat media belum tersedia', validation: { isRequired: true } }),
             mediaKind: fields.select({
               label: 'Jenis media',
               description: 'Pilih "Tanpa media" untuk menampilkan teks pengantar di tempat media.',

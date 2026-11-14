@@ -33,7 +33,7 @@ const pageDescription = (
   .replaceAll('{university}', university);
 
 // Only a real Google Maps embed URL may reach the iframe src.
-const googleMapsEmbed = /^https:\/\/((www\.)?google\.com|maps\.google\.com)\/maps\/embed\?/;
+const googleMapsEmbed = /^https:\/\/((www\.)?google\.com|maps\.google\.com)\/maps\/embed(\?|\/v1\/)/;
 const mapsEmbedSrc = googleMapsEmbed.test(page.mapsEmbedUrl) ? page.mapsEmbedUrl : '';
 
 const socialEntries = [
@@ -187,16 +187,18 @@ const sectionItems = [
           </p>
         </div>
 
-        <div class="contact-map-frame e-reveal mt-[clamp(2.5rem,6vh,4rem)]">
-          <iframe
-            src={mapsEmbedSrc}
-            title={page.map.title}
-            allowfullscreen=""
-            loading="lazy"
-            sandbox="allow-scripts allow-same-origin allow-popups"
-            referrerpolicy="no-referrer-when-downgrade"
-          ></iframe>
-        </div>
+        {mapsEmbedSrc && (
+          <div class="contact-map-frame e-reveal mt-[clamp(2.5rem,6vh,4rem)]">
+            <iframe
+              src={mapsEmbedSrc}
+              title={page.map.title}
+              allowfullscreen=""
+              loading="lazy"
+              sandbox="allow-scripts allow-same-origin allow-popups"
+              referrerpolicy="no-referrer-when-downgrade"
+            ></iframe>
+          </div>
+        )}
       </div>
     </section>
     )}

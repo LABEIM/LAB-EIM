@@ -130,8 +130,8 @@ const sectionItems = [
     {sectionOn(page.courses) && bandCourses.length > 0 && (
       <EimCourses courses={bandCourses} content={page.courses} />
     )}
-    {sectionOn(page.events) && <EimEvents events={events} locale={locale} content={page.events} fallbackLabel={chrome.labels.details} />}
-    {sectionOn(page.news) && <EimNews news={latestNews} locale={locale} content={page.news} fallbackLabel={chrome.labels.details} />}
+    {sectionOn(page.events) && <EimEvents events={events} locale={locale} content={page.events} fallbackLabel={chrome.nav.event} />}
+    {sectionOn(page.news) && <EimNews news={latestNews} locale={locale} content={page.news} fallbackLabel={chrome.nav.news} />}
     {sectionOn(page.cta) && (
       <EimCTA content={chrome.cta} contact={siteData.contact} stage={recruitmentStage} />
     )}

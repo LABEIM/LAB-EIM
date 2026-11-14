@@ -16,12 +16,13 @@ interface Props {
 }
 
 const { content } = Astro.props;
+const mediaKind = content.mediaKind ?? 'none';
 const chrome = getLocalizedJsonData<ChromeData>('chrome', getLocaleFromUrl(Astro.url));
 ---
 
-<section id="reveal" class:list={['e-reveal-stage', content.mediaKind === 'none' && 'is-pending']} aria-label={chrome.ui.aria.mediaIntro}>
+<section id="reveal" class:list={['e-reveal-stage', mediaKind === 'none' && 'is-pending']} aria-label={chrome.ui.aria.mediaIntro}>
   <figure class="e-reveal-stage-figure">
-    {content.mediaKind === 'video' && (
+    {mediaKind === 'video' && (
       <video
         class="e-reveal-stage-media"
         src={content.video}
@@ -35,7 +36,7 @@ const chrome = getLocalizedJsonData<ChromeData>('chrome', getLocaleFromUrl(Astro
       ></video>
     )}
 
-    {content.mediaKind === 'image' && (
+    {mediaKind === 'image' && (
       <img
         class="e-reveal-stage-media"
         src={content.image}
@@ -45,7 +46,7 @@ const chrome = getLocalizedJsonData<ChromeData>('chrome', getLocaleFromUrl(Astro
       />
     )}
 
-    {content.mediaKind === 'none' && (
+    {mediaKind === 'none' && (
       <div class="e-reveal-stage-pending">
         <Image
           class="e-reveal-stage-emblem"
@@ -58,7 +59,7 @@ const chrome = getLocalizedJsonData<ChromeData>('chrome', getLocaleFromUrl(Astro
         />
         <p class="e-reveal-stage-note">{content.pending}</p>
         <a class="e-reveal-stage-link" href="/about">
-          {content.pendingCta} <span aria-hidden="true">→</span>
+          {content.pendingCta || 'Kenali lab kami'} <span aria-hidden="true">→</span>
         </a>
       </div>
     )}

@@ -9,7 +9,7 @@ interface Props {
 
 const { lecturer, positionIndex } = Astro.props;
 
-const hasImage = Boolean(lecturer.image.trim());
+const hasImage = Boolean(lecturer.image?.trim());
 const hasName = Boolean(lecturer.name.trim());
 const label = positionLabel(positionIndex, lecturer.role);
 ---
@@ -17,7 +17,7 @@ const label = positionLabel(positionIndex, lecturer.role);
 <article class="lecturer-card">
   <span class="lecturer-card-media">
     <img
-      src={hasImage ? lecturer.image : '/image/placeholder-avatar.svg'}
+      src={hasImage && lecturer.image ? lecturer.image : '/image/placeholder-avatar.svg'}
       alt=""
       loading="lazy"
       decoding="async"

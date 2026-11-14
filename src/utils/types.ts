@@ -349,7 +349,8 @@ export interface Member {
   id: number;
   name: string;
   role: string;
-  image: string;
+  // Optional fields serialize to an omitted key once an editor clears them.
+  image?: string;
   scale?: string;
   position?: string;
 }
@@ -358,7 +359,7 @@ export interface Lecturer {
   id: string;
   name: string;
   role: string;
-  image: string;
+  image?: string;
   scale?: string;
   position?: string;
 }
@@ -531,7 +532,7 @@ export interface HomePageData {
     caption: string;
     pending: string;
     pendingCta: string;
-    mediaKind: 'none' | 'image' | 'video';
+    mediaKind?: 'none' | 'image' | 'video';
     image?: string;
     video?: string;
     poster?: string;

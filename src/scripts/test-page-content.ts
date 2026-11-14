@@ -460,6 +460,13 @@ assert(
   /<span class="e-reveal-open-glyph" aria-hidden="true">/.test(stageMarkup),
   'EimReveal play glyph is hidden from assistive tech'
 );
+assert(
+  revealComponent.includes("matchMedia('(pointer: fine)')") &&
+    revealComponent.includes('prefers-reduced-motion') &&
+    revealComponent.includes("addEventListener('pointerleave', park)") &&
+    revealComponent.includes("matches(':focus-visible')"),
+  'EimReveal pill trails the pointer only on fine pointers, parks on leave, and yields to keyboard focus'
+);
 
 const modalMarkup = revealComponent.slice(
   revealComponent.indexOf('id="e-reveal-modal"'),

@@ -203,4 +203,62 @@ const chrome = getLocalizedJsonData<ChromeData>('chrome', getLocaleFromUrl(Astro
       }
     });
   }
+
+  // The pill trails the pointer so the whole stage reads as clickable. Fine
+  // pointers only, and only when motion is allowed; otherwise it stays parked.
+  const pill = document.querySelector<HTMLElement>('.e-reveal-open-pill');
+  const followsPointer =
+    window.matchMedia('(pointer: fine)').matches &&
+    !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  if (pill && trigger && followsPointer) {
+    const PAD = 12;
+    let frame = 0;
+    let pointer = { x: 0, y: 0 };
+    let stage = { width: 0, height: 0 };
+    let size = { width: 0, height: 0 };
+    let origin = { x: 0, y: 0 };
+
+    // Layout metrics ignore ancestor transforms, so they stay valid while the
+    // figure scales during the reveal animation.
+    const measure = () => {
+      stage = { width: trigger.offsetWidth, height: trigger.offsetHeight };
+      size = { width: pill.offsetWidth, height: pill.offsetHeight };
+      origin = { x: pill.offsetLeft, y: pill.offsetTop };
+    };
+
+    const apply = () => {
+      frame = 0;
+      const rect = trigger.getBoundingClientRect();
+      if (!rect.width || !stage.width) return;
+      // Convert screen pixels to the stage's local pixels.
+      const scale = stage.width / rect.width;
+      const maxX = Math.max(PAD, stage.width - size.width - PAD);
+      const maxY = Math.max(PAD, stage.height - size.height - PAD);
+      const x = Math.min(Math.max((pointer.x - rect.left) / scale - size.width / 2, PAD), maxX);
+      const y = Math.min(Math.max((pointer.y - rect.top) / scale - size.height / 2, PAD), maxY);
+      pill.style.transform = `translate3d(${(x - origin.x).toFixed(1)}px, ${(y - origin.y).toFixed(1)}px, 0)`;
+    };
+
+    const park = () => {
+      if (frame) cancelAnimationFrame(frame);
+      frame = 0;
+      pill.style.transform = '';
+    };
+
+    measure();
+    trigger.addEventListener('pointermove', (event) => {
+      pointer = { x: event.clientX, y: event.clientY };
+      if (!frame) frame = requestAnimationFrame(apply);
+    });
+    trigger.addEventListener('pointerleave', park);
+    // Keyboard focus needs the ring at the parked position, not under the mouse.
+    trigger.addEventListener('focus', () => {
+      if (trigger.matches(':focus-visible')) park();
+    });
+    window.addEventListener('resize', () => {
+      measure();
+      park();
+    });
+  }
 </script>

@@ -584,6 +584,9 @@ export interface NewsDetailPageData {
     title: string;
     description: string;
   };
+  hero: {
+    backLabel: string;
+  };
   author: string;
   topics: string;
   body: {

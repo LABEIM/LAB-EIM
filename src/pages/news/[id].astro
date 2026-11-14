@@ -5,7 +5,7 @@ import Layout from '../../layouts/Layout.astro';
 import PhotoGallery from '../../components/common/PhotoGallery.astro';
 import '../../styles/pages/home-eim.css';
 import '../../styles/pages/news-eim.css';
-import { getLocaleFromUrl, getCleanSlug, getLocalizedPath, getLocalizedJsonData, getCollectionEntriesForLocale, t } from '../../utils/i18n';
+import { getLocaleFromUrl, getCleanSlug, getLocalizedPath, getLocalizedJsonData, getCollectionEntriesForLocale } from '../../utils/i18n';
 import { calculateReadingTime, getRelatedNews } from '../../utils/news-helpers';
 import { filterAuditContent } from '../../utils/content-helpers';
 import { formatGlobalDate } from '../../utils/date';
@@ -54,7 +54,7 @@ const newsIndexHref = getLocalizedPath('/news', locale);
       <div class="mx-auto max-w-[1200px] px-[clamp(1.25rem,4vw,4rem)]">
         <div class="article-detail-top">
           <a class="article-back" href={newsIndexHref}>
-            <span aria-hidden="true">←</span> {t('news.backToList', locale)}
+            <span aria-hidden="true">←</span> {page.hero.backLabel}
           </a>
           {sectionOn(page.share) && (
             <button type="button" class="article-share share-btn">{page.share.label}</button>

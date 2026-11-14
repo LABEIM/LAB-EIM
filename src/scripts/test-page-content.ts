@@ -372,10 +372,16 @@ assert(newsDetailExists, 'pages/news-detail.json exists');
 const newsDetail = (newsDetailExists ? JSON.parse(readFileSync(newsDetailPath, 'utf8')) : {}) as Partial<NewsDetailPageData>;
 
 // The header carries the article title, so it stays collection data and has no section here.
-for (const key of ['meta', 'body', 'gallery', 'related', 'backLink', 'share'] as const) {
+for (const key of ['meta', 'hero', 'body', 'gallery', 'related', 'backLink', 'share'] as const) {
   const section = newsDetail[key];
   assert(Boolean(section) && typeof section === 'object', `newsDetail.${key} exists`);
 }
+
+assert(Boolean(newsDetail.hero) && !('enabled' in (newsDetail.hero as object)), 'newsDetail.hero has no enabled toggle');
+assert(
+  typeof newsDetail.hero?.backLabel === 'string' && newsDetail.hero.backLabel.trim().length > 0,
+  'newsDetail.hero.backLabel is a non-empty string'
+);
 
 for (const key of ['body', 'gallery', 'related', 'backLink', 'share'] as const) {
   assert(typeof newsDetail[key]?.enabled === 'boolean', `newsDetail.${key}.enabled is a boolean`);

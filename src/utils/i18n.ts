@@ -178,11 +178,6 @@ export const uiTranslations: Record<Locale, Record<string, string>> = {
 
     // News Page
     'news.featured': 'Artikel utama',
-    'news.backToList': 'Kembali ke artikel',
-
-    // News Index
-    'news.galleryEyebrow': 'Dokumentasi',
-    'news.galleryTitle': 'Foto artikel.',
 
     // Contact Page
     'contact.heroEyebrow': 'Kontak',

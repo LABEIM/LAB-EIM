@@ -906,6 +906,15 @@ export default config({
           },
           { label: 'Meta halaman' }
         ),
+        hero: fields.object(
+          {
+            backLabel: fields.text({
+              label: 'Label tautan kembali di bagian atas',
+              description: 'Tautan diarahkan ke halaman Artikel, di sebelah tombol bagikan.',
+            }),
+          },
+          { label: 'Bagian atas artikel', description: 'Tanpa tombol tampil/sembunyi; judul artikel dibaca dari koleksi News.' }
+        ),
         author: fields.text({ label: 'Label penulis' }),
         topics: fields.text({ label: 'Label topik' }),
         body: fields.object(

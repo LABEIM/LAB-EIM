@@ -3,6 +3,9 @@
     "title": "EIM Lab",
     "description": "{title} · EIM Lab"
   },
+  "hero": {
+    "backLabel": "Kembali ke artikel"
+  },
   "author": "Penulis",
   "topics": "Topik",
   "body": {

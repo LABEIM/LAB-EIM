@@ -603,7 +603,7 @@ export default config({
             videoUrl: fields.text({
               label: 'Tautan video eksternal',
               description:
-                'Tempel tautan YouTube, Vimeo, Google Drive, atau berkas video (.mp4/.webm). Diutamakan di atas berkas yang diunggah. Untuk Google Drive, pastikan berkas dibagikan publik.',
+                'Tempel tautan YouTube, Vimeo, atau Google Drive untuk pemutar saat video diklik. Tautan berkas video langsung (.mp4/.webm) dipakai sebagai latar. Jika berkas juga diunggah, unggahan menjadi latar dan tautan menjadi pemutar. Untuk Google Drive, pastikan berkas dibagikan publik.',
             }),
             imageUrl: fields.text({
               label: 'Tautan gambar eksternal',

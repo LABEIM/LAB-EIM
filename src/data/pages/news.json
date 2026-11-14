@@ -27,6 +27,7 @@
     "emptyDesc": "Artikel akan tampil di sini setelah dipublikasikan.",
     "noMatchTitle": "Artikel tidak ditemukan.",
     "noMatchDesc": "Tidak ada artikel yang cocok dengan pencarian atau filter Anda. Coba kata kunci lain atau reset filter.",
-    "searchPlaceholder": "Cari judul artikel, penulis, atau kata kunci..."
+    "searchPlaceholder": "Cari judul artikel, penulis, atau kata kunci...",
+    "contactLabel": "Hubungi kami"
   }
 }

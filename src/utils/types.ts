@@ -552,6 +552,7 @@ export interface NewsPageData {
     noMatchTitle: string;
     noMatchDesc: string;
     searchPlaceholder: string;
+    contactLabel: string;
   };
 }
 

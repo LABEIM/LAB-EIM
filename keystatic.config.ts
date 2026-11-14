@@ -880,6 +880,7 @@ export default config({
             noMatchTitle: fields.text({ label: 'Judul saat pencarian tidak ditemukan', multiline: true }),
             noMatchDesc: fields.text({ label: 'Penjelasan saat pencarian tidak ditemukan', multiline: true }),
             searchPlaceholder: fields.text({ label: 'Teks placeholder kolom pencarian' }),
+            contactLabel: fields.text({ label: 'Label tautan hubungi kontak' }),
           },
           { label: 'Daftar artikel', description: 'Entri daftar dibaca dari koleksi News. Label filter diambil dari Navbar, Footer & Brand.' }
         ),

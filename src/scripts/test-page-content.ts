@@ -347,6 +347,7 @@ for (const key of [
   'noMatchTitle',
   'noMatchDesc',
   'searchPlaceholder',
+  'contactLabel',
 ] as const) {
   const value = newsList?.[key];
   assert(typeof value === 'string' && value.trim().length > 0, `news.list.${key} is a non-empty string`);

@@ -177,9 +177,7 @@ export const uiTranslations: Record<Locale, Record<string, string>> = {
     'events.recapEmpty': 'Dokumentasi kegiatan ini belum tersedia.',
 
     // News Page
-    'news.subtitle': 'Tulisan riset, publikasi, dan pengumuman dari EIM Lab.',
     'news.author': 'Penulis',
-    'news.date': 'Tanggal',
     'news.featured': 'Artikel utama',
     'news.topics': 'Topik',
     'news.share': 'Bagikan',
@@ -192,7 +190,6 @@ export const uiTranslations: Record<Locale, Record<string, string>> = {
     // News Index
     'news.galleryEyebrow': 'Dokumentasi',
     'news.galleryTitle': 'Foto artikel.',
-    'news.contact': 'Hubungi kami',
 
     // Contact Page
     'contact.heroEyebrow': 'Kontak',

@@ -41,6 +41,7 @@ const chrome = getLocalizedJsonData<ChromeData>('chrome', getLocaleFromUrl(Astro
         loading="lazy"
         allow="autoplay; encrypted-media; picture-in-picture"
         allowfullscreen
+        sandbox="allow-scripts allow-same-origin allow-presentation allow-popups"
         referrerpolicy="strict-origin-when-cross-origin"
       ></iframe>
     )}
@@ -66,6 +67,7 @@ const chrome = getLocalizedJsonData<ChromeData>('chrome', getLocaleFromUrl(Astro
         alt={content.mediaAlt}
         loading="lazy"
         decoding="async"
+        referrerpolicy="no-referrer"
       />
     )}
 

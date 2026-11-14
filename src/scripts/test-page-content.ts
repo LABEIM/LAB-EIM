@@ -285,20 +285,30 @@ assert(
   reveal?.mediaKind === 'none' || reveal?.mediaKind === 'image' || reveal?.mediaKind === 'video',
   'home.reveal.mediaKind is none, image, or video'
 );
-if (reveal?.mediaKind === 'image' || reveal?.mediaKind === 'video') {
-  assert(Boolean(reveal.mediaAlt?.trim()), `home.reveal.mediaAlt is set for ${reveal.mediaKind} media`);
+
+// Pasted links win over uploads (`EimReveal`), so an upload is only required when
+// the matching URL field is empty. The URL itself is checked further down.
+type RevealMedia = Pick<HomePageData['reveal'], 'mediaKind' | 'mediaAlt' | 'image' | 'video' | 'poster' | 'imageUrl' | 'videoUrl'>;
+function assertRevealMedia(value: RevealMedia | undefined) {
+  if (value?.mediaKind === 'image' || value?.mediaKind === 'video') {
+    assert(Boolean(value.mediaAlt?.trim()), `home.reveal.mediaAlt is set for ${value.mediaKind} media`);
+  }
+  if (value?.mediaKind === 'image' && !value.imageUrl?.trim()) {
+    assert(typeof value.image === 'string' && value.image.trim().length > 0, 'home.reveal.image is a non-empty string');
+    assert(existsSync(publicFile(value.image)), 'home.reveal.image resolves under public/');
+  }
+  if (value?.mediaKind === 'video' && !value.videoUrl?.trim()) {
+    assert(typeof value.video === 'string' && value.video.trim().length > 0, 'home.reveal.video is a non-empty string');
+    assert(existsSync(publicFile(value.video)), 'home.reveal.video resolves under public/');
+  }
+  if (value?.poster) {
+    assert(existsSync(publicFile(value.poster)), 'home.reveal.poster resolves under public/');
+  }
 }
-if (reveal?.mediaKind === 'image') {
-  assert(typeof reveal.image === 'string' && reveal.image.trim().length > 0, 'home.reveal.image is a non-empty string');
-  assert(existsSync(publicFile(reveal.image)), 'home.reveal.image resolves under public/');
-}
-if (reveal?.mediaKind === 'video') {
-  assert(typeof reveal.video === 'string' && reveal.video.trim().length > 0, 'home.reveal.video is a non-empty string');
-  assert(existsSync(publicFile(reveal.video)), 'home.reveal.video resolves under public/');
-}
-if (reveal?.poster) {
-  assert(existsSync(publicFile(reveal.poster)), 'home.reveal.poster resolves under public/');
-}
+assertRevealMedia(reveal);
+// A page using only the pasted link must pass; this is the documented precedence.
+assertRevealMedia({ mediaKind: 'image', mediaAlt: 'intro', imageUrl: 'https://cdn.example.com/intro.jpg' });
+assertRevealMedia({ mediaKind: 'video', mediaAlt: 'intro', videoUrl: 'https://youtu.be/dQw4w9WgXcQ' });
 
 // A hand-edited home.json may drop mediaKind entirely; the component must still
 // land on the placeholder state instead of an empty stage.
@@ -386,6 +396,12 @@ for (const input of [
   assert(resolveVideoUrl(input) === null, `unsupported video URL rejected: ${input || '(empty)'}`);
 }
 assert(resolveVideoUrl(undefined) === null && resolveVideoUrl(null) === null, 'missing video URL resolves to null');
+assert(resolveVideoUrl('https://127.0.0.1/v.mp4') === null, 'IPv4 literal video URL rejected');
+assert(resolveVideoUrl('https://[::1]/v.mp4') === null, 'IPv6 literal video URL rejected');
+assert(
+  resolveVideoUrl('https://CDN.Example.com/intro.mp4')?.src === 'https://cdn.example.com/intro.mp4',
+  'direct video URL emits the parsed URL'
+);
 
 for (const input of [
   'https://cdn.example.com/photo.jpg',
@@ -410,6 +426,25 @@ for (const input of [
   assert(resolveExternalImageUrl(input) === null, `unsupported image URL rejected: ${input || '(empty)'}`);
 }
 assert(resolveExternalImageUrl(undefined) === null && resolveExternalImageUrl(null) === null, 'missing image URL resolves to null');
+assert(resolveExternalImageUrl('https://192.168.1.10/a.png') === null, 'IPv4 literal image URL rejected');
+assert(resolveExternalImageUrl('https://[::1]/a.png') === null, 'IPv6 literal image URL rejected');
+assert(
+  resolveExternalImageUrl('https://CDN.Example.com/a.png') === 'https://cdn.example.com/a.png',
+  'external image URL emits the parsed URL'
+);
+for (const [input, expected] of [
+  ['https://cdn.example.com/a".png', 'https://cdn.example.com/a%22.png'],
+  ['https://cdn.example.com/a\r\nb.png', 'https://cdn.example.com/ab.png'],
+] as [string, string][]) {
+  let resolved: string | null = null;
+  let threw = false;
+  try {
+    resolved = resolveExternalImageUrl(input);
+  } catch {
+    threw = true;
+  }
+  assert(!threw && resolved === expected, `image URL with quotes or line breaks is handled: ${JSON.stringify(input)}`);
+}
 
 console.log('\n5️⃣ Testing about.json:');
 const aboutPath = join(dataDir, 'about.json');

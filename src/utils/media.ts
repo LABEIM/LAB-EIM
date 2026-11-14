@@ -10,9 +10,13 @@ const DRIVE_HOSTS = new Set(['drive.google.com']);
 const DRIVE_ID = /^[A-Za-z0-9_-]+$/;
 const VIDEO_EXTENSIONS = /\.(mp4|webm|ogv)$/i;
 const UNSAFE_IMAGE_EXTENSIONS = /\.(js|html|svg|pdf|zip)$/i;
+const IPV4_LITERAL = /^\d{1,3}(?:\.\d{1,3}){3}$/;
 
 // Untrusted links become iframe/img src, so only absolute https URLs get through.
 // `//host` throws in the URL constructor without a base and returns null here.
+// The WHATWG parser normalises every IPv4 spelling to a dotted quad and keeps
+// IPv6 brackets in `hostname`, so both literals are caught here. A LAN or
+// loopback literal would otherwise make each visitor's browser probe that host.
 function parseHttps(raw: string | undefined | null): URL | null {
   if (typeof raw !== 'string') return null;
   const value = raw.trim();
@@ -23,7 +27,9 @@ function parseHttps(raw: string | undefined | null): URL | null {
   } catch {
     return null;
   }
-  return url.protocol === 'https:' ? url : null;
+  if (url.protocol !== 'https:') return null;
+  if (url.hostname.startsWith('[') || IPV4_LITERAL.test(url.hostname)) return null;
+  return url;
 }
 
 export function resolveVideoUrl(raw: string | undefined | null): ResolvedMedia | null {
@@ -83,7 +89,7 @@ export function resolveVideoUrl(raw: string | undefined | null): ResolvedMedia |
   }
 
   if (VIDEO_EXTENSIONS.test(url.pathname)) {
-    return { kind: 'video', src: raw.trim() };
+    return { kind: 'video', src: url.href };
   }
 
   return null;
@@ -94,5 +100,5 @@ export function resolveExternalImageUrl(raw: string | undefined | null): string 
   const url = parseHttps(raw);
   if (!url) return null;
   if (UNSAFE_IMAGE_EXTENSIONS.test(url.pathname)) return null;
-  return raw.trim();
+  return url.href;
 }

@@ -76,6 +76,16 @@ for (const key of toggleableSections) {
   assert(typeof home[key]?.enabled === 'boolean', `home.${key}.enabled is a boolean`);
 }
 
+for (const key of ['hero', 'meta', 'navDots'] as const) {
+  const section = home[key];
+  assert(Boolean(section) && !('enabled' in (section as object)), `home.${key} has no enabled toggle`);
+}
+
+for (const key of ['reveal', 'focus', 'vision', 'courses', 'events', 'articles', 'sectionLabel'] as const) {
+  const value = home.navDots?.[key];
+  assert(typeof value === 'string' && value.trim().length > 0, `home.navDots.${key} is a non-empty string`);
+}
+
 assert(Boolean(home.meta?.title?.trim()), 'home.meta.title is a non-empty string');
 assert(
   Array.isArray(home.hero?.lines) && home.hero.lines.length >= 1 && home.hero.lines.length <= 3,

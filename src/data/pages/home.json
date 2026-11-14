@@ -57,18 +57,7 @@
   },
   "numbers": {
     "enabled": true,
-    "label": "Laboratorium dalam angka",
-    "stats": [
-      {
-        "label": "Dosen"
-      },
-      {
-        "label": "Anggota laboratorium"
-      },
-      {
-        "label": "Mata kuliah"
-      }
-    ]
+    "label": "Laboratorium dalam angka"
   },
   "courses": {
     "enabled": true,

@@ -389,7 +389,7 @@ export interface ChromeData {
 export interface HomePageData {
   meta: {
     title: string;
-    description: string;
+    description?: string;
   };
   navDots: {
     reveal: string;
@@ -426,7 +426,9 @@ export interface HomePageData {
   numbers: {
     enabled: boolean;
     label: string;
-    stats: { label: string; manualValue?: number | null }[];
+    dosenValue?: number | null;
+    membersValue?: number | null;
+    coursesValue?: number | null;
   };
   courses: {
     enabled: boolean;

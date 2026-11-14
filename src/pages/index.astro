@@ -77,11 +77,12 @@ const allCourses = resolveCourses(courseEntries, lecturersData?.list ?? [], memb
 const bandCourses = allCourses.filter((course) => course.hasPracticum).slice(0, 3);
 
 // Stat values stay derived from the data unless the editor pins a manual value.
-const derivedStats = [groupCounts.dosen, members.length, allCourses.length];
-const numberStats = page.numbers.stats.map((stat, index) => ({
-  label: stat.label,
-  value: stat.manualValue ?? derivedStats[index] ?? 0,
-}));
+// Labels are shared chrome copy, so they are not duplicated in the page file.
+const numberStats = [
+  { label: chrome.labels.statsDosen, value: page.numbers.dosenValue ?? groupCounts.dosen },
+  { label: chrome.labels.statsMembers, value: page.numbers.membersValue ?? members.length },
+  { label: chrome.labels.statsCourses, value: page.numbers.coursesValue ?? allCourses.length },
+];
 
 // The dots read the same flags as the sections, so a hidden section drops its dot.
 const sectionItems = [

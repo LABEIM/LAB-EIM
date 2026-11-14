@@ -468,6 +468,7 @@ export default config({
             title: fields.text({
               label: 'Judul halaman',
               description: 'Tampil di tab browser dan hasil pencarian.',
+              validation: { isRequired: true },
             }),
             description: fields.text({
               label: 'Deskripsi meta',
@@ -495,7 +496,7 @@ export default config({
         hero: fields.object(
           {
             kicker: fields.text({ label: 'Teks kecil di atas judul', description: 'Juga dipakai sebagai teks alternatif logo.' }),
-            lines: fields.array(fields.text({ label: 'Baris judul' }), {
+            lines: fields.array(fields.text({ label: 'Baris judul', validation: { isRequired: true } }), {
               label: 'Judul utama',
               description: 'Satu item per baris, maksimal tiga baris.',
               validation: { length: { min: 1, max: 3 } },
@@ -548,22 +549,23 @@ export default config({
           {
             enabled: fields.checkbox({ label: 'Tampilkan bagian ini', defaultValue: true }),
             label: fields.text({ label: 'Label bagian' }),
-            stats: fields.array(
-              fields.object({
-                label: fields.text({ label: 'Label statistik' }),
-                manualValue: fields.integer({
-                  label: 'Nilai manual (opsional)',
-                  description: 'Kosongkan agar dihitung otomatis dari data anggota dan mata kuliah.',
-                  validation: { isRequired: false },
-                }),
-              }),
-              {
-                label: 'Statistik',
-                itemLabel: (props) => props.fields.label.value || 'Statistik',
-              }
-            ),
+            dosenValue: fields.integer({
+              label: 'Nilai dosen (opsional)',
+              description: 'Kosongkan agar dihitung otomatis dari data posisi.',
+              validation: { isRequired: false },
+            }),
+            membersValue: fields.integer({
+              label: 'Nilai anggota laboratorium (opsional)',
+              description: 'Kosongkan agar dihitung otomatis dari data anggota.',
+              validation: { isRequired: false },
+            }),
+            coursesValue: fields.integer({
+              label: 'Nilai mata kuliah (opsional)',
+              description: 'Kosongkan agar dihitung otomatis dari data mata kuliah.',
+              validation: { isRequired: false },
+            }),
           },
-          { label: 'Laboratorium dalam angka' }
+          { label: 'Laboratorium dalam angka', description: 'Label statistik diambil dari Navbar, Footer & Brand.' }
         ),
         courses: fields.object(
           {

@@ -137,8 +137,6 @@ export const uiTranslations: Record<Locale, Record<string, string>> = {
     'stage.closed': 'Ditutup',
     'stage.fallback': 'Formulir Cadangan',
 
-    // Home Page
-
     // Structure Page
     'struct.title': 'Struktur Organisasi Lab',
     'struct.metaDescription': 'Struktur organisasi EIM Lab: dosen, koordinator asisten, mahasiswa anggota, dan asisten praktikum.',

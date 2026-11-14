@@ -35,7 +35,7 @@ const preparedEvents = upcomingEvents.map((event) => {
 ---
 
 {preparedEvents.length > 0 && (
-  <div id="eventPosterModal" class="event-modal-overlay" aria-hidden="true" role="dialog">
+  <div id="eventPosterModal" class="event-modal-overlay" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="modalEventTitle">
     <div class="event-modal-container">
       {/* Header */}
       <div class="event-modal-header">
@@ -72,13 +72,13 @@ const preparedEvents = upcomingEvents.map((event) => {
 
         {/* Interactive Zoom Toolbar Controls */}
         <div class="poster-zoom-controls">
-          <button id="zoomOutBtn" class="zoom-btn" title="Zoom Out (-)">
+          <button id="zoomOutBtn" class="zoom-btn" title={chrome.ui.aria.zoomOut}>
             <i class="fa-solid fa-minus"></i>
           </button>
-          <button id="zoomResetBtn" class="zoom-btn zoom-reset-btn" title="Reset Zoom">
+          <button id="zoomResetBtn" class="zoom-btn zoom-reset-btn" title={chrome.ui.aria.zoomReset}>
             100%
           </button>
-          <button id="zoomInBtn" class="zoom-btn" title="Zoom In (+)">
+          <button id="zoomInBtn" class="zoom-btn" title={chrome.ui.aria.zoomIn}>
             <i class="fa-solid fa-plus"></i>
           </button>
         </div>
@@ -98,7 +98,7 @@ const preparedEvents = upcomingEvents.map((event) => {
                 <button
                   class={`dot ${idx === 0 ? 'is-active' : ''}`}
                   data-dot-index={idx}
-                  aria-label={`Go to slide ${idx + 1}`}
+                  aria-label={chrome.ui.aria.slideDot.replace('{n}', String(idx + 1))}
                 />
               ))}
             </div>

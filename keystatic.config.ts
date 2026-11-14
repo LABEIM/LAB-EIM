@@ -1316,6 +1316,14 @@ export default config({
                 closeModal: fields.text({ label: 'Label tutup modal poster', validation: { isRequired: true } }),
                 previousEvent: fields.text({ label: 'Label poster kegiatan sebelumnya', validation: { isRequired: true } }),
                 nextEvent: fields.text({ label: 'Label poster kegiatan berikutnya', validation: { isRequired: true } }),
+                slideDot: fields.text({
+                  label: 'Label titik navigasi poster',
+                  description: 'Gunakan {n} untuk nomor gambar.',
+                  validation: { isRequired: true },
+                }),
+                zoomIn: fields.text({ label: 'Label perbesar poster', validation: { isRequired: true } }),
+                zoomOut: fields.text({ label: 'Label perkecil poster', validation: { isRequired: true } }),
+                zoomReset: fields.text({ label: 'Label atur ulang ukuran poster', validation: { isRequired: true } }),
               },
               { label: 'Label pembaca layar' }
             ),
@@ -1741,7 +1749,6 @@ export default config({
         title: fields.text({ label: 'Judul utama hero', validation: { isRequired: true } }),
         heroDescription: fields.text({ label: 'Deskripsi hero', multiline: true, validation: { isRequired: true } }),
         locationTitle: fields.text({ label: 'Judul kartu lokasi', validation: { isRequired: true } }),
-        mapsUrl: fields.text({ label: 'Tautan eksternal Google Maps', validation: { isRequired: true } }),
         mapsEmbedUrl: fields.text({
           label: 'Tautan sematan iframe Google Maps',
           description: 'Harus diawali https://www.google.com/maps/embed? atau https://maps.google.com/maps/embed?.',

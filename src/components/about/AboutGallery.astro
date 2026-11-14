@@ -35,7 +35,7 @@ const remaining = items.slice(FIRST_BATCH);
                 <img
                   class="h-full w-full object-cover"
                   src={photo.image}
-                  alt={photo.alt || photo.caption}
+                  alt={photo.caption ? '' : photo.alt}
                   loading="lazy"
                   decoding="async"
                 />
@@ -61,7 +61,7 @@ const remaining = items.slice(FIRST_BATCH);
                     <img
                       class="h-full w-full object-cover"
                       src={photo.image}
-                      alt={photo.alt || photo.caption}
+                      alt={photo.caption ? '' : photo.alt}
                       loading="lazy"
                       decoding="async"
                     />

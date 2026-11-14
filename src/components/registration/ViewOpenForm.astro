@@ -32,7 +32,9 @@ const { initialStage, registrationConfig, extendedCfg, studentYears, docLimits, 
 
 const labels = registrationConfig.labels;
 const ui = chrome.ui.registration;
-const [wordCountPrefix, wordCountSuffix] = (ui.wordCount ?? '').split('{count}');
+// {min} can sit before {count}, so substitute it across the whole template first.
+const wordCountTemplate = (ui.wordCount ?? '').replaceAll('{min}', String(minReasonWords));
+const [wordCountPrefix, wordCountSuffix] = wordCountTemplate.split('{count}');
 
 const allowedExtsCfg = (registrationConfig as any).allowedFileExtensions || {};
 const formatAccept = (extsStr?: string) => (extsStr || "pdf, png, jpg, jpeg")
@@ -295,7 +297,7 @@ for (let i = 0; i < standardDocs.length; i += 2) {
       <label for="alasan_divisi_1">{labels.reason} 1 <span class="required-asterisk">*</span></label>
       <textarea class="form-control" id="alasan_divisi_1" rows="3" placeholder={labels.reasonPlaceholder} required></textarea>
       <small class="reg-small-desc word-count-info" id="alasan_divisi_1_counter" data-min-words={minReasonWords}>
-        {wordCountPrefix ?? ''}<span class="word-count-val" id="alasan_divisi_1_count">0</span>{(wordCountSuffix ?? '').replace('{min}', String(minReasonWords))}
+        {wordCountPrefix ?? ''}<span class="word-count-val" id="alasan_divisi_1_count">0</span>{wordCountSuffix ?? ''}
       </small>
     </div>
 
@@ -307,7 +309,7 @@ for (let i = 0; i < standardDocs.length; i += 2) {
         </label>
         <textarea class="form-control" id="alasan_divisi_2" rows="3" placeholder={labels.reasonPlaceholder} required={alasan2State === 'required'}></textarea>
         <small class="reg-small-desc word-count-info" id="alasan_divisi_2_counter" data-min-words={minReasonWords}>
-          {wordCountPrefix ?? ''}<span class="word-count-val" id="alasan_divisi_2_count">0</span>{(wordCountSuffix ?? '').replace('{min}', String(minReasonWords))}
+          {wordCountPrefix ?? ''}<span class="word-count-val" id="alasan_divisi_2_count">0</span>{wordCountSuffix ?? ''}
         </small>
       </div>
     )}
@@ -479,7 +481,7 @@ for (let i = 0; i < standardDocs.length; i += 2) {
 
       <!-- Modal Action Buttons -->
       <div id="progress-modal-actions" class="progress-modal-actions is-hidden">
-        <button type="button" id="modal-close-btn" class="btn btn-primary reg-modal-btn-w" data-label-close={chrome.labels.close} data-label-close-error={labels.closeError} data-label-done={labels.done}>{chrome.labels.close}</button>
+        <button type="button" id="modal-close-btn" class="btn btn-primary reg-modal-btn-w" data-label-close-error={labels.closeError} data-label-done={labels.done}>{chrome.labels.close}</button>
       </div>
     </div>
   </div>

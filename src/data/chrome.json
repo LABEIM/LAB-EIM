@@ -78,9 +78,13 @@
       "homeLink": "{name} — Beranda",
       "mediaIntro": "Media pengantar",
       "closeAnnouncement": "Tutup Pengumuman",
-      "closeModal": "Close modal",
-      "previousEvent": "Previous event",
-      "nextEvent": "Next event"
+      "closeModal": "Tutup dialog",
+      "previousEvent": "Kegiatan sebelumnya",
+      "nextEvent": "Kegiatan berikutnya",
+      "slideDot": "Buka gambar {n}",
+      "zoomIn": "Perbesar (+)",
+      "zoomOut": "Perkecil (-)",
+      "zoomReset": "Atur ulang ukuran"
     }
   }
 }

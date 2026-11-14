@@ -1,5 +1,5 @@
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
-import { dirname, join } from 'node:path';
+import { dirname, join, resolve, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { sectionOn } from '../utils/page-content';
 import type { RecruitmentConfig } from '../utils/types';
@@ -8,6 +8,13 @@ import type { AboutData, ChromeData, ContactData, CourseDetailPageData, CoursesP
 const root = join(dirname(fileURLToPath(import.meta.url)), '../..');
 const dataDir = join(root, 'src/data');
 const publicDir = join(root, 'public');
+
+// Resolve a public URL to a file inside public/, or '' when the path escapes it.
+function publicFile(value: unknown): string {
+  if (typeof value !== 'string') return '';
+  const file = resolve(publicDir, value.replace(/^\//, ''));
+  return file.startsWith(publicDir + sep) ? file : '';
+}
 
 let passed = 0;
 let failed = 0;
@@ -128,6 +135,10 @@ const uiStrings: [string, unknown][] = [
   ['aria.closeModal', ui?.aria?.closeModal],
   ['aria.previousEvent', ui?.aria?.previousEvent],
   ['aria.nextEvent', ui?.aria?.nextEvent],
+  ['aria.slideDot', ui?.aria?.slideDot],
+  ['aria.zoomIn', ui?.aria?.zoomIn],
+  ['aria.zoomOut', ui?.aria?.zoomOut],
+  ['aria.zoomReset', ui?.aria?.zoomReset],
 ];
 for (const [path, value] of uiStrings) {
   assert(typeof value === 'string' && value.trim().length > 0, `chrome.ui.${path} is a non-empty string`);
@@ -139,6 +150,7 @@ for (const [path, value, tokens] of [
   ['contentFilter.resultsRange', ui?.contentFilter?.resultsRange, ['{from}', '{to}', '{total}', '{item}']],
   ['registration.wordCount', ui?.registration?.wordCount, ['{count}', '{min}']],
   ['aria.homeLink', ui?.aria?.homeLink, ['{name}']],
+  ['aria.slideDot', ui?.aria?.slideDot, ['{n}']],
 ] as [string, string | undefined, string[]][]) {
   for (const token of tokens) {
     assert(Boolean(value?.includes(token)), `chrome.ui.${path} keeps ${token}`);
@@ -153,8 +165,7 @@ assert(sectionOn({ enabled: false }) === false, 'sectionOn({ enabled: false }) i
 
 console.log('\n3️⃣ Testing chrome.brand files:');
 for (const key of chromeGroups.brand) {
-  const value = chrome.brand?.[key];
-  const file = typeof value === 'string' ? join(publicDir, value.replace(/^\//, '')) : '';
+  const file = publicFile(chrome.brand?.[key]);
   assert(Boolean(file) && existsSync(file), `chrome.brand.${key} resolves under public/`);
 }
 
@@ -162,7 +173,7 @@ console.log('\n3️⃣b Testing uploaded images resolve under public/:');
 const siteData = JSON.parse(readFileSync(join(dataDir, 'site.json'), 'utf8')) as { favicon?: string };
 assert(typeof siteData.favicon === 'string' && siteData.favicon.trim().length > 0, 'site.favicon is set');
 assert(
-  typeof siteData.favicon === 'string' && existsSync(join(publicDir, siteData.favicon.replace(/^\//, ''))),
+  existsSync(publicFile(siteData.favicon)),
   'site.favicon resolves under public/'
 );
 
@@ -172,7 +183,7 @@ assert(galleryImages.length > 0, 'gallery.json has at least one image');
 galleryImages.forEach((image, index) => {
   assert(typeof image === 'string' && image.trim().length > 0, `gallery image ${index} is a non-empty string`);
   assert(
-    typeof image === 'string' && existsSync(join(publicDir, image.replace(/^\//, ''))),
+    existsSync(publicFile(image)),
     `gallery image ${index} resolves under public/`
   );
 });
@@ -709,7 +720,6 @@ for (const key of [
   'title',
   'heroDescription',
   'locationTitle',
-  'mapsUrl',
   'mapsEmbedUrl',
   'emailTitle',
   'hoursTitle',
@@ -847,7 +857,7 @@ const stateDependent: Record<string, RegExp[]> = {
     /^ui\.pagination\.(previous|previousAria|next|nextAria)$/,
     /^ui\.filter\.(clearSearch|resultsCount|searchPlaceholder)$/,
     /^ui\.contentFilter\./,
-    /^ui\.aria\.(closeAnnouncement|previousEvent)$/,
+    /^ui\.aria\.(closeAnnouncement|previousEvent|closeModal|nextEvent|slideDot|zoomIn|zoomOut|zoomReset)$/,
   ],
 };
 

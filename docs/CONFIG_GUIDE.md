@@ -352,7 +352,7 @@ Every non-hero section (`details`, `map`, `socials`) carries an `enabled` boolea
 * **`socials`** (`enabled`): Social section `eyebrow`, `title`, and `intro`. The accounts come from `site.json` (`socials.instagram`, `socials.linkedin`, `socials.github`).
 * **`title`** / **`heroDescription`**: Hero heading and description.
 * **`locationTitle`**: Label for the location row. The location and university text come from `site.json` (`contact.location`, `contact.university`).
-* **`mapsUrl`**, **`mapsEmbedUrl`**: External maps link and the map iframe URL.
+* **`mapsEmbedUrl`**: Map iframe URL for the `map` section; it must be a Google Maps embed URL (`https://www.google.com/maps/embed?…` or `https://maps.google.com/maps/embed?…`), otherwise the frame renders with an empty `src`.
 * **`emailTitle`**: Label for the email row. The address comes from `site.json` (`contact.email`).
 * **`hoursTitle`**, **`hoursText`**, **`hoursSubtext`**: Operating-hours row.
 * **`contactPersons`** (Array): Narahubung cards shown inside "Kanal komunikasi".

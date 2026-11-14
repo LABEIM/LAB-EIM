@@ -51,6 +51,7 @@ const related = [
   ...pool.filter((item) => item.data.category === event.data.category),
   ...pool.filter((item) => item.data.category !== event.data.category),
 ].slice(0, 3);
+const gallery = getEventStoryGallery(event);
 ---
 
 <Layout
@@ -75,13 +76,13 @@ const related = [
     )}
     {sectionOn(page.gallery) && (
       <PhotoGallery
-        images={getEventStoryGallery(event)}
+        images={gallery}
         eyebrow={page.gallery.eyebrow}
         title={page.gallery.title}
         altLabel={event.data.title}
       />
     )}
-    {sectionOn(page.gallery) && !event.body?.trim() && getEventStoryGallery(event).length === 0 && (
+    {sectionOn(page.gallery) && !event.body?.trim() && gallery.length === 0 && (
       <p class="kegiatan-recap-empty">{page.gallery.empty}</p>
     )}
     {sectionOn(page.related) && (

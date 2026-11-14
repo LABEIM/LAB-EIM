@@ -482,6 +482,10 @@ export interface ChromeData {
       closeModal: string;
       previousEvent: string;
       nextEvent: string;
+      slideDot: string;
+      zoomIn: string;
+      zoomOut: string;
+      zoomReset: string;
     };
   };
 }
@@ -816,7 +820,6 @@ export interface ContactData {
   title: string;
   heroDescription: string;
   locationTitle: string;
-  mapsUrl: string;
   mapsEmbedUrl: string;
   emailTitle: string;
   hoursTitle: string;

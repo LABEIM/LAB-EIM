@@ -4,7 +4,7 @@ import type { ChromeData } from '../utils/types';
 
 const locale = getLocaleFromUrl(Astro.url);
 const siteData = await getLocalizedJsonData<any>('site', locale);
-const chrome = await getLocalizedJsonData<ChromeData>('chrome', locale);
+const chrome = getLocalizedJsonData<ChromeData>('chrome', locale);
 const currentYear = new Date().getFullYear();
 
 const navLinks = [

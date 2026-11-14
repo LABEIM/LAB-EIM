@@ -24,7 +24,7 @@ function assert(condition: boolean, testName: string) {
 
 const chromeGroups: Record<keyof ChromeData, string[]> = {
   nav: ['home', 'about', 'structure', 'courses', 'event', 'news', 'register', 'contact', 'joinUs'],
-  footer: ['description', 'quickLinks', 'contact', 'resources', 'assets', 'linkHub', 'location', 'university', 'rights', 'backToTop'],
+  footer: ['description', 'quickLinks', 'contact', 'resources', 'assets', 'linkHub', 'rights', 'backToTop'],
   cta: ['title', 'description', 'contactLabel'],
   brand: ['logoHorizontal', 'logoIcon'],
   labels: ['upcoming', 'details', 'learnMore', 'statsDosen', 'statsMembers', 'statsCourses', 'organizerFallback', 'coordinator', 'sks', 'practicumYes', 'practicumNo', 'featured', 'search', 'close'],

@@ -356,8 +356,6 @@ export interface ChromeData {
     resources: string;
     assets: string;
     linkHub: string;
-    location: string;
-    university: string;
     rights: string;
     backToTop: string;
   };

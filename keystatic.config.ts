@@ -485,8 +485,6 @@ export default config({
             resources: fields.text({ label: 'Judul tautan' }),
             assets: fields.text({ label: 'Teks aset brand' }),
             linkHub: fields.text({ label: 'Teks EIM Link Hub' }),
-            location: fields.text({ label: 'Teks lokasi' }),
-            university: fields.text({ label: 'Teks universitas' }),
             rights: fields.text({ label: 'Teks hak cipta' }),
             backToTop: fields.text({ label: 'Teks kembali ke atas' }),
           },

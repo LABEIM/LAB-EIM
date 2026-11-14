@@ -111,6 +111,18 @@ const registrationSchema = {
       done: fields.text({ label: 'Label tombol selesai saat berhasil', validation: { isRequired: true } }),
       saveDraft: fields.text({ label: 'Label tombol simpan draf', validation: { isRequired: true } }),
       draftSaved: fields.text({ label: 'Label draf tersimpan', validation: { isRequired: true } }),
+      draftRestored: fields.text({
+        label: 'Teks draf dipulihkan',
+        description: 'Gunakan {time} untuk waktu penyimpanan draf.',
+        validation: { isRequired: true },
+      }),
+      clearDraft: fields.text({ label: 'Label tombol hapus draf', validation: { isRequired: true } }),
+      legendPersonal: fields.text({ label: 'Judul bagian data diri', validation: { isRequired: true } }),
+      legendDivision: fields.text({ label: 'Judul bagian pemilihan divisi', validation: { isRequired: true } }),
+      timerDays: fields.text({ label: 'Satuan hitung mundur hari', validation: { isRequired: true } }),
+      timerHours: fields.text({ label: 'Satuan hitung mundur jam', validation: { isRequired: true } }),
+      timerMinutes: fields.text({ label: 'Satuan hitung mundur menit', validation: { isRequired: true } }),
+      timerSeconds: fields.text({ label: 'Satuan hitung mundur detik', validation: { isRequired: true } }),
       resultsPlaceholder: fields.text({ label: 'Placeholder pencarian NIM', validation: { isRequired: true } }),
     },
     {
@@ -718,7 +730,7 @@ export default config({
             intro: fields.text({ label: 'Paragraf pengantar', multiline: true, validation: { isRequired: true } }),
             ariaLabel: fields.text({
               label: 'Label bagan untuk pembaca layar',
-              description: 'Menjelaskan susunan peran dari ketua laboratorium sampai asisten praktikum.',
+              description: 'Menjelaskan susunan peran dari ketua laboratorium sampai asisten praktikum. Perbarui teks ini setiap kali nama peran di positions.json berubah.',
               multiline: true,
               validation: { isRequired: true },
             }),
@@ -812,7 +824,8 @@ export default config({
             eyebrow: fields.text({ label: 'Teks kecil di atas judul', validation: { isRequired: true } }),
             title: fields.text({ label: 'Judul bagian', validation: { isRequired: true } }),
             intro: fields.text({ label: 'Paragraf pengantar', multiline: true, validation: { isRequired: true } }),
-            empty: fields.text({ label: 'Teks saat belum ada mata kuliah', multiline: true, validation: { isRequired: true } }),
+            emptyTitle: fields.text({ label: 'Judul saat belum ada mata kuliah', multiline: true, validation: { isRequired: true } }),
+            empty: fields.text({ label: 'Penjelasan saat belum ada mata kuliah', multiline: true, validation: { isRequired: true } }),
           },
           { label: 'Daftar mata kuliah', description: 'Entri daftar dibaca dari koleksi Courses.' }
         ),
@@ -942,6 +955,11 @@ export default config({
             noMatchDesc: fields.text({ label: 'Penjelasan saat pencarian tidak ditemukan', multiline: true, validation: { isRequired: true } }),
             searchPlaceholder: fields.text({ label: 'Teks placeholder kolom pencarian', validation: { isRequired: true } }),
             contactLabel: fields.text({ label: 'Label tautan hubungi kontak', validation: { isRequired: true } }),
+            item: fields.text({
+              label: 'Nama jenis konten',
+              description: 'Dipakai di teks hasil filter, misalnya "Artikel".',
+              validation: { isRequired: true },
+            }),
           },
           { label: 'Daftar artikel', description: 'Entri daftar dibaca dari koleksi News. Label filter diambil dari Navbar, Footer & Brand.' }
         ),
@@ -1087,6 +1105,11 @@ export default config({
             noMatchDesc: fields.text({ label: 'Penjelasan saat pencarian tidak ditemukan', multiline: true, validation: { isRequired: true } }),
             searchPlaceholder: fields.text({ label: 'Teks placeholder kolom pencarian', validation: { isRequired: true } }),
             contactLabel: fields.text({ label: 'Label tautan hubungi kontak', validation: { isRequired: true } }),
+            item: fields.text({
+              label: 'Nama jenis konten',
+              description: 'Dipakai di teks hasil filter, misalnya "Kegiatan".',
+              validation: { isRequired: true },
+            }),
           },
           { label: 'Daftar kegiatan', description: 'Entri daftar dibaca dari koleksi Events. Label filter diambil dari Navbar, Footer & Brand.' }
         ),
@@ -1272,6 +1295,14 @@ export default config({
                   validation: { isRequired: true },
                 }),
                 searchPlaceholder: fields.text({ label: 'Placeholder pencarian bawaan', validation: { isRequired: true } }),
+                sortLabel: fields.text({ label: 'Label urutkan', validation: { isRequired: true } }),
+                sortNewest: fields.text({ label: 'Pilihan urutan terbaru', validation: { isRequired: true } }),
+                sortOldest: fields.text({ label: 'Pilihan urutan terlama', validation: { isRequired: true } }),
+                statusLabel: fields.text({ label: 'Label status', validation: { isRequired: true } }),
+                allStatuses: fields.text({ label: 'Pilihan semua status', validation: { isRequired: true } }),
+                categoryLabel: fields.text({ label: 'Label kategori', validation: { isRequired: true } }),
+                allCategories: fields.text({ label: 'Pilihan semua kategori', validation: { isRequired: true } }),
+                reset: fields.text({ label: 'Label tombol reset filter', validation: { isRequired: true } }),
               },
               { label: 'Bar filter' }
             ),
@@ -1595,11 +1626,6 @@ export default config({
         overviewTitle: fields.text({ label: 'Judul ikhtisar', validation: { isRequired: true } }),
         overviewContent1: fields.text({ label: 'Paragraf ikhtisar pertama', multiline: true, validation: { isRequired: true } }),
         overviewContent2: fields.text({ label: 'Paragraf ikhtisar kedua', multiline: true, validation: { isRequired: true } }),
-        overviewImage: fields.text({
-          label: 'Gambar ikhtisar',
-          description: 'Belum dipakai halaman mana pun.',
-          validation: { isRequired: true },
-        }),
         vision: fields.text({ label: 'Pernyataan visi', multiline: true, validation: { isRequired: true } }),
         missions: fields.array(fields.text({ label: 'Poin misi' }), {
           label: 'Misi',

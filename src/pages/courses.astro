@@ -5,7 +5,7 @@ import '../styles/pages/home-eim.css';
 import EimSectionNav from '../components/home/EimSectionNav.astro';
 import { resolveCourses } from '../utils/course-helpers';
 import { getLocaleFromUrl, getLocalizedJsonData } from '../utils/i18n';
-import { sectionOn } from '../utils/page-content';
+import { sectionNumber, sectionOn } from '../utils/page-content';
 import type { ChromeData, CoursesPageData, Lecturer, Member } from '../utils/types';
 
 const locale = getLocaleFromUrl(Astro.url);
@@ -44,7 +44,7 @@ const sectionItems = [
         </h1>
         <p class="eim-hero-desc">{page.hero.description}</p>
         <div class="eim-hero-actions">
-          {sectionOn(page.list) && (
+          {sectionOn(page.list) && courses.length > 0 && (
             <a class="eim-hero-cta" href="#daftar">{page.hero.primaryLabel}</a>
           )}
           <a class="eim-hero-secondary" href="/event">
@@ -67,7 +67,7 @@ const sectionItems = [
           <div class="grid gap-6 lg:grid-cols-2 lg:items-end">
             <div>
               <p class="e-reveal font-mono text-xs uppercase tracking-[0.08em] text-brand">
-                01 — {page.list.eyebrow}
+                {sectionNumber([sectionOn(page.list)], 0)} — {page.list.eyebrow}
               </p>
               <h2
                 id="courses-list-title"
@@ -82,7 +82,17 @@ const sectionItems = [
           </div>
 
           {courses.length === 0 ? (
-            <p class="mt-12 text-[15px] text-muted-ink">{page.list.empty}</p>
+            <div class="mt-[clamp(2.5rem,6vh,4rem)]">
+              <p class="font-display text-[clamp(1.5rem,2.6vw,2.25rem)] leading-[1.1]">
+                {page.list.emptyTitle}
+              </p>
+              <p class="mt-3 max-w-[52ch] text-[15px] leading-[1.6] text-muted-ink">
+                {page.list.empty}
+              </p>
+              <div class="mt-6 flex flex-wrap items-center gap-4">
+                <a class="eim-hero-cta" href="/event">{page.hero.secondaryLabel}</a>
+              </div>
+            </div>
           ) : (
             <ul class="mt-[clamp(2.5rem,6vh,4rem)] list-none border-t border-line p-0">
               {courses.map((course, index) => {
@@ -101,7 +111,7 @@ const sectionItems = [
                         <span
                           class:list={[
                             'ml-2',
-                            course.hasPracticum ? 'text-brand' : 'text-muted-ink line-through',
+                            course.hasPracticum ? 'text-brand' : 'text-muted-ink',
                           ]}
                         >
                           · {course.hasPracticum ? chrome.labels.practicumYes : chrome.labels.practicumNo}

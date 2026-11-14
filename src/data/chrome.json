@@ -61,7 +61,15 @@
     "filter": {
       "clearSearch": "Hapus pencarian",
       "resultsCount": "Menampilkan {n} item",
-      "searchPlaceholder": "Cari berdasarkan judul, kata kunci..."
+      "searchPlaceholder": "Cari berdasarkan judul, kata kunci...",
+      "sortLabel": "Urutkan:",
+      "sortNewest": "Terbaru",
+      "sortOldest": "Terlama",
+      "statusLabel": "Status:",
+      "allStatuses": "Semua Status",
+      "categoryLabel": "Kategori:",
+      "allCategories": "Semua Kategori",
+      "reset": "Reset Filter"
     },
     "contentFilter": {
       "noResults": "Tidak ada {item} ditemukan",

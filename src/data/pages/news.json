@@ -28,6 +28,7 @@
     "noMatchTitle": "Artikel tidak ditemukan.",
     "noMatchDesc": "Tidak ada artikel yang cocok dengan pencarian atau filter Anda. Coba kata kunci lain atau reset filter.",
     "searchPlaceholder": "Cari judul artikel, penulis, atau kata kunci...",
-    "contactLabel": "Hubungi kami"
+    "contactLabel": "Hubungi kami",
+    "item": "Artikel"
   }
 }

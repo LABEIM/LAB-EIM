@@ -7,7 +7,7 @@ Admin Portal: https://lab-eim.vercel.app/keystatic
 ---
 
 ## Halaman (page copy)
-Every page's visible copy lives in JSON, editable under **Halaman** in Keystatic. Shared UI strings — pagination, filter-bar results, screen-reader labels, back links, and the registration tab suffix — live in `src/data/chrome.json` under `ui`, editable under **Navbar, Footer & Brand**; registration status copy lives in `src/data/registration.json`. Edit the files directly only when Keystatic is unavailable. Still code-only: registration form internals (fieldset legends, countdown labels, modal bodies, upload hints, validation messages), the filter bar's sort/status/category/reset labels, the poster modal's slide-dot and zoom labels, `ViewClosed`'s "Artikel & Pengumuman" link, and the `/assets` reference page.
+Every page's visible copy lives in JSON, editable under **Halaman** in Keystatic. Shared UI strings — pagination, the whole filter bar (sort, status, category, reset copy), screen-reader labels, back links, and the registration tab suffix — live in `src/data/chrome.json` under `ui`, editable under **Navbar, Footer & Brand**; registration copy lives in `src/data/registration.json`, including the form labels (fieldset legends, countdown units, draft banner). Edit the files directly only when Keystatic is unavailable. Still code-only: the remaining registration form internals (the upload legend, modal bodies, upload hints, validation messages), the poster modal's slide-dot and zoom labels, `ViewClosed`'s "Artikel & Pengumuman" link, and the `/assets` reference page.
 
 | Page | File |
 | --- | --- |
@@ -24,7 +24,9 @@ Every page's visible copy lives in JSON, editable under **Halaman** in Keystatic
 | Pendaftaran | `src/data/registration.json` |
 | Shared chrome (nav, footer, CTA, labels) | `src/data/chrome.json` |
 
-**Hiding a section:** every non-hero section object has an `enabled` boolean. Set it to `false` in Keystatic to remove the section from the page; section nav dots read the same flag, so the dot disappears too. Hero sections have no toggle because they hold the page `<h1>`. Upload fields on detail pages are collection fields, not page copy; only their headings and enabled switches live in the `*-detail.json` files.
+**Hiding a section:** every non-hero section object has an `enabled` boolean. Set it to `false` in Keystatic to remove the section from the page; section nav dots read the same flag, so the dot disappears too. Numbered sections (`01 — …`) count only the visible sections, so hiding one leaves no gap in the sequence. Hero sections have no toggle because they hold the page `<h1>`. Upload fields on detail pages are collection fields, not page copy; only their headings and enabled switches live in the `*-detail.json` files.
+
+**Empty states and filter nouns:** each listing page has its own `list` copy. Mata Kuliah uses `list.emptyTitle` with `list.empty` as the description; Artikel and Kegiatan use `list.emptyTitle` / `list.emptyDesc`. Artikel and Kegiatan also name their content type in `list.item` ("Artikel", "Kegiatan"), which fills the filter results line ("Menampilkan 1-6 dari 12 Artikel").
 
 **Shared strings:** navigation, footer, the closing CTA, brand assets, and cross-page labels (for example "Lihat Detail", "Mendatang", statistics labels, coordinator/SKS/practicum labels) live once in `chrome.json`. Change them there rather than in a page file.
 

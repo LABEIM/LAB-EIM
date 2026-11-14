@@ -1,7 +1,7 @@
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { dirname, join, resolve, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { sectionOn } from '../utils/page-content';
+import { sectionNumber, sectionOn } from '../utils/page-content';
 import type { RecruitmentConfig } from '../utils/types';
 import type { AboutData, ChromeData, ContactData, CourseDetailPageData, CoursesPageData, EventDetailPageData, EventsPageData, GalleryData, HomePageData, NewsDetailPageData, NewsPageData, StructurePageData } from '../utils/types';
 
@@ -122,6 +122,14 @@ const uiStrings: [string, unknown][] = [
   ['filter.clearSearch', ui?.filter?.clearSearch],
   ['filter.resultsCount', ui?.filter?.resultsCount],
   ['filter.searchPlaceholder', ui?.filter?.searchPlaceholder],
+  ['filter.sortLabel', ui?.filter?.sortLabel],
+  ['filter.sortNewest', ui?.filter?.sortNewest],
+  ['filter.sortOldest', ui?.filter?.sortOldest],
+  ['filter.statusLabel', ui?.filter?.statusLabel],
+  ['filter.allStatuses', ui?.filter?.allStatuses],
+  ['filter.categoryLabel', ui?.filter?.categoryLabel],
+  ['filter.allCategories', ui?.filter?.allCategories],
+  ['filter.reset', ui?.filter?.reset],
   ['contentFilter.noResults', ui?.contentFilter?.noResults],
   ['contentFilter.resultsRange', ui?.contentFilter?.resultsRange],
   ['registration.optional', ui?.registration?.optional],
@@ -162,6 +170,12 @@ assert(sectionOn(undefined) === true, 'sectionOn(undefined) is true');
 assert(sectionOn({}) === true, 'sectionOn({}) is true');
 assert(sectionOn({ enabled: true }) === true, 'sectionOn({ enabled: true }) is true');
 assert(sectionOn({ enabled: false }) === false, 'sectionOn({ enabled: false }) is false');
+
+console.log('\n2️⃣b Testing sectionNumber:');
+assert(sectionNumber([true], 0) === '01', 'sectionNumber numbers the first visible section 01');
+assert(sectionNumber([true, true, true], 1) === '02', 'sectionNumber numbers the second section 02');
+assert(sectionNumber([false, true, true], 1) === '01', 'sectionNumber keeps numbers contiguous after a hidden first section');
+assert(sectionNumber([true, false, true], 2) === '02', 'sectionNumber keeps numbers contiguous after a hidden middle section');
 
 console.log('\n3️⃣ Testing chrome.brand files:');
 for (const key of chromeGroups.brand) {
@@ -231,7 +245,6 @@ for (const key of [
   'overviewTitle',
   'overviewContent1',
   'overviewContent2',
-  'overviewImage',
   'vision',
 ] as const) {
   const value = about[key];
@@ -392,7 +405,7 @@ assert(
 );
 
 const coursesList = coursesPage.list;
-for (const key of ['eyebrow', 'title', 'intro', 'empty'] as const) {
+for (const key of ['eyebrow', 'title', 'intro', 'emptyTitle', 'empty'] as const) {
   const value = coursesList?.[key];
   assert(typeof value === 'string' && value.trim().length > 0, `courses.list.${key} is a non-empty string`);
 }
@@ -476,6 +489,7 @@ for (const key of [
   'noMatchDesc',
   'searchPlaceholder',
   'contactLabel',
+  'item',
 ] as const) {
   const value = newsList?.[key];
   assert(typeof value === 'string' && value.trim().length > 0, `news.list.${key} is a non-empty string`);
@@ -584,6 +598,7 @@ for (const key of [
   'noMatchDesc',
   'searchPlaceholder',
   'contactLabel',
+  'item',
 ] as const) {
   const value = eventsList?.[key];
   assert(typeof value === 'string' && value.trim().length > 0, `events.list.${key} is a non-empty string`);
@@ -777,11 +792,23 @@ for (const key of [
   'done',
   'saveDraft',
   'draftSaved',
+  'draftRestored',
+  'clearDraft',
+  'legendPersonal',
+  'legendDivision',
+  'timerDays',
+  'timerHours',
+  'timerMinutes',
+  'timerSeconds',
   'resultsPlaceholder',
 ] as const) {
   const value = registration.labels?.[key];
   assert(typeof value === 'string' && value.trim().length > 0, `registration.labels.${key} is a non-empty string`);
 }
+assert(
+  Boolean(registration.labels?.draftRestored?.includes('{time}')),
+  'registration.labels.draftRestored keeps {time}'
+);
 
 for (const key of ['heroTag', 'heroTitle', 'heroPeriod', 'heroPrimaryLabel', 'heroSecondaryLabel'] as const) {
   const value = (registration as Record<string, unknown>)[key];
@@ -847,7 +874,7 @@ const stateDependent: Record<string, RegExp[]> = {
   ],
   'pages/home.json': [/^events\.empty$/, /^news\.empty$/],
   'pages/structure.json': [/^chart\.emptyPosition$/],
-  'pages/courses.json': [/^list\.empty$/],
+  'pages/courses.json': [/^list\.(emptyTitle|empty)$/],
   'pages/news.json': [/^list\.(emptyTitle|emptyDesc|contactLabel)$/, /^hero\.metaEmpty$/],
   'pages/events.json': [/^list\.(emptyTitle|emptyDesc|contactLabel)$/, /^hero\.metaEmpty$/],
   'pages/event-detail.json': [/^gallery\.empty$/],
@@ -855,7 +882,7 @@ const stateDependent: Record<string, RegExp[]> = {
     /^labels\.(featured|upcoming)$/,
     // Rendered only on a list page that has content, or on a modal/banner state.
     /^ui\.pagination\.(previous|previousAria|next|nextAria)$/,
-    /^ui\.filter\.(clearSearch|resultsCount|searchPlaceholder)$/,
+    /^ui\.filter\./,
     /^ui\.contentFilter\./,
     /^ui\.aria\.(closeAnnouncement|previousEvent|closeModal|nextEvent|slideDot|zoomIn|zoomOut|zoomReset)$/,
   ],

@@ -180,6 +180,14 @@ export interface RecruitmentLabels {
   done: string;
   saveDraft: string;
   draftSaved: string;
+  draftRestored: string;
+  clearDraft: string;
+  legendPersonal: string;
+  legendDivision: string;
+  timerDays: string;
+  timerHours: string;
+  timerMinutes: string;
+  timerSeconds: string;
   resultsPlaceholder: string;
 }
 
@@ -463,6 +471,14 @@ export interface ChromeData {
       clearSearch: string;
       resultsCount: string;
       searchPlaceholder: string;
+      sortLabel: string;
+      sortNewest: string;
+      sortOldest: string;
+      statusLabel: string;
+      allStatuses: string;
+      categoryLabel: string;
+      allCategories: string;
+      reset: string;
     };
     contentFilter: {
       noResults: string;
@@ -621,6 +637,7 @@ export interface CoursesPageData {
     eyebrow: string;
     title: string;
     intro: string;
+    emptyTitle: string;
     empty: string;
   };
 }
@@ -653,6 +670,7 @@ export interface NewsPageData {
     noMatchDesc: string;
     searchPlaceholder: string;
     contactLabel: string;
+    item: string;
   };
 }
 
@@ -684,6 +702,7 @@ export interface EventsPageData {
     noMatchDesc: string;
     searchPlaceholder: string;
     contactLabel: string;
+    item: string;
   };
 }
 
@@ -833,7 +852,6 @@ export interface AboutData {
   overviewTitle: string;
   overviewContent1: string;
   overviewContent2: string;
-  overviewImage: string;
   vision: string;
   missions: string[];
   values: { title: string; description: string; icon: string; isAccent?: boolean }[];

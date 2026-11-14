@@ -3,7 +3,6 @@ export interface ContentFilterOptions {
   cardClass: string;
   itemsPerPage?: number;
   emptyStateId?: string;
-  itemName?: string; // e.g. "Berita" or "Kegiatan"
 }
 
 export interface FilterCard {
@@ -68,7 +67,6 @@ export function initContentFilter(options: ContentFilterOptions) {
     cardClass,
     itemsPerPage = 6,
     emptyStateId = 'empty-state-notice',
-    itemName = 'Item',
   } = options;
 
   const gridEl = document.getElementById(gridId);
@@ -101,6 +99,8 @@ export function initContentFilter(options: ContentFilterOptions) {
   // Templates come from chrome.ui via the components' data attributes; the
   // literals only cover a page rendered without a filter bar or pagination.
   const filterBarEl = document.getElementById('content-filter-bar');
+  // Each listing page names its own content type via the bar, like the label attributes.
+  const itemName = filterBarEl?.getAttribute('data-item-name') || 'Item';
   const labels = {
     noResults: filterBarEl?.getAttribute('data-label-no-results') || 'Tidak ada {item} ditemukan',
     resultsRange:

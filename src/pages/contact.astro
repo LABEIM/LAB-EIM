@@ -5,7 +5,7 @@ import '../styles/pages/contact-eim.css';
 import EimSectionNav from '../components/home/EimSectionNav.astro';
 import ContactPersonBox from '../components/registration/ContactPersonBox.astro';
 import { getLocaleFromUrl, getLocalizedJsonData } from '../utils/i18n';
-import { sectionOn } from '../utils/page-content';
+import { sectionNumber, sectionOn } from '../utils/page-content';
 import type { ChromeData, ContactData, ContactPerson, SiteData } from '../utils/types';
 
 const locale = getLocaleFromUrl(Astro.url);
@@ -60,6 +60,8 @@ function getSocialHandle(url: string): string {
 }
 
 const showSocials = sectionOn(page.socials) && socialEntries.length > 0;
+// Numbered sections in render order; each ordinal counts only the visible ones before it.
+const numberableSections = [sectionOn(page.details), sectionOn(page.map), showSocials];
 // The hero dot has no toggle of its own; the other dots follow their section flags.
 const sectionItems = [
   { id: 'kontak', label: page.hero.eyebrow },
@@ -96,7 +98,7 @@ const sectionItems = [
       <div class="mx-auto max-w-[1200px] px-[clamp(1.25rem,4vw,4rem)]">
         <div class="grid gap-[clamp(2.5rem,5vw,5rem)] lg:grid-cols-[minmax(0,4fr)_minmax(0,7fr)]">
           <div class="e-reveal lg:sticky lg:top-[calc(var(--site-header-height)+1.5rem)] lg:self-start">
-            <p class="font-mono text-xs uppercase tracking-[0.08em] text-brand">01 — {page.details.eyebrow}</p>
+            <p class="font-mono text-xs uppercase tracking-[0.08em] text-brand">{sectionNumber(numberableSections, 0)} — {page.details.eyebrow}</p>
             <h2
               id="contact-detail-title"
               class="mt-4 font-display text-[clamp(2rem,4vw,3.5rem)] leading-[1.05] tracking-[-0.01em]"
@@ -172,7 +174,7 @@ const sectionItems = [
       <div class="mx-auto max-w-[1200px] px-[clamp(1.25rem,4vw,4rem)]">
         <div class="grid gap-6 lg:grid-cols-2 lg:items-end">
           <div>
-            <p class="e-reveal font-mono text-xs uppercase tracking-[0.08em] text-brand">02 — {page.map.navDot}</p>
+            <p class="e-reveal font-mono text-xs uppercase tracking-[0.08em] text-brand">{sectionNumber(numberableSections, 1)} — {page.map.navDot}</p>
             <h2
               id="contact-map-title"
               class="e-reveal mt-4 font-display text-[clamp(2rem,4vw,3.5rem)] leading-[1.05] tracking-[-0.01em]"
@@ -204,7 +206,7 @@ const sectionItems = [
         <div class="mx-auto max-w-[1200px] px-[clamp(1.25rem,4vw,4rem)]">
           <div class="grid gap-6 lg:grid-cols-2 lg:items-end">
             <div>
-              <p class="e-reveal font-mono text-xs uppercase tracking-[0.08em] text-brand">03 — {page.socials.eyebrow}</p>
+              <p class="e-reveal font-mono text-xs uppercase tracking-[0.08em] text-brand">{sectionNumber(numberableSections, 2)} — {page.socials.eyebrow}</p>
               <h2
                 id="contact-social-title"
                 class="e-reveal mt-4 font-display text-[clamp(2rem,4vw,3.5rem)] leading-[1.05] tracking-[-0.01em]"

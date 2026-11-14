@@ -35,6 +35,7 @@ const ui = chrome.ui.registration;
 // {min} can sit before {count}, so substitute it across the whole template first.
 const wordCountTemplate = (ui.wordCount ?? '').replaceAll('{min}', String(minReasonWords));
 const [wordCountPrefix, wordCountSuffix] = wordCountTemplate.split('{count}');
+const [draftRestoredPrefix, draftRestoredSuffix] = (labels.draftRestored ?? '').split('{time}');
 
 const allowedExtsCfg = (registrationConfig as any).allowedFileExtensions || {};
 const formatAccept = (extsStr?: string) => (extsStr || "pdf, png, jpg, jpeg")
@@ -155,10 +156,10 @@ for (let i = 0; i < standardDocs.length; i += 2) {
   <div id="draft-restored-banner" class="draft-restored-banner is-hidden">
     <div class="draft-restored-content">
       <i class="fa-solid fa-floppy-disk draft-icon"></i>
-      <span>Draf formulir dipulihkan dari penyimpanan lokal (<strong id="draft-restored-time"></strong>).</span>
+      <span>{draftRestoredPrefix}<strong id="draft-restored-time"></strong>{draftRestoredSuffix}</span>
     </div>
     <button type="button" id="banner-clear-draft-btn" class="btn-clear-draft-link">
-      <i class="fa-solid fa-trash-can"></i> Hapus Draf
+      <i class="fa-solid fa-trash-can"></i> {labels.clearDraft}
     </button>
   </div>
 
@@ -170,19 +171,19 @@ for (let i = 0; i < standardDocs.length; i += 2) {
   <div class="registration-timer reg-timer-mb" id="registration-timer">
     <div class="timer-block">
       <div id="timer-days" class="reg-timer-val">0</div>
-      <div class="reg-timer-label">Hari</div>
+      <div class="reg-timer-label">{labels.timerDays}</div>
     </div>
     <div class="timer-block">
       <div id="timer-hours" class="reg-timer-val">0</div>
-      <div class="reg-timer-label">Jam</div>
+      <div class="reg-timer-label">{labels.timerHours}</div>
     </div>
     <div class="timer-block">
       <div id="timer-minutes" class="reg-timer-val">0</div>
-      <div class="reg-timer-label">Menit</div>
+      <div class="reg-timer-label">{labels.timerMinutes}</div>
     </div>
     <div class="timer-block">
       <div id="timer-seconds" class="reg-timer-val-red">0</div>
-      <div class="reg-timer-label">Detik</div>
+      <div class="reg-timer-label">{labels.timerSeconds}</div>
     </div>
   </div>
 
@@ -194,7 +195,7 @@ for (let i = 0; i < standardDocs.length; i += 2) {
     {/* Section 1: Data Diri */}
     <fieldset class="reg-fieldset">
     <legend class="form-section-heading">
-      <i class="fa-solid fa-user reg-icon-mr-sm" aria-hidden="true"></i> 1. Data Diri & Akademik
+      <i class="fa-solid fa-user reg-icon-mr-sm" aria-hidden="true"></i> {labels.legendPersonal}
     </legend>
 
     <div class="form-group">
@@ -254,7 +255,7 @@ for (let i = 0; i < standardDocs.length; i += 2) {
     {/* Section 2: Pemilihan Divisi */}
     <fieldset class="reg-fieldset">
     <legend class="form-section-heading">
-      <i class="fa-solid fa-layer-group reg-icon-mr-sm" aria-hidden="true"></i> 2. Pemilihan Divisi & Alasan
+      <i class="fa-solid fa-layer-group reg-icon-mr-sm" aria-hidden="true"></i> {labels.legendDivision}
     </legend>
 
     {div2State !== 'disabled' ? (
@@ -294,7 +295,7 @@ for (let i = 0; i < standardDocs.length; i += 2) {
     )}
 
     <div class="form-group reg-form-row-mt">
-      <label for="alasan_divisi_1">{labels.reason} 1 <span class="required-asterisk">*</span></label>
+      <label for="alasan_divisi_1">{labels.reason} <span>1</span> <span class="required-asterisk">*</span></label>
       <textarea class="form-control" id="alasan_divisi_1" rows="3" placeholder={labels.reasonPlaceholder} required></textarea>
       <small class="reg-small-desc word-count-info" id="alasan_divisi_1_counter" data-min-words={minReasonWords}>
         {wordCountPrefix ?? ''}<span class="word-count-val" id="alasan_divisi_1_count">0</span>{wordCountSuffix ?? ''}
@@ -304,7 +305,7 @@ for (let i = 0; i < standardDocs.length; i += 2) {
     {alasan2State !== 'disabled' && (
       <div class="form-group reg-form-row-mt">
         <label for="alasan_divisi_2">
-          {labels.reason} 2
+          {labels.reason} <span>2</span>
           {alasan2State === 'required' ? <span class="required-asterisk">*</span> : <span class="reg-file-label-small">{ui.optional}</span>}
         </label>
         <textarea class="form-control" id="alasan_divisi_2" rows="3" placeholder={labels.reasonPlaceholder} required={alasan2State === 'required'}></textarea>
@@ -430,7 +431,7 @@ for (let i = 0; i < standardDocs.length; i += 2) {
 
       <div class="reg-btn-group reg-form-row-mt">
         <button type="button" id="cancel-clear-draft-btn" class="btn btn-modal-cancel">Batal</button>
-        <button type="button" id="confirm-clear-draft-btn" class="btn btn-modal-confirm">Hapus Draf</button>
+        <button type="button" id="confirm-clear-draft-btn" class="btn btn-modal-confirm">{labels.clearDraft}</button>
       </div>
     </div>
   </div>

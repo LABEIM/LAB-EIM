@@ -10,7 +10,7 @@ import { getCleanSlug, getCollectionEntriesForLocale, getLocaleFromUrl, getLocal
 import { filterAuditContent } from '../../utils/content-helpers';
 import { calculateReadingTime } from '../../utils/news-helpers';
 import { formatGlobalDate, parseGlobalDateStr } from '../../utils/date';
-import { sectionOn } from '../../utils/page-content';
+import { sectionNumber, sectionOn } from '../../utils/page-content';
 import type { ChromeData, NewsPageData } from '../../utils/types';
 
 const locale = getLocaleFromUrl(Astro.url);
@@ -84,7 +84,7 @@ const sectionItems = [
         <div class="grid gap-6 lg:grid-cols-2 lg:items-end">
           <div>
             <p class="e-reveal font-mono text-xs uppercase tracking-[0.08em] text-brand">
-              01 — {page.list.eyebrow}
+              {sectionNumber([sectionOn(page.list)], 0)} — {page.list.eyebrow}
             </p>
             <h2
               id="news-list-title"
@@ -115,6 +115,7 @@ const sectionItems = [
               categories={categories}
               searchPlaceholder={page.list.searchPlaceholder}
               totalCount={news.length}
+              itemName={page.list.item}
             />
 
             <div id="news-list-empty" class="news-list-empty" style="display: none;">
@@ -190,6 +191,5 @@ const sectionItems = [
     cardClass: 'grid-card-item',
     itemsPerPage: 6,
     emptyStateId: 'news-list-empty',
-    itemName: 'Artikel',
   });
 </script>

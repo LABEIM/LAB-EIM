@@ -5,6 +5,7 @@ import type { Locale } from '../../utils/i18n';
 import FilterControlBar from '../common/FilterControlBar.astro';
 import Pagination from '../common/Pagination.astro';
 import KegiatanCard from './KegiatanCard.astro';
+import { sectionNumber, sectionOn } from '../../utils/page-content';
 
 interface Props {
   content: EventsPageData['list'];
@@ -15,6 +16,7 @@ interface Props {
 
 const { content, events, locale, secondaryLabel } = Astro.props;
 const categories = [...new Set(events.map((event) => event.data.category).filter(Boolean))].sort();
+const listNumber = sectionNumber([sectionOn(content)], 0);
 ---
 
 <section
@@ -26,7 +28,7 @@ const categories = [...new Set(events.map((event) => event.data.category).filter
     <div class="grid gap-6 lg:grid-cols-2 lg:items-end">
       <div>
         <p class="e-reveal font-mono text-xs uppercase tracking-[0.08em] text-brand">
-          01 — {content.eyebrow}
+          {listNumber} — {content.eyebrow}
         </p>
         <h2
           id="kegiatan-list-title"
@@ -57,6 +59,7 @@ const categories = [...new Set(events.map((event) => event.data.category).filter
           categories={categories}
           searchPlaceholder={content.searchPlaceholder}
           totalCount={events.length}
+          itemName={content.item}
         />
 
         <div id="kegiatan-list-empty" class="kegiatan-list-empty" style="display: none;">
@@ -84,6 +87,5 @@ const categories = [...new Set(events.map((event) => event.data.category).filter
     cardClass: 'grid-card-item',
     itemsPerPage: 6,
     emptyStateId: 'kegiatan-list-empty',
-    itemName: 'Kegiatan',
   });
 </script>

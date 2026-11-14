@@ -7,6 +7,7 @@ interface Props {
   statuses?: { value: string; label: string }[];
   searchPlaceholder?: string;
   totalCount: number;
+  itemName: string;
 }
 
 const locale = getLocaleFromUrl(Astro.url);
@@ -16,12 +17,14 @@ const {
   statuses = [],
   searchPlaceholder = ui.filter.searchPlaceholder,
   totalCount = 0,
+  itemName,
 } = Astro.props;
 ---
 
 <div
   class="content-filter-bar"
   id="content-filter-bar"
+  data-item-name={itemName}
   data-label-no-results={ui.contentFilter.noResults}
   data-label-results-range={ui.contentFilter.resultsRange}
 >
@@ -50,10 +53,10 @@ const {
 
     <!-- Sort Selector -->
     <div class="sort-select-wrapper">
-      <label for="filter-sort-select" class="sort-label">Urutkan:</label>
+      <label for="filter-sort-select" class="sort-label">{ui.filter.sortLabel}</label>
       <select id="filter-sort-select" class="filter-sort-select">
-        <option value="desc">Terbaru</option>
-        <option value="asc">Terlama</option>
+        <option value="desc">{ui.filter.sortNewest}</option>
+        <option value="asc">{ui.filter.sortOldest}</option>
       </select>
     </div>
   </div>
@@ -61,9 +64,9 @@ const {
   <!-- Status Filter Pills (if events) -->
   {statuses.length > 0 && (
     <div class="filter-pills-row" id="status-pills-row" role="group" aria-labelledby="status-filter-label">
-      <span class="sort-label" id="status-filter-label">Status:</span>
+      <span class="sort-label" id="status-filter-label">{ui.filter.statusLabel}</span>
       <button type="button" class="filter-pill status-pill active" data-status="all" aria-pressed="true">
-        Semua Status
+        {ui.filter.allStatuses}
       </button>
       {statuses.map(status => (
         <button type="button" class="filter-pill status-pill" data-status={status.value} aria-pressed="false">
@@ -76,9 +79,9 @@ const {
   <!-- Category Filter Pills -->
   {categories.length > 0 && (
     <div class="filter-pills-row" id="category-pills-row" role="group" aria-labelledby="category-filter-label">
-      <span class="sort-label" id="category-filter-label">Kategori:</span>
+      <span class="sort-label" id="category-filter-label">{ui.filter.categoryLabel}</span>
       <button type="button" class="filter-pill category-pill active" data-category="all" aria-pressed="true">
-        Semua Kategori
+        {ui.filter.allCategories}
       </button>
       {categories.map(cat => (
         <button type="button" class="filter-pill category-pill" data-category={cat} aria-pressed="false">
@@ -94,7 +97,7 @@ const {
       {(ui.filter.resultsCount ?? '').replaceAll('{n}', String(totalCount))}
     </span>
     <button type="button" id="filter-reset-btn" class="filter-reset-btn" style="display: none;">
-      <i class="fa-solid fa-rotate-left" aria-hidden="true"></i> Reset Filter
+      <i class="fa-solid fa-rotate-left" aria-hidden="true"></i> {ui.filter.reset}
     </button>
   </div>
 </div>

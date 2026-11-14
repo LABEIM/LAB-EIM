@@ -28,6 +28,6 @@
     "noMatchTitle": "Kegiatan tidak ditemukan.",
     "noMatchDesc": "Tidak ada kegiatan yang cocok dengan pencarian atau filter Anda. Coba kata kunci lain atau reset filter.",
     "searchPlaceholder": "Cari nama kegiatan, kategori, atau penyelenggara...",
-    "contact": "Hubungi kami"
+    "contactLabel": "Hubungi kami"
   }
 }

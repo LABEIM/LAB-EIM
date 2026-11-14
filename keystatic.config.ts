@@ -894,8 +894,8 @@ export default config({
         meta: fields.object(
           {
             title: fields.text({
-              label: 'Judul halaman',
-              description: 'Diapit judul artikel di tab browser dan hasil pencarian.',
+              label: 'Sufiks judul halaman',
+              description: 'Ditambahkan setelah judul artikel di tab browser dan hasil pencarian.',
               validation: { isRequired: true },
             }),
             description: fields.text({
@@ -1020,7 +1020,7 @@ export default config({
             noMatchTitle: fields.text({ label: 'Judul saat pencarian tidak ditemukan', multiline: true }),
             noMatchDesc: fields.text({ label: 'Penjelasan saat pencarian tidak ditemukan', multiline: true }),
             searchPlaceholder: fields.text({ label: 'Teks placeholder kolom pencarian' }),
-            contact: fields.text({ label: 'Label tautan hubungi kontak' }),
+            contactLabel: fields.text({ label: 'Label tautan hubungi kontak' }),
           },
           { label: 'Daftar kegiatan', description: 'Entri daftar dibaca dari koleksi Events. Label filter diambil dari Navbar, Footer & Brand.' }
         ),
@@ -1490,7 +1490,7 @@ export default config({
   },
   ui: {
     navigation: {
-      Halaman: ['page_home', 'page_structure', 'page_courses', 'page_courseDetail', 'page_news', 'page_newsDetail', 'about', 'contact'],
+      Halaman: ['page_home', 'page_structure', 'page_courses', 'page_courseDetail', 'page_news', 'page_newsDetail', 'page_events', 'about', 'contact'],
       Koleksi: ['news', 'events', 'courses'],
       Pengaturan: [
         'site',

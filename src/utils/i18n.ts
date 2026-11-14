@@ -138,9 +138,7 @@ export const uiTranslations: Record<Locale, Record<string, string>> = {
     'courses.coordinatorLabel': 'Koordinator mata kuliah',
     'courses.sksLabel': '{n} SKS',
 
-    // Events Page
-    'events.title': 'Kegiatan & Acara',
-    'events.subtitle': 'Ikuti workshop, studi banding, webinar, dan kegiatan EIM Lab.',
+    // Events Page (detail page keys; list page copy moved to pages/events.json)
     'events.backToList': 'Kembali ke kegiatan',
     'events.share': 'Bagikan',
     'events.organizerFallback': 'EIM Lab',

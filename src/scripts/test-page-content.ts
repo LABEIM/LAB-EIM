@@ -455,7 +455,7 @@ for (const key of [
   'noMatchTitle',
   'noMatchDesc',
   'searchPlaceholder',
-  'contact',
+  'contactLabel',
 ] as const) {
   const value = eventsList?.[key];
   assert(typeof value === 'string' && value.trim().length > 0, `events.list.${key} is a non-empty string`);

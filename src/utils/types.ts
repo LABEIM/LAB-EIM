@@ -583,7 +583,7 @@ export interface EventsPageData {
     noMatchTitle: string;
     noMatchDesc: string;
     searchPlaceholder: string;
-    contact: string;
+    contactLabel: string;
   };
 }
 

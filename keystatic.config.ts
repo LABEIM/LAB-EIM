@@ -600,6 +600,15 @@ export default config({
               directory: 'public/assets/media',
               publicPath: '/assets/media/',
             }),
+            videoUrl: fields.text({
+              label: 'Tautan video eksternal',
+              description:
+                'Tempel tautan YouTube, Vimeo, Google Drive, atau berkas video (.mp4/.webm). Diutamakan di atas berkas yang diunggah. Untuk Google Drive, pastikan berkas dibagikan publik.',
+            }),
+            imageUrl: fields.text({
+              label: 'Tautan gambar eksternal',
+              description: 'Tempel tautan gambar eksternal (https). Diutamakan di atas gambar yang diunggah.',
+            }),
             mediaAlt: fields.text({
               label: 'Teks alternatif media',
               description: 'Wajib diisi saat jenis media bukan "Tanpa media".',

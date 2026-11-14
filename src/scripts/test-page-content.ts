@@ -1,6 +1,7 @@
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { dirname, join, resolve, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { resolveExternalImageUrl, resolveVideoUrl } from '../utils/media';
 import { sectionNumber, sectionOn, splitWordCount } from '../utils/page-content';
 import type { RecruitmentConfig } from '../utils/types';
 import type { AboutData, ChromeData, ContactData, CourseDetailPageData, CoursesPageData, EventDetailPageData, EventsPageData, GalleryData, HomePageData, Lecturer, Member, NewsDetailPageData, NewsPageData, StructurePageData } from '../utils/types';
@@ -306,6 +307,109 @@ assert(
   revealComponent.includes("content.mediaKind ?? 'none'"),
   "EimReveal treats a missing mediaKind as 'none'"
 );
+
+// Pasted links win over uploads, so a broken link must not slip into a built src.
+if (reveal?.videoUrl) {
+  assert(resolveVideoUrl(reveal.videoUrl) !== null, 'home.reveal.videoUrl resolves to a supported provider or video file');
+}
+if (reveal?.imageUrl) {
+  assert(resolveExternalImageUrl(reveal.imageUrl) !== null, 'home.reveal.imageUrl resolves to an https image');
+}
+
+console.log('\n4️⃣c Testing external media URL resolution:');
+const youtubeCases: [string, string][] = [
+  ['https://www.youtube.com/watch?v=dQw4w9WgXcQ', 'https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ'],
+  ['https://youtube.com/watch?v=dQw4w9WgXcQ&t=10', 'https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ'],
+  ['https://m.youtube.com/watch?v=dQw4w9WgXcQ', 'https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ'],
+  ['https://youtu.be/dQw4w9WgXcQ', 'https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ'],
+  ['https://www.youtube.com/shorts/dQw4w9WgXcQ', 'https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ'],
+  ['https://www.youtube.com/embed/dQw4w9WgXcQ', 'https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ'],
+];
+for (const [input, expected] of youtubeCases) {
+  const resolved = resolveVideoUrl(input);
+  assert(
+    resolved?.kind === 'iframe' && resolved.provider === 'youtube' && resolved.src === expected,
+    `youtube URL resolves: ${input}`
+  );
+}
+
+const vimeoCases: [string, string][] = [
+  ['https://vimeo.com/76979871', 'https://player.vimeo.com/video/76979871'],
+  ['https://www.vimeo.com/76979871', 'https://player.vimeo.com/video/76979871'],
+  ['https://player.vimeo.com/video/76979871', 'https://player.vimeo.com/video/76979871'],
+];
+for (const [input, expected] of vimeoCases) {
+  const resolved = resolveVideoUrl(input);
+  assert(
+    resolved?.kind === 'iframe' && resolved.provider === 'vimeo' && resolved.src === expected,
+    `vimeo URL resolves: ${input}`
+  );
+}
+
+const driveCases: [string, string][] = [
+  ['https://drive.google.com/file/d/1AbCdEfGhIjK/view?usp=sharing', 'https://drive.google.com/file/d/1AbCdEfGhIjK/preview'],
+  ['https://drive.google.com/file/d/1AbCdEfGhIjK/preview', 'https://drive.google.com/file/d/1AbCdEfGhIjK/preview'],
+  ['https://drive.google.com/open?id=1AbCdEfGhIjK', 'https://drive.google.com/file/d/1AbCdEfGhIjK/preview'],
+];
+for (const [input, expected] of driveCases) {
+  const resolved = resolveVideoUrl(input);
+  assert(
+    resolved?.kind === 'iframe' && resolved.provider === 'drive' && resolved.src === expected,
+    `google drive URL resolves: ${input}`
+  );
+}
+
+for (const [input, expected] of [
+  ['https://cdn.example.com/intro.mp4', 'https://cdn.example.com/intro.mp4'],
+  ['https://cdn.example.com/intro.mp4?token=x', 'https://cdn.example.com/intro.mp4?token=x'],
+  ['https://cdn.example.com/intro.WEBM', 'https://cdn.example.com/intro.WEBM'],
+  ['https://cdn.example.com/intro.ogv', 'https://cdn.example.com/intro.ogv'],
+] as [string, string][]) {
+  const resolved = resolveVideoUrl(input);
+  assert(resolved?.kind === 'video' && resolved.src === expected, `direct video URL resolves: ${input}`);
+}
+
+for (const input of [
+  'http://www.youtube.com/watch?v=dQw4w9WgXcQ',
+  'javascript:alert(1)',
+  'data:video/mp4;base64,AAAA',
+  '//www.youtube.com/watch?v=dQw4w9WgXcQ',
+  'https://youtube.com.evil.test/watch?v=dQw4w9WgXcQ',
+  'https://www.youtube.com/watch?v=abc',
+  'https://vimeo.com/not-a-number',
+  'https://vimeo.com.evil.test/76979871',
+  'https://drive.google.com.evil.test/file/d/1AbCdEfGhIjK/view',
+  'https://example.com/page',
+  'not a url',
+  '',
+] as string[]) {
+  assert(resolveVideoUrl(input) === null, `unsupported video URL rejected: ${input || '(empty)'}`);
+}
+assert(resolveVideoUrl(undefined) === null && resolveVideoUrl(null) === null, 'missing video URL resolves to null');
+
+for (const input of [
+  'https://cdn.example.com/photo.jpg',
+  'https://cdn.example.com/photo.PNG?w=1200',
+  'https://cdn.example.com/page',
+] as string[]) {
+  assert(resolveExternalImageUrl(input) === input, `external image URL accepted unchanged: ${input}`);
+}
+
+for (const input of [
+  'http://cdn.example.com/photo.jpg',
+  'javascript:alert(1)',
+  'data:image/svg+xml;base64,AAAA',
+  '//cdn.example.com/photo.jpg',
+  'https://cdn.example.com/tracker.js',
+  'https://cdn.example.com/page.html',
+  'https://cdn.example.com/icon.svg',
+  'https://cdn.example.com/doc.pdf',
+  'https://cdn.example.com/bundle.zip',
+  '',
+] as string[]) {
+  assert(resolveExternalImageUrl(input) === null, `unsupported image URL rejected: ${input || '(empty)'}`);
+}
+assert(resolveExternalImageUrl(undefined) === null && resolveExternalImageUrl(null) === null, 'missing image URL resolves to null');
 
 console.log('\n5️⃣ Testing about.json:');
 const aboutPath = join(dataDir, 'about.json');

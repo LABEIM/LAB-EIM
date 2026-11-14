@@ -2,13 +2,14 @@
 import { Image } from 'astro:assets';
 import emblem from '../../../public/assets/brand/eim-emblem.png';
 import { getLocaleFromUrl, getLocalizedJsonData } from '../../utils/i18n';
+import { resolveExternalImageUrl, resolveVideoUrl } from '../../utils/media';
 import type { ChromeData, HomePageData } from '../../utils/types';
 
 /**
  * Intro media comes from the Beranda singleton (`reveal` section):
  *
- *   mediaKind: 'video' → renders `video` with `poster`
- *   mediaKind: 'image' → renders `image` with `mediaAlt`
+ *   mediaKind: 'video' → pasted link (iframe or direct file), else `video` with `poster`
+ *   mediaKind: 'image' → pasted `imageUrl`, else uploaded `image`
  *   mediaKind: 'none'  → the placeholder below
  */
 interface Props {
@@ -17,15 +18,37 @@ interface Props {
 
 const { content } = Astro.props;
 const mediaKind = content.mediaKind ?? 'none';
+const externalVideo = resolveVideoUrl(content.videoUrl);
+const iframeMedia = mediaKind === 'video' && externalVideo?.kind === 'iframe' ? externalVideo : null;
+const nativeVideo =
+  mediaKind === 'video' && externalVideo?.kind === 'video'
+    ? externalVideo.src
+    : mediaKind === 'video' && !iframeMedia && content.video
+      ? content.video
+      : null;
+const imageSrc = mediaKind === 'image' ? resolveExternalImageUrl(content.imageUrl) ?? content.image : null;
+const showPlaceholder = !iframeMedia && !nativeVideo && !imageSrc;
 const chrome = getLocalizedJsonData<ChromeData>('chrome', getLocaleFromUrl(Astro.url));
 ---
 
 <section id="reveal" class:list={['e-reveal-stage', mediaKind === 'none' && 'is-pending']} aria-label={chrome.ui.aria.mediaIntro}>
   <figure class="e-reveal-stage-figure">
-    {mediaKind === 'video' && (
+    {iframeMedia && (
+      <iframe
+        class="e-reveal-stage-media"
+        src={iframeMedia.src}
+        title={content.mediaAlt}
+        loading="lazy"
+        allow="autoplay; encrypted-media; picture-in-picture"
+        allowfullscreen
+        referrerpolicy="strict-origin-when-cross-origin"
+      ></iframe>
+    )}
+
+    {nativeVideo && (
       <video
         class="e-reveal-stage-media"
-        src={content.video}
+        src={nativeVideo}
         poster={content.poster}
         muted
         loop
@@ -36,17 +59,17 @@ const chrome = getLocalizedJsonData<ChromeData>('chrome', getLocaleFromUrl(Astro
       ></video>
     )}
 
-    {mediaKind === 'image' && (
+    {imageSrc && (
       <img
         class="e-reveal-stage-media"
-        src={content.image}
+        src={imageSrc}
         alt={content.mediaAlt}
         loading="lazy"
         decoding="async"
       />
     )}
 
-    {mediaKind === 'none' && (
+    {showPlaceholder && (
       <div class="e-reveal-stage-pending">
         <Image
           class="e-reveal-stage-emblem"

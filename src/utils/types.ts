@@ -535,6 +535,9 @@ export interface HomePageData {
     mediaKind?: 'none' | 'image' | 'video';
     image?: string;
     video?: string;
+    /** Pasted link; wins over the uploaded file when it resolves. */
+    videoUrl?: string;
+    imageUrl?: string;
     poster?: string;
     mediaAlt?: string;
   };

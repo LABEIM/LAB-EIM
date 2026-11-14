@@ -33,6 +33,6 @@ const labels = getLocalizedJsonData<ChromeData>('chrome', locale).ui.pagination;
     </button>
   </div>
   <div class="pagination-info" id="pagination-info" data-template={labels.info}>
-    {labels.info.replaceAll('{page}', '1').replaceAll('{total}', '1')}
+    {(labels.info ?? '').replaceAll('{page}', '1').replaceAll('{total}', '1')}
   </div>
 </div>

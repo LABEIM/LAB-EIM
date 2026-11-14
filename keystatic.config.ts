@@ -1686,7 +1686,7 @@ export default config({
             copySuccessStatus: fields.text({ label: 'Status pembaca layar saat tersalin' }),
             copyFailedStatus: fields.text({ label: 'Status pembaca layar saat gagal' }),
             routingNote: fields.text({ label: 'Catatan perutean kontak', multiline: true }),
-            picsTitle: fields.text({ label: 'Judul kartu PIC' }),
+            picsTitle: fields.text({ label: 'Judul kartu PIC', validation: { isRequired: true } }),
             picsSubtitle: fields.text({ label: 'Penjelasan kartu PIC', multiline: true }),
           },
           {

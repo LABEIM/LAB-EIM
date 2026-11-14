@@ -7,7 +7,7 @@ Admin Portal: https://lab-eim.vercel.app/keystatic
 ---
 
 ## Halaman (page copy)
-Every page's visible copy lives in JSON, editable under **Halaman** in Keystatic. Shared UI strings — pagination, filter-bar states, registration status labels, screen-reader labels, back links, and the registration tab suffix — live in `src/data/chrome.json` under `ui`, editable under **Navbar, Footer & Brand**. Edit the files directly only when Keystatic is unavailable. The registration form internals (fieldset legends, countdown labels, modal bodies, upload hints, validation messages) and the filter bar's sort and status pill labels are still written in components and scripts.
+Every page's visible copy lives in JSON, editable under **Halaman** in Keystatic. Shared UI strings — pagination, filter-bar results, screen-reader labels, back links, and the registration tab suffix — live in `src/data/chrome.json` under `ui`, editable under **Navbar, Footer & Brand**; registration status copy lives in `src/data/registration.json`. Edit the files directly only when Keystatic is unavailable. Still code-only: registration form internals (fieldset legends, countdown labels, modal bodies, upload hints, validation messages), the filter bar's sort/status/category/reset labels, the poster modal's slide-dot and zoom labels, `ViewClosed`'s "Artikel & Pengumuman" link, and the `/assets` reference page.
 
 | Page | File |
 | --- | --- |
@@ -342,9 +342,9 @@ Configures the `/contact` page. Manage it via **Keystatic Admin > Singletons > C
 
 ### Fields Explanation
 * **`title`** / **`heroDescription`**: Hero heading and description.
-* **`locationTitle`**, **`location`**, **`university`**: Location row and its label.
+* **`locationTitle`**: Label for the location row. The location and university text come from `site.json` (`contact.location`, `contact.university`).
 * **`mapsUrl`**, **`mapsEmbedUrl`**: External maps link and the map iframe URL.
-* **`emailTitle`**, **`email`**: Email row label and address.
+* **`emailTitle`**: Label for the email row. The address comes from `site.json` (`contact.email`).
 * **`hoursTitle`**, **`hoursText`**, **`hoursSubtext`**: Operating-hours row.
 * **`mapSectionTitle`**, **`mapSectionSubtitle`**: Map section heading and intro.
 * **`contactPersons`** (Array): Narahubung cards shown inside "Kanal komunikasi".

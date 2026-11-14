@@ -91,7 +91,7 @@ const {
   <!-- Filter Summary & Reset Bar -->
   <div class="filter-summary-row" id="filter-summary-row">
     <span id="filter-results-count" aria-live="polite" aria-atomic="true">
-      {ui.filter.resultsCount.replaceAll('{n}', String(totalCount))}
+      {(ui.filter.resultsCount ?? '').replaceAll('{n}', String(totalCount))}
     </span>
     <button type="button" id="filter-reset-btn" class="filter-reset-btn" style="display: none;">
       <i class="fa-solid fa-rotate-left" aria-hidden="true"></i> Reset Filter

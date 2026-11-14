@@ -32,7 +32,7 @@ const { initialStage, registrationConfig, extendedCfg, studentYears, docLimits, 
 
 const labels = registrationConfig.labels;
 const ui = chrome.ui.registration;
-const [wordCountPrefix, wordCountSuffix] = ui.wordCount.split('{count}');
+const [wordCountPrefix, wordCountSuffix] = (ui.wordCount ?? '').split('{count}');
 
 const allowedExtsCfg = (registrationConfig as any).allowedFileExtensions || {};
 const formatAccept = (extsStr?: string) => (extsStr || "pdf, png, jpg, jpeg")
@@ -295,7 +295,7 @@ for (let i = 0; i < standardDocs.length; i += 2) {
       <label for="alasan_divisi_1">{labels.reason} 1 <span class="required-asterisk">*</span></label>
       <textarea class="form-control" id="alasan_divisi_1" rows="3" placeholder={labels.reasonPlaceholder} required></textarea>
       <small class="reg-small-desc word-count-info" id="alasan_divisi_1_counter" data-min-words={minReasonWords}>
-        {wordCountPrefix}<span class="word-count-val" id="alasan_divisi_1_count">0</span>{wordCountSuffix.replace('{min}', String(minReasonWords))}
+        {wordCountPrefix ?? ''}<span class="word-count-val" id="alasan_divisi_1_count">0</span>{(wordCountSuffix ?? '').replace('{min}', String(minReasonWords))}
       </small>
     </div>
 
@@ -307,7 +307,7 @@ for (let i = 0; i < standardDocs.length; i += 2) {
         </label>
         <textarea class="form-control" id="alasan_divisi_2" rows="3" placeholder={labels.reasonPlaceholder} required={alasan2State === 'required'}></textarea>
         <small class="reg-small-desc word-count-info" id="alasan_divisi_2_counter" data-min-words={minReasonWords}>
-          {wordCountPrefix}<span class="word-count-val" id="alasan_divisi_2_count">0</span>{wordCountSuffix.replace('{min}', String(minReasonWords))}
+          {wordCountPrefix ?? ''}<span class="word-count-val" id="alasan_divisi_2_count">0</span>{(wordCountSuffix ?? '').replace('{min}', String(minReasonWords))}
         </small>
       </div>
     )}
@@ -322,7 +322,7 @@ for (let i = 0; i < standardDocs.length; i += 2) {
       >
         <label for="portofolio_medhum" class="medhum-porto-label" id="label-medhum-porto">
           <i class="fa-solid fa-palette reg-icon-mr"></i> {labels.portfolioLink}{' '}
-          <span id="porto-required-indicator">
+          <span id="porto-required-indicator" data-optional-label={ui.optional}>
             <span class="reg-file-label-small">{ui.optional}</span>
           </span>
         </label>

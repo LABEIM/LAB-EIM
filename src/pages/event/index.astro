@@ -49,6 +49,7 @@ const sectionItems = [
       totalCount={events.length}
       categoryCount={categories.length}
       latestYear={latestYear}
+      showPrimary={sectionOn(page.list)}
     />
     {sectionOn(page.list) && (
       <KegiatanList content={page.list} events={events} locale={locale} secondaryLabel={page.hero.secondaryLabel} />

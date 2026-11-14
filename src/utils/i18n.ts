@@ -27,16 +27,10 @@ export function getLocalizedPath(path: string, _locale?: string): string {
  */
 export const uiTranslations: Record<Locale, Record<string, string>> = {
   id: {
-    // Navigation
-    'nav.home': 'Beranda',
+    // Navigation (page-title call sites remain until each page task migrates them)
     'nav.about': 'Tentang Kami',
-    'nav.structure': 'Struktur',
     'nav.courses': 'Mata Kuliah',
     'nav.event': 'Kegiatan',
-    'nav.news': 'Artikel',
-    'nav.register': 'Pendaftaran',
-    'nav.contact': 'Kontak',
-    'nav.joinUs': 'Gabung EIM',
 
     // Common Buttons & Badges
     'stats.dosen': 'Dosen',
@@ -49,18 +43,6 @@ export const uiTranslations: Record<Locale, Record<string, string>> = {
     'btn.search': 'Cari',
     'btn.close': 'Tutup',
     'badge.upcoming': 'Mendatang',
-
-    // Footer
-    'footer.description': 'Laboratorium Enterprise Infrastructure Management Telkom University.',
-    'footer.quickLinks': 'Jelajahi',
-    'footer.contact': 'Kontak',
-    'footer.resources': 'Tautan',
-    'footer.assets': 'Aset Brand & Email',
-    'footer.linkHub': 'EIM Link Hub',
-    'footer.location': 'Gedung TULT Lantai 8, Ruang TULT.08.09',
-    'footer.university': 'Telkom University, Bandung, Indonesia',
-    'footer.rights': 'Hak Cipta Dilindungi Undang-Undang.',
-    'footer.backToTop': 'Kembali ke atas',
 
     // Registration & Selection Main
     'reg.title': 'Pendaftaran Asisten',
@@ -249,9 +231,6 @@ export const uiTranslations: Record<Locale, Record<string, string>> = {
     'about.galleryHideAll': 'Sembunyikan foto',
     'about.statsLabel': 'EIM dalam angka',
     'about.teamLink': 'Lihat seluruh struktur',
-    'about.ctaTitle': 'Ingin tumbuh bersama kami?',
-    'about.ctaContact': 'Hubungi Kami',
-    'about.ctaDesc': 'Pendaftaran asisten dibuka setiap periode. Untuk kolaborasi riset, kunjungan, atau pertanyaan lain, kami terbuka.',
     'about.sectionNavLabel': 'Navigasi bagian halaman',
     'about.navDotProfile': 'Profil',
     'about.navDotStats': 'Angka',

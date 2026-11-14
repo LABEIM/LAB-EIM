@@ -14,7 +14,7 @@
     "sync:results:replace": "tsx src/scripts/sync-recruitment-results.ts --replace",
     "clear:results": "tsx src/scripts/sync-recruitment-results.ts --clear",
     "generate:assets": "tsx src/scripts/generate-assets.ts",
-    "test": "tsx src/scripts/test-registration.ts",
+    "test": "tsx src/scripts/test-registration.ts && tsx src/scripts/test-page-content.ts",
     "preview": "astro preview",
     "astro": "astro"
   },

@@ -1,0 +1,50 @@
+{
+  "nav": {
+    "home": "Beranda",
+    "about": "Tentang Kami",
+    "structure": "Struktur",
+    "courses": "Mata Kuliah",
+    "event": "Kegiatan",
+    "news": "Artikel",
+    "register": "Pendaftaran",
+    "contact": "Kontak",
+    "joinUs": "Gabung EIM"
+  },
+  "footer": {
+    "description": "Laboratorium Enterprise Infrastructure Management Telkom University.",
+    "quickLinks": "Jelajahi",
+    "contact": "Kontak",
+    "resources": "Tautan",
+    "assets": "Aset Brand & Email",
+    "linkHub": "EIM Link Hub",
+    "location": "Gedung TULT Lantai 8, Ruang TULT.08.09",
+    "university": "Telkom University, Bandung, Indonesia",
+    "rights": "Hak Cipta Dilindungi Undang-Undang.",
+    "backToTop": "Kembali ke atas"
+  },
+  "cta": {
+    "title": "Ingin tumbuh bersama kami?",
+    "description": "Pendaftaran asisten dibuka setiap periode. Untuk kolaborasi riset, kunjungan, atau pertanyaan lain, kami terbuka.",
+    "contactLabel": "Hubungi Kami"
+  },
+  "brand": {
+    "logoHorizontal": "/assets/brand/eim-logo-horizontal-640.avif",
+    "logoIcon": "/assets/brand/eim-logo-icon.png"
+  },
+  "labels": {
+    "upcoming": "Mendatang",
+    "details": "Lihat Detail",
+    "learnMore": "Pelajari Selengkapnya",
+    "statsDosen": "Dosen",
+    "statsMembers": "Anggota laboratorium",
+    "statsCourses": "Mata kuliah",
+    "organizerFallback": "EIM Lab",
+    "coordinator": "Koordinator mata kuliah",
+    "sks": "{n} SKS",
+    "practicumYes": "Praktikum",
+    "practicumNo": "Tanpa praktikum",
+    "featured": "Artikel utama",
+    "search": "Cari",
+    "close": "Tutup"
+  }
+}

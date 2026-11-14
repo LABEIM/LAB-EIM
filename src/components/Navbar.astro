@@ -1,17 +1,19 @@
 ---
-import { getLocaleFromUrl, getLocalizedPath, getLocalizedJsonData, t } from '../utils/i18n';
+import { getLocaleFromUrl, getLocalizedPath, getLocalizedJsonData } from '../utils/i18n';
 import { getCurrentRecruitmentStage } from '../utils/recruitment';
+import type { ChromeData } from '../utils/types';
 
 const locale = getLocaleFromUrl(Astro.url);
 const siteData = await getLocalizedJsonData<any>('site', locale);
+const chrome = await getLocalizedJsonData<ChromeData>('chrome', locale);
 const registrationData = await getLocalizedJsonData<any>('registration', locale);
 
 const recruitmentStage = getCurrentRecruitmentStage(registrationData || {});
 const isRecruitmentActive = recruitmentStage === 'open' || recruitmentStage === 'extended';
 
 const ctaConfig = isRecruitmentActive
-  ? { href: getLocalizedPath('/registration', locale), rawHref: '/registration', label: t('nav.joinUs', locale), isJoinUs: true }
-  : { href: getLocalizedPath('/contact', locale), rawHref: '/contact', label: t('nav.contact', locale), isJoinUs: false };
+  ? { href: getLocalizedPath('/registration', locale), rawHref: '/registration', label: chrome.nav.joinUs, isJoinUs: true }
+  : { href: getLocalizedPath('/contact', locale), rawHref: '/contact', label: chrome.nav.contact, isJoinUs: false };
 
 const pathname = Astro.url.pathname;
 let baseCleanPath = pathname;
@@ -23,18 +25,18 @@ if (baseCleanPath.endsWith('/') && baseCleanPath.length > 1) {
 }
 
 const rawLinks = [
-  { href: '/', key: 'nav.home' },
-  { href: '/about', key: 'nav.about' },
-  { href: '/structure', key: 'nav.structure' },
-  { href: '/courses', key: 'nav.courses' },
-  { href: '/event', key: 'nav.event' },
-  { href: '/news', key: 'nav.news' },
+  { href: '/', label: chrome.nav.home },
+  { href: '/about', label: chrome.nav.about },
+  { href: '/structure', label: chrome.nav.structure },
+  { href: '/courses', label: chrome.nav.courses },
+  { href: '/event', label: chrome.nav.event },
+  { href: '/news', label: chrome.nav.news },
 ];
 
 const links = rawLinks.map((link) => ({
   href: getLocalizedPath(link.href, locale),
   rawHref: link.href,
-  label: t(link.key, locale),
+  label: link.label,
 }));
 
 const isActive = (rawHref: string) => {
@@ -58,14 +60,14 @@ const isActive = (rawHref: string) => {
   data-extended-deadline={registrationData?.extendedDeadline || ''}
   data-announcement-date={registrationData?.announcementDate || ''}
   data-selection-steps={JSON.stringify(registrationData?.selectionSteps || [])}
-  data-join-label={t('nav.joinUs', locale)}
-  data-contact-label={t('nav.contact', locale)}
+  data-join-label={chrome.nav.joinUs}
+  data-contact-label={chrome.nav.contact}
 >
   <div class="site-container">
     <a href={getLocalizedPath('/', locale)} class="logo-container">
       <img
         class="logo-brand"
-        src="/assets/brand/eim-logo-horizontal-640.avif"
+        src={chrome.brand.logoHorizontal}
         alt={`${siteData.name} ${siteData.subName}`}
         width="221"
         height="40"
@@ -73,7 +75,7 @@ const isActive = (rawHref: string) => {
       />
       <img
         class="logo-mark"
-        src="/assets/brand/eim-logo-icon.png"
+        src={chrome.brand.logoIcon}
         alt={`${siteData.name} ${siteData.subName}`}
         width="40"
         height="40"

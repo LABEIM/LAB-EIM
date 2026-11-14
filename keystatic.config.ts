@@ -458,6 +458,84 @@ export default config({
     }),
   },
   singletons: {
+    chrome: singleton({
+      label: 'Navbar, Footer & Brand',
+      path: 'src/data/chrome',
+      format: { data: 'json' },
+      schema: {
+        nav: fields.object(
+          {
+            home: fields.text({ label: 'Menu Beranda' }),
+            about: fields.text({ label: 'Menu Tentang Kami' }),
+            structure: fields.text({ label: 'Menu Struktur' }),
+            courses: fields.text({ label: 'Menu Mata Kuliah' }),
+            event: fields.text({ label: 'Menu Kegiatan' }),
+            news: fields.text({ label: 'Menu Artikel' }),
+            register: fields.text({ label: 'Menu Pendaftaran' }),
+            contact: fields.text({ label: 'Menu Kontak' }),
+            joinUs: fields.text({ label: 'Tombol Gabung EIM' }),
+          },
+          { label: 'Menu navigasi' }
+        ),
+        footer: fields.object(
+          {
+            description: fields.text({ label: 'Deskripsi footer', multiline: true }),
+            quickLinks: fields.text({ label: 'Judul tautan cepat' }),
+            contact: fields.text({ label: 'Judul kontak' }),
+            resources: fields.text({ label: 'Judul tautan' }),
+            assets: fields.text({ label: 'Teks aset brand' }),
+            linkHub: fields.text({ label: 'Teks EIM Link Hub' }),
+            location: fields.text({ label: 'Teks lokasi' }),
+            university: fields.text({ label: 'Teks universitas' }),
+            rights: fields.text({ label: 'Teks hak cipta' }),
+            backToTop: fields.text({ label: 'Teks kembali ke atas' }),
+          },
+          { label: 'Footer' }
+        ),
+        cta: fields.object(
+          {
+            title: fields.text({ label: 'Judul ajakan bergabung' }),
+            description: fields.text({ label: 'Deskripsi ajakan bergabung', multiline: true }),
+            contactLabel: fields.text({ label: 'Label tombol kontak' }),
+          },
+          { label: 'Ajakan bergabung' }
+        ),
+        brand: fields.object(
+          {
+            logoHorizontal: fields.image({
+              label: 'Logo horizontal',
+              directory: 'public/assets/brand',
+              publicPath: '/assets/brand/',
+            }),
+            logoIcon: fields.image({
+              label: 'Ikon logo',
+              directory: 'public/assets/brand',
+              publicPath: '/assets/brand/',
+            }),
+          },
+          { label: 'Logo' }
+        ),
+        labels: fields.object(
+          {
+            upcoming: fields.text({ label: 'Label mendatang' }),
+            details: fields.text({ label: 'Label lihat detail' }),
+            learnMore: fields.text({ label: 'Label pelajari selengkapnya' }),
+            statsDosen: fields.text({ label: 'Label statistik dosen' }),
+            statsMembers: fields.text({ label: 'Label statistik anggota' }),
+            statsCourses: fields.text({ label: 'Label statistik mata kuliah' }),
+            organizerFallback: fields.text({ label: 'Label penyelenggara cadangan' }),
+            coordinator: fields.text({ label: 'Label koordinator mata kuliah' }),
+            sks: fields.text({ label: 'Label SKS', description: 'Gunakan {n} untuk jumlah SKS.' }),
+            practicumYes: fields.text({ label: 'Label dengan praktikum' }),
+            practicumNo: fields.text({ label: 'Label tanpa praktikum' }),
+            featured: fields.text({ label: 'Label artikel utama' }),
+            search: fields.text({ label: 'Label pencarian' }),
+            close: fields.text({ label: 'Label tutup' }),
+          },
+          { label: 'Label umum' }
+        ),
+      },
+    }),
     site: singleton({
       label: 'Site Metadata',
       path: 'src/data/site',
@@ -469,8 +547,11 @@ export default config({
         defaultTitle: fields.text({ label: 'Default Page Title' }),
         defaultDescription: fields.text({ label: 'Default Meta Description', multiline: true }),
         defaultKeywords: fields.text({ label: 'Default Meta Keywords', multiline: true }),
-        favicon: fields.text({ label: 'Favicon Path' }),
-        logo: fields.text({ label: 'Logo Image Path' }),
+        favicon: fields.image({
+          label: 'Favicon',
+          directory: 'public/image/eim',
+          publicPath: '/image/eim/',
+        }),
         timezone: fields.text({ label: 'Global IANA Timezone (e.g. Asia/Jakarta)', defaultValue: 'Asia/Jakarta' }),
         timezoneOffset: fields.text({ label: 'Global Timezone Offset (e.g. +07:00 for WIB, +08:00 for WITA)', defaultValue: '+07:00' }),
         contact: fields.object({
@@ -711,5 +792,23 @@ export default config({
         id: fields.text({ label: 'Announcement Version ID (Change this to reset dismissal state for visitors)', defaultValue: 'announcement-2026-v1' }),
       },
     }),
+  },
+  ui: {
+    navigation: {
+      Halaman: ['about', 'contact'],
+      Koleksi: ['news', 'events', 'courses'],
+      Pengaturan: [
+        'site',
+        'chrome',
+        'divisions',
+        'positions',
+        'members',
+        'lecturers',
+        'gallery',
+        'registration',
+        'recruitment_results',
+        'announcement',
+      ],
+    },
   },
 });

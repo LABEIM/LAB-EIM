@@ -24,10 +24,11 @@ import { filterAuditContent } from '../utils/content-helpers';
 import { resolveCourses } from '../utils/course-helpers';
 import { countPeopleByGroup, parsePositions } from '../utils/position-mapper';
 import { getCurrentRecruitmentStage } from '../utils/recruitment';
-import type { Lecturer, Member, RecruitmentConfig } from '../utils/types';
+import type { ChromeData, Lecturer, Member, RecruitmentConfig } from '../utils/types';
 
 const locale = getLocaleFromUrl(Astro.url);
 const siteData = getLocalizedJsonData<any>('site', locale);
+const chrome = getLocalizedJsonData<ChromeData>('chrome', locale);
 const registrationConfig = getLocalizedJsonData<Partial<RecruitmentConfig>>('registration', locale);
 const recruitmentStage = getCurrentRecruitmentStage(registrationConfig);
 const lecturersData = getLocalizedJsonData<{ list: Lecturer[] }>('lecturers', locale);
@@ -112,7 +113,7 @@ const bandCourses = allCourses.filter((course) => course.hasPracticum).slice(0, 
     <EimCourses courses={bandCourses} />
     <EimEvents events={events} locale={locale} />
     <EimNews news={latestNews} locale={locale} />
-    <EimCTA site={siteData} stage={recruitmentStage} />
+    <EimCTA content={chrome.cta} contact={siteData.contact} stage={recruitmentStage} />
   </main>
 </Layout>
 

@@ -5,7 +5,7 @@ import '../styles/pages/home-eim.css';
 import { getLocaleFromUrl, getLocalizedJsonData, t } from '../utils/i18n';
 import { countPeopleByGroup, parsePositions } from '../utils/position-mapper';
 import { getCurrentRecruitmentStage } from '../utils/recruitment';
-import type { AboutData, GalleryData, Lecturer, Member, RecruitmentConfig } from '../utils/types';
+import type { AboutData, ChromeData, GalleryData, Lecturer, Member, RecruitmentConfig } from '../utils/types';
 import AboutHero from '../components/about/AboutHero.astro';
 import AboutProfile from '../components/about/AboutProfile.astro';
 import EimVisiMisi from '../components/home/EimVisiMisi.astro';
@@ -18,6 +18,7 @@ import EimSectionNav from '../components/home/EimSectionNav.astro';
 const locale = getLocaleFromUrl(Astro.url);
 const aboutData = getLocalizedJsonData<AboutData>('about', locale);
 const siteData = getLocalizedJsonData<any>('site', locale);
+const chrome = getLocalizedJsonData<ChromeData>('chrome', locale);
 const membersData = getLocalizedJsonData<{ list: Member[] }>('members', locale);
 const lecturersData = getLocalizedJsonData<{ list: Lecturer[] }>('lecturers', locale);
 const positionsData = getLocalizedJsonData<{ list: unknown }>('positions', locale);
@@ -73,6 +74,6 @@ const sectionItems = [
     )}
     <EimVisiMisi about={aboutData} />
     <AboutGallery photos={gallery.photos ?? []} />
-    <EimCTA site={siteData} stage={recruitmentStage} />
+    <EimCTA content={chrome.cta} contact={siteData.contact} stage={recruitmentStage} />
   </main>
 </Layout>

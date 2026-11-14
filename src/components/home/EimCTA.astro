@@ -1,27 +1,28 @@
 ---
-import { getLocaleFromUrl, t } from '../../utils/i18n';
+import { getLocaleFromUrl, getLocalizedJsonData } from '../../utils/i18n';
 import { resolveStageCta } from '../../utils/constants';
+import type { ChromeData } from '../../utils/types';
 
 interface Props {
-  site: any;
+  content: ChromeData['cta'];
+  contact: { location: string; email: string };
   stage: string;
 }
 
-const { site, stage } = Astro.props;
+const { content, contact, stage } = Astro.props;
 const locale = getLocaleFromUrl(Astro.url);
-const contact = site?.contact ?? {};
+const chrome = getLocalizedJsonData<ChromeData>('chrome', locale);
 const primaryCta = resolveStageCta(stage);
 const joinIsPrimary = primaryCta.href === '/registration';
-const contactLabel = t('about.ctaContact', locale);
 ---
 
 <section id="gabung" class="eim-cta" aria-labelledby="eim-cta-title">
   <div class="mx-auto grid max-w-[1200px] items-end gap-10 px-[clamp(1.25rem,4vw,4rem)] py-[clamp(4.5rem,10vh,8.75rem)] lg:grid-cols-[minmax(0,7fr)_minmax(0,4fr)]">
     <div>
       <h2 id="eim-cta-title" class="text-balance text-background font-display text-[clamp(2.25rem,5vw,4.5rem)] leading-[1.02] tracking-[-0.01em]">
-        {t('about.ctaTitle', locale)}
+        {content.title}
       </h2>
-      <p class="mt-5 max-w-[52ch] text-[15px] leading-[1.6] text-surface-strong">{t('about.ctaDesc', locale)}</p>
+      <p class="mt-5 max-w-[52ch] text-[15px] leading-[1.6] text-surface-strong">{content.description}</p>
     </div>
     <div>
       <div class="flex flex-wrap items-center gap-x-6 gap-y-4">
@@ -29,9 +30,9 @@ const contactLabel = t('about.ctaContact', locale);
           class="eim-cta-primary"
           href={primaryCta.href}
           data-stage-primary
-          data-contact-label={contactLabel}>{primaryCta.href === '/contact' ? contactLabel : primaryCta.label}</a>
+          data-contact-label={content.contactLabel}>{primaryCta.href === '/contact' ? content.contactLabel : primaryCta.label}</a>
         <a class="eim-cta-secondary" href="/registration" data-stage-secondary hidden={joinIsPrimary}>
-          {t('nav.joinUs', locale)} <span aria-hidden="true">→</span>
+          {chrome.nav.joinUs} <span aria-hidden="true">→</span>
         </a>
       </div>
       <div class="mt-10 border-t border-white/15 pt-4 font-mono text-xs uppercase tracking-[0.08em] text-surface-strong">

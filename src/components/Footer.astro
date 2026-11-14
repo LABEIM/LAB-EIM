@@ -1,19 +1,21 @@
 ---
-import { getLocaleFromUrl, getLocalizedPath, getLocalizedJsonData, t } from '../utils/i18n';
+import { getLocaleFromUrl, getLocalizedPath, getLocalizedJsonData } from '../utils/i18n';
+import type { ChromeData } from '../utils/types';
 
 const locale = getLocaleFromUrl(Astro.url);
 const siteData = await getLocalizedJsonData<any>('site', locale);
+const chrome = await getLocalizedJsonData<ChromeData>('chrome', locale);
 const currentYear = new Date().getFullYear();
 
 const navLinks = [
-  { href: '/', key: 'nav.home' },
-  { href: '/about', key: 'nav.about' },
-  { href: '/structure', key: 'nav.structure' },
-  { href: '/courses', key: 'nav.courses' },
-  { href: '/event', key: 'nav.event' },
-  { href: '/news', key: 'nav.news' },
-  { href: '/registration', key: 'nav.register' },
-  { href: '/contact', key: 'nav.contact' },
+  { href: '/', label: chrome.nav.home },
+  { href: '/about', label: chrome.nav.about },
+  { href: '/structure', label: chrome.nav.structure },
+  { href: '/courses', label: chrome.nav.courses },
+  { href: '/event', label: chrome.nav.event },
+  { href: '/news', label: chrome.nav.news },
+  { href: '/registration', label: chrome.nav.register },
+  { href: '/contact', label: chrome.nav.contact },
 ];
 ---
 
@@ -23,7 +25,7 @@ const navLinks = [
       <div class="footer-about">
         <a href={getLocalizedPath('/', locale)} class="footer-brand" aria-label={`${siteData.name} — Beranda`}>
           <img
-            src="/assets/brand/eim-logo-horizontal-640.avif"
+            src={chrome.brand.logoHorizontal}
             alt=""
             width="221"
             height="40"
@@ -31,7 +33,7 @@ const navLinks = [
           />
         </a>
 
-        <p class="footer-desc">{t('footer.description', locale)}</p>
+        <p class="footer-desc">{chrome.footer.description}</p>
 
         <div class="footer-connect-list">
           {siteData.socials.instagram && (
@@ -81,19 +83,19 @@ const navLinks = [
         </div>
       </div>
 
-      <nav class="footer-col" aria-label={t('footer.quickLinks', locale)}>
-        <h3 class="footer-title">{t('footer.quickLinks', locale)}</h3>
+      <nav class="footer-col" aria-label={chrome.footer.quickLinks}>
+        <h3 class="footer-title">{chrome.footer.quickLinks}</h3>
         <ul class="footer-links">
           {navLinks.map((link) => (
             <li>
-              <a href={getLocalizedPath(link.href, locale)}>{t(link.key, locale)}</a>
+              <a href={getLocalizedPath(link.href, locale)}>{link.label}</a>
             </li>
           ))}
         </ul>
       </nav>
 
       <div class="footer-col">
-        <h3 class="footer-title">{t('footer.contact', locale)}</h3>
+        <h3 class="footer-title">{chrome.footer.contact}</h3>
         <ul class="footer-links footer-contact-list">
           <li><i class="fa-solid fa-location-dot" aria-hidden="true"></i><span>{siteData.contact.location}</span></li>
           <li><i class="fa-solid fa-university" aria-hidden="true"></i><span>{siteData.contact.university}</span></li>
@@ -101,15 +103,15 @@ const navLinks = [
         </ul>
       </div>
 
-      <nav class="footer-col" aria-label={t('footer.resources', locale)}>
-        <h3 class="footer-title">{t('footer.resources', locale)}</h3>
+      <nav class="footer-col" aria-label={chrome.footer.resources}>
+        <h3 class="footer-title">{chrome.footer.resources}</h3>
         <ul class="footer-links">
           <li>
-            <a href={getLocalizedPath('/assets', locale)}>{t('footer.assets', locale)}</a>
+            <a href={getLocalizedPath('/assets', locale)}>{chrome.footer.assets}</a>
           </li>
           <li>
             <a href="https://link.eimlab.org" target="_blank" rel="noopener noreferrer">
-              {t('footer.linkHub', locale)} <span aria-hidden="true">↗</span>
+              {chrome.footer.linkHub} <span aria-hidden="true">↗</span>
             </a>
           </li>
         </ul>
@@ -117,9 +119,9 @@ const navLinks = [
     </div>
 
     <div class="footer-bottom">
-      <p>&copy; {currentYear} {siteData.fullName}. {t('footer.rights', locale)}</p>
+      <p>&copy; {currentYear} {siteData.fullName}. {chrome.footer.rights}</p>
       <div class="footer-bottom-end">
-        <a class="footer-top-link" href="#top">{t('footer.backToTop', locale)} <span aria-hidden="true">↑</span></a>
+        <a class="footer-top-link" href="#top">{chrome.footer.backToTop} <span aria-hidden="true">↑</span></a>
       </div>
     </div>
   </div>

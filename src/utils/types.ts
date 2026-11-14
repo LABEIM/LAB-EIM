@@ -337,6 +337,57 @@ export interface GalleryData {
   photos?: GalleryItem[];
 }
 
+export interface ChromeData {
+  nav: {
+    home: string;
+    about: string;
+    structure: string;
+    courses: string;
+    event: string;
+    news: string;
+    register: string;
+    contact: string;
+    joinUs: string;
+  };
+  footer: {
+    description: string;
+    quickLinks: string;
+    contact: string;
+    resources: string;
+    assets: string;
+    linkHub: string;
+    location: string;
+    university: string;
+    rights: string;
+    backToTop: string;
+  };
+  cta: {
+    title: string;
+    description: string;
+    contactLabel: string;
+  };
+  brand: {
+    logoHorizontal: string;
+    logoIcon: string;
+  };
+  labels: {
+    upcoming: string;
+    details: string;
+    learnMore: string;
+    statsDosen: string;
+    statsMembers: string;
+    statsCourses: string;
+    organizerFallback: string;
+    coordinator: string;
+    sks: string;
+    practicumYes: string;
+    practicumNo: string;
+    featured: string;
+    search: string;
+    close: string;
+  };
+}
+
 export interface AboutData {
   title: string;
   description: string;

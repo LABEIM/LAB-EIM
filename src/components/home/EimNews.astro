@@ -10,12 +10,15 @@ interface Props {
   news: CollectionEntry<'news'>[];
   locale: Locale;
   content: HomePageData['news'];
+  fallbackLabel: string;
 }
 
-const { news = [], locale, content } = Astro.props;
+const { news = [], locale, content, fallbackLabel } = Astro.props;
 
 const featured: CollectionEntry<'news'> | undefined = news[0];
 const secondary = news.slice(1, 5);
+// The link label is the only visible text in the anchor, so it must never be empty.
+const viewAllLabel = content.viewAll || fallbackLabel;
 
 const newsIndexHref = getLocalizedPath('/news', locale);
 const featuredHref = featured ? getLocalizedPath(`/news/${getCleanSlug(featured.id)}`, locale) : '';
@@ -37,7 +40,7 @@ const featuredImage = featured?.data.image?.[0];
         </p>
         {featured && (
           <a href={newsIndexHref} class="mt-4 inline-flex items-center gap-2 font-mono text-xs uppercase tracking-[0.08em]">
-            <span class="text-brand">{content.viewAll}</span>
+            <span class="text-brand">{viewAllLabel}</span>
             <span class="text-brand" aria-hidden="true">→</span>
           </a>
         )}
@@ -107,7 +110,7 @@ const featuredImage = featured?.data.image?.[0];
           {content.empty}
         </p>
         <a href={newsIndexHref} class="mt-5 inline-flex items-center gap-2 font-mono text-xs uppercase tracking-[0.08em]">
-          <span class="text-brand">{content.viewAll}</span>
+          <span class="text-brand">{viewAllLabel}</span>
           <span class="text-brand" aria-hidden="true">→</span>
         </a>
       </div>

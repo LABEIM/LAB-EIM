@@ -697,6 +697,12 @@ for (const key of ['detail', 'social'] as const) {
   assert(typeof value === 'string' && value.trim().length > 0, `contact.navDots.${key} is a non-empty string`);
 }
 assert(Boolean(contactPage.meta?.title?.trim()), 'contact.meta.title is a non-empty string');
+assert(
+  typeof contactPage.meta?.description === 'string' &&
+    contactPage.meta.description.includes('{location}') &&
+    contactPage.meta.description.includes('{university}'),
+  'contact.meta.description exists and keeps {location} and {university}'
+);
 
 // Card copy, maps, and the PIC list keep their legacy top-level homes.
 for (const key of [
@@ -713,6 +719,10 @@ for (const key of [
   const value = contactPage[key];
   assert(typeof value === 'string' && value.trim().length > 0, `contact.${key} is a non-empty string`);
 }
+assert(
+  /^https:\/\/((www\.)?google\.com|maps\.google\.com)\/maps\/embed\?/.test(contactPage.mapsEmbedUrl ?? ''),
+  `contact.mapsEmbedUrl is a Google Maps embed URL (https://www.google.com/maps/embed?…) — got "${contactPage.mapsEmbedUrl ?? ''}"`
+);
 assert(Array.isArray(contactPage.contactPersons), 'contact.contactPersons is an array');
 
 console.log('\n1️⃣4️⃣ Testing registration.json labels:');

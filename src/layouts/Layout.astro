@@ -6,6 +6,7 @@ import AnnouncementBanner from '../components/common/AnnouncementBanner.astro';
 import { getLocaleFromUrl, getLocalizedJsonData } from '../utils/i18n';
 import { getCurrentRecruitmentStage } from '../utils/recruitment';
 import { applySimulationToConfig } from '../utils/simulation';
+import type { SiteData } from '../utils/types';
 
 interface Props {
   title?: string;
@@ -17,7 +18,7 @@ interface Props {
 }
 
 const locale = getLocaleFromUrl(Astro.url);
-const siteData = await getLocalizedJsonData<any>('site', locale);
+const siteData = getLocalizedJsonData<SiteData>('site', locale);
 
 const {
   title = siteData.defaultTitle,

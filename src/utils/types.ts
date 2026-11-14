@@ -377,6 +377,28 @@ export interface GalleryData {
   photos?: GalleryItem[];
 }
 
+export interface SiteData {
+  name: string;
+  subName: string;
+  fullName: string;
+  defaultTitle: string;
+  defaultDescription: string;
+  defaultKeywords: string;
+  favicon: string;
+  timezone: string;
+  timezoneOffset: string;
+  contact: {
+    location: string;
+    university: string;
+    email: string;
+  };
+  socials: {
+    instagram: string;
+    linkedin: string;
+    github: string;
+  };
+}
+
 export interface ChromeData {
   nav: {
     home: string;
@@ -753,6 +775,7 @@ export interface EventDetailPageData {
 export interface ContactData {
   meta: {
     title: string;
+    description: string;
   };
   navDots: {
     detail: string;

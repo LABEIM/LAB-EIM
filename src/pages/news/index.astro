@@ -34,9 +34,11 @@ const latestYear =
     .sort((a, b) => b.localeCompare(a))[0] ?? null;
 
 const titleLines = page.hero.lines;
+// The eyebrow doubles as the hero dot label, so it falls back to the page title.
+const eyebrow = page.hero.eyebrow || page.meta.title;
 // The hero dot has no toggle of its own; the list dot reads the same flag as the section.
 const sectionItems = [
-  { id: 'artikel', label: page.hero.eyebrow },
+  { id: 'artikel', label: eyebrow },
   ...(sectionOn(page.list) ? [{ id: 'daftar', label: page.navDots.list }] : []),
 ];
 ---
@@ -48,7 +50,7 @@ const sectionItems = [
     <section id="artikel" class="eim-hero eim-subhero" aria-labelledby="news-hero-title">
       <canvas class="eim-hero-canvas" aria-hidden="true"></canvas>
       <div class="eim-hero-inner">
-        <p class="eim-eyebrow">{page.hero.eyebrow}</p>
+        <p class="eim-eyebrow">{eyebrow}</p>
         <h1 id="news-hero-title" class="eim-hero-title">
           {titleLines.map((line, index) => (
             <>

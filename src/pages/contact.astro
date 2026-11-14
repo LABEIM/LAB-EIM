@@ -6,10 +6,10 @@ import EimSectionNav from '../components/home/EimSectionNav.astro';
 import ContactPersonBox from '../components/registration/ContactPersonBox.astro';
 import { getLocaleFromUrl, getLocalizedJsonData } from '../utils/i18n';
 import { sectionOn } from '../utils/page-content';
-import type { ChromeData, ContactData, ContactPerson } from '../utils/types';
+import type { ChromeData, ContactData, ContactPerson, SiteData } from '../utils/types';
 
 const locale = getLocaleFromUrl(Astro.url);
-const siteData = getLocalizedJsonData<any>('site', locale);
+const siteData = getLocalizedJsonData<SiteData>('site', locale);
 const page = getLocalizedJsonData<ContactData>('contact', locale);
 const chrome = getLocalizedJsonData<ChromeData>('chrome', locale);
 
@@ -24,7 +24,17 @@ const university = siteContact.university || 'Telkom University, Bandung, Indone
 const email = siteContact.email || 'lab@eimlab.org';
 
 const pageTitle = page.meta.title;
-const pageDescription = `${location}, ${university}, dan saluran komunikasi Laboratorium Enterprise Infrastructure Management (EIM) Telkom University.`;
+// The literal stays a fallback for a hand-edited contact.json that lost the field.
+const pageDescription = (
+  page.meta.description ||
+  '{location}, {university}, dan saluran komunikasi Laboratorium Enterprise Infrastructure Management (EIM) Telkom University.'
+)
+  .replaceAll('{location}', location)
+  .replaceAll('{university}', university);
+
+// Only a real Google Maps embed URL may reach the iframe src.
+const googleMapsEmbed = /^https:\/\/((www\.)?google\.com|maps\.google\.com)\/maps\/embed\?/;
+const mapsEmbedSrc = googleMapsEmbed.test(page.mapsEmbedUrl) ? page.mapsEmbedUrl : '';
 
 const socialEntries = [
   { name: 'Instagram', url: socials.instagram, icon: 'fa-brands fa-instagram' },
@@ -177,10 +187,11 @@ const sectionItems = [
 
         <div class="contact-map-frame e-reveal mt-[clamp(2.5rem,6vh,4rem)]">
           <iframe
-            src={page.mapsEmbedUrl}
+            src={mapsEmbedSrc}
             title={page.map.title}
             allowfullscreen=""
             loading="lazy"
+            sandbox="allow-scripts allow-same-origin allow-popups"
             referrerpolicy="no-referrer-when-downgrade"
           ></iframe>
         </div>

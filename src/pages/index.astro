@@ -2,7 +2,7 @@
 import { getCollection } from 'astro:content';
 import Layout from '../layouts/Layout.astro';
 import '../styles/pages/home-eim.css';
-import type { AboutData, ChromeData, HomePageData, Lecturer, Member, RecruitmentConfig } from '../utils/types';
+import type { AboutData, ChromeData, HomePageData, Lecturer, Member, RecruitmentConfig, SiteData } from '../utils/types';
 import EventPosterModal from '../components/events/EventPosterModal.astro';
 import EimHero from '../components/home/EimHero.astro';
 import EimReveal from '../components/home/EimReveal.astro';
@@ -27,7 +27,7 @@ import { getCurrentRecruitmentStage } from '../utils/recruitment';
 
 const locale = getLocaleFromUrl(Astro.url);
 const page = getLocalizedJsonData<HomePageData>('pages/home', locale);
-const siteData = getLocalizedJsonData<any>('site', locale);
+const siteData = getLocalizedJsonData<SiteData>('site', locale);
 const chrome = getLocalizedJsonData<ChromeData>('chrome', locale);
 const registrationConfig = getLocalizedJsonData<Partial<RecruitmentConfig>>('registration', locale);
 const recruitmentStage = getCurrentRecruitmentStage(registrationConfig);
@@ -130,8 +130,8 @@ const sectionItems = [
     {sectionOn(page.courses) && bandCourses.length > 0 && (
       <EimCourses courses={bandCourses} content={page.courses} />
     )}
-    {sectionOn(page.events) && <EimEvents events={events} locale={locale} content={page.events} />}
-    {sectionOn(page.news) && <EimNews news={latestNews} locale={locale} content={page.news} />}
+    {sectionOn(page.events) && <EimEvents events={events} locale={locale} content={page.events} fallbackLabel={chrome.labels.details} />}
+    {sectionOn(page.news) && <EimNews news={latestNews} locale={locale} content={page.news} fallbackLabel={chrome.labels.details} />}
     {sectionOn(page.cta) && (
       <EimCTA content={chrome.cta} contact={siteData.contact} stage={recruitmentStage} />
     )}

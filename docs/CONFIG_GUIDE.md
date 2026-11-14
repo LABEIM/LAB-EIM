@@ -300,6 +300,7 @@ Site administrators can toggle and configure a top global announcement banner th
 * **`mode`** (`"auto_recruitment"` | `"manual"`):
   - `"auto_recruitment"`: Automatically updates banner text, alert style, icon, and CTA link to mirror the active recruitment pipeline status (e.g. Opening Soon, Registration Open, Document Screening Results, Final Results).
   - `"manual"`: Displays custom manual announcement text and settings configured below.
+* `badgeText`, `message`, and `ctaText` apply only in `manual` mode; `auto_recruitment` mode reads its badge, message, and CTA text from the active stage configuration in `src/data/registration.json`.
 * **`alertType`** (`"recruitment"` | `"maintenance"` | `"info"` | `"success"`): Color-coded visual theme for manual announcements:
   - `"recruitment"`: Purple & Gold accent
   - `"maintenance"`: Amber & Crimson caution accent
@@ -338,15 +339,22 @@ Manage it via **Keystatic Admin > Singletons > Lecturers**. Entries with an empt
 ```
 ## 10. Contact Page (`src/data/contact.json`)
 
-Configures the `/contact` page. Manage it via **Keystatic Admin > Singletons > Contact Page**.
+Configures the `/contact` page. Manage it via **Keystatic Admin > Singletons > Kontak**.
+
+Every non-hero section (`details`, `map`, `socials`) carries an `enabled` boolean; the hero has none because it holds the page `<h1>`.
 
 ### Fields Explanation
+* **`meta`**: `title` for the tab; `description` for search results. `meta.description` keeps `{location}` and `{university}`, both replaced from `site.json` (`contact.location`, `contact.university`).
+* **`navDots`**: Section-nav dot labels (`detail`, `social`). The top hero dot reuses `hero.eyebrow`.
+* **`hero`**: Eyebrow, primary button label, and secondary link label. The hero heading and description are the top-level `title` and `heroDescription` below.
+* **`details`** (`enabled`): Copy for the "Kanal komunikasi" section — `eyebrow`, `title`, `intro`, `routingNote`, the email action and copy-button labels (`emailAction`, `copyEmail`, `copied`, `copyFailed`), their screen-reader status strings (`copySuccessStatus`, `copyFailedStatus`), and the PIC card `picsTitle` / `picsSubtitle`.
+* **`map`** (`enabled`): Map section `title`, `subtitle`, and `navDot`. The iframe source is `mapsEmbedUrl` below; it must be a Google Maps embed URL (`https://www.google.com/maps/embed?…` or `https://maps.google.com/maps/embed?…`), otherwise the frame renders with an empty `src`.
+* **`socials`** (`enabled`): Social section `eyebrow`, `title`, and `intro`. The accounts come from `site.json` (`socials.instagram`, `socials.linkedin`, `socials.github`).
 * **`title`** / **`heroDescription`**: Hero heading and description.
 * **`locationTitle`**: Label for the location row. The location and university text come from `site.json` (`contact.location`, `contact.university`).
 * **`mapsUrl`**, **`mapsEmbedUrl`**: External maps link and the map iframe URL.
 * **`emailTitle`**: Label for the email row. The address comes from `site.json` (`contact.email`).
 * **`hoursTitle`**, **`hoursText`**, **`hoursSubtext`**: Operating-hours row.
-* **`mapSectionTitle`**, **`mapSectionSubtitle`**: Map section heading and intro.
 * **`contactPersons`** (Array): Narahubung cards shown inside "Kanal komunikasi".
   These are independent of the recruitment PICs in **Registration Settings** (`src/data/registration.json`); update both if the same people appear on both pages.
   * **`name`**: PIC name.
@@ -354,8 +362,6 @@ Configures the `/contact` page. Manage it via **Keystatic Admin > Singletons > C
   * **`platform`**: `whatsapp`, `line`, `email`, or `phone` (selects the icon).
   * **`contactId`**: Phone number or handle shown on the card.
   * **`link`**: Direct clickable link (must start with `https://`, `mailto:`, or `tel:`, e.g. `https://wa.me/6281234567890`). Leave empty to render a non-clickable card.
-
-> Entries in the repository currently use placeholder numbers (`08xx-xxxx-xxxx`). Replace them with real PIC data before publishing.
 
 ### Contact Person Template
 ```json

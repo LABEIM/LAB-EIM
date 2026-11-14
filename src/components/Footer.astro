@@ -1,9 +1,9 @@
 ---
 import { getLocaleFromUrl, getLocalizedPath, getLocalizedJsonData } from '../utils/i18n';
-import type { ChromeData } from '../utils/types';
+import type { ChromeData, SiteData } from '../utils/types';
 
 const locale = getLocaleFromUrl(Astro.url);
-const siteData = await getLocalizedJsonData<any>('site', locale);
+const siteData = getLocalizedJsonData<SiteData>('site', locale);
 const chrome = getLocalizedJsonData<ChromeData>('chrome', locale);
 const currentYear = new Date().getFullYear();
 

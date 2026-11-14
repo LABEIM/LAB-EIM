@@ -118,12 +118,12 @@ const registrationSchema = {
       description: 'Teks label dan placeholder pada formulir pendaftaran. Pesan validasi tetap di kode.',
     }
   ),
-  heroTag: fields.text({ label: 'Hero Tag', defaultValue: 'Assistant Recruitment' }),
+  heroTag: fields.text({ label: 'Hero Tag', defaultValue: 'Assistant Recruitment', validation: { isRequired: true } }),
   heroTitle: fields.text({ label: 'Hero Title', defaultValue: 'Assistant Lab Registration', validation: { isRequired: true } }),
   heroDescription: fields.text({ label: 'Hero Description', defaultValue: 'Join us and become a part of EIM Lab. Develop your potential in IT infrastructure, networks, and technology research.' }),
   heroPeriod: fields.text({ label: 'Hero periode pendaftaran', description: 'Gunakan {start} dan {end} untuk tanggal mulai dan batas akhir.', validation: { isRequired: true } }),
-  heroPrimaryLabel: fields.text({ label: 'Label tombol utama hero' }),
-  heroSecondaryLabel: fields.text({ label: 'Label tombol sekunder hero' }),
+  heroPrimaryLabel: fields.text({ label: 'Label tombol utama hero', validation: { isRequired: true } }),
+  heroSecondaryLabel: fields.text({ label: 'Label tombol sekunder hero', validation: { isRequired: true } }),
   studentYears: fields.array(fields.text({ label: 'Year' }), {
     label: 'Eligible Student Years',
     itemLabel: props => props.value,
@@ -527,12 +527,12 @@ export default config({
         ),
         navDots: fields.object(
           {
-            reveal: fields.text({ label: 'Label titik media' }),
-            focus: fields.text({ label: 'Label titik fokus' }),
-            vision: fields.text({ label: 'Label titik visi & misi' }),
-            courses: fields.text({ label: 'Label titik mata kuliah' }),
-            events: fields.text({ label: 'Label titik kegiatan' }),
-            articles: fields.text({ label: 'Label titik artikel' }),
+            reveal: fields.text({ label: 'Label titik media', validation: { isRequired: true } }),
+            focus: fields.text({ label: 'Label titik fokus', validation: { isRequired: true } }),
+            vision: fields.text({ label: 'Label titik visi & misi', validation: { isRequired: true } }),
+            courses: fields.text({ label: 'Label titik mata kuliah', validation: { isRequired: true } }),
+            events: fields.text({ label: 'Label titik kegiatan', validation: { isRequired: true } }),
+            articles: fields.text({ label: 'Label titik artikel', validation: { isRequired: true } }),
           },
           {
             label: 'Navigasi titik bagian',
@@ -630,7 +630,7 @@ export default config({
             title: fields.text({ label: 'Judul bagian', validation: { isRequired: true } }),
             intro: fields.text({ label: 'Paragraf pengantar', multiline: true }),
             empty: fields.text({ label: 'Teks saat belum ada kegiatan', multiline: true }),
-            viewAll: fields.text({ label: 'Label tautan semua kegiatan' }),
+            viewAll: fields.text({ label: 'Label tautan semua kegiatan', validation: { isRequired: true } }),
           },
           { label: 'Kegiatan' }
         ),
@@ -640,7 +640,7 @@ export default config({
             title: fields.text({ label: 'Judul bagian', validation: { isRequired: true } }),
             intro: fields.text({ label: 'Paragraf pengantar', multiline: true }),
             empty: fields.text({ label: 'Teks saat belum ada artikel', multiline: true }),
-            viewAll: fields.text({ label: 'Label tautan semua artikel' }),
+            viewAll: fields.text({ label: 'Label tautan semua artikel', validation: { isRequired: true } }),
           },
           { label: 'Artikel' }
         ),
@@ -668,14 +668,15 @@ export default config({
               label: 'Deskripsi meta',
               description: 'Tampil di hasil pencarian.',
               multiline: true,
+              validation: { isRequired: true },
             }),
           },
           { label: 'Meta halaman' }
         ),
         navDots: fields.object(
           {
-            chart: fields.text({ label: 'Label titik bagan' }),
-            join: fields.text({ label: 'Label titik gabung' }),
+            chart: fields.text({ label: 'Label titik bagan', validation: { isRequired: true } }),
+            join: fields.text({ label: 'Label titik gabung', validation: { isRequired: true } }),
           },
           {
             label: 'Navigasi titik bagian',
@@ -684,29 +685,29 @@ export default config({
         ),
         groups: fields.object(
           {
-            dosen: fields.text({ label: 'Label kelompok dosen' }),
-            asisten: fields.text({ label: 'Label kelompok asisten' }),
-            mahasiswa: fields.text({ label: 'Label kelompok mahasiswa' }),
+            dosen: fields.text({ label: 'Label kelompok dosen', validation: { isRequired: true } }),
+            asisten: fields.text({ label: 'Label kelompok asisten', validation: { isRequired: true } }),
+            mahasiswa: fields.text({ label: 'Label kelompok mahasiswa', validation: { isRequired: true } }),
           },
           { label: 'Label kelompok peran', description: 'Dipakai di bagan dan di judul tiap peran.' }
         ),
         hero: fields.object(
           {
-            eyebrow: fields.text({ label: 'Teks kecil di atas judul' }),
+            eyebrow: fields.text({ label: 'Teks kecil di atas judul', validation: { isRequired: true } }),
             lines: fields.array(fields.text({ label: 'Baris judul', validation: { isRequired: true } }), {
               label: 'Judul utama',
               description: 'Satu item per baris, maksimal tiga baris.',
               validation: { length: { min: 1, max: 3 } },
               itemLabel: (props) => props.value,
             }),
-            description: fields.text({ label: 'Deskripsi', multiline: true }),
+            description: fields.text({ label: 'Deskripsi', multiline: true, validation: { isRequired: true } }),
             meta: fields.text({
               label: 'Teks kecil di bawah tombol',
               description: 'Jumlah anggota, dosen, dan peran diisi otomatis. Jangan hapus {members}, {dosen}, atau {positions}.',
               validation: { isRequired: true },
             }),
-            primaryLabel: fields.text({ label: 'Label tombol utama' }),
-            secondaryLabel: fields.text({ label: 'Label tautan kedua' }),
+            primaryLabel: fields.text({ label: 'Label tombol utama', validation: { isRequired: true } }),
+            secondaryLabel: fields.text({ label: 'Label tautan kedua', validation: { isRequired: true } }),
           },
           { label: 'Hero' }
         ),
@@ -714,19 +715,20 @@ export default config({
           {
             enabled: fields.checkbox({ label: 'Tampilkan bagian ini', defaultValue: true }),
             title: fields.text({ label: 'Judul bagian', validation: { isRequired: true } }),
-            intro: fields.text({ label: 'Paragraf pengantar', multiline: true }),
+            intro: fields.text({ label: 'Paragraf pengantar', multiline: true, validation: { isRequired: true } }),
             ariaLabel: fields.text({
               label: 'Label bagan untuk pembaca layar',
               description: 'Menjelaskan susunan peran dari ketua laboratorium sampai asisten praktikum.',
               multiline: true,
+              validation: { isRequired: true },
             }),
             memberAssistantNote: fields.text({
               label: 'Catatan asisten praktikum',
               description: 'Jumlah diisi otomatis. Jangan hapus {n} atau {total}.',
               validation: { isRequired: true },
             }),
-            practicumAssistant: fields.text({ label: 'Nama peran asisten praktikum' }),
-            emptyPosition: fields.text({ label: 'Teks saat peran belum berisi orang' }),
+            practicumAssistant: fields.text({ label: 'Nama peran asisten praktikum', validation: { isRequired: true } }),
+            emptyPosition: fields.text({ label: 'Teks saat peran belum berisi orang', validation: { isRequired: true } }),
             positionCount: fields.text({
               label: 'Teks jumlah orang',
               description: 'Jumlah diisi otomatis. Jangan hapus {n}.',
@@ -770,13 +772,14 @@ export default config({
               label: 'Deskripsi meta',
               description: 'Tampil di hasil pencarian.',
               multiline: true,
+              validation: { isRequired: true },
             }),
           },
           { label: 'Meta halaman' }
         ),
         navDots: fields.object(
           {
-            list: fields.text({ label: 'Label titik daftar' }),
+            list: fields.text({ label: 'Label titik daftar', validation: { isRequired: true } }),
           },
           {
             label: 'Navigasi titik bagian',
@@ -785,31 +788,31 @@ export default config({
         ),
         hero: fields.object(
           {
-            eyebrow: fields.text({ label: 'Teks kecil di atas judul' }),
+            eyebrow: fields.text({ label: 'Teks kecil di atas judul', validation: { isRequired: true } }),
             lines: fields.array(fields.text({ label: 'Baris judul', validation: { isRequired: true } }), {
               label: 'Judul utama',
               description: 'Satu item per baris, maksimal tiga baris.',
               validation: { length: { min: 1, max: 3 } },
               itemLabel: (props) => props.value,
             }),
-            description: fields.text({ label: 'Deskripsi', multiline: true }),
+            description: fields.text({ label: 'Deskripsi', multiline: true, validation: { isRequired: true } }),
             summary: fields.text({
               label: 'Ringkasan jumlah di bawah tombol',
               description: 'Jumlah diisi otomatis. Jangan hapus {n} (jumlah mata kuliah) atau {p} (jumlah dengan praktikum).',
               validation: { isRequired: true },
             }),
-            primaryLabel: fields.text({ label: 'Label tombol utama' }),
-            secondaryLabel: fields.text({ label: 'Label tautan kedua' }),
+            primaryLabel: fields.text({ label: 'Label tombol utama', validation: { isRequired: true } }),
+            secondaryLabel: fields.text({ label: 'Label tautan kedua', validation: { isRequired: true } }),
           },
           { label: 'Hero', description: 'Markup hero ada langsung di halaman Mata Kuliah.' }
         ),
         list: fields.object(
           {
             enabled: fields.checkbox({ label: 'Tampilkan bagian ini', defaultValue: true }),
-            eyebrow: fields.text({ label: 'Teks kecil di atas judul' }),
+            eyebrow: fields.text({ label: 'Teks kecil di atas judul', validation: { isRequired: true } }),
             title: fields.text({ label: 'Judul bagian', validation: { isRequired: true } }),
-            intro: fields.text({ label: 'Paragraf pengantar', multiline: true }),
-            empty: fields.text({ label: 'Teks saat belum ada mata kuliah', multiline: true }),
+            intro: fields.text({ label: 'Paragraf pengantar', multiline: true, validation: { isRequired: true } }),
+            empty: fields.text({ label: 'Teks saat belum ada mata kuliah', multiline: true, validation: { isRequired: true } }),
           },
           { label: 'Daftar mata kuliah', description: 'Entri daftar dibaca dari koleksi Courses.' }
         ),
@@ -857,6 +860,7 @@ export default config({
               label: 'Catatan tanpa praktikum',
               description: 'Tampil saat mata kuliah tidak memiliki praktikum.',
               multiline: true,
+              validation: { isRequired: true },
             }),
           },
           { label: 'Asisten praktikum', description: 'Daftar asisten dibaca dari koleksi Courses dan Members.' }
@@ -864,7 +868,7 @@ export default config({
         backLink: fields.object(
           {
             enabled: fields.checkbox({ label: 'Tampilkan bagian ini', defaultValue: true }),
-            label: fields.text({ label: 'Label tautan kembali ke daftar' }),
+            label: fields.text({ label: 'Label tautan kembali ke daftar', validation: { isRequired: true } }),
           },
           { label: 'Tautan kembali', description: 'Tautan diarahkan ke halaman Mata Kuliah.' }
         ),
@@ -886,13 +890,14 @@ export default config({
               label: 'Deskripsi meta',
               description: 'Tampil di hasil pencarian.',
               multiline: true,
+              validation: { isRequired: true },
             }),
           },
           { label: 'Meta halaman' }
         ),
         navDots: fields.object(
           {
-            list: fields.text({ label: 'Label titik daftar' }),
+            list: fields.text({ label: 'Label titik daftar', validation: { isRequired: true } }),
           },
           {
             label: 'Navigasi titik bagian',
@@ -901,14 +906,14 @@ export default config({
         ),
         hero: fields.object(
           {
-            eyebrow: fields.text({ label: 'Teks kecil di atas judul' }),
+            eyebrow: fields.text({ label: 'Teks kecil di atas judul', validation: { isRequired: true } }),
             lines: fields.array(fields.text({ label: 'Baris judul', validation: { isRequired: true } }), {
               label: 'Judul utama',
               description: 'Satu item per baris, maksimal tiga baris.',
               validation: { length: { min: 1, max: 3 } },
               itemLabel: (props) => props.value,
             }),
-            description: fields.text({ label: 'Deskripsi', multiline: true }),
+            description: fields.text({ label: 'Deskripsi', multiline: true, validation: { isRequired: true } }),
             meta: fields.text({
               label: 'Teks kecil di bawah tombol',
               description: 'Jumlah artikel, kategori, dan tahun diisi otomatis. Jangan hapus {articles}, {categories}, atau {year}.',
@@ -918,24 +923,25 @@ export default config({
               label: 'Teks saat belum ada artikel',
               description: 'Tampil menggantikan jumlah artikel saat koleksi kosong.',
               multiline: true,
+              validation: { isRequired: true },
             }),
-            primaryLabel: fields.text({ label: 'Label tombol utama' }),
-            secondaryLabel: fields.text({ label: 'Label tautan kedua' }),
+            primaryLabel: fields.text({ label: 'Label tombol utama', validation: { isRequired: true } }),
+            secondaryLabel: fields.text({ label: 'Label tautan kedua', validation: { isRequired: true } }),
           },
           { label: 'Hero' }
         ),
         list: fields.object(
           {
             enabled: fields.checkbox({ label: 'Tampilkan bagian ini', defaultValue: true }),
-            eyebrow: fields.text({ label: 'Teks kecil di atas judul' }),
+            eyebrow: fields.text({ label: 'Teks kecil di atas judul', validation: { isRequired: true } }),
             title: fields.text({ label: 'Judul bagian', validation: { isRequired: true } }),
-            intro: fields.text({ label: 'Paragraf pengantar', multiline: true }),
-            emptyTitle: fields.text({ label: 'Judul saat belum ada artikel', multiline: true }),
-            emptyDesc: fields.text({ label: 'Penjelasan saat belum ada artikel', multiline: true }),
-            noMatchTitle: fields.text({ label: 'Judul saat pencarian tidak ditemukan', multiline: true }),
-            noMatchDesc: fields.text({ label: 'Penjelasan saat pencarian tidak ditemukan', multiline: true }),
-            searchPlaceholder: fields.text({ label: 'Teks placeholder kolom pencarian' }),
-            contactLabel: fields.text({ label: 'Label tautan hubungi kontak' }),
+            intro: fields.text({ label: 'Paragraf pengantar', multiline: true, validation: { isRequired: true } }),
+            emptyTitle: fields.text({ label: 'Judul saat belum ada artikel', multiline: true, validation: { isRequired: true } }),
+            emptyDesc: fields.text({ label: 'Penjelasan saat belum ada artikel', multiline: true, validation: { isRequired: true } }),
+            noMatchTitle: fields.text({ label: 'Judul saat pencarian tidak ditemukan', multiline: true, validation: { isRequired: true } }),
+            noMatchDesc: fields.text({ label: 'Penjelasan saat pencarian tidak ditemukan', multiline: true, validation: { isRequired: true } }),
+            searchPlaceholder: fields.text({ label: 'Teks placeholder kolom pencarian', validation: { isRequired: true } }),
+            contactLabel: fields.text({ label: 'Label tautan hubungi kontak', validation: { isRequired: true } }),
           },
           { label: 'Daftar artikel', description: 'Entri daftar dibaca dari koleksi News. Label filter diambil dari Navbar, Footer & Brand.' }
         ),
@@ -967,12 +973,13 @@ export default config({
             backLabel: fields.text({
               label: 'Label tautan kembali di bagian atas',
               description: 'Tautan diarahkan ke halaman Artikel, di sebelah tombol bagikan.',
+              validation: { isRequired: true },
             }),
           },
           { label: 'Bagian atas artikel', description: 'Tanpa tombol tampil/sembunyi; judul artikel dibaca dari koleksi News.' }
         ),
-        author: fields.text({ label: 'Label penulis' }),
-        topics: fields.text({ label: 'Label topik' }),
+        author: fields.text({ label: 'Label penulis', validation: { isRequired: true } }),
+        topics: fields.text({ label: 'Label topik', validation: { isRequired: true } }),
         body: fields.object(
           {
             enabled: fields.checkbox({ label: 'Tampilkan bagian ini', defaultValue: true }),
@@ -982,7 +989,7 @@ export default config({
         gallery: fields.object(
           {
             enabled: fields.checkbox({ label: 'Tampilkan bagian ini', defaultValue: true }),
-            eyebrow: fields.text({ label: 'Teks kecil di atas judul' }),
+            eyebrow: fields.text({ label: 'Teks kecil di atas judul', validation: { isRequired: true } }),
             title: fields.text({ label: 'Judul bagian', validation: { isRequired: true } }),
           },
           { label: 'Galeri foto', description: 'Foto dibaca dari koleksi News, tidak termasuk foto sampul.' }
@@ -990,23 +997,23 @@ export default config({
         related: fields.object(
           {
             enabled: fields.checkbox({ label: 'Tampilkan bagian ini', defaultValue: true }),
-            eyebrow: fields.text({ label: 'Teks kecil di atas judul' }),
+            eyebrow: fields.text({ label: 'Teks kecil di atas judul', validation: { isRequired: true } }),
             title: fields.text({ label: 'Judul bagian', validation: { isRequired: true } }),
-            intro: fields.text({ label: 'Paragraf pengantar', multiline: true }),
+            intro: fields.text({ label: 'Paragraf pengantar', multiline: true, validation: { isRequired: true } }),
           },
           { label: 'Artikel terkait', description: 'Daftar artikel dibaca dari koleksi News.' }
         ),
         backLink: fields.object(
           {
             enabled: fields.checkbox({ label: 'Tampilkan bagian ini', defaultValue: true }),
-            label: fields.text({ label: 'Label tautan kembali ke daftar' }),
+            label: fields.text({ label: 'Label tautan kembali ke daftar', validation: { isRequired: true } }),
           },
           { label: 'Tautan kembali di akhir halaman', description: 'Tautan diarahkan ke halaman Artikel.' }
         ),
         share: fields.object(
           {
             enabled: fields.checkbox({ label: 'Tampilkan bagian ini', defaultValue: true }),
-            label: fields.text({ label: 'Label tombol bagikan' }),
+            label: fields.text({ label: 'Label tombol bagikan', validation: { isRequired: true } }),
           },
           { label: 'Tombol bagikan', description: 'Tombol di bagian atas halaman.' }
         ),
@@ -1028,13 +1035,14 @@ export default config({
               label: 'Deskripsi meta',
               description: 'Tampil di hasil pencarian.',
               multiline: true,
+              validation: { isRequired: true },
             }),
           },
           { label: 'Meta halaman' }
         ),
         navDots: fields.object(
           {
-            list: fields.text({ label: 'Label titik daftar' }),
+            list: fields.text({ label: 'Label titik daftar', validation: { isRequired: true } }),
           },
           {
             label: 'Navigasi titik bagian',
@@ -1043,14 +1051,14 @@ export default config({
         ),
         hero: fields.object(
           {
-            eyebrow: fields.text({ label: 'Teks kecil di atas judul' }),
+            eyebrow: fields.text({ label: 'Teks kecil di atas judul', validation: { isRequired: true } }),
             lines: fields.array(fields.text({ label: 'Baris judul', validation: { isRequired: true } }), {
               label: 'Judul utama',
               description: 'Satu item per baris, maksimal tiga baris.',
               validation: { length: { min: 1, max: 3 } },
               itemLabel: (props) => props.value,
             }),
-            description: fields.text({ label: 'Deskripsi', multiline: true }),
+            description: fields.text({ label: 'Deskripsi', multiline: true, validation: { isRequired: true } }),
             meta: fields.text({
               label: 'Teks kecil di bawah tombol',
               description: 'Jumlah kegiatan, kategori, dan tahun diisi otomatis. Jangan hapus {events}, {categories}, atau {year}.',
@@ -1060,24 +1068,25 @@ export default config({
               label: 'Teks saat belum ada kegiatan',
               description: 'Tampil menggantikan jumlah kegiatan saat koleksi kosong.',
               multiline: true,
+              validation: { isRequired: true },
             }),
-            primaryLabel: fields.text({ label: 'Label tombol utama' }),
-            secondaryLabel: fields.text({ label: 'Label tautan kedua' }),
+            primaryLabel: fields.text({ label: 'Label tombol utama', validation: { isRequired: true } }),
+            secondaryLabel: fields.text({ label: 'Label tautan kedua', validation: { isRequired: true } }),
           },
           { label: 'Hero' }
         ),
         list: fields.object(
           {
             enabled: fields.checkbox({ label: 'Tampilkan bagian ini', defaultValue: true }),
-            eyebrow: fields.text({ label: 'Teks kecil di atas judul' }),
+            eyebrow: fields.text({ label: 'Teks kecil di atas judul', validation: { isRequired: true } }),
             title: fields.text({ label: 'Judul bagian', validation: { isRequired: true } }),
-            intro: fields.text({ label: 'Paragraf pengantar', multiline: true }),
-            emptyTitle: fields.text({ label: 'Judul saat belum ada kegiatan', multiline: true }),
-            emptyDesc: fields.text({ label: 'Penjelasan saat belum ada kegiatan', multiline: true }),
-            noMatchTitle: fields.text({ label: 'Judul saat pencarian tidak ditemukan', multiline: true }),
-            noMatchDesc: fields.text({ label: 'Penjelasan saat pencarian tidak ditemukan', multiline: true }),
-            searchPlaceholder: fields.text({ label: 'Teks placeholder kolom pencarian' }),
-            contactLabel: fields.text({ label: 'Label tautan hubungi kontak' }),
+            intro: fields.text({ label: 'Paragraf pengantar', multiline: true, validation: { isRequired: true } }),
+            emptyTitle: fields.text({ label: 'Judul saat belum ada kegiatan', multiline: true, validation: { isRequired: true } }),
+            emptyDesc: fields.text({ label: 'Penjelasan saat belum ada kegiatan', multiline: true, validation: { isRequired: true } }),
+            noMatchTitle: fields.text({ label: 'Judul saat pencarian tidak ditemukan', multiline: true, validation: { isRequired: true } }),
+            noMatchDesc: fields.text({ label: 'Penjelasan saat pencarian tidak ditemukan', multiline: true, validation: { isRequired: true } }),
+            searchPlaceholder: fields.text({ label: 'Teks placeholder kolom pencarian', validation: { isRequired: true } }),
+            contactLabel: fields.text({ label: 'Label tautan hubungi kontak', validation: { isRequired: true } }),
           },
           { label: 'Daftar kegiatan', description: 'Entri daftar dibaca dari koleksi Events. Label filter diambil dari Navbar, Footer & Brand.' }
         ),
@@ -1103,6 +1112,7 @@ export default config({
             backLabel: fields.text({
               label: 'Label tautan kembali di bagian atas',
               description: 'Tautan diarahkan ke halaman Kegiatan, di sebelah tombol bagikan.',
+              validation: { isRequired: true },
             }),
           },
           { label: 'Bagian atas kegiatan', description: 'Tanpa tombol tampil/sembunyi; judul, tanggal, ringkasan, dan foto dibaca dari koleksi Events.' }
@@ -1116,12 +1126,13 @@ export default config({
         gallery: fields.object(
           {
             enabled: fields.checkbox({ label: 'Tampilkan bagian ini', defaultValue: true }),
-            eyebrow: fields.text({ label: 'Teks kecil di atas judul' }),
+            eyebrow: fields.text({ label: 'Teks kecil di atas judul', validation: { isRequired: true } }),
             title: fields.text({ label: 'Judul bagian', validation: { isRequired: true } }),
             empty: fields.text({
               label: 'Teks saat dokumentasi kosong',
               description: 'Tampil saat kegiatan tidak memiliki cerita maupun foto dokumentasi.',
               multiline: true,
+              validation: { isRequired: true },
             }),
           },
           { label: 'Galeri dokumentasi', description: 'Foto dibaca dari koleksi Events, tidak termasuk foto sampul.' }
@@ -1129,23 +1140,23 @@ export default config({
         related: fields.object(
           {
             enabled: fields.checkbox({ label: 'Tampilkan bagian ini', defaultValue: true }),
-            eyebrow: fields.text({ label: 'Teks kecil di atas judul' }),
+            eyebrow: fields.text({ label: 'Teks kecil di atas judul', validation: { isRequired: true } }),
             title: fields.text({ label: 'Judul bagian', validation: { isRequired: true } }),
-            intro: fields.text({ label: 'Paragraf pengantar', multiline: true }),
+            intro: fields.text({ label: 'Paragraf pengantar', multiline: true, validation: { isRequired: true } }),
           },
           { label: 'Kegiatan terkait', description: 'Daftar kegiatan dibaca dari koleksi Events.' }
         ),
         backLink: fields.object(
           {
             enabled: fields.checkbox({ label: 'Tampilkan bagian ini', defaultValue: true }),
-            label: fields.text({ label: 'Label tautan kembali ke daftar' }),
+            label: fields.text({ label: 'Label tautan kembali ke daftar', validation: { isRequired: true } }),
           },
           { label: 'Tautan kembali di akhir halaman', description: 'Tautan diarahkan ke halaman Kegiatan.' }
         ),
         share: fields.object(
           {
             enabled: fields.checkbox({ label: 'Tampilkan bagian ini', defaultValue: true }),
-            label: fields.text({ label: 'Label tombol bagikan' }),
+            label: fields.text({ label: 'Label tombol bagikan', validation: { isRequired: true } }),
           },
           { label: 'Tombol bagikan', description: 'Tombol di bagian atas halaman.' }
         ),
@@ -1158,36 +1169,36 @@ export default config({
       schema: {
         nav: fields.object(
           {
-            home: fields.text({ label: 'Menu Beranda' }),
-            about: fields.text({ label: 'Menu Tentang Kami' }),
-            structure: fields.text({ label: 'Menu Struktur' }),
-            courses: fields.text({ label: 'Menu Mata Kuliah' }),
-            event: fields.text({ label: 'Menu Kegiatan' }),
-            news: fields.text({ label: 'Menu Artikel' }),
-            register: fields.text({ label: 'Menu Pendaftaran' }),
-            contact: fields.text({ label: 'Menu Kontak' }),
-            joinUs: fields.text({ label: 'Tombol Gabung EIM' }),
+            home: fields.text({ label: 'Menu Beranda', validation: { isRequired: true } }),
+            about: fields.text({ label: 'Menu Tentang Kami', validation: { isRequired: true } }),
+            structure: fields.text({ label: 'Menu Struktur', validation: { isRequired: true } }),
+            courses: fields.text({ label: 'Menu Mata Kuliah', validation: { isRequired: true } }),
+            event: fields.text({ label: 'Menu Kegiatan', validation: { isRequired: true } }),
+            news: fields.text({ label: 'Menu Artikel', validation: { isRequired: true } }),
+            register: fields.text({ label: 'Menu Pendaftaran', validation: { isRequired: true } }),
+            contact: fields.text({ label: 'Menu Kontak', validation: { isRequired: true } }),
+            joinUs: fields.text({ label: 'Tombol Gabung EIM', validation: { isRequired: true } }),
           },
           { label: 'Menu navigasi' }
         ),
         footer: fields.object(
           {
-            description: fields.text({ label: 'Deskripsi footer', multiline: true }),
+            description: fields.text({ label: 'Deskripsi footer', multiline: true, validation: { isRequired: true } }),
             quickLinks: fields.text({ label: 'Judul tautan cepat', validation: { isRequired: true } }),
             contact: fields.text({ label: 'Judul kontak', validation: { isRequired: true } }),
             resources: fields.text({ label: 'Judul tautan', validation: { isRequired: true } }),
-            assets: fields.text({ label: 'Teks aset brand' }),
-            linkHub: fields.text({ label: 'Teks EIM Link Hub' }),
-            rights: fields.text({ label: 'Teks hak cipta' }),
-            backToTop: fields.text({ label: 'Teks kembali ke atas' }),
+            assets: fields.text({ label: 'Teks aset brand', validation: { isRequired: true } }),
+            linkHub: fields.text({ label: 'Teks EIM Link Hub', validation: { isRequired: true } }),
+            rights: fields.text({ label: 'Teks hak cipta', validation: { isRequired: true } }),
+            backToTop: fields.text({ label: 'Teks kembali ke atas', validation: { isRequired: true } }),
           },
           { label: 'Footer' }
         ),
         cta: fields.object(
           {
             title: fields.text({ label: 'Judul ajakan bergabung', validation: { isRequired: true } }),
-            description: fields.text({ label: 'Deskripsi ajakan bergabung', multiline: true }),
-            contactLabel: fields.text({ label: 'Label tombol kontak' }),
+            description: fields.text({ label: 'Deskripsi ajakan bergabung', multiline: true, validation: { isRequired: true } }),
+            contactLabel: fields.text({ label: 'Label tombol kontak', validation: { isRequired: true } }),
           },
           { label: 'Ajakan bergabung' }
         ),
@@ -1197,34 +1208,36 @@ export default config({
               label: 'Logo horizontal',
               directory: 'public/assets/brand',
               publicPath: '/assets/brand/',
+              validation: { isRequired: true },
             }),
             logoIcon: fields.image({
               label: 'Ikon logo',
               directory: 'public/assets/brand',
               publicPath: '/assets/brand/',
+              validation: { isRequired: true },
             }),
           },
           { label: 'Logo' }
         ),
         labels: fields.object(
           {
-            upcoming: fields.text({ label: 'Label mendatang' }),
-            details: fields.text({ label: 'Label lihat detail' }),
-            statsDosen: fields.text({ label: 'Label statistik dosen' }),
-            statsMembers: fields.text({ label: 'Label statistik anggota' }),
-            statsCourses: fields.text({ label: 'Label statistik mata kuliah' }),
-            organizerFallback: fields.text({ label: 'Label penyelenggara cadangan' }),
-            sectionNav: fields.text({ label: 'Label navigasi bagian halaman' }),
-            coordinator: fields.text({ label: 'Label koordinator mata kuliah' }),
+            upcoming: fields.text({ label: 'Label mendatang', validation: { isRequired: true } }),
+            details: fields.text({ label: 'Label lihat detail', validation: { isRequired: true } }),
+            statsDosen: fields.text({ label: 'Label statistik dosen', validation: { isRequired: true } }),
+            statsMembers: fields.text({ label: 'Label statistik anggota', validation: { isRequired: true } }),
+            statsCourses: fields.text({ label: 'Label statistik mata kuliah', validation: { isRequired: true } }),
+            organizerFallback: fields.text({ label: 'Label penyelenggara cadangan', validation: { isRequired: true } }),
+            sectionNav: fields.text({ label: 'Label navigasi bagian halaman', validation: { isRequired: true } }),
+            coordinator: fields.text({ label: 'Label koordinator mata kuliah', validation: { isRequired: true } }),
             sks: fields.text({ label: 'Label SKS', description: 'Gunakan {n} untuk jumlah SKS.', validation: { isRequired: true } }),
-            practicumYes: fields.text({ label: 'Label dengan praktikum' }),
-            practicumNo: fields.text({ label: 'Label tanpa praktikum' }),
-            featured: fields.text({ label: 'Label artikel utama' }),
-            search: fields.text({ label: 'Label pencarian' }),
-            close: fields.text({ label: 'Label tutup' }),
-            vision: fields.text({ label: 'Label visi', description: 'Dipakai di Beranda dan Tentang Kami.' }),
-            mission: fields.text({ label: 'Label misi', description: 'Dipakai di Beranda dan Tentang Kami.' }),
-            values: fields.text({ label: 'Label nilai-nilai utama', description: 'Dipakai di Beranda dan Tentang Kami.' }),
+            practicumYes: fields.text({ label: 'Label dengan praktikum', validation: { isRequired: true } }),
+            practicumNo: fields.text({ label: 'Label tanpa praktikum', validation: { isRequired: true } }),
+            featured: fields.text({ label: 'Label artikel utama', validation: { isRequired: true } }),
+            search: fields.text({ label: 'Label pencarian', validation: { isRequired: true } }),
+            close: fields.text({ label: 'Label tutup', validation: { isRequired: true } }),
+            vision: fields.text({ label: 'Label visi', description: 'Dipakai di Beranda dan Tentang Kami.', validation: { isRequired: true } }),
+            mission: fields.text({ label: 'Label misi', description: 'Dipakai di Beranda dan Tentang Kami.', validation: { isRequired: true } }),
+            values: fields.text({ label: 'Label nilai-nilai utama', description: 'Dipakai di Beranda dan Tentang Kami.', validation: { isRequired: true } }),
           },
           { label: 'Label umum' }
         ),
@@ -1326,6 +1339,7 @@ export default config({
           label: 'Favicon',
           directory: 'public/image/eim',
           publicPath: '/image/eim/',
+          validation: { isRequired: true },
         }),
         timezone: fields.text({ label: 'Global IANA Timezone (e.g. Asia/Jakarta)', defaultValue: 'Asia/Jakarta' }),
         timezoneOffset: fields.text({ label: 'Global Timezone Offset (e.g. +07:00 for WIB, +08:00 for WITA)', defaultValue: '+07:00' }),
@@ -1454,14 +1468,15 @@ export default config({
         ),
         navDots: fields.object(
           {
-            profile: fields.text({ label: 'Label titik profil' }),
-            stats: fields.text({ label: 'Label titik angka' }),
-            vision: fields.text({ label: 'Label titik visi & misi' }),
+            profile: fields.text({ label: 'Label titik profil', validation: { isRequired: true } }),
+            stats: fields.text({ label: 'Label titik angka', validation: { isRequired: true } }),
+            vision: fields.text({ label: 'Label titik visi & misi', validation: { isRequired: true } }),
             gallery: fields.text({
               label: 'Label titik galeri',
               description: 'Hanya tampil saat galeri berisi foto.',
+              validation: { isRequired: true },
             }),
-            cta: fields.text({ label: 'Label titik gabung' }),
+            cta: fields.text({ label: 'Label titik gabung', validation: { isRequired: true } }),
           },
           {
             label: 'Navigasi titik bagian',
@@ -1472,39 +1487,39 @@ export default config({
           {
             hero: fields.object(
               {
-                eyebrow: fields.text({ label: 'Teks kecil di atas judul' }),
+                eyebrow: fields.text({ label: 'Teks kecil di atas judul', validation: { isRequired: true } }),
                 lines: fields.array(fields.text({ label: 'Baris judul', validation: { isRequired: true } }), {
                   label: 'Judul utama',
                   description: 'Satu item per baris, maksimal tiga baris.',
                   validation: { length: { min: 1, max: 3 } },
                   itemLabel: (props) => props.value,
                 }),
-                description: fields.text({ label: 'Deskripsi', multiline: true }),
+                description: fields.text({ label: 'Deskripsi', multiline: true, validation: { isRequired: true } }),
                 meta: fields.text({ label: 'Teks kecil di bawah tombol', validation: { isRequired: true } }),
-                primaryLabel: fields.text({ label: 'Label tombol utama' }),
-                secondaryLabel: fields.text({ label: 'Label tautan kedua' }),
+                primaryLabel: fields.text({ label: 'Label tombol utama', validation: { isRequired: true } }),
+                secondaryLabel: fields.text({ label: 'Label tautan kedua', validation: { isRequired: true } }),
               },
               { label: 'Hero' }
             ),
             profile: fields.object(
               {
                 enabled: fields.checkbox({ label: 'Tampilkan bagian ini', defaultValue: true }),
-                eyebrow: fields.text({ label: 'Teks kecil di atas ikhtisar' }),
-                factsLabel: fields.text({ label: 'Judul tabel identitas' }),
-                factName: fields.text({ label: 'Label baris nama resmi' }),
-                factFaculty: fields.text({ label: 'Label baris fakultas' }),
-                factFacultyValue: fields.text({ label: 'Isi baris fakultas' }),
-                factProgram: fields.text({ label: 'Label baris program studi' }),
-                factProgramValue: fields.text({ label: 'Isi baris program studi' }),
-                factLocation: fields.text({ label: 'Label baris lokasi' }),
-                factEmail: fields.text({ label: 'Label baris email' }),
+                eyebrow: fields.text({ label: 'Teks kecil di atas ikhtisar', validation: { isRequired: true } }),
+                factsLabel: fields.text({ label: 'Judul tabel identitas', validation: { isRequired: true } }),
+                factName: fields.text({ label: 'Label baris nama resmi', validation: { isRequired: true } }),
+                factFaculty: fields.text({ label: 'Label baris fakultas', validation: { isRequired: true } }),
+                factFacultyValue: fields.text({ label: 'Isi baris fakultas', validation: { isRequired: true } }),
+                factProgram: fields.text({ label: 'Label baris program studi', validation: { isRequired: true } }),
+                factProgramValue: fields.text({ label: 'Isi baris program studi', validation: { isRequired: true } }),
+                factLocation: fields.text({ label: 'Label baris lokasi', validation: { isRequired: true } }),
+                factEmail: fields.text({ label: 'Label baris email', validation: { isRequired: true } }),
               },
               { label: 'Profil', description: 'Nama resmi, lokasi, dan email dibaca dari Site Metadata.' }
             ),
             stats: fields.object(
               {
                 enabled: fields.checkbox({ label: 'Tampilkan bagian ini', defaultValue: true }),
-                label: fields.text({ label: 'Label bagian' }),
+                label: fields.text({ label: 'Label bagian', validation: { isRequired: true } }),
                 membersValue: fields.integer({
                   label: 'Nilai anggota laboratorium (opsional)',
                   description: 'Kosongkan agar dihitung otomatis dari data anggota.',
@@ -1526,14 +1541,14 @@ export default config({
             teamLink: fields.object(
               {
                 enabled: fields.checkbox({ label: 'Tampilkan bagian ini', defaultValue: true }),
-                label: fields.text({ label: 'Label tautan ke struktur' }),
+                label: fields.text({ label: 'Label tautan ke struktur', validation: { isRequired: true } }),
               },
               { label: 'Tautan struktur', description: 'Tautan diarahkan ke halaman Struktur.' }
             ),
             galleryBand: fields.object(
               {
                 enabled: fields.checkbox({ label: 'Tampilkan bagian ini', defaultValue: true }),
-                label: fields.text({ label: 'Label untuk pembaca layar' }),
+                label: fields.text({ label: 'Label untuk pembaca layar', validation: { isRequired: true } }),
               },
               { label: 'Foto studio', description: 'Hanya tampil saat galeri punya foto studio.' }
             ),
@@ -1551,11 +1566,11 @@ export default config({
             gallery: fields.object(
               {
                 enabled: fields.checkbox({ label: 'Tampilkan bagian ini', defaultValue: true }),
-                eyebrow: fields.text({ label: 'Teks kecil di atas judul' }),
+                eyebrow: fields.text({ label: 'Teks kecil di atas judul', validation: { isRequired: true } }),
                 title: fields.text({ label: 'Judul bagian', validation: { isRequired: true } }),
-                intro: fields.text({ label: 'Paragraf pengantar', multiline: true }),
-                showAll: fields.text({ label: 'Label tombol lihat semua foto' }),
-                hideAll: fields.text({ label: 'Label tombol sembunyikan foto' }),
+                intro: fields.text({ label: 'Paragraf pengantar', multiline: true, validation: { isRequired: true } }),
+                showAll: fields.text({ label: 'Label tombol lihat semua foto', validation: { isRequired: true } }),
+                hideAll: fields.text({ label: 'Label tombol sembunyikan foto', validation: { isRequired: true } }),
               },
               { label: 'Galeri' }
             ),
@@ -1568,12 +1583,16 @@ export default config({
           },
           { label: 'Bagian halaman' }
         ),
-        description: fields.text({ label: 'Deskripsi meta halaman', multiline: true }),
+        description: fields.text({ label: 'Deskripsi meta halaman', multiline: true, validation: { isRequired: true } }),
         overviewTitle: fields.text({ label: 'Judul ikhtisar', validation: { isRequired: true } }),
-        overviewContent1: fields.text({ label: 'Paragraf ikhtisar pertama', multiline: true }),
-        overviewContent2: fields.text({ label: 'Paragraf ikhtisar kedua', multiline: true }),
-        overviewImage: fields.text({ label: 'Gambar ikhtisar', description: 'Belum dipakai halaman mana pun.' }),
-        vision: fields.text({ label: 'Pernyataan visi', multiline: true }),
+        overviewContent1: fields.text({ label: 'Paragraf ikhtisar pertama', multiline: true, validation: { isRequired: true } }),
+        overviewContent2: fields.text({ label: 'Paragraf ikhtisar kedua', multiline: true, validation: { isRequired: true } }),
+        overviewImage: fields.text({
+          label: 'Gambar ikhtisar',
+          description: 'Belum dipakai halaman mana pun.',
+          validation: { isRequired: true },
+        }),
+        vision: fields.text({ label: 'Pernyataan visi', multiline: true, validation: { isRequired: true } }),
         missions: fields.array(fields.text({ label: 'Poin misi' }), {
           label: 'Misi',
           itemLabel: (props) => props.value,
@@ -1649,13 +1668,19 @@ export default config({
               description: 'Tampil di tab browser dan hasil pencarian.',
               validation: { isRequired: true },
             }),
+            description: fields.text({
+              label: 'Deskripsi meta',
+              description: 'Tampil di hasil pencarian. Gunakan {location} dan {university} agar diisi otomatis dari Site Metadata.',
+              multiline: true,
+              validation: { isRequired: true },
+            }),
           },
           { label: 'Meta halaman' }
         ),
         navDots: fields.object(
           {
-            detail: fields.text({ label: 'Label titik detail' }),
-            social: fields.text({ label: 'Label titik sosial' }),
+            detail: fields.text({ label: 'Label titik detail', validation: { isRequired: true } }),
+            social: fields.text({ label: 'Label titik sosial', validation: { isRequired: true } }),
           },
           {
             label: 'Navigasi titik bagian',
@@ -1667,27 +1692,28 @@ export default config({
             eyebrow: fields.text({
               label: 'Teks kecil di atas judul',
               description: 'Sekaligus label titik navigasi bagian teratas.',
+              validation: { isRequired: true },
             }),
-            primaryLabel: fields.text({ label: 'Label tombol utama' }),
-            secondaryLabel: fields.text({ label: 'Label tautan kedua' }),
+            primaryLabel: fields.text({ label: 'Label tombol utama', validation: { isRequired: true } }),
+            secondaryLabel: fields.text({ label: 'Label tautan kedua', validation: { isRequired: true } }),
           },
           { label: 'Hero', description: 'Tanpa tombol tampil/sembunyi; judul dan deskripsi hero ada di bagian bawah.' }
         ),
         details: fields.object(
           {
             enabled: fields.checkbox({ label: 'Tampilkan bagian ini', defaultValue: true }),
-            eyebrow: fields.text({ label: 'Teks kecil di atas judul' }),
+            eyebrow: fields.text({ label: 'Teks kecil di atas judul', validation: { isRequired: true } }),
             title: fields.text({ label: 'Judul bagian', validation: { isRequired: true } }),
-            intro: fields.text({ label: 'Paragraf pengantar', multiline: true }),
-            emailAction: fields.text({ label: 'Label tautan kirim email' }),
-            copyEmail: fields.text({ label: 'Label tombol salin email' }),
-            copied: fields.text({ label: 'Teks tombol setelah tersalin' }),
-            copyFailed: fields.text({ label: 'Teks tombol saat gagal menyalin' }),
-            copySuccessStatus: fields.text({ label: 'Status pembaca layar saat tersalin' }),
-            copyFailedStatus: fields.text({ label: 'Status pembaca layar saat gagal' }),
-            routingNote: fields.text({ label: 'Catatan perutean kontak', multiline: true }),
+            intro: fields.text({ label: 'Paragraf pengantar', multiline: true, validation: { isRequired: true } }),
+            emailAction: fields.text({ label: 'Label tautan kirim email', validation: { isRequired: true } }),
+            copyEmail: fields.text({ label: 'Label tombol salin email', validation: { isRequired: true } }),
+            copied: fields.text({ label: 'Teks tombol setelah tersalin', validation: { isRequired: true } }),
+            copyFailed: fields.text({ label: 'Teks tombol saat gagal menyalin', validation: { isRequired: true } }),
+            copySuccessStatus: fields.text({ label: 'Status pembaca layar saat tersalin', validation: { isRequired: true } }),
+            copyFailedStatus: fields.text({ label: 'Status pembaca layar saat gagal', validation: { isRequired: true } }),
+            routingNote: fields.text({ label: 'Catatan perutean kontak', multiline: true, validation: { isRequired: true } }),
             picsTitle: fields.text({ label: 'Judul kartu PIC', validation: { isRequired: true } }),
-            picsSubtitle: fields.text({ label: 'Penjelasan kartu PIC', multiline: true }),
+            picsSubtitle: fields.text({ label: 'Penjelasan kartu PIC', multiline: true, validation: { isRequired: true } }),
           },
           {
             label: 'Detail kontak',
@@ -1698,29 +1724,33 @@ export default config({
           {
             enabled: fields.checkbox({ label: 'Tampilkan bagian ini', defaultValue: true }),
             title: fields.text({ label: 'Judul bagian', validation: { isRequired: true } }),
-            subtitle: fields.text({ label: 'Penjelasan singkat', multiline: true }),
-            navDot: fields.text({ label: 'Label titik navigasi bagian ini' }),
+            subtitle: fields.text({ label: 'Penjelasan singkat', multiline: true, validation: { isRequired: true } }),
+            navDot: fields.text({ label: 'Label titik navigasi bagian ini', validation: { isRequired: true } }),
           },
           { label: 'Peta lokasi', description: 'Peta dibaca dari tautan sematan Google Maps di bawah.' }
         ),
         socials: fields.object(
           {
             enabled: fields.checkbox({ label: 'Tampilkan bagian ini', defaultValue: true }),
-            eyebrow: fields.text({ label: 'Teks kecil di atas judul' }),
+            eyebrow: fields.text({ label: 'Teks kecil di atas judul', validation: { isRequired: true } }),
             title: fields.text({ label: 'Judul bagian', validation: { isRequired: true } }),
-            intro: fields.text({ label: 'Paragraf pengantar', multiline: true }),
+            intro: fields.text({ label: 'Paragraf pengantar', multiline: true, validation: { isRequired: true } }),
           },
           { label: 'Media sosial', description: 'Daftar akun dibaca dari singleton Navbar, Footer & Brand.' }
         ),
         title: fields.text({ label: 'Judul utama hero', validation: { isRequired: true } }),
-        heroDescription: fields.text({ label: 'Deskripsi hero', multiline: true }),
-        locationTitle: fields.text({ label: 'Judul kartu lokasi' }),
-        mapsUrl: fields.text({ label: 'Tautan eksternal Google Maps' }),
-        mapsEmbedUrl: fields.text({ label: 'Tautan sematan iframe Google Maps' }),
-        emailTitle: fields.text({ label: 'Judul kartu email' }),
-        hoursTitle: fields.text({ label: 'Judul kartu jam operasional' }),
-        hoursText: fields.text({ label: 'Teks jam operasional' }),
-        hoursSubtext: fields.text({ label: 'Teks tambahan jam operasional', multiline: true }),
+        heroDescription: fields.text({ label: 'Deskripsi hero', multiline: true, validation: { isRequired: true } }),
+        locationTitle: fields.text({ label: 'Judul kartu lokasi', validation: { isRequired: true } }),
+        mapsUrl: fields.text({ label: 'Tautan eksternal Google Maps', validation: { isRequired: true } }),
+        mapsEmbedUrl: fields.text({
+          label: 'Tautan sematan iframe Google Maps',
+          description: 'Harus diawali https://www.google.com/maps/embed? atau https://maps.google.com/maps/embed?.',
+          validation: { isRequired: true },
+        }),
+        emailTitle: fields.text({ label: 'Judul kartu email', validation: { isRequired: true } }),
+        hoursTitle: fields.text({ label: 'Judul kartu jam operasional', validation: { isRequired: true } }),
+        hoursText: fields.text({ label: 'Teks jam operasional', validation: { isRequired: true } }),
+        hoursSubtext: fields.text({ label: 'Teks tambahan jam operasional', multiline: true, validation: { isRequired: true } }),
         contactPersons: contactPersonsField,
       },
     }),
@@ -1749,9 +1779,22 @@ export default config({
           defaultValue: 'recruitment',
         }),
         icon: fields.text({ label: 'FontAwesome Icon Class (e.g. fa-solid fa-bullhorn)', defaultValue: 'fa-solid fa-bullhorn' }),
-        badgeText: fields.text({ label: 'Badge Tag Text (e.g., PENGUMUMAN, MAINTENANCE)', defaultValue: 'REKRUTMEN' }),
-        message: fields.text({ label: 'Announcement Message Text', multiline: true, defaultValue: 'Pendaftaran Asisten EIM Lab sedang berlangsung!' }),
-        ctaText: fields.text({ label: 'Call-To-Action Button Text (Optional)', defaultValue: 'Daftar Sekarang' }),
+        badgeText: fields.text({
+          label: 'Badge Tag Text (Manual Mode Only)',
+          description: 'Hanya dipakai saat Announcement Mode = Manual. Mode auto memakai badge dari tahap rekrutmen aktif di Registration Settings.',
+          defaultValue: 'REKRUTMEN',
+        }),
+        message: fields.text({
+          label: 'Announcement Message Text (Manual Mode Only)',
+          description: 'Hanya dipakai saat Announcement Mode = Manual. Mode auto memakai pesan dari tahap rekrutmen aktif di Registration Settings.',
+          multiline: true,
+          defaultValue: 'Pendaftaran Asisten EIM Lab sedang berlangsung!',
+        }),
+        ctaText: fields.text({
+          label: 'Call-To-Action Button Text (Manual Mode Only)',
+          description: 'Hanya dipakai saat Announcement Mode = Manual. Mode auto memakai label tombol dari tahap rekrutmen aktif di Registration Settings.',
+          defaultValue: 'Daftar Sekarang',
+        }),
         ctaLink: fields.text({ label: 'Call-To-Action Destination URL (Optional)', defaultValue: '/registration' }),
         dismissible: fields.checkbox({ label: 'Allow Visitors to Close / Dismiss Banner', defaultValue: true }),
         id: fields.text({ label: 'Announcement Version ID (Change this to reset dismissal state for visitors)', defaultValue: 'announcement-2026-v1' }),

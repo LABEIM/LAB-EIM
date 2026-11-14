@@ -1,6 +1,7 @@
 {
   "meta": {
-    "title": "Hubungi Kami · EIM Lab"
+    "title": "Hubungi Kami · EIM Lab",
+    "description": "{location}, {university}, dan saluran komunikasi Laboratorium Enterprise Infrastructure Management (EIM) Telkom University."
   },
   "navDots": {
     "detail": "Detail",

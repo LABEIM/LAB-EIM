@@ -35,8 +35,10 @@ const latestYear =
     .sort((a, b) => b.localeCompare(a))[0] ?? null;
 
 // The hero dot has no toggle of its own; the list dot reads the same flag as the section.
+// The eyebrow doubles as the hero dot label, so it falls back to the page title.
+const eyebrow = page.hero.eyebrow || page.meta.title;
 const sectionItems = [
-  { id: 'kegiatan', label: page.hero.eyebrow },
+  { id: 'kegiatan', label: eyebrow },
   ...(sectionOn(page.list) ? [{ id: 'daftar', label: page.navDots.list }] : []),
 ];
 ---

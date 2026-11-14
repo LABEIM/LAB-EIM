@@ -10,12 +10,15 @@ interface Props {
   events: CollectionEntry<'events'>[];
   locale: Locale;
   content: HomePageData['events'];
+  fallbackLabel: string;
 }
 
-const { events = [], locale, content } = Astro.props;
+const { events = [], locale, content, fallbackLabel } = Astro.props;
 
 const items = events.slice(0, 2);
 const eventsIndexHref = getLocalizedPath('/event', locale);
+// The link label is the only visible text in the anchor, so it must never be empty.
+const viewAllLabel = content.viewAll || fallbackLabel;
 ---
 
 <section id="kegiatan" class="py-[clamp(4.5rem,10vh,8.75rem)]" aria-labelledby="eim-events-title">
@@ -33,7 +36,7 @@ const eventsIndexHref = getLocalizedPath('/event', locale);
         </p>
         {items.length > 0 && (
           <a href={eventsIndexHref} class="mt-4 inline-flex items-center gap-2 font-mono text-xs uppercase tracking-[0.08em]">
-            <span class="text-brand">{content.viewAll}</span>
+            <span class="text-brand">{viewAllLabel}</span>
             <span class="text-brand" aria-hidden="true">→</span>
           </a>
         )}
@@ -89,7 +92,7 @@ const eventsIndexHref = getLocalizedPath('/event', locale);
           {content.empty}
         </p>
         <a href={eventsIndexHref} class="mt-5 inline-flex items-center gap-2 font-mono text-xs uppercase tracking-[0.08em]">
-          <span class="text-brand">{content.viewAll}</span>
+          <span class="text-brand">{viewAllLabel}</span>
           <span class="text-brand" aria-hidden="true">→</span>
         </a>
       </div>

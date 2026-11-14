@@ -1,4 +1,43 @@
 {
+  "meta": {
+    "title": "Hubungi Kami · EIM Lab"
+  },
+  "navDots": {
+    "detail": "Detail",
+    "social": "Sosial"
+  },
+  "hero": {
+    "eyebrow": "Kontak",
+    "primaryLabel": "Detail kontak",
+    "secondaryLabel": "Daftar asisten"
+  },
+  "details": {
+    "enabled": true,
+    "eyebrow": "Detail kontak",
+    "title": "Kanal komunikasi.",
+    "intro": "Pertanyaan riset, kolaborasi, kunjungan, atau informasi rekrutmen — mulai dari salah satu kanal berikut.",
+    "emailAction": "Kirim email",
+    "copyEmail": "Salin email",
+    "copied": "Tersalin!",
+    "copyFailed": "Gagal menyalin",
+    "copySuccessStatus": "Email disalin ke papan klip.",
+    "copyFailedStatus": "Email gagal disalin.",
+    "routingNote": "Rekrutmen, riset, kolaborasi, dan dokumen administrasi → email.",
+    "picsTitle": "Hubungi PIC kami.",
+    "picsSubtitle": "Pilih PIC sesuai kebutuhan: rekrutmen dan kegiatan, atau riset dan kolaborasi."
+  },
+  "map": {
+    "enabled": true,
+    "title": "Peta Lokasi Laboratorium",
+    "subtitle": "Temukan lokasi Gedung Telkom University Landmark Tower (TULT) di kampus Telkom University Bandung.",
+    "navDot": "Lokasi"
+  },
+  "socials": {
+    "enabled": true,
+    "eyebrow": "Media sosial",
+    "title": "Ikuti kami.",
+    "intro": "Perkembangan kegiatan riset, pelatihan, dan pengumuman rekrutmen terbaru di media sosial EIM."
+  },
   "title": "Hubungi Kami",
   "heroDescription": "Laboratorium Enterprise Infrastructure Management Telkom University siap melayani pertanyaan, kolaborasi riset, dan informasi kegiatan.",
   "locationTitle": "Lokasi Laboratorium",
@@ -11,7 +50,5 @@
   "hoursTitle": "Jam Operasional Lab",
   "hoursText": "Senin - Jumat: 08.00 - 17.00 WIB",
   "hoursSubtext": "Kunjungan offline dapat disesuaikan dengan janji perizinan atau jadwal kegiatan laboratorium.",
-  "mapSectionTitle": "Peta Lokasi Laboratorium",
-  "mapSectionSubtitle": "Temukan lokasi Gedung Telkom University Landmark Tower (TULT) di kampus Telkom University Bandung.",
   "contactPersons": []
 }

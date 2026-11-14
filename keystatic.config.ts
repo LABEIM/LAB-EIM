@@ -1501,24 +1501,92 @@ export default config({
       schema: recruitmentResultsSchema,
     }),
     contact: singleton({
-      label: 'Contact Page',
+      label: 'Kontak',
       path: 'src/data/contact',
       format: { data: 'json' },
       schema: {
-        title: fields.text({ label: 'Page Title' }),
-        heroDescription: fields.text({ label: 'Hero Description', multiline: true }),
-        locationTitle: fields.text({ label: 'Location Card Title' }),
-        location: fields.text({ label: 'Room / Location' }),
-        university: fields.text({ label: 'University / Campus' }),
-        mapsUrl: fields.text({ label: 'External Google Maps Link' }),
-        mapsEmbedUrl: fields.text({ label: 'Google Maps Embed iframe URL' }),
-        emailTitle: fields.text({ label: 'Email Card Title' }),
-        email: fields.text({ label: 'Official Email Address' }),
-        hoursTitle: fields.text({ label: 'Working Hours Card Title' }),
-        hoursText: fields.text({ label: 'Working Hours Text' }),
-        hoursSubtext: fields.text({ label: 'Working Hours Subtext', multiline: true }),
-        mapSectionTitle: fields.text({ label: 'Map Section Title' }),
-        mapSectionSubtitle: fields.text({ label: 'Map Section Subtitle', multiline: true }),
+        meta: fields.object(
+          {
+            title: fields.text({
+              label: 'Judul halaman',
+              description: 'Tampil di tab browser dan hasil pencarian.',
+              validation: { isRequired: true },
+            }),
+          },
+          { label: 'Meta halaman' }
+        ),
+        navDots: fields.object(
+          {
+            detail: fields.text({ label: 'Label titik detail' }),
+            social: fields.text({ label: 'Label titik sosial' }),
+          },
+          {
+            label: 'Navigasi titik bagian',
+            description: 'Titik navigasi di tepi halaman. Titik ikut hilang saat bagiannya dimatikan.',
+          }
+        ),
+        hero: fields.object(
+          {
+            eyebrow: fields.text({
+              label: 'Teks kecil di atas judul',
+              description: 'Sekaligus label titik navigasi bagian teratas.',
+            }),
+            primaryLabel: fields.text({ label: 'Label tombol utama' }),
+            secondaryLabel: fields.text({ label: 'Label tautan kedua' }),
+          },
+          { label: 'Hero', description: 'Tanpa tombol tampil/sembunyi; judul dan deskripsi hero ada di bagian bawah.' }
+        ),
+        details: fields.object(
+          {
+            enabled: fields.checkbox({ label: 'Tampilkan bagian ini', defaultValue: true }),
+            eyebrow: fields.text({ label: 'Teks kecil di atas judul' }),
+            title: fields.text({ label: 'Judul bagian' }),
+            intro: fields.text({ label: 'Paragraf pengantar', multiline: true }),
+            emailAction: fields.text({ label: 'Label tautan kirim email' }),
+            copyEmail: fields.text({ label: 'Label tombol salin email' }),
+            copied: fields.text({ label: 'Teks tombol setelah tersalin' }),
+            copyFailed: fields.text({ label: 'Teks tombol saat gagal menyalin' }),
+            copySuccessStatus: fields.text({ label: 'Status pembaca layar saat tersalin' }),
+            copyFailedStatus: fields.text({ label: 'Status pembaca layar saat gagal' }),
+            routingNote: fields.text({ label: 'Catatan perutean kontak', multiline: true }),
+            picsTitle: fields.text({ label: 'Judul kartu PIC' }),
+            picsSubtitle: fields.text({ label: 'Penjelasan kartu PIC', multiline: true }),
+          },
+          {
+            label: 'Detail kontak',
+            description: 'Kartu lokasi, email, dan jam operasional dari kolom di bawah; daftar PIC dari kolom PIC.',
+          }
+        ),
+        map: fields.object(
+          {
+            enabled: fields.checkbox({ label: 'Tampilkan bagian ini', defaultValue: true }),
+            title: fields.text({ label: 'Judul bagian' }),
+            subtitle: fields.text({ label: 'Penjelasan singkat', multiline: true }),
+            navDot: fields.text({ label: 'Label titik navigasi bagian ini' }),
+          },
+          { label: 'Peta lokasi', description: 'Peta dibaca dari tautan sematan Google Maps di bawah.' }
+        ),
+        socials: fields.object(
+          {
+            enabled: fields.checkbox({ label: 'Tampilkan bagian ini', defaultValue: true }),
+            eyebrow: fields.text({ label: 'Teks kecil di atas judul' }),
+            title: fields.text({ label: 'Judul bagian' }),
+            intro: fields.text({ label: 'Paragraf pengantar', multiline: true }),
+          },
+          { label: 'Media sosial', description: 'Daftar akun dibaca dari singleton Navbar, Footer & Brand.' }
+        ),
+        title: fields.text({ label: 'Judul utama hero' }),
+        heroDescription: fields.text({ label: 'Deskripsi hero', multiline: true }),
+        locationTitle: fields.text({ label: 'Judul kartu lokasi' }),
+        location: fields.text({ label: 'Ruang / lokasi' }),
+        university: fields.text({ label: 'Universitas / kampus' }),
+        mapsUrl: fields.text({ label: 'Tautan eksternal Google Maps' }),
+        mapsEmbedUrl: fields.text({ label: 'Tautan sematan iframe Google Maps' }),
+        emailTitle: fields.text({ label: 'Judul kartu email' }),
+        email: fields.text({ label: 'Alamat email resmi' }),
+        hoursTitle: fields.text({ label: 'Judul kartu jam operasional' }),
+        hoursText: fields.text({ label: 'Teks jam operasional' }),
+        hoursSubtext: fields.text({ label: 'Teks tambahan jam operasional', multiline: true }),
         contactPersons: contactPersonsField,
       },
     }),

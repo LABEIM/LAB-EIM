@@ -2,7 +2,7 @@ import { existsSync, readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { sectionOn } from '../utils/page-content';
-import type { AboutData, ChromeData, CourseDetailPageData, CoursesPageData, EventDetailPageData, EventsPageData, HomePageData, NewsDetailPageData, NewsPageData, StructurePageData } from '../utils/types';
+import type { AboutData, ChromeData, ContactData, CourseDetailPageData, CoursesPageData, EventDetailPageData, EventsPageData, HomePageData, NewsDetailPageData, NewsPageData, StructurePageData } from '../utils/types';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '../..');
 const dataDir = join(root, 'src/data');
@@ -521,6 +521,85 @@ assert(
   typeof eventDetail.share?.label === 'string' && eventDetail.share.label.trim().length > 0,
   'eventDetail.share.label is a non-empty string'
 );
+
+console.log('\n1️⃣3️⃣ Testing contact.json:');
+const contactPath = join(dataDir, 'contact.json');
+const contactExists = existsSync(contactPath);
+assert(contactExists, 'contact.json exists');
+const contactPage = (contactExists ? JSON.parse(readFileSync(contactPath, 'utf8')) : {}) as Partial<ContactData>;
+
+for (const key of ['meta', 'navDots', 'hero', 'details', 'map', 'socials'] as const) {
+  const section = contactPage[key];
+  assert(Boolean(section) && typeof section === 'object', `contact.${key} exists`);
+}
+
+for (const key of ['details', 'map', 'socials'] as const) {
+  assert(typeof contactPage[key]?.enabled === 'boolean', `contact.${key}.enabled is a boolean`);
+}
+assert(Boolean(contactPage.hero) && !('enabled' in (contactPage.hero as object)), 'contact.hero has no enabled toggle');
+
+const contactHero = contactPage.hero;
+for (const key of ['eyebrow', 'primaryLabel', 'secondaryLabel'] as const) {
+  const value = contactHero?.[key];
+  assert(typeof value === 'string' && value.trim().length > 0, `contact.hero.${key} is a non-empty string`);
+}
+
+const contactDetails = contactPage.details;
+for (const key of [
+  'eyebrow',
+  'title',
+  'intro',
+  'emailAction',
+  'copyEmail',
+  'copied',
+  'copyFailed',
+  'copySuccessStatus',
+  'copyFailedStatus',
+  'routingNote',
+  'picsTitle',
+  'picsSubtitle',
+] as const) {
+  const value = contactDetails?.[key];
+  assert(typeof value === 'string' && value.trim().length > 0, `contact.details.${key} is a non-empty string`);
+}
+
+const contactMap = contactPage.map;
+for (const key of ['title', 'subtitle', 'navDot'] as const) {
+  const value = contactMap?.[key];
+  assert(typeof value === 'string' && value.trim().length > 0, `contact.map.${key} is a non-empty string`);
+}
+
+const contactSocials = contactPage.socials;
+for (const key of ['eyebrow', 'title', 'intro'] as const) {
+  const value = contactSocials?.[key];
+  assert(typeof value === 'string' && value.trim().length > 0, `contact.socials.${key} is a non-empty string`);
+}
+
+for (const key of ['detail', 'social'] as const) {
+  const value = contactPage.navDots?.[key];
+  assert(typeof value === 'string' && value.trim().length > 0, `contact.navDots.${key} is a non-empty string`);
+}
+assert(Boolean(contactPage.meta?.title?.trim()), 'contact.meta.title is a non-empty string');
+
+// Card copy, maps, and the PIC list keep their legacy top-level homes.
+for (const key of [
+  'title',
+  'heroDescription',
+  'locationTitle',
+  'location',
+  'university',
+  'mapsUrl',
+  'mapsEmbedUrl',
+  'emailTitle',
+  'email',
+  'hoursTitle',
+  'hoursText',
+  'hoursSubtext',
+] as const) {
+  const value = contactPage[key];
+  assert(typeof value === 'string' && value.trim().length > 0, `contact.${key} is a non-empty string`);
+}
+assert(Array.isArray(contactPage.contactPersons), 'contact.contactPersons is an array');
 
 console.log(`\n${passed} passed, ${failed} failed`);
 if (failed > 0) process.exitCode = 1;

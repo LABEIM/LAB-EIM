@@ -145,30 +145,6 @@ export const uiTranslations: Record<Locale, Record<string, string>> = {
 
     // News Page
     'news.featured': 'Artikel utama',
-
-    // Contact Page
-    'contact.heroEyebrow': 'Kontak',
-    'contact.heroPrimary': 'Detail kontak',
-    'contact.heroSecondary': 'Daftar asisten',
-    'contact.sectionNavLabel': 'Navigasi bagian halaman',
-    'contact.navDotDetail': 'Detail',
-    'contact.navDotMap': 'Lokasi',
-    'contact.navDotSocial': 'Sosial',
-    'contact.detailsEyebrow': 'Detail kontak',
-    'contact.detailsTitle': 'Kanal komunikasi.',
-    'contact.detailsIntro': 'Pertanyaan riset, kolaborasi, kunjungan, atau informasi rekrutmen — mulai dari salah satu kanal berikut.',
-    'contact.emailAction': 'Kirim email',
-    'contact.socialsEyebrow': 'Media sosial',
-    'contact.socialsTitle': 'Ikuti kami.',
-    'contact.socialsIntro': 'Perkembangan kegiatan riset, pelatihan, dan pengumuman rekrutmen terbaru di media sosial EIM.',
-    'contact.routingNote': 'Rekrutmen, riset, kolaborasi, dan dokumen administrasi → email.',
-    'contact.copyEmail': 'Salin email',
-    'contact.copied': 'Tersalin!',
-    'contact.copyFailed': 'Gagal menyalin',
-    'contact.copySuccessStatus': 'Email disalin ke papan klip.',
-    'contact.copyFailedStatus': 'Email gagal disalin.',
-    'contact.picsTitle': 'Hubungi PIC kami.',
-    'contact.picsSubtitle': 'Pilih PIC sesuai kebutuhan: rekrutmen dan kegiatan, atau riset dan kolaborasi.',
   },
 };
 

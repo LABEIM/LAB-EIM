@@ -676,6 +676,61 @@ export interface EventDetailPageData {
   };
 }
 
+export interface ContactData {
+  meta: {
+    title: string;
+  };
+  navDots: {
+    detail: string;
+    social: string;
+  };
+  hero: {
+    eyebrow: string;
+    primaryLabel: string;
+    secondaryLabel: string;
+  };
+  details: {
+    enabled: boolean;
+    eyebrow: string;
+    title: string;
+    intro: string;
+    emailAction: string;
+    copyEmail: string;
+    copied: string;
+    copyFailed: string;
+    copySuccessStatus: string;
+    copyFailedStatus: string;
+    routingNote: string;
+    picsTitle: string;
+    picsSubtitle: string;
+  };
+  map: {
+    enabled: boolean;
+    title: string;
+    subtitle: string;
+    navDot: string;
+  };
+  socials: {
+    enabled: boolean;
+    eyebrow: string;
+    title: string;
+    intro: string;
+  };
+  title: string;
+  heroDescription: string;
+  locationTitle: string;
+  location: string;
+  university: string;
+  mapsUrl: string;
+  mapsEmbedUrl: string;
+  emailTitle: string;
+  email: string;
+  hoursTitle: string;
+  hoursText: string;
+  hoursSubtext: string;
+  contactPersons: ContactPerson[];
+}
+
 export interface AboutData {
   title: string;
   description: string;

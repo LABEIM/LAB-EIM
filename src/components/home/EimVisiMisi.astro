@@ -3,10 +3,11 @@ import type { AboutData } from '../../utils/types';
 import { t } from '../../utils/i18n';
 
 interface Props {
+  content: { title: string };
   about: AboutData;
 }
 
-const { about } = Astro.props;
+const { content, about } = Astro.props;
 ---
 
 <section id="visi-misi" class="py-[clamp(4.5rem,10vh,8.75rem)]" aria-labelledby="eim-vm-title">
@@ -15,7 +16,7 @@ const { about } = Astro.props;
       id="eim-vm-title"
       class="e-reveal font-display text-[clamp(2rem,4vw,3.5rem)] leading-[1.05] tracking-[-0.01em]"
     >
-      {t('home.vmTitle')}
+      {content.title}
     </h2>
 
     <div

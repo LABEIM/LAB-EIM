@@ -386,6 +386,74 @@ export interface ChromeData {
   };
 }
 
+export interface HomePageData {
+  meta: {
+    title: string;
+    description: string;
+  };
+  navDots: {
+    reveal: string;
+    focus: string;
+    vision: string;
+    courses: string;
+    events: string;
+    articles: string;
+    sectionLabel: string;
+  };
+  hero: {
+    kicker: string;
+    lines: string[];
+    description: string;
+    primaryLabel: string;
+    secondaryLabel: string;
+  };
+  reveal: {
+    enabled: boolean;
+    caption: string;
+    pending: string;
+    pendingCta: string;
+  };
+  focus: {
+    enabled: boolean;
+    title: string;
+    intro: string;
+    rows: { title: string; description: string }[];
+  };
+  visiMisi: {
+    enabled: boolean;
+    title: string;
+  };
+  numbers: {
+    enabled: boolean;
+    label: string;
+    stats: { label: string; manualValue?: number | null }[];
+  };
+  courses: {
+    enabled: boolean;
+    eyebrow: string;
+    title: string;
+    intro: string;
+    link: string;
+  };
+  events: {
+    enabled: boolean;
+    title: string;
+    intro: string;
+    empty: string;
+    viewAll: string;
+  };
+  news: {
+    enabled: boolean;
+    title: string;
+    intro: string;
+    empty: string;
+    viewAll: string;
+  };
+  cta: {
+    enabled: boolean;
+  };
+}
+
 export interface AboutData {
   title: string;
   description: string;

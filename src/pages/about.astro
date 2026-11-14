@@ -49,7 +49,7 @@ const sectionItems = [
     <AboutProfile about={aboutData} site={siteData} />
     <EimLabNumbers
       id="angka"
-      label={t('about.statsLabel', locale)}
+      content={{ label: t('about.statsLabel', locale) }}
       stats={[
         { label: t('stats.members', locale), value: members.length },
         { label: t('stats.courses', locale), value: courses.length },
@@ -72,7 +72,7 @@ const sectionItems = [
         label={t('about.studioLabel', locale)}
       />
     )}
-    <EimVisiMisi about={aboutData} />
+    <EimVisiMisi content={{ title: t('home.vmTitle', locale) }} about={aboutData} />
     <AboutGallery photos={gallery.photos ?? []} />
     <EimCTA content={chrome.cta} contact={siteData.contact} stage={recruitmentStage} />
   </main>

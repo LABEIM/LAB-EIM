@@ -1,7 +1,7 @@
 ---
 import { Image } from 'astro:assets';
 import emblem from '../../../public/assets/brand/eim-emblem.png';
-import { t } from '../../utils/i18n';
+import type { HomePageData } from '../../utils/types';
 
 /**
  * Asset swap point — the only thing to edit when the intro media arrives.
@@ -12,10 +12,14 @@ import { t } from '../../utils/i18n';
  *
  * Set those values and change nothing else in this file.
  */
-const MEDIA: { kind: 'pending' | 'image' | 'video'; src: string; poster?: string; caption: string; alt: string } = {
+interface Props {
+  content: HomePageData['reveal'];
+}
+
+const { content } = Astro.props;
+const MEDIA: { kind: 'pending' | 'image' | 'video'; src: string; poster?: string; alt: string } = {
   kind: 'pending',
   src: '',
-  caption: t('home.revealCaption'),
   alt: '',
 };
 ---
@@ -58,14 +62,14 @@ const MEDIA: { kind: 'pending' | 'image' | 'video'; src: string; poster?: string
           loading="lazy"
           decoding="async"
         />
-        <p class="e-reveal-stage-note">{t('home.revealPending')}</p>
+        <p class="e-reveal-stage-note">{content.pending}</p>
         <a class="e-reveal-stage-link" href="/about">
-          {t('home.revealPendingCta')} <span aria-hidden="true">→</span>
+          {content.pendingCta} <span aria-hidden="true">→</span>
         </a>
       </div>
     )}
 
-    <figcaption class="e-reveal-stage-caption">{MEDIA.caption}</figcaption>
+    <figcaption class="e-reveal-stage-caption">{content.caption}</figcaption>
   </figure>
 </section>
 

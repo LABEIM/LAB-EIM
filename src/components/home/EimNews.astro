@@ -2,15 +2,17 @@
 import { Image } from 'astro:assets';
 import type { CollectionEntry } from 'astro:content';
 import type { Locale } from '../../utils/i18n';
-import { getCleanSlug, getLocalizedPath, t } from '../../utils/i18n';
+import type { HomePageData } from '../../utils/types';
+import { getCleanSlug, getLocalizedPath } from '../../utils/i18n';
 import { formatGlobalDate } from '../../utils/date';
 
 interface Props {
   news: CollectionEntry<'news'>[];
   locale: Locale;
+  content: HomePageData['news'];
 }
 
-const { news = [], locale } = Astro.props;
+const { news = [], locale, content } = Astro.props;
 
 const featured: CollectionEntry<'news'> | undefined = news[0];
 const secondary = news.slice(1, 5);
@@ -27,15 +29,15 @@ const featuredImage = featured?.data.image?.[0];
         id="eim-news-title"
         class="e-reveal font-display text-[clamp(2rem,4vw,3.5rem)] leading-[1.05] tracking-[-0.01em]"
       >
-        {t('home.latestNews', locale)}
+        {content.title}
       </h2>
       <div class="e-reveal lg:justify-self-end lg:text-right">
         <p class="max-w-[52ch] text-[15px] leading-[1.55] text-muted-ink">
-          {t('home.newsIntro', locale)}
+          {content.intro}
         </p>
         {featured && (
           <a href={newsIndexHref} class="mt-4 inline-flex items-center gap-2 font-mono text-xs uppercase tracking-[0.08em]">
-            <span class="text-brand">{t('home.viewAllNews', locale)}</span>
+            <span class="text-brand">{content.viewAll}</span>
             <span class="text-brand" aria-hidden="true">→</span>
           </a>
         )}
@@ -102,10 +104,10 @@ const featuredImage = featured?.data.image?.[0];
     ) : (
       <div class="e-reveal mt-[clamp(2.5rem,6vh,4.5rem)] border-t border-line pt-10">
         <p class="font-display text-[clamp(1.5rem,2.2vw,2rem)] leading-[1.2] text-muted-ink">
-          {t('home.noNews', locale)}
+          {content.empty}
         </p>
         <a href={newsIndexHref} class="mt-5 inline-flex items-center gap-2 font-mono text-xs uppercase tracking-[0.08em]">
-          <span class="text-brand">{t('home.viewAllNews', locale)}</span>
+          <span class="text-brand">{content.viewAll}</span>
           <span class="text-brand" aria-hidden="true">→</span>
         </a>
       </div>

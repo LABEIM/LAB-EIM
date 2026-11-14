@@ -2,7 +2,7 @@
 import { getCollection } from 'astro:content';
 import Layout from '../layouts/Layout.astro';
 import '../styles/pages/home-eim.css';
-import type { AboutData } from '../utils/types';
+import type { AboutData, ChromeData, HomePageData, Lecturer, Member, RecruitmentConfig } from '../utils/types';
 import EventPosterModal from '../components/events/EventPosterModal.astro';
 import EimHero from '../components/home/EimHero.astro';
 import EimReveal from '../components/home/EimReveal.astro';
@@ -17,16 +17,16 @@ import EimCTA from '../components/home/EimCTA.astro';
 import {
   getLocaleFromUrl,
   getLocalizedJsonData,
-  getCollectionEntriesForLocale,
-  t
+  getCollectionEntriesForLocale
 } from '../utils/i18n';
+import { sectionOn } from '../utils/page-content';
 import { filterAuditContent } from '../utils/content-helpers';
 import { resolveCourses } from '../utils/course-helpers';
 import { countPeopleByGroup, parsePositions } from '../utils/position-mapper';
 import { getCurrentRecruitmentStage } from '../utils/recruitment';
-import type { ChromeData, Lecturer, Member, RecruitmentConfig } from '../utils/types';
 
 const locale = getLocaleFromUrl(Astro.url);
+const page = getLocalizedJsonData<HomePageData>('pages/home', locale);
 const siteData = getLocalizedJsonData<any>('site', locale);
 const chrome = getLocalizedJsonData<ChromeData>('chrome', locale);
 const registrationConfig = getLocalizedJsonData<Partial<RecruitmentConfig>>('registration', locale);
@@ -75,45 +75,54 @@ const groupCounts = countPeopleByGroup(people, positions);
 const courseEntries = await getCollection('courses');
 const allCourses = resolveCourses(courseEntries, lecturersData?.list ?? [], members);
 const bandCourses = allCourses.filter((course) => course.hasPracticum).slice(0, 3);
+
+// Stat values stay derived from the data unless the editor pins a manual value.
+const derivedStats = [groupCounts.dosen, members.length, allCourses.length];
+const numberStats = page.numbers.stats.map((stat, index) => ({
+  label: stat.label,
+  value: stat.manualValue ?? derivedStats[index] ?? 0,
+}));
+
+// The dots read the same flags as the sections, so a hidden section drops its dot.
+const sectionItems = [
+  ...(sectionOn(page.reveal) ? [{ id: 'reveal', label: page.navDots.reveal }] : []),
+  ...(sectionOn(page.focus) ? [{ id: 'fokus', label: page.navDots.focus }] : []),
+  ...(sectionOn(page.visiMisi) ? [{ id: 'visi-misi', label: page.navDots.vision }] : []),
+  ...(sectionOn(page.courses) && bandCourses.length > 0
+    ? [{ id: 'mata-kuliah', label: page.navDots.courses }]
+    : []),
+  ...(sectionOn(page.events) ? [{ id: 'kegiatan', label: page.navDots.events }] : []),
+  ...(sectionOn(page.news) ? [{ id: 'berita', label: page.navDots.articles }] : []),
+];
 ---
 
-<Layout title={`EIM Lab · Infrastruktur untuk dunia nyata`} homeSkin skipLink>
+<Layout
+  title={page.meta.title}
+  description={page.meta.description || undefined}
+  homeSkin
+  skipLink
+>
   <EventPosterModal upcomingEvents={upcomingEvents} locale={locale} />
   <main id="main-content" tabindex="-1">
-    <EimSectionNav
-      items={[
-        { id: 'reveal', label: t('home.navDotMedia', locale) },
-        { id: 'fokus', label: t('home.navDotFocus', locale) },
-        { id: 'visi-misi', label: t('home.navDotVision', locale) },
-        ...(bandCourses.length > 0
-          ? [{ id: 'mata-kuliah', label: t('home.navDotCourses', locale) }]
-          : []),
-        { id: 'kegiatan', label: t('home.navDotEvents', locale) },
-        { id: 'berita', label: t('home.navDotArticles', locale) },
-      ]}
-      label={t('home.sectionNavLabel', locale)}
-    />
+    <EimSectionNav items={sectionItems} label={page.navDots.sectionLabel} />
     <EimHero
-      primaryLabel={t('home.heroPrimary', locale)}
+      content={page.hero}
+      logo={chrome.brand.logoHorizontal}
       primaryHref="#reveal"
-      secondaryLabel={t('home.heroSecondary', locale)}
       secondaryHref="/about"
     />
-    <EimReveal />
-    <EimFocus />
-    <EimVisiMisi about={about} />
-    <EimLabNumbers
-      label={t('home.numbersLabel', locale)}
-      stats={[
-        { label: t('stats.dosen', locale), value: groupCounts.dosen },
-        { label: t('stats.members', locale), value: members.length },
-        { label: t('stats.courses', locale), value: allCourses.length },
-      ]}
-    />
-    <EimCourses courses={bandCourses} />
-    <EimEvents events={events} locale={locale} />
-    <EimNews news={latestNews} locale={locale} />
-    <EimCTA content={chrome.cta} contact={siteData.contact} stage={recruitmentStage} />
+    {sectionOn(page.reveal) && <EimReveal content={page.reveal} />}
+    {sectionOn(page.focus) && <EimFocus content={page.focus} />}
+    {sectionOn(page.visiMisi) && <EimVisiMisi content={page.visiMisi} about={about} />}
+    {sectionOn(page.numbers) && <EimLabNumbers content={page.numbers} stats={numberStats} />}
+    {sectionOn(page.courses) && bandCourses.length > 0 && (
+      <EimCourses courses={bandCourses} content={page.courses} />
+    )}
+    {sectionOn(page.events) && <EimEvents events={events} locale={locale} content={page.events} />}
+    {sectionOn(page.news) && <EimNews news={latestNews} locale={locale} content={page.news} />}
+    {sectionOn(page.cta) && (
+      <EimCTA content={chrome.cta} contact={siteData.contact} stage={recruitmentStage} />
+    )}
   </main>
 </Layout>
 

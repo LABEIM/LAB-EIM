@@ -138,12 +138,6 @@ export const uiTranslations: Record<Locale, Record<string, string>> = {
     'stage.fallback': 'Formulir Cadangan',
 
     // Home Page
-    'home.heroTag': 'Enterprise Infrastructure Management',
-    'home.latestNews': 'Artikel Terkini',
-    'home.upcomingEvents': 'Kegiatan Lab',
-    'home.viewAllNews': 'Lihat Semua Artikel',
-    'home.viewAllEvents': 'Lihat Semua Kegiatan',
-    'home.noNews': 'Belum ada artikel terkini.',
 
     // Structure Page
     'struct.title': 'Struktur Organisasi Lab',
@@ -172,12 +166,6 @@ export const uiTranslations: Record<Locale, Record<string, string>> = {
     'struct.practicumAssistant': 'Asisten Praktikum',
     'struct.memberAssistantNote': '{n} dari {total} juga Asisten Praktikum',
 
-    'home.numbersLabel': 'Laboratorium dalam angka',
-    'home.coursesEyebrow': 'Pengajaran',
-    'home.coursesTitle': 'Mata kuliah & praktikum.',
-    'home.coursesIntro': 'Mata kuliah di bidang studi lab yang punya praktikum, beserta dosen koordinatornya.',
-    'home.coursesLink': 'Lihat semua mata kuliah',
-    'home.navDotCourses': 'Mata Kuliah',
 
     // Courses Page
     'courses.heroEyebrow': 'Pengajaran',
@@ -332,37 +320,10 @@ export const uiTranslations: Record<Locale, Record<string, string>> = {
     'contact.picsTitle': 'Hubungi PIC kami.',
     'contact.picsSubtitle': 'Pilih PIC sesuai kebutuhan: rekrutmen dan kegiatan, atau riset dan kolaborasi.',
 
-    // Home Page v2 [PLACEHOLDER — draft]
-    'home.heroKicker': 'EIM Lab',
-    'home.heroTitle': 'Infrastruktur untuk\ndunia nyata.',
-    'home.heroDesc': 'Laboratorium Enterprise Infrastructure Management Telkom University — jaringan, cloud, sistem operasi, keamanan siber.',
-    'home.heroPrimary': 'Jelajahi lab',
-    'home.heroSecondary': 'Tentang Kami',
-    'home.revealCaption': 'Lebih dekat dengan EIM.',
-    'home.revealPending': 'Video pengantar sedang disiapkan.',
-    'home.revealPendingCta': 'Kenali lab kami',
-    'home.focusTitle': 'Fokus Riset & Laboratorium',
-    'home.focusIntro': 'Empat penguasaan inti yang kami asah lewat riset dan praktik.',
-    'home.focus1Title': 'Jaringan',
-    'home.focus1Desc': 'Arsitektur, protokol routing & switching, dan optimasi infrastruktur komunikasi data skala enterprise.',
-    'home.focus2Title': 'Cloud Computing',
-    'home.focus2Desc': 'Layanan cloud, kontainerisasi (Docker, Kubernetes), virtualisasi server & jaringan, dan data center hibrida.',
-    'home.focus3Title': 'Sistem Operasi',
-    'home.focus3Desc': 'Linux, administrasi server, otomasi sistem, dan pengelolaan infrastruktur berbasis OS.',
-    'home.focus4Title': 'Keamanan Siber',
-    'home.focus4Desc': 'Keamanan jaringan, analisis kerentanan, pengujian penetrasi, dan perlindungan aset informasi digital.',
+    // Beranda copy moved to src/data/pages/home.json. These two stay until /about
+    // migrates its Visi & Misi heading and section dot.
     'home.vmTitle': 'Visi & Misi',
-    'home.divisionPhoto': 'Foto kegiatan {name}',
-    'home.sectionNavLabel': 'Navigasi bagian halaman',
-    'home.navDotMedia': 'Media',
-    'home.navDotFocus': 'Fokus',
     'home.navDotVision': 'Visi & Misi',
-    'home.navDotEvents': 'Kegiatan',
-    'home.navDotArticles': 'Artikel',
-    'home.newsIntro': 'Tulisan riset dan catatan terbaru dari lab.',
-    'home.eventsTitle': 'Kegiatan Terkini',
-    'home.eventsIntro': 'Workshop, seminar, kompetisi, dan pengabdian yang kami jalankan.',
-    'home.eventsEmpty': 'Belum ada kegiatan yang dipublikasikan.',
   },
 };
 

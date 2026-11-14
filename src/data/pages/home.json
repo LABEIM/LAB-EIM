@@ -1,0 +1,97 @@
+{
+  "meta": {
+    "title": "EIM Lab · Infrastruktur untuk dunia nyata",
+    "description": ""
+  },
+  "navDots": {
+    "reveal": "Media",
+    "focus": "Fokus",
+    "vision": "Visi & Misi",
+    "courses": "Mata Kuliah",
+    "events": "Kegiatan",
+    "articles": "Artikel",
+    "sectionLabel": "Navigasi bagian halaman"
+  },
+  "hero": {
+    "kicker": "EIM Lab",
+    "lines": [
+      "Infrastruktur untuk",
+      "dunia nyata."
+    ],
+    "description": "Laboratorium Enterprise Infrastructure Management Telkom University — jaringan, cloud, sistem operasi, keamanan siber.",
+    "primaryLabel": "Jelajahi lab",
+    "secondaryLabel": "Tentang Kami"
+  },
+  "reveal": {
+    "enabled": true,
+    "caption": "Lebih dekat dengan EIM.",
+    "pending": "Video pengantar sedang disiapkan.",
+    "pendingCta": "Kenali lab kami"
+  },
+  "focus": {
+    "enabled": true,
+    "title": "Fokus Riset & Laboratorium",
+    "intro": "Empat penguasaan inti yang kami asah lewat riset dan praktik.",
+    "rows": [
+      {
+        "title": "Jaringan",
+        "description": "Arsitektur, protokol routing & switching, dan optimasi infrastruktur komunikasi data skala enterprise."
+      },
+      {
+        "title": "Cloud Computing",
+        "description": "Layanan cloud, kontainerisasi (Docker, Kubernetes), virtualisasi server & jaringan, dan data center hibrida."
+      },
+      {
+        "title": "Sistem Operasi",
+        "description": "Linux, administrasi server, otomasi sistem, dan pengelolaan infrastruktur berbasis OS."
+      },
+      {
+        "title": "Keamanan Siber",
+        "description": "Keamanan jaringan, analisis kerentanan, pengujian penetrasi, dan perlindungan aset informasi digital."
+      }
+    ]
+  },
+  "visiMisi": {
+    "enabled": true,
+    "title": "Visi & Misi"
+  },
+  "numbers": {
+    "enabled": true,
+    "label": "Laboratorium dalam angka",
+    "stats": [
+      {
+        "label": "Dosen"
+      },
+      {
+        "label": "Anggota laboratorium"
+      },
+      {
+        "label": "Mata kuliah"
+      }
+    ]
+  },
+  "courses": {
+    "enabled": true,
+    "eyebrow": "Pengajaran",
+    "title": "Mata kuliah & praktikum.",
+    "intro": "Mata kuliah di bidang studi lab yang punya praktikum, beserta dosen koordinatornya.",
+    "link": "Lihat semua mata kuliah"
+  },
+  "events": {
+    "enabled": true,
+    "title": "Kegiatan Terkini",
+    "intro": "Workshop, seminar, kompetisi, dan pengabdian yang kami jalankan.",
+    "empty": "Belum ada kegiatan yang dipublikasikan.",
+    "viewAll": "Lihat Semua Kegiatan"
+  },
+  "news": {
+    "enabled": true,
+    "title": "Artikel Terkini",
+    "intro": "Tulisan riset dan catatan terbaru dari lab.",
+    "empty": "Belum ada artikel terkini.",
+    "viewAll": "Lihat Semua Artikel"
+  },
+  "cta": {
+    "enabled": true
+  }
+}

@@ -2,7 +2,7 @@ import { existsSync, readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { sectionOn } from '../utils/page-content';
-import type { ChromeData } from '../utils/types';
+import type { ChromeData, HomePageData } from '../utils/types';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '../..');
 const dataDir = join(root, 'src/data');
@@ -59,6 +59,28 @@ for (const key of chromeGroups.brand) {
   const file = typeof value === 'string' ? join(publicDir, value.replace(/^\//, '')) : '';
   assert(Boolean(file) && existsSync(file), `chrome.brand.${key} resolves under public/`);
 }
+
+console.log('\n4️⃣ Testing pages/home.json:');
+const homePath = join(dataDir, 'pages/home.json');
+const homeExists = existsSync(homePath);
+assert(homeExists, 'pages/home.json exists');
+const home = (homeExists ? JSON.parse(readFileSync(homePath, 'utf8')) : {}) as Partial<HomePageData>;
+
+const homeSections = ['meta', 'navDots', 'hero', 'reveal', 'focus', 'visiMisi', 'numbers', 'courses', 'events', 'news', 'cta'] as const;
+for (const key of homeSections) {
+  assert(Boolean(home[key]) && typeof home[key] === 'object', `home.${key} exists`);
+}
+
+const toggleableSections = ['reveal', 'focus', 'visiMisi', 'numbers', 'courses', 'events', 'news', 'cta'] as const;
+for (const key of toggleableSections) {
+  assert(typeof home[key]?.enabled === 'boolean', `home.${key}.enabled is a boolean`);
+}
+
+assert(Boolean(home.meta?.title?.trim()), 'home.meta.title is a non-empty string');
+assert(
+  Array.isArray(home.hero?.lines) && home.hero.lines.length >= 1 && home.hero.lines.length <= 3,
+  'home.hero.lines has 1 to 3 lines'
+);
 
 console.log(`\n${passed} passed, ${failed} failed`);
 if (failed > 0) process.exitCode = 1;

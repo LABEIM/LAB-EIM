@@ -1,7 +1,7 @@
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { dirname, join, resolve, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { resolveExternalImageUrl, resolveVideoUrl } from '../utils/media';
+import { embedPoster, resolveExternalImageUrl, resolveVideoUrl } from '../utils/media';
 import { sectionNumber, sectionOn, splitWordCount } from '../utils/page-content';
 import type { RecruitmentConfig } from '../utils/types';
 import type { AboutData, ChromeData, ContactData, CourseDetailPageData, CoursesPageData, EventDetailPageData, EventsPageData, GalleryData, HomePageData, Lecturer, Member, NewsDetailPageData, NewsPageData, StructurePageData } from '../utils/types';
@@ -327,6 +327,48 @@ assert(
   'EimReveal native video keeps controls so uploads stay interactive'
 );
 
+// Embeds are click-to-load. A YouTube link always yields a thumbnail, so its
+// server HTML holds the facade only; the iframe is created in the browser script.
+const youtubeMedia = resolveVideoUrl('https://youtu.be/dQw4w9WgXcQ');
+assert(
+  youtubeMedia?.kind === 'iframe' && embedPoster(youtubeMedia, '') === 'https://i.ytimg.com/vi/dQw4w9WgXcQ/hqdefault.jpg',
+  'a YouTube embed derives its facade thumbnail from the video id'
+);
+assert(
+  youtubeMedia?.kind === 'iframe' && embedPoster(youtubeMedia, '/assets/media/poster.jpg') === '/assets/media/poster.jpg',
+  'an uploaded poster wins over the YouTube thumbnail'
+);
+for (const input of ['https://vimeo.com/76979871', 'https://drive.google.com/file/d/1AbCdEfGhIjK/view']) {
+  const resolved = resolveVideoUrl(input);
+  assert(
+    resolved?.kind === 'iframe' && embedPoster(resolved, '') === null,
+    `a posterless ${resolved?.kind === 'iframe' ? resolved.provider : ''} embed skips the facade`
+  );
+}
+
+const facadeMarkup = revealComponent.slice(
+  revealComponent.indexOf('e-reveal-facade"'),
+  revealComponent.indexOf('{directIframe &&')
+);
+assert(facadeMarkup.includes('data-embed-src={iframeMedia.src}'), 'EimReveal facade carries the embed src');
+assert(facadeMarkup.includes('data-embed-provider={iframeMedia.provider}'), 'EimReveal facade carries the provider');
+assert(!facadeMarkup.includes('<iframe'), 'EimReveal facade emits no iframe in the server HTML');
+assert(
+  /<button\b[^>]*\bclass="e-reveal-facade-play"[^>]*\baria-label="[^"]+"/.test(facadeMarkup),
+  'EimReveal facade play control is a button with an aria-label'
+);
+const facadeScript = revealComponent.slice(revealComponent.indexOf("document.addEventListener('click'"));
+for (const fragment of [
+  "createElement('iframe')",
+  "iframe.allow = 'autoplay; encrypted-media; picture-in-picture; fullscreen'",
+  'iframe.allowFullscreen = true',
+  "iframe.referrerPolicy = 'strict-origin-when-cross-origin'",
+  "iframe.setAttribute('sandbox', 'allow-scripts allow-same-origin allow-presentation allow-popups')",
+  'iframe.focus()',
+]) {
+  assert(facadeScript.includes(fragment), `EimReveal click builds the iframe with ${fragment}`);
+}
+
 // Pasted links win over uploads, so a broken link must not slip into a built src.
 if (reveal?.videoUrl) {
   assert(resolveVideoUrl(reveal.videoUrl) !== null, 'home.reveal.videoUrl resolves to a supported provider or video file');
@@ -352,6 +394,10 @@ for (const [input, expected] of youtubeCases) {
     resolved?.kind === 'iframe' && resolved.provider === 'youtube' && resolved.src === expected,
     `youtube URL resolves: ${input}`
   );
+  assert(
+    resolved?.kind === 'iframe' && resolved.id === 'dQw4w9WgXcQ',
+    `youtube URL resolves the video id: ${input}`
+  );
 }
 
 // Autoplay needs mute, and loop needs playlist to repeat the same video. The
@@ -374,6 +420,10 @@ for (const [input, expected] of vimeoCases) {
     resolved?.kind === 'iframe' && resolved.provider === 'vimeo' && resolved.src === expected,
     `vimeo URL resolves: ${input}`
   );
+  assert(
+    resolved?.kind === 'iframe' && resolved.id === '76979871',
+    `vimeo URL resolves the video id: ${input}`
+  );
 }
 
 const driveCases: [string, string][] = [
@@ -386,6 +436,10 @@ for (const [input, expected] of driveCases) {
   assert(
     resolved?.kind === 'iframe' && resolved.provider === 'drive' && resolved.src === expected,
     `google drive URL resolves: ${input}`
+  );
+  assert(
+    resolved?.kind === 'iframe' && resolved.id === '1AbCdEfGhIjK',
+    `google drive URL resolves the file id: ${input}`
   );
 }
 

@@ -2,7 +2,7 @@
 import { Image } from 'astro:assets';
 import emblem from '../../../public/assets/brand/eim-emblem.png';
 import { getLocaleFromUrl, getLocalizedJsonData } from '../../utils/i18n';
-import { resolveExternalImageUrl, resolveVideoUrl } from '../../utils/media';
+import { embedPoster, resolveExternalImageUrl, resolveVideoUrl } from '../../utils/media';
 import type { ChromeData, HomePageData } from '../../utils/types';
 
 /**
@@ -20,6 +20,9 @@ const { content } = Astro.props;
 const mediaKind = content.mediaKind ?? 'none';
 const externalVideo = resolveVideoUrl(content.videoUrl);
 const iframeMedia = mediaKind === 'video' && externalVideo?.kind === 'iframe' ? externalVideo : null;
+const facadePoster = iframeMedia ? embedPoster(iframeMedia, content.poster) : null;
+// No poster and no derivable thumbnail: keep the server-side iframe instead.
+const directIframe = iframeMedia && !facadePoster ? iframeMedia : null;
 const nativeVideo =
   mediaKind === 'video' && externalVideo?.kind === 'video'
     ? externalVideo.src
@@ -33,10 +36,33 @@ const chrome = getLocalizedJsonData<ChromeData>('chrome', getLocaleFromUrl(Astro
 
 <section id="reveal" class:list={['e-reveal-stage', mediaKind === 'none' && 'is-pending']} aria-label={chrome.ui.aria.mediaIntro}>
   <figure class="e-reveal-stage-figure">
-    {iframeMedia && (
+    {facadePoster && iframeMedia && (
+      <div
+        class="e-reveal-stage-media e-reveal-facade"
+        data-embed-src={iframeMedia.src}
+        data-embed-title={content.mediaAlt}
+        data-embed-provider={iframeMedia.provider}
+      >
+        <img
+          class="e-reveal-facade-poster"
+          src={facadePoster}
+          alt=""
+          loading="lazy"
+          decoding="async"
+          referrerpolicy="no-referrer"
+        />
+        <button type="button" class="e-reveal-facade-play" aria-label="Putar video">
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <path d="M8 5v14l11-7z" fill="currentColor"></path>
+          </svg>
+        </button>
+      </div>
+    )}
+
+    {directIframe && (
       <iframe
         class="e-reveal-stage-media"
-        src={iframeMedia.src}
+        src={directIframe.src}
         title={content.mediaAlt}
         loading="lazy"
         allow="autoplay; encrypted-media; picture-in-picture; fullscreen"
@@ -98,4 +124,24 @@ const chrome = getLocalizedJsonData<ChromeData>('chrome', getLocaleFromUrl(Astro
   import { initMediaReveal } from '../../scripts/media-reveal';
 
   initMediaReveal();
+
+  // Embeds are click-to-load: the facade paints a poster, activation builds the player.
+  document.addEventListener('click', (event) => {
+    if (!(event.target instanceof Element)) return;
+    const facade = event.target.closest('.e-reveal-facade-play')?.closest<HTMLElement>('.e-reveal-facade');
+    const src = facade?.dataset.embedSrc;
+    if (!facade || !src) return;
+    const iframe = document.createElement('iframe');
+    iframe.src = src;
+    iframe.title = facade.dataset.embedTitle ?? '';
+    iframe.className = 'e-reveal-stage-media';
+    iframe.loading = 'lazy';
+    iframe.allow = 'autoplay; encrypted-media; picture-in-picture; fullscreen';
+    iframe.allowFullscreen = true;
+    iframe.referrerPolicy = 'strict-origin-when-cross-origin';
+    iframe.setAttribute('sandbox', 'allow-scripts allow-same-origin allow-presentation allow-popups');
+    iframe.tabIndex = 0;
+    facade.replaceWith(iframe);
+    iframe.focus();
+  });
 </script>

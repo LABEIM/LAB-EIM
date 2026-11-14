@@ -1,5 +1,5 @@
 export type ResolvedMedia =
-  | { kind: 'iframe'; src: string; provider: 'youtube' | 'vimeo' | 'drive' }
+  | { kind: 'iframe'; src: string; provider: 'youtube' | 'vimeo' | 'drive'; id: string }
   | { kind: 'video'; src: string };
 
 const YOUTUBE_HOSTS = new Set(['youtube.com', 'www.youtube.com', 'm.youtube.com']);
@@ -48,7 +48,7 @@ export function resolveVideoUrl(raw: string | undefined | null): ResolvedMedia |
   if (YOUTU_BE_HOSTS.has(host)) {
     const id = segments[0];
     if (id && YOUTUBE_ID.test(id)) {
-      return { kind: 'iframe', provider: 'youtube', src: youtubeEmbed(id) };
+      return { kind: 'iframe', provider: 'youtube', src: youtubeEmbed(id), id };
     }
     return null;
   }
@@ -60,7 +60,7 @@ export function resolveVideoUrl(raw: string | undefined | null): ResolvedMedia |
         ? segments[1]
         : null;
     if (id && YOUTUBE_ID.test(id)) {
-      return { kind: 'iframe', provider: 'youtube', src: youtubeEmbed(id) };
+      return { kind: 'iframe', provider: 'youtube', src: youtubeEmbed(id), id };
     }
     return null;
   }
@@ -68,7 +68,7 @@ export function resolveVideoUrl(raw: string | undefined | null): ResolvedMedia |
   if (VIMEO_HOSTS.has(host)) {
     const id = segments[0];
     if (id && /^\d+$/.test(id)) {
-      return { kind: 'iframe', provider: 'vimeo', src: `https://player.vimeo.com/video/${id}` };
+      return { kind: 'iframe', provider: 'vimeo', src: `https://player.vimeo.com/video/${id}`, id };
     }
     return null;
   }
@@ -76,7 +76,7 @@ export function resolveVideoUrl(raw: string | undefined | null): ResolvedMedia |
   if (host === 'player.vimeo.com') {
     const id = segments[0] === 'video' ? segments[1] : undefined;
     if (id && /^\d+$/.test(id)) {
-      return { kind: 'iframe', provider: 'vimeo', src: `https://player.vimeo.com/video/${id}` };
+      return { kind: 'iframe', provider: 'vimeo', src: `https://player.vimeo.com/video/${id}`, id };
     }
     return null;
   }
@@ -88,7 +88,7 @@ export function resolveVideoUrl(raw: string | undefined | null): ResolvedMedia |
         ? url.searchParams.get('id')
         : null;
     if (id && DRIVE_ID.test(id)) {
-      return { kind: 'iframe', provider: 'drive', src: `https://drive.google.com/file/d/${id}/preview` };
+      return { kind: 'iframe', provider: 'drive', src: `https://drive.google.com/file/d/${id}/preview`, id };
     }
     return null;
   }
@@ -98,6 +98,14 @@ export function resolveVideoUrl(raw: string | undefined | null): ResolvedMedia |
   }
 
   return null;
+}
+
+// Only YouTube exposes a stable thumbnail by id; an uploaded poster covers the
+// rest, and providers without either load their iframe directly on the server.
+export function embedPoster(media: ResolvedMedia, poster?: string | null): string | null {
+  if (media.kind !== 'iframe') return null;
+  if (poster?.trim()) return poster;
+  return media.provider === 'youtube' ? `https://i.ytimg.com/vi/${media.id}/hqdefault.jpg` : null;
 }
 
 export function resolveExternalImageUrl(raw: string | undefined | null): string | null {

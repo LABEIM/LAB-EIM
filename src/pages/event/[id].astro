@@ -11,13 +11,15 @@ import {
   getCleanSlug,
   getCollectionEntriesForLocale,
   getLocaleFromUrl,
-  t,
+  getLocalizedJsonData,
 } from '../../utils/i18n';
 import { filterAuditContent } from '../../utils/content-helpers';
+import { sectionOn } from '../../utils/page-content';
 import {
   compareEventDates,
   getEventStoryGallery,
 } from '../../utils/event-helpers';
+import type { ChromeData, EventDetailPageData } from '../../utils/types';
 import type { EventEntry } from '../../utils/event-helpers';
 
 export async function getStaticPaths() {
@@ -37,6 +39,9 @@ const locale = getLocaleFromUrl(Astro.url);
 const { event } = Astro.props;
 const { Content } = await render(event);
 
+const page = getLocalizedJsonData<EventDetailPageData>('pages/event-detail', locale);
+const chrome = getLocalizedJsonData<ChromeData>('chrome', locale);
+
 const all = filterAuditContent(getCollectionEntriesForLocale(await getCollection('events'), locale));
 // Sort once, then keep same-category entries first (filters preserve order).
 const pool = all
@@ -49,30 +54,44 @@ const related = [
 ---
 
 <Layout
-  title={`${event.data.title} · EIM Lab`}
+  title={`${event.data.title} · ${page.meta.title}`}
   description={event.data.description}
   homeSkin
   skipLink
   noindex={event.data.audit === true}
 >
   <main id="main-content" tabindex="-1">
-    <KegiatanRecapHero event={event} locale={locale} />
-    <KegiatanStory event={event}>
-      <Content />
-    </KegiatanStory>
-    <PhotoGallery
-      images={getEventStoryGallery(event)}
-      eyebrow={t('events.galleryEyebrow', locale)}
-      title={t('events.galleryTitle', locale)}
-      altLabel={event.data.title}
+    <KegiatanRecapHero
+      event={event}
+      locale={locale}
+      content={page.hero}
+      share={page.share}
+      organizerFallback={chrome.labels.organizerFallback}
     />
-    {!event.body?.trim() && getEventStoryGallery(event).length === 0 && (
-      <p class="kegiatan-recap-empty">{t('events.recapEmpty', locale)}</p>
+    {sectionOn(page.story) && (
+      <KegiatanStory event={event}>
+        <Content />
+      </KegiatanStory>
     )}
-    <KegiatanRelated events={related} locale={locale} />
-    <div class="kegiatan-recap-end">
-      <a class="kegiatan-back" href="/event">{t('events.backToIndex', locale)}</a>
-    </div>
+    {sectionOn(page.gallery) && (
+      <PhotoGallery
+        images={getEventStoryGallery(event)}
+        eyebrow={page.gallery.eyebrow}
+        title={page.gallery.title}
+        altLabel={event.data.title}
+      />
+    )}
+    {sectionOn(page.gallery) && !event.body?.trim() && getEventStoryGallery(event).length === 0 && (
+      <p class="kegiatan-recap-empty">{page.gallery.empty}</p>
+    )}
+    {sectionOn(page.related) && (
+      <KegiatanRelated events={related} locale={locale} content={page.related} />
+    )}
+    {sectionOn(page.backLink) && (
+      <div class="kegiatan-recap-end">
+        <a class="kegiatan-back" href="/event">{page.backLink.label}</a>
+      </div>
+    )}
   </main>
 </Layout>
 

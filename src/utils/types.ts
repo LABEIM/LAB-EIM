@@ -644,6 +644,38 @@ export interface NewsDetailPageData {
   };
 }
 
+export interface EventDetailPageData {
+  meta: {
+    title: string;
+  };
+  hero: {
+    backLabel: string;
+  };
+  story: {
+    enabled: boolean;
+  };
+  gallery: {
+    enabled: boolean;
+    eyebrow: string;
+    title: string;
+    empty: string;
+  };
+  related: {
+    enabled: boolean;
+    eyebrow: string;
+    title: string;
+    intro: string;
+  };
+  backLink: {
+    enabled: boolean;
+    label: string;
+  };
+  share: {
+    enabled: boolean;
+    label: string;
+  };
+}
+
 export interface AboutData {
   title: string;
   description: string;

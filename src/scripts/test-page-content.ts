@@ -2,7 +2,7 @@ import { existsSync, readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { sectionOn } from '../utils/page-content';
-import type { AboutData, ChromeData, CourseDetailPageData, CoursesPageData, EventsPageData, HomePageData, NewsDetailPageData, NewsPageData, StructurePageData } from '../utils/types';
+import type { AboutData, ChromeData, CourseDetailPageData, CoursesPageData, EventDetailPageData, EventsPageData, HomePageData, NewsDetailPageData, NewsPageData, StructurePageData } from '../utils/types';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '../..');
 const dataDir = join(root, 'src/data');
@@ -472,6 +472,55 @@ assert(Boolean(eventsPage.meta?.description?.trim()), 'events.meta.description i
 for (const token of ['{events}', '{categories}', '{year}'] as const) {
   assert(Boolean(eventsHero?.meta?.includes(token)), `events.hero.meta keeps ${token}`);
 }
+
+console.log('\n1️⃣2️⃣ Testing pages/event-detail.json:');
+const eventDetailPath = join(dataDir, 'pages/event-detail.json');
+const eventDetailExists = existsSync(eventDetailPath);
+assert(eventDetailExists, 'pages/event-detail.json exists');
+const eventDetail = (eventDetailExists ? JSON.parse(readFileSync(eventDetailPath, 'utf8')) : {}) as Partial<EventDetailPageData>;
+
+// The header carries the event title, standfirst, and dates, so they stay collection data and have no section here.
+for (const key of ['meta', 'hero', 'story', 'gallery', 'related', 'backLink', 'share'] as const) {
+  const section = eventDetail[key];
+  assert(Boolean(section) && typeof section === 'object', `eventDetail.${key} exists`);
+}
+
+assert(Boolean(eventDetail.hero) && !('enabled' in (eventDetail.hero as object)), 'eventDetail.hero has no enabled toggle');
+assert(
+  typeof eventDetail.hero?.backLabel === 'string' && eventDetail.hero.backLabel.trim().length > 0,
+  'eventDetail.hero.backLabel is a non-empty string'
+);
+
+for (const key of ['story', 'gallery', 'related', 'backLink', 'share'] as const) {
+  assert(typeof eventDetail[key]?.enabled === 'boolean', `eventDetail.${key}.enabled is a boolean`);
+}
+
+assert(Boolean(eventDetail.meta?.title?.trim()), 'eventDetail.meta.title is a non-empty string');
+assert(
+  !Object.prototype.hasOwnProperty.call(eventDetail.meta ?? {}, 'description'),
+  'eventDetail.meta carries no description (the event standfirst doubles as the meta description)'
+);
+
+const eventDetailGallery = eventDetail.gallery;
+for (const key of ['eyebrow', 'title', 'empty'] as const) {
+  const value = eventDetailGallery?.[key];
+  assert(typeof value === 'string' && value.trim().length > 0, `eventDetail.gallery.${key} is a non-empty string`);
+}
+
+const eventDetailRelated = eventDetail.related;
+for (const key of ['eyebrow', 'title', 'intro'] as const) {
+  const value = eventDetailRelated?.[key];
+  assert(typeof value === 'string' && value.trim().length > 0, `eventDetail.related.${key} is a non-empty string`);
+}
+
+assert(
+  typeof eventDetail.backLink?.label === 'string' && eventDetail.backLink.label.trim().length > 0,
+  'eventDetail.backLink.label is a non-empty string'
+);
+assert(
+  typeof eventDetail.share?.label === 'string' && eventDetail.share.label.trim().length > 0,
+  'eventDetail.share.label is a non-empty string'
+);
 
 console.log(`\n${passed} passed, ${failed} failed`);
 if (failed > 0) process.exitCode = 1;

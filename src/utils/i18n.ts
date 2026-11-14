@@ -138,19 +138,10 @@ export const uiTranslations: Record<Locale, Record<string, string>> = {
     'courses.coordinatorLabel': 'Koordinator mata kuliah',
     'courses.sksLabel': '{n} SKS',
 
-    // Events Page (detail page keys; list page copy moved to pages/events.json)
-    'events.backToList': 'Kembali ke kegiatan',
-    'events.share': 'Bagikan',
+    // Events Page (organizerFallback is chrome-backed in Keystatic; Task 13 owns the move. galleryAlt is unreferenced and goes with the dictionary.)
     'events.organizerFallback': 'EIM Lab',
     'events.dateTbd': 'Tanggal menyusul',
-    'events.relatedEyebrow': 'Kegiatan lain',
-    'events.relatedTitle': 'Kegiatan lain dari EIM.',
-    'events.relatedIntro': 'Kegiatan lain yang mungkin Anda minati.',
-    'events.backToIndex': 'Kembali ke daftar kegiatan',
-    'events.galleryEyebrow': 'Dokumentasi',
-    'events.galleryTitle': 'Dokumentasi kegiatan.',
     'events.galleryAlt': 'Dokumentasi {title} {n}',
-    'events.recapEmpty': 'Dokumentasi kegiatan ini belum tersedia.',
 
     // News Page
     'news.featured': 'Artikel utama',

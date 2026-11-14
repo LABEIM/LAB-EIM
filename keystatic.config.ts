@@ -1026,6 +1026,74 @@ export default config({
         ),
       },
     }),
+    page_eventDetail: singleton({
+      label: 'Detail Kegiatan',
+      path: 'src/data/pages/event-detail',
+      format: { data: 'json' },
+      schema: {
+        meta: fields.object(
+          {
+            title: fields.text({
+              label: 'Sufiks judul halaman',
+              description: 'Ditambahkan setelah judul kegiatan di tab browser dan hasil pencarian.',
+              validation: { isRequired: true },
+            }),
+          },
+          { label: 'Meta halaman', description: 'Deskripsi meta dibaca dari ringkasan kegiatan di koleksi Events.' }
+        ),
+        hero: fields.object(
+          {
+            backLabel: fields.text({
+              label: 'Label tautan kembali di bagian atas',
+              description: 'Tautan diarahkan ke halaman Kegiatan, di sebelah tombol bagikan.',
+            }),
+          },
+          { label: 'Bagian atas kegiatan', description: 'Tanpa tombol tampil/sembunyi; judul, tanggal, ringkasan, dan foto dibaca dari koleksi Events.' }
+        ),
+        story: fields.object(
+          {
+            enabled: fields.checkbox({ label: 'Tampilkan bagian ini', defaultValue: true }),
+          },
+          { label: 'Cerita kegiatan', description: 'Isi cerita dibaca dari koleksi Events.' }
+        ),
+        gallery: fields.object(
+          {
+            enabled: fields.checkbox({ label: 'Tampilkan bagian ini', defaultValue: true }),
+            eyebrow: fields.text({ label: 'Teks kecil di atas judul' }),
+            title: fields.text({ label: 'Judul bagian' }),
+            empty: fields.text({
+              label: 'Teks saat dokumentasi kosong',
+              description: 'Tampil saat kegiatan tidak memiliki cerita maupun foto dokumentasi.',
+              multiline: true,
+            }),
+          },
+          { label: 'Galeri dokumentasi', description: 'Foto dibaca dari koleksi Events, tidak termasuk foto sampul.' }
+        ),
+        related: fields.object(
+          {
+            enabled: fields.checkbox({ label: 'Tampilkan bagian ini', defaultValue: true }),
+            eyebrow: fields.text({ label: 'Teks kecil di atas judul' }),
+            title: fields.text({ label: 'Judul bagian' }),
+            intro: fields.text({ label: 'Paragraf pengantar', multiline: true }),
+          },
+          { label: 'Kegiatan terkait', description: 'Daftar kegiatan dibaca dari koleksi Events.' }
+        ),
+        backLink: fields.object(
+          {
+            enabled: fields.checkbox({ label: 'Tampilkan bagian ini', defaultValue: true }),
+            label: fields.text({ label: 'Label tautan kembali ke daftar' }),
+          },
+          { label: 'Tautan kembali di akhir halaman', description: 'Tautan diarahkan ke halaman Kegiatan.' }
+        ),
+        share: fields.object(
+          {
+            enabled: fields.checkbox({ label: 'Tampilkan bagian ini', defaultValue: true }),
+            label: fields.text({ label: 'Label tombol bagikan' }),
+          },
+          { label: 'Tombol bagikan', description: 'Tombol di bagian atas halaman.' }
+        ),
+      },
+    }),
     chrome: singleton({
       label: 'Navbar, Footer & Brand',
       path: 'src/data/chrome',
@@ -1490,7 +1558,7 @@ export default config({
   },
   ui: {
     navigation: {
-      Halaman: ['page_home', 'page_structure', 'page_courses', 'page_courseDetail', 'page_news', 'page_newsDetail', 'page_events', 'about', 'contact'],
+      Halaman: ['page_home', 'page_structure', 'page_courses', 'page_courseDetail', 'page_news', 'page_newsDetail', 'page_events', 'page_eventDetail', 'about', 'contact'],
       Koleksi: ['news', 'events', 'courses'],
       Pengaturan: [
         'site',

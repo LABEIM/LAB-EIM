@@ -138,30 +138,13 @@ export const uiTranslations: Record<Locale, Record<string, string>> = {
 
     // Structure Page
     'struct.title': 'Struktur Organisasi Lab',
-    'struct.metaDescription': 'Struktur organisasi EIM Lab: dosen, koordinator asisten, mahasiswa anggota, dan asisten praktikum.',
-    'struct.heroEyebrow': 'Struktur organisasi',
-    'struct.heroTitle': 'Satu lab,\nsatu tim.',
-    'struct.heroDesc': 'Dosen, koordinator asisten, dan mahasiswa anggota yang menjalankan riset, praktikum, dan pengabdian di EIM Lab.',
-    'struct.heroPrimary': 'Jelajahi bagan',
-    'struct.heroSecondary': 'Mata kuliah',
-    'struct.heroMeta': '{members} anggota laboratorium · {dosen} dosen · {positions} peran',
-    'struct.sectionNavLabel': 'Navigasi bagian halaman',
-    'struct.navDotChart': 'Bagan',
-    'struct.navDotJoin': 'Gabung',
     'struct.navDotDosen': 'Dosen',
     'struct.navDotAsisten': 'Asisten',
     'struct.navDotMahasiswa': 'Mahasiswa',
-    'struct.chartTitle': 'Bagan peran.',
-    'struct.chartIntro': 'Struktur peran laboratorium, dari dosen sampai asisten praktikum. Detail anggota ada di bagian bawah halaman.',
     'struct.chartLabel': 'Bagan struktur: Dosen Ketua Laboratorium membawahi Dosen Wakil Ketua Laboratorium, yang membawahi Dosen Anggota Laboratorium, Koordinator Mata Kuliah, dan Koordinator Asisten Laboratorium. Koordinator Asisten Laboratorium membawahi Asisten Koordinator Praktikum dan Mahasiswa Anggota Laboratorium, dan Asisten Koordinator Praktikum membawahi Asisten Praktikum.',
     'struct.groupDosen': 'Dosen',
     'struct.groupAsisten': 'Asisten',
     'struct.groupMahasiswa': 'Mahasiswa',
-    'struct.emptyPosition': 'Belum ada anggota',
-    'struct.positionIntro': '{n} orang pada peran ini.',
-    'struct.positionCount': '{n} orang',
-    'struct.practicumAssistant': 'Asisten Praktikum',
-    'struct.memberAssistantNote': '{n} dari {total} juga Asisten Praktikum',
 
 
     // Courses Page

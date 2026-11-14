@@ -605,6 +605,92 @@ export default config({
         ),
       },
     }),
+    page_structure: singleton({
+      label: 'Struktur',
+      path: 'src/data/pages/structure',
+      format: { data: 'json' },
+      schema: {
+        meta: fields.object(
+          {
+            title: fields.text({
+              label: 'Judul halaman',
+              description: 'Tampil di tab browser dan hasil pencarian.',
+              validation: { isRequired: true },
+            }),
+            description: fields.text({
+              label: 'Deskripsi meta',
+              description: 'Tampil di hasil pencarian.',
+              multiline: true,
+            }),
+          },
+          { label: 'Meta halaman' }
+        ),
+        sectionLabel: fields.text({ label: 'Label navigasi bagian halaman' }),
+        navDots: fields.object(
+          {
+            chart: fields.text({ label: 'Label titik bagan' }),
+            join: fields.text({ label: 'Label titik gabung' }),
+          },
+          {
+            label: 'Navigasi titik bagian',
+            description: 'Titik navigasi di tepi halaman. Titik ikut hilang saat bagiannya dimatikan.',
+          }
+        ),
+        hero: fields.object(
+          {
+            eyebrow: fields.text({ label: 'Teks kecil di atas judul' }),
+            lines: fields.array(fields.text({ label: 'Baris judul', validation: { isRequired: true } }), {
+              label: 'Judul utama',
+              description: 'Satu item per baris, maksimal tiga baris.',
+              validation: { length: { min: 1, max: 3 } },
+              itemLabel: (props) => props.value,
+            }),
+            description: fields.text({ label: 'Deskripsi', multiline: true }),
+            meta: fields.text({
+              label: 'Teks kecil di bawah tombol',
+              description: 'Jumlah anggota, dosen, dan peran diisi otomatis. Jangan hapus {members}, {dosen}, atau {positions}.',
+            }),
+            primaryLabel: fields.text({ label: 'Label tombol utama' }),
+            secondaryLabel: fields.text({ label: 'Label tautan kedua' }),
+          },
+          { label: 'Hero' }
+        ),
+        chart: fields.object(
+          {
+            enabled: fields.checkbox({ label: 'Tampilkan bagian ini', defaultValue: true }),
+            title: fields.text({ label: 'Judul bagian' }),
+            intro: fields.text({ label: 'Paragraf pengantar', multiline: true }),
+            memberAssistantNote: fields.text({
+              label: 'Catatan asisten praktikum',
+              description: 'Jumlah diisi otomatis. Jangan hapus {n} atau {total}.',
+            }),
+            practicumAssistant: fields.text({ label: 'Nama peran asisten praktikum' }),
+            emptyPosition: fields.text({ label: 'Teks saat peran belum berisi orang' }),
+            positionCount: fields.text({
+              label: 'Teks jumlah orang',
+              description: 'Jumlah diisi otomatis. Jangan hapus {n}.',
+            }),
+          },
+          { label: 'Bagan peran' }
+        ),
+        roles: fields.object(
+          {
+            enabled: fields.checkbox({ label: 'Tampilkan bagian ini', defaultValue: true }),
+            positionIntro: fields.text({
+              label: 'Paragraf pengantar tiap peran',
+              description: 'Jumlah orang diisi otomatis. Jangan hapus {n}.',
+            }),
+          },
+          { label: 'Daftar peran', description: 'Peran dan anggotanya dibaca dari data posisi, anggota, dan dosen.' }
+        ),
+        cta: fields.object(
+          {
+            enabled: fields.checkbox({ label: 'Tampilkan bagian ini', defaultValue: true }),
+          },
+          { label: 'Ajakan bergabung', description: 'Teksnya diatur di Navbar, Footer & Brand.' }
+        ),
+      },
+    }),
     chrome: singleton({
       label: 'Navbar, Footer & Brand',
       path: 'src/data/chrome',
@@ -1069,7 +1155,7 @@ export default config({
   },
   ui: {
     navigation: {
-      Halaman: ['page_home', 'about', 'contact'],
+      Halaman: ['page_home', 'page_structure', 'about', 'contact'],
       Koleksi: ['news', 'events', 'courses'],
       Pengaturan: [
         'site',

@@ -459,6 +459,42 @@ export interface HomePageData {
   };
 }
 
+export interface StructurePageData {
+  meta: {
+    title: string;
+    description: string;
+  };
+  sectionLabel: string;
+  navDots: {
+    chart: string;
+    join: string;
+  };
+  hero: {
+    eyebrow: string;
+    lines: string[];
+    description: string;
+    meta: string;
+    primaryLabel: string;
+    secondaryLabel: string;
+  };
+  chart: {
+    enabled: boolean;
+    title: string;
+    intro: string;
+    memberAssistantNote: string;
+    practicumAssistant: string;
+    emptyPosition: string;
+    positionCount: string;
+  };
+  roles: {
+    enabled: boolean;
+    positionIntro: string;
+  };
+  cta: {
+    enabled: boolean;
+  };
+}
+
 export interface AboutData {
   title: string;
   description: string;

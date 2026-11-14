@@ -2,15 +2,16 @@
 import type { Locale } from '../../utils/i18n';
 import { t } from '../../utils/i18n';
 import type { ChartNode } from '../../utils/position-mapper';
-import type { PositionGroup } from '../../utils/types';
+import type { PositionGroup, StructurePageData } from '../../utils/types';
 import ChartBranch from './ChartBranch.astro';
 
 interface Props {
   node: ChartNode;
+  content: StructurePageData['chart'];
   locale: Locale;
 }
 
-const { node, locale } = Astro.props;
+const { node, content, locale } = Astro.props;
 
 const GROUP_KEYS: Record<PositionGroup, string> = {
   dosen: 'struct.groupDosen',
@@ -20,8 +21,8 @@ const GROUP_KEYS: Record<PositionGroup, string> = {
 
 const count =
   node.count > 0
-    ? t('struct.positionCount', locale, { n: String(node.count) })
-    : t('struct.emptyPosition', locale);
+    ? content.positionCount.replaceAll('{n}', String(node.count))
+    : content.emptyPosition;
 ---
 
 <li class="chart-node">
@@ -34,7 +35,7 @@ const count =
   {node.children.length > 0 && (
     <ol class="chart-children" role="list">
       {node.children.map((child) => (
-        <ChartBranch node={child} locale={locale} />
+        <ChartBranch node={child} content={content} locale={locale} />
       ))}
     </ol>
   )}

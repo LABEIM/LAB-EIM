@@ -2,7 +2,7 @@ import { existsSync, readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { sectionOn } from '../utils/page-content';
-import type { AboutData, ChromeData, HomePageData } from '../utils/types';
+import type { AboutData, ChromeData, HomePageData, StructurePageData } from '../utils/types';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '../..');
 const dataDir = join(root, 'src/data');
@@ -176,6 +176,56 @@ for (const key of ['profile', 'stats', 'vision', 'cta', 'gallery'] as const) {
   const value = about.navDots?.[key];
   assert(typeof value === 'string' && value.trim().length > 0, `about.navDots.${key} is a non-empty string`);
 }
+
+console.log('\n6️⃣ Testing pages/structure.json:');
+const structurePath = join(dataDir, 'pages/structure.json');
+const structureExists = existsSync(structurePath);
+assert(structureExists, 'pages/structure.json exists');
+const structure = (structureExists ? JSON.parse(readFileSync(structurePath, 'utf8')) : {}) as Partial<StructurePageData>;
+
+for (const key of ['hero', 'chart', 'roles', 'cta'] as const) {
+  const section = structure[key];
+  assert(Boolean(section) && typeof section === 'object', `structure.${key} exists`);
+}
+
+for (const key of ['chart', 'roles', 'cta'] as const) {
+  assert(typeof structure[key]?.enabled === 'boolean', `structure.${key}.enabled is a boolean`);
+}
+assert(Boolean(structure.hero) && !('enabled' in (structure.hero as object)), 'structure.hero has no enabled toggle');
+
+const structureHero = structure.hero;
+for (const key of ['eyebrow', 'description', 'meta', 'primaryLabel', 'secondaryLabel'] as const) {
+  const value = structureHero?.[key];
+  assert(typeof value === 'string' && value.trim().length > 0, `structure.hero.${key} is a non-empty string`);
+}
+assert(
+  Array.isArray(structureHero?.lines) && structureHero.lines.length >= 1 && structureHero.lines.length <= 3,
+  'structure.hero.lines has 1 to 3 lines'
+);
+
+const structureChart = structure.chart;
+for (const key of ['title', 'intro', 'memberAssistantNote', 'practicumAssistant', 'emptyPosition', 'positionCount'] as const) {
+  const value = structureChart?.[key];
+  assert(typeof value === 'string' && value.trim().length > 0, `structure.chart.${key} is a non-empty string`);
+}
+assert(Boolean(structure.roles?.positionIntro?.trim()), 'structure.roles.positionIntro is a non-empty string');
+
+for (const key of ['chart', 'join'] as const) {
+  const value = structure.navDots?.[key];
+  assert(typeof value === 'string' && value.trim().length > 0, `structure.navDots.${key} is a non-empty string`);
+}
+assert(Boolean(structure.sectionLabel?.trim()), 'structure.sectionLabel is a non-empty string');
+assert(Boolean(structure.meta?.title?.trim()), 'structure.meta.title is a non-empty string');
+assert(Boolean(structure.meta?.description?.trim()), 'structure.meta.description is a non-empty string');
+
+// The copy still carries its placeholders, so editors cannot drop the counts.
+assert(Boolean(structureHero?.meta?.includes('{members}')), 'structure.hero.meta keeps {members}');
+assert(Boolean(structureChart?.positionCount?.includes('{n}')), 'structure.chart.positionCount keeps {n}');
+assert(
+  Boolean(structureChart?.memberAssistantNote?.includes('{n}') && structureChart?.memberAssistantNote?.includes('{total}')),
+  'structure.chart.memberAssistantNote keeps {n} and {total}'
+);
+assert(Boolean(structure.roles?.positionIntro?.includes('{n}')), 'structure.roles.positionIntro keeps {n}');
 
 console.log(`\n${passed} passed, ${failed} failed`);
 if (failed > 0) process.exitCode = 1;

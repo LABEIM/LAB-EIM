@@ -1,0 +1,38 @@
+{
+  "meta": {
+    "title": "Struktur Organisasi · EIM Lab",
+    "description": "Struktur organisasi EIM Lab: dosen, koordinator asisten, mahasiswa anggota, dan asisten praktikum."
+  },
+  "sectionLabel": "Navigasi bagian halaman",
+  "navDots": {
+    "chart": "Bagan",
+    "join": "Gabung"
+  },
+  "hero": {
+    "eyebrow": "Struktur organisasi",
+    "lines": [
+      "Satu lab,",
+      "satu tim."
+    ],
+    "description": "Dosen, koordinator asisten, dan mahasiswa anggota yang menjalankan riset, praktikum, dan pengabdian di EIM Lab.",
+    "meta": "{members} anggota laboratorium · {dosen} dosen · {positions} peran",
+    "primaryLabel": "Jelajahi bagan",
+    "secondaryLabel": "Mata kuliah"
+  },
+  "chart": {
+    "enabled": true,
+    "title": "Bagan peran.",
+    "intro": "Struktur peran laboratorium, dari dosen sampai asisten praktikum. Detail anggota ada di bagian bawah halaman.",
+    "memberAssistantNote": "{n} dari {total} juga Asisten Praktikum",
+    "practicumAssistant": "Asisten Praktikum",
+    "emptyPosition": "Belum ada anggota",
+    "positionCount": "{n} orang"
+  },
+  "roles": {
+    "enabled": true,
+    "positionIntro": "{n} orang pada peran ini."
+  },
+  "cta": {
+    "enabled": true
+  }
+}

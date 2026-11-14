@@ -10,11 +10,13 @@ import StructureRoles from '../components/structure/StructureRoles.astro';
 import { getCollection } from 'astro:content';
 import { buildPositionIndex, countPeopleByGroup, groupPeople, parsePositions } from '../utils/position-mapper';
 import { resolveCourses } from '../utils/course-helpers';
-import { getLocaleFromUrl, getLocalizedJsonData, t } from '../utils/i18n';
-import type { ChromeData, Lecturer, Member, RecruitmentConfig } from '../utils/types';
+import { getLocaleFromUrl, getLocalizedJsonData } from '../utils/i18n';
+import type { ChromeData, Lecturer, Member, RecruitmentConfig, StructurePageData } from '../utils/types';
 import { getCurrentRecruitmentStage } from '../utils/recruitment';
+import { sectionOn } from '../utils/page-content';
 
 const locale = getLocaleFromUrl(Astro.url);
+const page = getLocalizedJsonData<StructurePageData>('pages/structure', locale);
 const membersData = getLocalizedJsonData<{ list: Member[] }>('members', locale);
 const positionsData = getLocalizedJsonData<{ list: unknown }>('positions', locale);
 const siteData = getLocalizedJsonData<any>('site', locale);
@@ -38,41 +40,47 @@ const dosenCount = groupCounts.dosen;
 // The member roster excludes dosen; lecturers are counted separately in the hero meta.
 const memberCount = members.length;
 
+// The dots read the same flags as the sections, so a hidden section drops its dot.
 const sectionItems = [
-  { id: 'struktur', label: t('struct.navDotChart', locale) },
-  ...sections.map(({ position }) => ({ id: `pos-${position.id}`, label: position.label })),
-  { id: 'gabung', label: t('struct.navDotJoin', locale) },
+  ...(sectionOn(page.chart) ? [{ id: 'struktur', label: page.navDots.chart }] : []),
+  ...(sectionOn(page.roles)
+    ? sections.map(({ position }) => ({ id: `pos-${position.id}`, label: position.label }))
+    : []),
+  ...(sectionOn(page.cta) ? [{ id: 'gabung', label: page.navDots.join }] : []),
 ];
 ---
 
-<Layout
-  title={`Struktur Organisasi · EIM Lab`}
-  description={t('struct.metaDescription', locale)}
-  homeSkin
-  skipLink
->
+<Layout title={page.meta.title} description={page.meta.description} homeSkin skipLink>
   <main id="main-content" tabindex="-1">
-    <EimSectionNav items={sectionItems} label={t('struct.sectionNavLabel', locale)} />
+    <EimSectionNav items={sectionItems} label={page.sectionLabel} />
     <StructureHero
+      content={page.hero}
       memberCount={memberCount}
       dosenCount={dosenCount}
       positionCount={positions.length}
     />
-    <StructureChart
-      positions={positions}
-      members={members}
-      lecturers={lecturers}
-      courses={courses}
-      locale={locale}
-    />
-    {sections.map((section, index) => (
-      <StructureRoles
-        section={section}
-        index={index}
-        positionIndex={positionIndex}
+    {sectionOn(page.chart) && (
+      <StructureChart
+        content={page.chart}
+        positions={positions}
+        members={members}
+        lecturers={lecturers}
+        courses={courses}
         locale={locale}
       />
-    ))}
-    <EimCTA content={chrome.cta} contact={siteData.contact} stage={recruitmentStage} />
+    )}
+    {sectionOn(page.roles) &&
+      sections.map((section, index) => (
+        <StructureRoles
+          content={page.roles}
+          section={section}
+          index={index}
+          positionIndex={positionIndex}
+          locale={locale}
+        />
+      ))}
+    {sectionOn(page.cta) && (
+      <EimCTA content={chrome.cta} contact={siteData.contact} stage={recruitmentStage} />
+    )}
   </main>
 </Layout>

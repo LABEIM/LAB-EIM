@@ -1,18 +1,19 @@
 ---
-import type { Lecturer, Member, Position, PositionSection } from '../../utils/types';
+import type { Lecturer, Member, Position, PositionSection, StructurePageData } from '../../utils/types';
 import type { Locale } from '../../utils/i18n';
 import { t } from '../../utils/i18n';
 import MemberTile from './MemberTile.astro';
 import LecturerCard from './LecturerCard.astro';
 
 interface Props {
+  content: StructurePageData['roles'];
   section: PositionSection<Member | Lecturer>;
   index: number;
   positionIndex: Map<string, Position>;
   locale: Locale;
 }
 
-const { section, index, positionIndex, locale } = Astro.props;
+const { content, section, index, positionIndex, locale } = Astro.props;
 
 const GROUP_KEYS: Record<string, string> = {
   dosen: 'struct.groupDosen',
@@ -49,7 +50,7 @@ const density = section.position.id === 'mahasiswa-anggota' ? '' : 'staff-grid--
         </h2>
       </div>
       <p class="e-reveal max-w-[52ch] text-[15px] leading-[1.55] text-muted-ink lg:justify-self-end">
-        {t('struct.positionIntro', locale, { n: String(section.people.length) })}
+        {content.positionIntro.replaceAll('{n}', String(section.people.length))}
       </p>
     </div>
 

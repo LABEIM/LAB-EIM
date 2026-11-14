@@ -194,14 +194,17 @@ export function initRegistrationSubmit(
       isSubmitting = false;
       if (submitBtn && btnText) {
         submitBtn.disabled = false;
-        btnText.innerHTML = `${isEn ? 'Submit Application' : (submitBtn.dataset.labelSubmit || 'Kirim Pendaftaran')} <i class="fa-solid fa-paper-plane" style="margin-left: 8px;"></i>`;
+        // CMS labels are untrusted text: never interpolate them into innerHTML.
+        btnText.textContent = isEn ? 'Submit Application' : (submitBtn.dataset.labelSubmit || 'Kirim Pendaftaran');
+        btnText.insertAdjacentHTML('beforeend', ' <i class="fa-solid fa-paper-plane" style="margin-left: 8px;"></i>');
       }
       return;
     }
 
     if (submitBtn && btnText) {
       submitBtn.disabled = true;
-      btnText.innerHTML = `${isEn ? 'Processing...' : (submitBtn.dataset.labelSubmitting || 'Memproses...')} <i class="fa-solid fa-circle-notch fa-spin" style="margin-left: 8px;"></i>`;
+      btnText.textContent = isEn ? 'Processing...' : (submitBtn.dataset.labelSubmitting || 'Memproses...');
+      btnText.insertAdjacentHTML('beforeend', ' <i class="fa-solid fa-circle-notch fa-spin" style="margin-left: 8px;"></i>');
     }
 
     if (alertError) alertError.style.display = 'none';
@@ -223,7 +226,9 @@ export function initRegistrationSubmit(
       isSubmitting = false;
       if (submitBtn && btnText) {
         submitBtn.disabled = false;
-        btnText.innerHTML = `${isEn ? 'Submit Application' : (submitBtn.dataset.labelSubmit || 'Kirim Pendaftaran')} <i class="fa-solid fa-paper-plane" style="margin-left: 8px;"></i>`;
+        // CMS labels are untrusted text: never interpolate them into innerHTML.
+        btnText.textContent = isEn ? 'Submit Application' : (submitBtn.dataset.labelSubmit || 'Kirim Pendaftaran');
+        btnText.insertAdjacentHTML('beforeend', ' <i class="fa-solid fa-paper-plane" style="margin-left: 8px;"></i>');
       }
     };
 

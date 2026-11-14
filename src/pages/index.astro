@@ -13,6 +13,7 @@ import EimEvents from '../components/home/EimEvents.astro';
 import EimCourses from '../components/home/EimCourses.astro';
 import EimLabNumbers from '../components/home/EimLabNumbers.astro';
 import EimSectionNav from '../components/home/EimSectionNav.astro';
+import EimCTA from '../components/home/EimCTA.astro';
 import {
   getLocaleFromUrl,
   getLocalizedJsonData,
@@ -22,9 +23,13 @@ import {
 import { filterAuditContent } from '../utils/content-helpers';
 import { resolveCourses } from '../utils/course-helpers';
 import { countPeopleByGroup, parsePositions } from '../utils/position-mapper';
-import type { Lecturer, Member } from '../utils/types';
+import { getCurrentRecruitmentStage } from '../utils/recruitment';
+import type { Lecturer, Member, RecruitmentConfig } from '../utils/types';
 
 const locale = getLocaleFromUrl(Astro.url);
+const siteData = getLocalizedJsonData<any>('site', locale);
+const registrationConfig = getLocalizedJsonData<Partial<RecruitmentConfig>>('registration', locale);
+const recruitmentStage = getCurrentRecruitmentStage(registrationConfig);
 const lecturersData = getLocalizedJsonData<{ list: Lecturer[] }>('lecturers', locale);
 const membersData = getLocalizedJsonData<{ list: Member[] }>('members', locale);
 const positionsData = getLocalizedJsonData<{ list: unknown }>('positions', locale);
@@ -107,6 +112,7 @@ const bandCourses = allCourses.filter((course) => course.hasPracticum).slice(0, 
     <EimCourses courses={bandCourses} />
     <EimEvents events={events} locale={locale} />
     <EimNews news={latestNews} locale={locale} />
+    <EimCTA site={siteData} stage={recruitmentStage} />
   </main>
 </Layout>
 

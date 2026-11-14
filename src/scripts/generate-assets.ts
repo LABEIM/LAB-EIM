@@ -2,6 +2,42 @@ import sharp from 'sharp';
 import fs from 'fs';
 import path from 'path';
 
+
+/**
+ * Member portraits ship as full-resolution originals, so every tile would pull
+ * megabytes. Mirror them into a 640px thumbnail tree; MemberTile prefers the
+ * thumbnail and falls back to the original when one has not been generated.
+ */
+async function generateMemberThumbs() {
+  const srcDir = path.join(process.cwd(), 'public/image/division');
+  if (!fs.existsSync(srcDir)) return;
+
+  const exts = new Set(['.avif', '.webp', '.jpg', '.jpeg', '.png']);
+  const files: string[] = [];
+  const walk = (dir: string) => {
+    for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+      if (entry.name === 'thumbs') continue;
+      const full = path.join(dir, entry.name);
+      if (entry.isDirectory()) walk(full);
+      else if (exts.has(path.extname(entry.name).toLowerCase())) files.push(full);
+    }
+  };
+  walk(srcDir);
+
+  let written = 0;
+  for (const file of files) {
+    const rel = path.relative(srcDir, file).replace(/\.[^.]+$/, '.avif');
+    const out = path.join(srcDir, 'thumbs', rel);
+    fs.mkdirSync(path.dirname(out), { recursive: true });
+    await sharp(file)
+      .resize({ width: 640, withoutEnlargement: true })
+      .avif({ quality: 55 })
+      .toFile(out);
+    written += 1;
+  }
+  console.log(`Member thumbnails: ${written} written.`);
+}
+
 export async function generateAssets() {
   const rootDir = process.cwd();
   const brandDir = path.join(rootDir, 'public/assets/brand');
@@ -343,6 +379,8 @@ export async function generateAssets() {
       .png()
       .toFile(path.join(emailIconsDir, `${icon.name}.png`));
   }
+
+  await generateMemberThumbs();
 
   console.log('Asset generation completed successfully!');
 }

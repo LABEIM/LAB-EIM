@@ -67,6 +67,8 @@ This file lists student members and assistants. On `/structure` each person rend
   }
 ```
 
+Portraits under `public/image/division/` are full-resolution originals. `pnpm run generate:assets` mirrors them into `public/image/division/thumbs/` at 640px, and the Struktur page serves those thumbnails; add a member's portrait, then re-run the command so the page never ships the multi-megabyte original.
+
 ---
 
 ## 3. Registration Settings (`src/data/registration.json`)

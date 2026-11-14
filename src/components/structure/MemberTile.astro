@@ -1,4 +1,5 @@
 ---
+import fs from 'node:fs';
 import { positionLabel } from '../../utils/position-mapper';
 import { getInitials } from '../../utils/initials';
 import type { Member, Position } from '../../utils/types';
@@ -11,6 +12,11 @@ interface Props {
 
 const { member, positionIndex, index } = Astro.props;
 
+// Full-resolution originals are multi-megabyte; prefer the generated thumbnail.
+const thumb = member.image?.replace('/image/division/', '/image/division/thumbs/') ?? '';
+const mediaSrc =
+  thumb && thumb !== member.image && fs.existsSync(`public${thumb}`) ? thumb : member.image;
+
 ---
 
 <article
@@ -19,9 +25,9 @@ const { member, positionIndex, index } = Astro.props;
   style={`--i:${index ?? 0}`}
 >
   <div class="member-tile-media">
-    {member.image ? (
+    {mediaSrc ? (
       <img
-        src={member.image}
+        src={mediaSrc}
         alt=""
         loading="lazy"
         decoding="async"

@@ -168,7 +168,8 @@ html {
   margin-top: clamp(1.25rem, 3vh, 2rem);
   font-size: clamp(1rem, 1.2vw, 1.125rem);
   line-height: 1.55;
-  color: var(--color-muted-ink);
+  /* Dark enough to hold 4.5:1 where the canvas paints behind the text. */
+  color: var(--color-foreground);
 }
 
 .eim-hero-actions {
@@ -422,6 +423,17 @@ html {
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--color-surface-strong);
+}
+
+.e-reveal-stage-link {
+  margin-top: var(--space-16);
+  font-family: var(--font-mono);
+  font-size: var(--text-12);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-brand-bright);
+  text-decoration: underline;
+  text-underline-offset: 4px;
 }
 
 .e-reveal-stage-caption {

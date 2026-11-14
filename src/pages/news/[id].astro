@@ -133,8 +133,7 @@ const newsIndexHref = getLocalizedPath('/news', locale);
                 <a href={getLocalizedPath(`/news/${getCleanSlug(related.id)}`, locale)}>
                   <span class="article-related-meta">
                     <time datetime={related.data.news_date}>{formatGlobalDate(related.data.news_date)}</time>
-                    <span aria-hidden="true">·</span>
-                    <span>{related.data.category}</span>
+                    <span class="article-related-category">{related.data.category}</span>
                   </span>
                   <h3 class="article-related-title">{related.data.title}</h3>
                   <span class="article-related-arrow" aria-hidden="true">→</span>

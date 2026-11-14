@@ -68,6 +68,10 @@
 /* Mono meta row: eyebrow, byline and related rows share one voice. */
 .article-eyebrow,
 .article-meta,
+.article-related-category::before {
+  content: "· ";
+}
+
 .article-related-meta {
   display: flex;
   flex-wrap: wrap;
@@ -135,13 +139,15 @@
 }
 
 .article-story {
+  /* Same content column as the masthead so the body starts under the title. */
+  max-width: 1200px;
+  margin-inline: auto;
   padding-block: clamp(2.5rem, 6vh, 4rem) clamp(4.5rem, 10vh, 8.75rem);
   padding-inline: clamp(1.25rem, 4vw, 4rem);
 }
 
 .article-story-inner {
   max-width: 68ch;
-  margin-inline: auto;
 }
 
 .article-tags {

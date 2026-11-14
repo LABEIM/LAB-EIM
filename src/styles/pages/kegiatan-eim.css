@@ -288,6 +288,10 @@
 /* Shared mono meta row: uppercase small caps used in the recap hero, gallery head and related rows. */
 .kegiatan-recap-eyebrow,
 .kegiatan-recap-meta,
+.kegiatan-related-category::before {
+  content: "· ";
+}
+
 .kegiatan-related-meta {
   display: flex;
   flex-wrap: wrap;
@@ -366,13 +370,14 @@
 .kegiatan-story {
   /* The hero already ends with the cover and its own bottom padding, so the top
      gap continues that rhythm instead of stacking a second full section pad. */
+  max-width: 1200px;
+  margin-inline: auto;
   padding-block: clamp(2.5rem, 6vh, 4rem) clamp(4.5rem, 10vh, 8.75rem);
   padding-inline: clamp(1.25rem, 4vw, 4rem);
 }
 
 .kegiatan-story-inner {
   max-width: 68ch;
-  margin-inline: auto;
 }
 
 /* == Recap closing == */

@@ -59,6 +59,9 @@ const MEDIA: { kind: 'pending' | 'image' | 'video'; src: string; poster?: string
           decoding="async"
         />
         <p class="e-reveal-stage-note">{t('home.revealPending')}</p>
+        <a class="e-reveal-stage-link" href="/about">
+          {t('home.revealPendingCta')} <span aria-hidden="true">→</span>
+        </a>
       </div>
     )}
 

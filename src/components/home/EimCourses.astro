@@ -1,14 +1,15 @@
 ---
-import type { CourseView } from '../../utils/types';
-import { t } from '../../utils/i18n';
-import { getLocaleFromUrl } from '../../utils/i18n';
+import type { ChromeData, CourseView, HomePageData } from '../../utils/types';
+import { getLocaleFromUrl, getLocalizedJsonData } from '../../utils/i18n';
 
 interface Props {
   courses: CourseView[];
+  content: HomePageData['courses'];
 }
 
-const { courses } = Astro.props;
+const { courses, content } = Astro.props;
 const locale = getLocaleFromUrl(Astro.url);
+const chrome = getLocalizedJsonData<ChromeData>('chrome', locale);
 ---
 
 {courses.length > 0 && (
@@ -17,17 +18,17 @@ const locale = getLocaleFromUrl(Astro.url);
       <div class="grid gap-6 lg:grid-cols-2 lg:items-end">
         <div>
           <p class="e-reveal font-mono text-xs uppercase tracking-[0.08em] text-brand">
-            {t('home.coursesEyebrow', locale)}
+            {content.eyebrow}
           </p>
           <h2
             id="eim-courses-title"
             class="e-reveal mt-4 font-display text-[clamp(2rem,4vw,3.5rem)] leading-[1.05] tracking-[-0.01em]"
           >
-            {t('home.coursesTitle', locale)}
+            {content.title}
           </h2>
         </div>
         <p class="e-reveal max-w-[52ch] text-[15px] leading-[1.55] text-muted-ink lg:justify-self-end">
-          {t('home.coursesIntro', locale)}
+          {content.intro}
         </p>
       </div>
 
@@ -44,7 +45,7 @@ const locale = getLocaleFromUrl(Astro.url);
             style={`--i:${index}`}
           >
             <p class="font-mono text-xs uppercase tracking-[0.08em] text-brand">
-              {t('courses.practicumYes', locale)}
+              {chrome.labels.practicumYes}
             </p>
             <h3 class="font-display text-[clamp(1.35rem,2vw,1.75rem)] leading-[1.15]">
               {course.title}
@@ -60,7 +61,7 @@ const locale = getLocaleFromUrl(Astro.url);
         href="/courses"
         class="mt-8 inline-flex items-center gap-2 py-2 font-mono text-xs uppercase tracking-[0.08em] text-brand"
       >
-        {t('home.coursesLink', locale)} <span aria-hidden="true">→</span>
+        {content.link} <span aria-hidden="true">→</span>
       </a>
     </div>
   </section>

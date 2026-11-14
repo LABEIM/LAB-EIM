@@ -3,7 +3,6 @@ export interface ContentFilterOptions {
   cardClass: string;
   itemsPerPage?: number;
   emptyStateId?: string;
-  itemName?: string; // e.g. "Berita" or "Kegiatan"
 }
 
 export interface FilterCard {
@@ -68,7 +67,6 @@ export function initContentFilter(options: ContentFilterOptions) {
     cardClass,
     itemsPerPage = 6,
     emptyStateId = 'empty-state-notice',
-    itemName = 'Item',
   } = options;
 
   const gridEl = document.getElementById(gridId);
@@ -97,6 +95,18 @@ export function initContentFilter(options: ContentFilterOptions) {
   const resetBtn = document.getElementById('filter-reset-btn');
   const resultsCountEl = document.getElementById('filter-results-count');
   const emptyStateEl = document.getElementById(emptyStateId);
+
+  // Templates come from chrome.ui via the components' data attributes; the
+  // literals only cover a page rendered without a filter bar or pagination.
+  const filterBarEl = document.getElementById('content-filter-bar');
+  // Each listing page names its own content type via the bar, like the label attributes.
+  const itemName = filterBarEl?.getAttribute('data-item-name') || 'Item';
+  const labels = {
+    noResults: filterBarEl?.getAttribute('data-label-no-results') || 'Tidak ada {item} ditemukan',
+    resultsRange:
+      filterBarEl?.getAttribute('data-label-results-range') || 'Menampilkan {from}-{to} dari {total} {item}',
+    pageInfo: document.getElementById('pagination-info')?.getAttribute('data-template') || 'Halaman {page} dari {total}',
+  };
 
   const categoryPills = document.querySelectorAll('#category-pills-row .filter-pill');
   const statusPills = document.querySelectorAll('#status-pills-row .filter-pill');
@@ -226,11 +236,15 @@ export function initContentFilter(options: ContentFilterOptions) {
     // 6. Update Filter Results Count
     if (resultsCountEl) {
       if (totalMatching === 0) {
-        resultsCountEl.textContent = `Tidak ada ${itemName.toLowerCase()} ditemukan`;
+        resultsCountEl.textContent = labels.noResults.replaceAll('{item}', itemName.toLowerCase());
       } else {
         const fromNum = startIndex + 1;
         const toNum = Math.min(endIndex, totalMatching);
-        resultsCountEl.textContent = `Menampilkan ${fromNum}-${toNum} dari ${totalMatching} ${itemName}`;
+        resultsCountEl.textContent = labels.resultsRange
+          .replaceAll('{from}', String(fromNum))
+          .replaceAll('{to}', String(toNum))
+          .replaceAll('{total}', String(totalMatching))
+          .replaceAll('{item}', itemName);
       }
     }
 
@@ -243,7 +257,11 @@ export function initContentFilter(options: ContentFilterOptions) {
 
         if (paginationPrev) paginationPrev.disabled = currentPage <= 1;
         if (paginationNext) paginationNext.disabled = currentPage >= totalPages;
-        if (paginationInfo) paginationInfo.textContent = `Halaman ${currentPage} dari ${totalPages}`;
+        if (paginationInfo) {
+          paginationInfo.textContent = labels.pageInfo
+            .replaceAll('{page}', String(currentPage))
+            .replaceAll('{total}', String(totalPages));
+        }
 
         if (paginationNumbers) {
           paginationNumbers.innerHTML = '';

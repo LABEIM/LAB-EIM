@@ -2,7 +2,6 @@
 import TimelineSteps from './TimelineSteps.astro';
 import NimSearchBox from './NimSearchBox.astro';
 import BackToHomeButton from './BackToHomeButton.astro';
-import { getLocaleFromUrl, t } from '../../utils/i18n';
 
 import type { SelectionStepConfig } from '../../utils/types';
 
@@ -34,7 +33,6 @@ interface Props {
   selectionSteps?: SelectionStepConfig[];
 }
 
-const locale = getLocaleFromUrl(Astro.url);
 const { initialStage, announcementCfg, selectionSteps = [] } = Astro.props;
 ---
 
@@ -53,7 +51,6 @@ const { initialStage, announcementCfg, selectionSteps = [] } = Astro.props;
     inputId="search-nim-input"
     buttonId="search-nim-btn"
     resultBoxId="search-result-box"
-    buttonLabel={t('btn.search', locale)}
     containerClass="reg-timer-mb"
   />
 

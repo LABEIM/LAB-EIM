@@ -1,7 +1,5 @@
 ---
-import type { CourseView, Lecturer, Member, Position } from '../../utils/types';
-import type { Locale } from '../../utils/i18n';
-import { t } from '../../utils/i18n';
+import type { CourseView, Lecturer, Member, Position, StructurePageData } from '../../utils/types';
 import {
   PRACTICUM_ASSISTANT_ID,
   STRUCTURE_TREE,
@@ -11,14 +9,15 @@ import { summarizePracticumAssistants } from '../../utils/course-helpers';
 import ChartBranch from './ChartBranch.astro';
 
 interface Props {
+  content: StructurePageData['chart'];
+  labels: StructurePageData['groups'];
   positions: Position[];
   members: Member[];
   lecturers: Lecturer[];
   courses: CourseView[];
-  locale: Locale;
 }
 
-const { positions, members, lecturers, courses, locale } = Astro.props;
+const { content, labels, positions, members, lecturers, courses } = Astro.props;
 
 const byId = new Map(positions.map((position) => [position.id, position]));
 const treeById = new Map(STRUCTURE_TREE.map((node) => [node.id, node]));
@@ -34,16 +33,15 @@ const assistantSummary = summarizePracticumAssistants(courses, members);
 const notesFor = (id: string): string | undefined => {
   if (assistantSummary.memberCount === 0) return undefined;
   if (id === 'mahasiswa-anggota') {
-    return t('struct.memberAssistantNote', locale, {
-      n: String(assistantSummary.memberCount),
-      total: String(students),
-    });
+    return (content.memberAssistantNote ?? '')
+      .replaceAll('{n}', String(assistantSummary.memberCount))
+      .replaceAll('{total}', String(students));
   }
   return undefined;
 };
 
 const practicumAssistant: ChartNode = {
-  label: t('struct.practicumAssistant', locale),
+  label: content.practicumAssistant,
   group: 'asisten',
   count: assistantSummary.distinctCount,
   children: [],
@@ -86,10 +84,10 @@ const root = buildNode(STRUCTURE_TREE[0].id);
         id="struct-chart-title"
         class="e-reveal font-display text-[clamp(2rem,4vw,3.5rem)] leading-[1.05] tracking-[-0.01em]"
       >
-        {t('struct.chartTitle', locale)}
+        {content.title}
       </h2>
       <p class="e-reveal max-w-[52ch] text-[15px] leading-[1.55] text-muted-ink lg:justify-self-end">
-        {t('struct.chartIntro', locale)}
+        {content.intro}
       </p>
     </div>
 
@@ -97,8 +95,8 @@ const root = buildNode(STRUCTURE_TREE[0].id);
       <div
         class="mt-[clamp(2.5rem,6vh,4rem)] rounded-media border border-line bg-surface p-[clamp(1.25rem,4vw,2.5rem)]"
       >
-        <ol class="chart-tree e-reveal" role="list">
-          <ChartBranch node={root} locale={locale} />
+        <ol class="chart-tree e-reveal" role="list" aria-label={content.ariaLabel}>
+          <ChartBranch node={root} content={content} labels={labels} />
         </ol>
       </div>
     )}

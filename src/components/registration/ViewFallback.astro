@@ -1,5 +1,6 @@
 ---
-import { getLocaleFromUrl, getLocalizedPath } from '../../utils/i18n';
+import { getLocaleFromUrl, getLocalizedJsonData, getLocalizedPath } from '../../utils/i18n';
+import type { ChromeData } from '../../utils/types';
 import FormDescriptionCard from './FormDescriptionCard.astro';
 
 interface Props {
@@ -18,6 +19,7 @@ interface Props {
 }
 
 const locale = getLocaleFromUrl(Astro.url);
+const chrome = getLocalizedJsonData<ChromeData>('chrome', locale);
 const { 
   initialStage, 
   fallbackCfg, 
@@ -68,7 +70,7 @@ const {
 
     <div class="reg-border-top-box">
       <a href={getLocalizedPath('/', locale)} class="btn btn-secondary reg-btn-padded">
-        <i class="fa-solid fa-house reg-btn-icon-abs"></i>Kembali ke Beranda
+        <i class="fa-solid fa-house reg-btn-icon-abs"></i>{chrome.ui.backToHome}
       </a>
     </div>
   </div>

@@ -6,6 +6,38 @@ Admin Portal: https://lab-eim.vercel.app/keystatic
 
 ---
 
+## Halaman (page copy)
+Every page's visible copy lives in JSON, editable under **Halaman** in Keystatic. Shared UI strings — pagination, the whole filter bar (sort, status, category, reset copy), screen-reader labels, back links, and the registration tab suffix — live in `src/data/chrome.json` under `ui`, editable under **Navbar, Footer & Brand**; registration copy lives in `src/data/registration.json`, including the form labels (fieldset legends, countdown units, draft banner). Edit the files directly only when Keystatic is unavailable. Still code-only: the remaining registration form internals (the upload legend, modal bodies, upload hints, validation messages), the poster modal's slide-dot and zoom labels, `ViewClosed`'s "Artikel & Pengumuman" link, and the `/assets` reference page.
+
+| Page | File |
+| --- | --- |
+| Beranda | `src/data/pages/home.json` |
+| Tentang Kami | `src/data/about.json` |
+| Struktur | `src/data/pages/structure.json` |
+| Mata Kuliah (list) | `src/data/pages/courses.json` |
+| Mata Kuliah (detail) | `src/data/pages/course-detail.json` |
+| Kegiatan (list) | `src/data/pages/events.json` |
+| Kegiatan (detail) | `src/data/pages/event-detail.json` |
+| Artikel (list) | `src/data/pages/news.json` |
+| Artikel (detail) | `src/data/pages/news-detail.json` |
+| Kontak | `src/data/contact.json` |
+| Pendaftaran | `src/data/registration.json` |
+| Shared chrome (nav, footer, CTA, labels) | `src/data/chrome.json` |
+
+**Hiding a section:** every non-hero section object has an `enabled` boolean. Set it to `false` in Keystatic to remove the section from the page; section nav dots read the same flag, so the dot disappears too. Numbered sections (`01 — …`) count only the visible sections, so hiding one leaves no gap in the sequence. Hero sections have no toggle because they hold the page `<h1>`. Upload fields on detail pages are collection fields, not page copy; only their headings and enabled switches live in the `*-detail.json` files.
+
+**Intro media (Beranda):** the `reveal` section shows one of three states chosen by `mediaKind` — `none` keeps the placeholder text, `image` shows an image, `video` shows a video. The `video` state has three sources with a fixed precedence for the background: the uploaded `video` file, then a `backgroundUrl` link (YouTube, Vimeo, Google Drive, or a direct `.mp4`/`.webm`/`.ogv` file such as an R2/CDN URL), then a direct file in `videoUrl`. The optional `backgroundUrl` is the way to pair a native or provider background with a separate provider player — for example a short YouTube loop behind a different full YouTube video. A `videoUrl` link to YouTube, Vimeo, or Google Drive is the player opened by the overlay, and only a provider link produces the overlay and modal; `backgroundUrl` never opens a modal. If no upload or background link is set, a provider `videoUrl` serves as both the background and the player; if only a file is set, the native player stays inline with its own controls and no modal. `poster` is the still frame for the uploaded background. In short: **unggah berkas atau isi `backgroundUrl` untuk latar berjalan otomatis; tempel tautan YouTube/Vimeo/Drive di `videoUrl` untuk pemutar saat diklik; jika hanya `videoUrl`, tautan itu menjadi latar sekaligus pemutar.** An external image may come from any https host at the editor's choice (the editor is trusted with all copy) and is served with `referrerpolicy="no-referrer"`; video links are restricted to those providers or a direct video file, and IP-literal hosts are rejected. Uploads land in `public/assets/media/`. A pasted embed (YouTube or Vimeo) autoplays muted and looping inside the section; clicking it opens a full player with sound and normal controls in a modal, which stops playback when closed. Google Drive previews cannot autoplay or loop, so they show their own preview player in the section and in the modal. An absent `mediaKind` falls back to `none`, and the copy guard (`pnpm test`) requires a non-empty `mediaAlt` whenever `mediaKind` is `image` or `video`, plus a resolvable URL whenever `imageUrl`, `backgroundUrl`, or `videoUrl` is set (Keystatic itself does not mark these fields required).
+
+**Empty states and filter nouns:** each listing page has its own `list` copy. Mata Kuliah uses `list.emptyTitle` with `list.empty` as the description; Artikel and Kegiatan use `list.emptyTitle` / `list.emptyDesc`. Artikel and Kegiatan also name their content type in `list.item` ("Artikel", "Kegiatan"), which fills the filter results line ("Menampilkan 1-6 dari 12 Artikel").
+
+**Shared strings:** navigation, footer, the closing CTA, brand assets, and cross-page labels (for example "Lihat Detail", "Mendatang", statistics labels, coordinator/SKS/practicum labels) live once in `chrome.json`. Change them there rather than in a page file.
+
+**Verifying copy:** the copy-render guard in `pnpm test` compares every JSON string against the built HTML, so run a build first (`pnpm run build && pnpm test`). To also check the audit sample content, build with `PUBLIC_SHOW_AUDIT_CONTENT=true`.
+
+**`meta.title` on detail pages is only the brand suffix:** the page renders `${collection item title} · ${meta.title}`, so `"EIM Lab"` produces `Judul · EIM Lab`. On list pages `meta.title` is the whole title (`"Artikel · EIM Lab"`). Course detail's `meta.description` is a template and keeps `{title}`; that token is replaced with the course name.
+
+---
+
 ## 1. Positions Configuration (`src/data/positions.json`)
 This file defines the laboratory's role hierarchy. The `/structure` chart and role sections and the Keystatic `Position` dropdowns on members and lecturers all read from it.
 
@@ -28,7 +60,7 @@ The hierarchy is fixed in code (`STRUCTURE_TREE` in `src/utils/position-mapper.t
 ```
 Sections render only for positions that hold at least one person; the chart shows the positions in `STRUCTURE_TREE` (`src/utils/position-mapper.ts`), so add a position to that tree as well as to `positions.json` if it belongs in the chart.
 
-The numbers on Beranda ("Laboratorium dalam angka") and Tentang Kami are derived — dosen and anggota counts come from `positions.json` plus `members.json`/`lecturers.json`, and the third Beranda number is the course count from `src/content/courses/` (Tentang Kami shows the dosen count instead). Nothing is typed in, so the numbers follow the data automatically.
+The numbers on Beranda ("Laboratorium dalam angka") and Tentang Kami are derived by default — dosen and anggota counts come from `positions.json` plus `members.json`/`lecturers.json`, and the third Beranda number is the course count from `src/content/courses/` (Tentang Kami shows the dosen count instead). Tentang Kami also has optional override fields (`sections.stats.dosenValue`, `membersValue`, `coursesValue`) in Keystatic; leave them empty to keep following the data.
 
 ---
 
@@ -51,9 +83,9 @@ This file lists student members and assistants. On `/structure` each person rend
 * **`id`** (Number): A unique numeric ID for the member. Course assistant lists reference these ids.
 * **`name`** (String): Full name of the assistant.
 * **`role`** (String): A position id from `positions.json` (Keystatic shows it as a Position dropdown).
-* **`image`** (String): Path to the member's avatar image starting from `/image/`.
-* **`scale`** (String, Optional): CSS transform scale value for positioning adjustments in the square avatar frame (e.g. `"2.5"`, `"3"`, `"1"`).
-* **`position`** (String, Optional): CSS transform-origin values to focus/center the avatar face inside the square avatar crop (e.g. `"center 32%"`, `"50% 15%"`).
+* **`image`** (String, Optional): Path to the member's avatar image starting from `/image/`. Upload it through Keystatic's **Foto** field (files are written to `public/image/division/`). Clearing the field omits the `image` key entirely and the card falls back to the member's initials. Crop the photo to the avatar tile's aspect ratio before uploading.
+* **`scale`** (String, Optional): CSS transform scale value for positioning adjustments in the square avatar frame (e.g. `"2.5"`, `"3"`, `"1"`). Only needed for an un-cropped upload; a pre-cropped photo uses `"1"`.
+* **`position`** (String, Optional): CSS transform-origin values to focus/center the avatar face inside the square avatar crop (e.g. `"center 32%"`, `"50% 15%"`). Only needed for an un-cropped upload; a pre-cropped photo uses `"center"`.
 
 ### Member Template
 ```json
@@ -272,6 +304,7 @@ Site administrators can toggle and configure a top global announcement banner th
 * **`mode`** (`"auto_recruitment"` | `"manual"`):
   - `"auto_recruitment"`: Automatically updates banner text, alert style, icon, and CTA link to mirror the active recruitment pipeline status (e.g. Opening Soon, Registration Open, Document Screening Results, Final Results).
   - `"manual"`: Displays custom manual announcement text and settings configured below.
+* `badgeText`, `message`, and `ctaText` apply only in `manual` mode; `auto_recruitment` mode reads its badge, message, and CTA text from the active stage configuration in `src/data/registration.json`.
 * **`alertType`** (`"recruitment"` | `"maintenance"` | `"info"` | `"success"`): Color-coded visual theme for manual announcements:
   - `"recruitment"`: Purple & Gold accent
   - `"maintenance"`: Amber & Crimson caution accent
@@ -289,7 +322,7 @@ Site administrators can toggle and configure a top global announcement banner th
 ## 9. Lecturers (`src/data/lecturers.json`)
 This file holds the dosen entries. Each entry's `role` is a position id from `positions.json`, so a lecturer appears in the matching `/structure` section.
 
-Manage it via **Keystatic Admin > Singletons > Lecturers**. Entries with an empty `image` fall back to the placeholder avatar.
+Manage it via **Keystatic Admin > Singletons > Lecturers**. Upload the portrait through the **Foto** field (files are written to `public/image/division/`); clearing the field omits the `image` key and the card falls back to the placeholder avatar.
 
 ### Fields Explanation
 * **`id`** (String): Unique id. Course `coordinatorId` values reference these ids.
@@ -303,22 +336,30 @@ Manage it via **Keystatic Admin > Singletons > Lecturers**. Entries with an empt
     "id": "dosen-koordinator-matkul-1",
     "name": "Nama Dosen",
     "role": "koordinator-matkul",
-    "image": "",
     "scale": "1",
     "position": "center"
   }
 ```
+An empty **Foto** field is saved as an omitted `image` key; the card then shows the placeholder avatar.
+
 ## 10. Contact Page (`src/data/contact.json`)
 
-Configures the `/contact` page. Manage it via **Keystatic Admin > Singletons > Contact Page**.
+Configures the `/contact` page. Manage it via **Keystatic Admin > Singletons > Kontak**.
+
+Every non-hero section (`details`, `map`, `socials`) carries an `enabled` boolean; the hero has none because it holds the page `<h1>`.
 
 ### Fields Explanation
+* **`meta`**: `title` for the tab; `description` for search results. `meta.description` keeps `{location}` and `{university}`, both replaced from `site.json` (`contact.location`, `contact.university`).
+* **`navDots`**: Section-nav dot labels (`detail`, `social`). The top hero dot reuses `hero.eyebrow`.
+* **`hero`**: Eyebrow, primary button label, and secondary link label. The hero heading and description are the top-level `title` and `heroDescription` below.
+* **`details`** (`enabled`): Copy for the "Kanal komunikasi" section — `eyebrow`, `title`, `intro`, `routingNote`, the email action and copy-button labels (`emailAction`, `copyEmail`, `copied`, `copyFailed`), their screen-reader status strings (`copySuccessStatus`, `copyFailedStatus`), and the PIC card `picsTitle` / `picsSubtitle`.
+* **`map`** (`enabled`): Map section `title`, `subtitle`, and `navDot`. The framed map comes from `mapsEmbedUrl` below.
+* **`socials`** (`enabled`): Social section `eyebrow`, `title`, and `intro`. The accounts come from `site.json` (`socials.instagram`, `socials.linkedin`, `socials.github`).
 * **`title`** / **`heroDescription`**: Hero heading and description.
-* **`locationTitle`**, **`location`**, **`university`**: Location row and its label.
-* **`mapsUrl`**, **`mapsEmbedUrl`**: External maps link and the map iframe URL.
-* **`emailTitle`**, **`email`**: Email row label and address.
+* **`locationTitle`**: Label for the location row. The location and university text come from `site.json` (`contact.location`, `contact.university`).
+* **`mapsEmbedUrl`**: Map iframe URL for the `map` section. Only `https://www.google.com/maps/embed?…`, `https://maps.google.com/maps/embed?…`, or Google's documented `https://www.google.com/maps/embed/v1/…` form is accepted; any other value omits the iframe entirely.
+* **`emailTitle`**: Label for the email row. The address comes from `site.json` (`contact.email`).
 * **`hoursTitle`**, **`hoursText`**, **`hoursSubtext`**: Operating-hours row.
-* **`mapSectionTitle`**, **`mapSectionSubtitle`**: Map section heading and intro.
 * **`contactPersons`** (Array): Narahubung cards shown inside "Kanal komunikasi".
   These are independent of the recruitment PICs in **Registration Settings** (`src/data/registration.json`); update both if the same people appear on both pages.
   * **`name`**: PIC name.
@@ -326,8 +367,6 @@ Configures the `/contact` page. Manage it via **Keystatic Admin > Singletons > C
   * **`platform`**: `whatsapp`, `line`, `email`, or `phone` (selects the icon).
   * **`contactId`**: Phone number or handle shown on the card.
   * **`link`**: Direct clickable link (must start with `https://`, `mailto:`, or `tel:`, e.g. `https://wa.me/6281234567890`). Leave empty to render a non-clickable card.
-
-> Entries in the repository currently use placeholder numbers (`08xx-xxxx-xxxx`). Replace them with real PIC data before publishing.
 
 ### Contact Person Template
 ```json

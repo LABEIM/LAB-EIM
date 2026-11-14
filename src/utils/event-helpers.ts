@@ -1,6 +1,6 @@
 import type { CollectionEntry } from 'astro:content';
 import type { Locale } from './i18n';
-import { getCleanSlug, getLocalizedPath, t } from './i18n';
+import { getCleanSlug, getLocalizedPath } from './i18n';
 import { formatGlobalDate, parseGlobalDateStr } from './date';
 
 export type EventEntry = CollectionEntry<'events'>;
@@ -46,9 +46,9 @@ export function getEventDateMs(event: EventEntry): number {
 }
 
 /** Formatted event date in the site timezone, or the "date TBD" label. */
-export function getEventDateLabel(event: EventEntry, locale: Locale): string {
+export function getEventDateLabel(event: EventEntry, _locale: Locale): string {
   const ms = getEventDateMs(event);
-  return ms === 0 ? t('events.dateTbd', locale) : formatGlobalDate(ms);
+  return ms === 0 ? 'Tanggal menyusul' : formatGlobalDate(ms);
 }
 
 export function getEventSearchText(event: EventEntry): string {

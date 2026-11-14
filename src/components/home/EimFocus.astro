@@ -1,12 +1,11 @@
 ---
-import { t } from '../../utils/i18n';
+import type { HomePageData } from '../../utils/types';
 
-const rows = [
-  { title: t('home.focus1Title'), description: t('home.focus1Desc') },
-  { title: t('home.focus2Title'), description: t('home.focus2Desc') },
-  { title: t('home.focus3Title'), description: t('home.focus3Desc') },
-  { title: t('home.focus4Title'), description: t('home.focus4Desc') },
-];
+interface Props {
+  content: HomePageData['focus'];
+}
+
+const { content: focus } = Astro.props;
 ---
 
 <section id="fokus" class="pt-[clamp(4.5rem,10vh,8.75rem)]" aria-labelledby="eim-focus-title">
@@ -15,15 +14,15 @@ const rows = [
       id="eim-focus-title"
       class="e-reveal font-display text-[clamp(2rem,4vw,3.5rem)] leading-[1.05] tracking-[-0.01em]"
     >
-      {t('home.focusTitle')}
+      {focus.title}
     </h2>
     <p class="e-reveal mt-4 max-w-[65ch] text-[17px] leading-[1.55] text-muted-ink">
-      {t('home.focusIntro')}
+      {focus.intro}
     </p>
   </div>
 
   <div class="e-reveal-group mt-[clamp(2.5rem,6vh,5rem)] border-b border-line">
-    {rows.map((row, index) => (
+    {focus.rows.map((row, index) => (
       <a
         href="/about"
         class:list={[

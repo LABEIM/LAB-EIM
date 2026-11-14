@@ -1,5 +1,6 @@
 ---
-import { getLocaleFromUrl, t } from '../../utils/i18n';
+import { getLocaleFromUrl, getLocalizedJsonData } from '../../utils/i18n';
+import type { ChromeData } from '../../utils/types';
 
 interface Props {
   title: string;
@@ -11,13 +12,15 @@ interface Props {
 }
 
 const locale = getLocaleFromUrl(Astro.url);
+const chrome = getLocalizedJsonData<ChromeData>('chrome', locale);
+const registration = getLocalizedJsonData<{ labels: { resultsPlaceholder: string } }>('registration', locale);
 
 const {
   title,
   inputId,
   buttonId,
   resultBoxId,
-  buttonLabel = t('btn.search', locale),
+  buttonLabel = chrome.labels.search,
   containerClass = ""
 } = Astro.props;
 ---
@@ -27,7 +30,7 @@ const {
     <i class="fa-solid fa-magnifying-glass reg-icon-mr-sm"></i> {title}
   </h3>
   <div class="search-lookup-form">
-    <input type="text" id={inputId} class="form-control reg-input-bg" placeholder={t('reg.resultsPlaceholder', locale)} />
+    <input type="text" id={inputId} class="form-control reg-input-bg" placeholder={registration.labels.resultsPlaceholder} />
     <button id={buttonId} class="btn btn-primary reg-btn-search" type="button">
       {buttonLabel} <i class="fa-solid fa-search reg-icon-ml-xs"></i>
     </button>

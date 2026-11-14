@@ -1,5 +1,6 @@
 ---
-import { getLocaleFromUrl, getLocalizedPath } from '../../utils/i18n';
+import { getLocaleFromUrl, getLocalizedJsonData, getLocalizedPath } from '../../utils/i18n';
+import type { ChromeData } from '../../utils/types';
 
 interface Props {
   wrapperClass?: string;
@@ -8,11 +9,12 @@ interface Props {
 }
 
 const locale = getLocaleFromUrl(Astro.url);
+const chrome = getLocalizedJsonData<ChromeData>('chrome', locale);
 
 const {
   wrapperClass = "reg-btn-wrapper",
   href = getLocalizedPath('/', locale),
-  label = "Kembali ke Beranda"
+  label = chrome.ui.backToHome
 } = Astro.props;
 ---
 

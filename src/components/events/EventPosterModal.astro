@@ -1,6 +1,7 @@
 ---
 import type { CollectionEntry } from 'astro:content';
-import { getCleanSlug, getLocalizedPath, t, type Locale } from '../../utils/i18n';
+import { getCleanSlug, getLocalizedJsonData, getLocalizedPath, type Locale } from '../../utils/i18n';
+import type { ChromeData } from '../../utils/types';
 
 interface Props {
   upcomingEvents: CollectionEntry<'events'>[];
@@ -8,6 +9,7 @@ interface Props {
 }
 
 const { upcomingEvents = [], locale = 'id' } = Astro.props;
+const chrome = getLocalizedJsonData<ChromeData>('chrome', locale);
 
 if (!upcomingEvents || upcomingEvents.length === 0) {
   // Render nothing if there are no upcoming events
@@ -33,19 +35,19 @@ const preparedEvents = upcomingEvents.map((event) => {
 ---
 
 {preparedEvents.length > 0 && (
-  <div id="eventPosterModal" class="event-modal-overlay" aria-hidden="true" role="dialog">
+  <div id="eventPosterModal" class="event-modal-overlay" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="modalEventTitle">
     <div class="event-modal-container">
       {/* Header */}
       <div class="event-modal-header">
         <div class="event-modal-header-info">
           <span class="event-modal-badge">
-            <i class="fa-solid fa-calendar-check"></i> {t('badge.upcoming', locale) || 'Upcoming Event'}
+            <i class="fa-solid fa-calendar-check"></i> {chrome.labels.upcoming}
           </span>
           <h3 id="modalEventTitle" class="event-modal-title">
             {preparedEvents[0].title}
           </h3>
         </div>
-        <button id="closePosterModal" class="event-modal-close-btn" aria-label="Close modal">
+        <button id="closePosterModal" class="event-modal-close-btn" aria-label={chrome.ui.aria.closeModal}>
           <i class="fa-solid fa-xmark"></i>
         </button>
       </div>
@@ -62,6 +64,7 @@ const preparedEvents = upcomingEvents.map((event) => {
                   class="poster-img"
                   draggable="false"
                   data-detail-url={event.detailUrl}
+                  data-event-title={event.title}
                 />
               </div>
             </div>
@@ -70,13 +73,13 @@ const preparedEvents = upcomingEvents.map((event) => {
 
         {/* Interactive Zoom Toolbar Controls */}
         <div class="poster-zoom-controls">
-          <button id="zoomOutBtn" class="zoom-btn" title="Zoom Out (-)">
+          <button id="zoomOutBtn" class="zoom-btn" title={chrome.ui.aria.zoomOut}>
             <i class="fa-solid fa-minus"></i>
           </button>
-          <button id="zoomResetBtn" class="zoom-btn zoom-reset-btn" title="Reset Zoom">
+          <button id="zoomResetBtn" class="zoom-btn zoom-reset-btn" title={chrome.ui.aria.zoomReset}>
             100%
           </button>
-          <button id="zoomInBtn" class="zoom-btn" title="Zoom In (+)">
+          <button id="zoomInBtn" class="zoom-btn" title={chrome.ui.aria.zoomIn}>
             <i class="fa-solid fa-plus"></i>
           </button>
         </div>
@@ -84,10 +87,10 @@ const preparedEvents = upcomingEvents.map((event) => {
         {/* Carousel Prev/Next Controls (If multiple) */}
         {preparedEvents.length > 1 && (
           <>
-            <button id="carouselPrevBtn" class="carousel-nav-btn carousel-prev" aria-label="Previous event">
+            <button id="carouselPrevBtn" class="carousel-nav-btn carousel-prev" aria-label={chrome.ui.aria.previousEvent}>
               <i class="fa-solid fa-chevron-left"></i>
             </button>
-            <button id="carouselNextBtn" class="carousel-nav-btn carousel-next" aria-label="Next event">
+            <button id="carouselNextBtn" class="carousel-nav-btn carousel-next" aria-label={chrome.ui.aria.nextEvent}>
               <i class="fa-solid fa-chevron-right"></i>
             </button>
             
@@ -96,7 +99,7 @@ const preparedEvents = upcomingEvents.map((event) => {
                 <button
                   class={`dot ${idx === 0 ? 'is-active' : ''}`}
                   data-dot-index={idx}
-                  aria-label={`Go to slide ${idx + 1}`}
+                  aria-label={chrome.ui.aria.slideDot.replace('{n}', String(idx + 1))}
                 />
               ))}
             </div>
@@ -121,7 +124,7 @@ const preparedEvents = upcomingEvents.map((event) => {
           href={preparedEvents[0].detailUrl}
           class="btn btn-primary event-modal-cta-btn"
         >
-          {t('btn.details', locale)} <i class="fa-solid fa-arrow-right"></i>
+          {chrome.labels.details} <i class="fa-solid fa-arrow-right"></i>
         </a>
       </div>
     </div>
@@ -141,6 +144,7 @@ const preparedEvents = upcomingEvents.map((event) => {
     const nextBtn = document.getElementById('carouselNextBtn');
     const dotsContainer = document.getElementById('carouselDots');
     const ctaBtn = document.getElementById('modalCtaBtn') as HTMLAnchorElement;
+    const modalTitle = document.getElementById('modalEventTitle');
 
     const zoomInBtn = document.getElementById('zoomInBtn');
     const zoomOutBtn = document.getElementById('zoomOutBtn');
@@ -220,6 +224,7 @@ const preparedEvents = upcomingEvents.map((event) => {
       // Update metadata in footer/header if target image exists
       const targetImg = images[currentIndex];
       if (targetImg) {
+        if (modalTitle) modalTitle.textContent = targetImg.dataset.eventTitle || '';
         if (ctaBtn) ctaBtn.href = internalHref(targetImg.dataset.detailUrl, '#');
       }
     }

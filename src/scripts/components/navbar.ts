@@ -37,12 +37,18 @@ export function initNavbar(): void {
   const links: HTMLElement = linksQuery;
 
   const isOpen = (): boolean => toggle.getAttribute('aria-expanded') === 'true';
+  const menuLabels = {
+    open: navbar?.getAttribute('data-label-menu-open') || '',
+    close: navbar?.getAttribute('data-label-menu-close') || '',
+  };
 
   function setOpen(open: boolean): void {
     toggle.classList.toggle('active', open);
     links.classList.toggle('active', open);
     toggle.setAttribute('aria-expanded', String(open));
-    toggle.setAttribute('aria-label', open ? 'Tutup menu' : 'Buka menu');
+    if (open ? menuLabels.close : menuLabels.open) {
+      toggle.setAttribute('aria-label', open ? menuLabels.close : menuLabels.open);
+    }
     document.documentElement.classList.toggle('nav-open', open);
     document
       .querySelectorAll<HTMLElement>('main, footer, #global-announcement-banner')

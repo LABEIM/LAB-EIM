@@ -1,14 +1,14 @@
 ---
 interface Props {
   id?: string;
-  label: string;
+  content: { label: string };
   stats: { label: string; value: number }[];
 }
 
-const { id, label, stats } = Astro.props;
+const { id, content, stats } = Astro.props;
 ---
 
-<section id={id} aria-label={label} class="pb-[clamp(3rem,7vh,5rem)]">
+<section id={id} aria-label={content.label} class="pb-[clamp(3rem,7vh,5rem)]">
   <div class="mx-auto max-w-[1200px] px-[clamp(1.25rem,4vw,4rem)]">
     <dl class="e-reveal grid grid-cols-1 border-y border-line sm:grid-cols-3">
       {stats.map((stat) => (

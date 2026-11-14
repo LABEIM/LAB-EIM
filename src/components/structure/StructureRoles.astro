@@ -1,24 +1,17 @@
 ---
-import type { Lecturer, Member, Position, PositionSection } from '../../utils/types';
-import type { Locale } from '../../utils/i18n';
-import { t } from '../../utils/i18n';
+import type { Lecturer, Member, Position, PositionSection, StructurePageData } from '../../utils/types';
 import MemberTile from './MemberTile.astro';
 import LecturerCard from './LecturerCard.astro';
 
 interface Props {
+  content: StructurePageData['roles'];
+  labels: StructurePageData['groups'];
   section: PositionSection<Member | Lecturer>;
   index: number;
   positionIndex: Map<string, Position>;
-  locale: Locale;
 }
 
-const { section, index, positionIndex, locale } = Astro.props;
-
-const GROUP_KEYS: Record<string, string> = {
-  dosen: 'struct.groupDosen',
-  asisten: 'struct.groupAsisten',
-  mahasiswa: 'struct.groupMahasiswa',
-};
+const { content, labels, section, index, positionIndex } = Astro.props;
 
 const isLecturer = (person: Member | Lecturer): person is Lecturer =>
   typeof person.id === 'string';
@@ -39,7 +32,7 @@ const density = section.position.id === 'mahasiswa-anggota' ? '' : 'staff-grid--
     <div class="grid gap-6 lg:grid-cols-2 lg:items-end">
       <div>
         <p class="e-reveal font-mono text-xs uppercase tracking-[0.08em] text-brand">
-          {String(index + 1).padStart(2, '0')} — {t(GROUP_KEYS[section.position.group], locale)}
+          {String(index + 1).padStart(2, '0')} — {labels[section.position.group]}
         </p>
         <h2
           id={titleId}
@@ -49,7 +42,7 @@ const density = section.position.id === 'mahasiswa-anggota' ? '' : 'staff-grid--
         </h2>
       </div>
       <p class="e-reveal max-w-[52ch] text-[15px] leading-[1.55] text-muted-ink lg:justify-self-end">
-        {t('struct.positionIntro', locale, { n: String(section.people.length) })}
+        {content.positionIntro?.replaceAll('{n}', String(section.people.length)) ?? ''}
       </p>
     </div>
 

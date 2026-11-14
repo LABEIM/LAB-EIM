@@ -3,10 +3,11 @@ import { getCollection, render, type CollectionEntry } from 'astro:content';
 import Layout from '../../layouts/Layout.astro';
 import '../../styles/pages/home-eim.css';
 import { courseHasContent, resolveCourses } from '../../utils/course-helpers';
-import { getLocaleFromUrl, getLocalizedJsonData, t } from '../../utils/i18n';
+import { getLocaleFromUrl, getLocalizedJsonData } from '../../utils/i18n';
+import { sectionOn } from '../../utils/page-content';
 import { buildPositionIndex, parsePositions, positionLabel } from '../../utils/position-mapper';
 import { getInitials } from '../../utils/initials';
-import type { CourseView, Lecturer, Member } from '../../utils/types';
+import type { ChromeData, CourseDetailPageData, CourseView, Lecturer, Member } from '../../utils/types';
 
 export async function getStaticPaths() {
   const locale = 'id';
@@ -30,35 +31,38 @@ interface Props {
 const { course, entry } = Astro.props;
 const locale = getLocaleFromUrl(Astro.url);
 
+const page = getLocalizedJsonData<CourseDetailPageData>('pages/course-detail', locale);
+const chrome = getLocalizedJsonData<ChromeData>('chrome', locale);
 const positionsData = getLocalizedJsonData<{ list: unknown }>('positions', locale);
 const positionIndex = buildPositionIndex(parsePositions(positionsData));
 const { Content } = await render(entry);
 const { modules, assistants } = courseHasContent(course);
+const pageDescription = (page.meta.description ?? '').replaceAll('{title}', course.title);
 ---
 
 <Layout
-  title={`${course.title} · ${t('nav.courses', locale)} · EIM Lab`}
-  description={t('courses.detailDescription', locale, { title: course.title })}
+  title={`${course.title} · ${page.meta.title}`}
+  description={pageDescription}
   homeSkin
   skipLink
 >
   <main id="main-content" tabindex="-1">
     <article class="mx-auto max-w-[1200px] px-[clamp(1.25rem,4vw,4rem)] pt-[clamp(6rem,12vh,9rem)] pb-[clamp(4.5rem,10vh,8.75rem)]">
-      <a
-        href="/courses"
-        class="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-[0.08em] text-brand"
-      >
-        <span aria-hidden="true">←</span> {t('courses.backToList', locale)}
-      </a>
+      {sectionOn(page.backLink) && (
+        <a
+          href="/courses"
+          class="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-[0.08em] text-brand"
+        >
+          <span aria-hidden="true">←</span> {page.backLink.label}
+        </a>
+      )}
 
       <header class="mt-8 max-w-[46rem]">
         <p class="font-mono text-xs uppercase tracking-[0.08em] text-muted-ink">
-          {course.code} · {t('courses.sksLabel', locale, { n: String(course.sks) })}
+          {course.code} · {(chrome.labels.sks ?? '').replaceAll('{n}', String(course.sks))}
           {course.semester && <span> · Semester {course.semester}</span>}
           <span class:list={['ml-2', course.hasPracticum ? 'text-brand' : 'text-muted-ink']}>
-            · {course.hasPracticum
-              ? t('courses.practicumYes', locale)
-              : t('courses.practicumNo', locale)}
+            · {course.hasPracticum ? chrome.labels.practicumYes : chrome.labels.practicumNo}
           </span>
         </p>
         <h1 class="mt-4 font-display text-[clamp(2.25rem,5vw,4rem)] leading-[1.03] tracking-[-0.01em]">
@@ -83,9 +87,6 @@ const { modules, assistants } = courseHasContent(course);
             )}
           </span>
           <span class="flex flex-col gap-1">
-            <span class="font-mono text-[11px] uppercase tracking-[0.08em] text-muted-ink">
-              {t('courses.coordinatorLabel', locale)}
-            </span>
             <span class="font-display text-[1.15rem] leading-[1.2]">
               {course.coordinator?.name.trim() || '—'}
             </span>
@@ -98,14 +99,16 @@ const { modules, assistants } = courseHasContent(course);
         </div>
       </header>
 
-      <div class="mt-8 max-w-[65ch] text-[16px] leading-[1.7] text-muted-ink">
-        <Content />
-      </div>
+      {sectionOn(page.description) && (
+        <div class="mt-8 max-w-[65ch] text-[16px] leading-[1.7] text-muted-ink">
+          <Content />
+        </div>
+      )}
 
-      {modules.length > 0 && (
+      {sectionOn(page.modules) && modules.length > 0 && (
         <section class="mt-[clamp(2.5rem,6vh,4rem)]" aria-labelledby="course-modules">
           <h2 id="course-modules" class="font-mono text-xs uppercase tracking-[0.08em] text-brand">
-            {t('courses.modulesTitle', locale)}
+            {page.modules.heading}
           </h2>
           <ol class="mt-4 list-none border-t border-line p-0">
             {modules.map((module, index) => (
@@ -127,10 +130,10 @@ const { modules, assistants } = courseHasContent(course);
         </section>
       )}
 
-      {assistants.length > 0 && (
+      {sectionOn(page.assistants) && assistants.length > 0 && (
         <section class="mt-[clamp(2.5rem,6vh,4rem)]" aria-labelledby="course-assistants">
           <h2 id="course-assistants" class="font-mono text-xs uppercase tracking-[0.08em] text-brand">
-            {t('courses.assistantsLabel', locale)} · {assistants.length}
+            {page.assistants.heading} · {assistants.length}
           </h2>
           <ul class="mt-4 grid list-none gap-x-8 gap-y-1 p-0 sm:grid-cols-2 lg:grid-cols-3">
             {assistants.map((assistant) => (
@@ -158,9 +161,9 @@ const { modules, assistants } = courseHasContent(course);
         </section>
       )}
 
-      {!course.hasPracticum && (
+      {sectionOn(page.assistants) && !course.hasPracticum && (
         <p class="mt-[clamp(2.5rem,6vh,4rem)] max-w-[52ch] text-[15px] leading-[1.6] text-muted-ink">
-          {t('courses.noPracticumNote', locale)}
+          {page.assistants.note}
         </p>
       )}
     </article>

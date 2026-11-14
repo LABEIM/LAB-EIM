@@ -1,7 +1,8 @@
 ---
 import type { EventEntry } from '../../utils/event-helpers';
-import { t } from '../../utils/i18n';
+import { getLocalizedJsonData } from '../../utils/i18n';
 import type { Locale } from '../../utils/i18n';
+import type { ChromeData } from '../../utils/types';
 import {
   getEventCover,
   getEventDateLabel,
@@ -18,6 +19,7 @@ interface Props {
 }
 
 const { event, locale, filterable = false, index = 0 } = Astro.props;
+const chrome = getLocalizedJsonData<ChromeData>('chrome', locale);
 
 const cover = getEventCover(event);
 const dateMs = getEventDateMs(event);
@@ -53,7 +55,7 @@ const href = getEventHref(event, locale);
     <h3 class="kegiatan-card-title">{event.data.title}</h3>
     {event.data.description && <span class="kegiatan-card-excerpt">{event.data.description}</span>}
     <span class="kegiatan-card-footer">
-      <span>{event.data.organizer || t('events.organizerFallback', locale)}</span>
+      <span>{event.data.organizer || chrome.labels.organizerFallback}</span>
     </span>
   </a>
 </li>

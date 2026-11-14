@@ -1,5 +1,4 @@
 ---
-import { getLocaleFromUrl, t } from '../../utils/i18n';
 import type { ContactPerson } from '../../utils/types';
 import { safeLink } from '../../utils/safe-link';
 
@@ -9,8 +8,6 @@ interface Props {
   contactPersons?: ContactPerson[];
   compact?: boolean;
 }
-
-const locale = getLocaleFromUrl(Astro.url);
 
 const {
   title = 'Butuh Bantuan atau Memiliki Pertanyaan?',
@@ -55,7 +52,7 @@ const platformConfig: Record<string, { label: string; iconClass: string }> = {
         return (
           <div class={`cp-card${link ? ' cp-card--linked' : ''}`}>
             <div class="cp-card-header">
-              <span class="cp-role-badge">{cp.role || t('reg.contactPerson', locale)}</span>
+              <span class="cp-role-badge">{cp.role || 'Narahubung'}</span>
               {link && (
                 <>
                   <div class="cp-plat-icon">

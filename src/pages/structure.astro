@@ -10,14 +10,17 @@ import StructureRoles from '../components/structure/StructureRoles.astro';
 import { getCollection } from 'astro:content';
 import { buildPositionIndex, countPeopleByGroup, groupPeople, parsePositions } from '../utils/position-mapper';
 import { resolveCourses } from '../utils/course-helpers';
-import { getLocaleFromUrl, getLocalizedJsonData, t } from '../utils/i18n';
-import type { Lecturer, Member, RecruitmentConfig } from '../utils/types';
+import { getLocaleFromUrl, getLocalizedJsonData } from '../utils/i18n';
+import type { ChromeData, Lecturer, Member, RecruitmentConfig, SiteData, StructurePageData } from '../utils/types';
 import { getCurrentRecruitmentStage } from '../utils/recruitment';
+import { sectionOn } from '../utils/page-content';
 
 const locale = getLocaleFromUrl(Astro.url);
+const page = getLocalizedJsonData<StructurePageData>('pages/structure', locale);
 const membersData = getLocalizedJsonData<{ list: Member[] }>('members', locale);
 const positionsData = getLocalizedJsonData<{ list: unknown }>('positions', locale);
-const siteData = getLocalizedJsonData<any>('site', locale);
+const siteData = getLocalizedJsonData<SiteData>('site', locale);
+const chrome = getLocalizedJsonData<ChromeData>('chrome', locale);
 const lecturersData = getLocalizedJsonData<{ list: Lecturer[] }>('lecturers', locale);
 const registrationConfig = getLocalizedJsonData<Partial<RecruitmentConfig>>('registration', locale);
 const recruitmentStage = getCurrentRecruitmentStage(registrationConfig);
@@ -37,41 +40,48 @@ const dosenCount = groupCounts.dosen;
 // The member roster excludes dosen; lecturers are counted separately in the hero meta.
 const memberCount = members.length;
 
+// The dots read the same flags as the sections, so a hidden section drops its dot.
 const sectionItems = [
-  { id: 'struktur', label: t('struct.navDotChart', locale) },
-  ...sections.map(({ position }) => ({ id: `pos-${position.id}`, label: position.label })),
-  { id: 'gabung', label: t('struct.navDotJoin', locale) },
+  ...(sectionOn(page.chart) ? [{ id: 'struktur', label: page.navDots.chart }] : []),
+  ...(sectionOn(page.roles)
+    ? sections.map(({ position }) => ({ id: `pos-${position.id}`, label: position.label }))
+    : []),
+  ...(sectionOn(page.cta) ? [{ id: 'gabung', label: page.navDots.join }] : []),
 ];
 ---
 
-<Layout
-  title={`Struktur Organisasi · EIM Lab`}
-  description={t('struct.metaDescription', locale)}
-  homeSkin
-  skipLink
->
+<Layout title={page.meta.title} description={page.meta.description} homeSkin skipLink>
   <main id="main-content" tabindex="-1">
-    <EimSectionNav items={sectionItems} label={t('struct.sectionNavLabel', locale)} />
+    <EimSectionNav items={sectionItems} label={chrome.labels.sectionNav} />
     <StructureHero
+      content={page.hero}
       memberCount={memberCount}
       dosenCount={dosenCount}
       positionCount={positions.length}
+      showPrimary={sectionOn(page.chart)}
     />
-    <StructureChart
-      positions={positions}
-      members={members}
-      lecturers={lecturers}
-      courses={courses}
-      locale={locale}
-    />
-    {sections.map((section, index) => (
-      <StructureRoles
-        section={section}
-        index={index}
-        positionIndex={positionIndex}
-        locale={locale}
+    {sectionOn(page.chart) && (
+      <StructureChart
+        content={page.chart}
+        labels={page.groups}
+        positions={positions}
+        members={members}
+        lecturers={lecturers}
+        courses={courses}
       />
-    ))}
-    <EimCTA site={siteData} stage={recruitmentStage} />
+    )}
+    {sectionOn(page.roles) &&
+      sections.map((section, index) => (
+        <StructureRoles
+          content={page.roles}
+          labels={page.groups}
+          section={section}
+          index={index}
+          positionIndex={positionIndex}
+        />
+      ))}
+    {sectionOn(page.cta) && (
+      <EimCTA content={chrome.cta} contact={siteData.contact} stage={recruitmentStage} />
+    )}
   </main>
 </Layout>

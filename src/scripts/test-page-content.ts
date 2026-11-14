@@ -2,7 +2,7 @@ import { existsSync, readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { sectionOn } from '../utils/page-content';
-import type { AboutData, ChromeData, CourseDetailPageData, CoursesPageData, HomePageData, NewsDetailPageData, NewsPageData, StructurePageData } from '../utils/types';
+import type { AboutData, ChromeData, CourseDetailPageData, CoursesPageData, EventsPageData, HomePageData, NewsDetailPageData, NewsPageData, StructurePageData } from '../utils/types';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '../..');
 const dataDir = join(root, 'src/data');
@@ -421,6 +421,57 @@ assert(
   Boolean(newsDetail.meta?.description?.includes('{title}')),
   'newsDetail.meta.description keeps {title}'
 );
+
+console.log('\n1️⃣1️⃣ Testing pages/events.json:');
+const eventsPagePath = join(dataDir, 'pages/events.json');
+const eventsPageExists = existsSync(eventsPagePath);
+assert(eventsPageExists, 'pages/events.json exists');
+const eventsPage = (eventsPageExists ? JSON.parse(readFileSync(eventsPagePath, 'utf8')) : {}) as Partial<EventsPageData>;
+
+for (const key of ['hero', 'list'] as const) {
+  const section = eventsPage[key];
+  assert(Boolean(section) && typeof section === 'object', `events.${key} exists`);
+}
+assert(typeof eventsPage.list?.enabled === 'boolean', 'events.list.enabled is a boolean');
+assert(Boolean(eventsPage.hero) && !('enabled' in (eventsPage.hero as object)), 'events.hero has no enabled toggle');
+
+const eventsHero = eventsPage.hero;
+for (const key of ['eyebrow', 'description', 'meta', 'metaEmpty', 'primaryLabel', 'secondaryLabel'] as const) {
+  const value = eventsHero?.[key];
+  assert(typeof value === 'string' && value.trim().length > 0, `events.hero.${key} is a non-empty string`);
+}
+assert(
+  Array.isArray(eventsHero?.lines) && eventsHero.lines.length >= 1 && eventsHero.lines.length <= 3,
+  'events.hero.lines has 1 to 3 lines'
+);
+
+const eventsList = eventsPage.list;
+for (const key of [
+  'eyebrow',
+  'title',
+  'intro',
+  'emptyTitle',
+  'emptyDesc',
+  'noMatchTitle',
+  'noMatchDesc',
+  'searchPlaceholder',
+  'contact',
+] as const) {
+  const value = eventsList?.[key];
+  assert(typeof value === 'string' && value.trim().length > 0, `events.list.${key} is a non-empty string`);
+}
+
+for (const key of ['list'] as const) {
+  const value = eventsPage.navDots?.[key];
+  assert(typeof value === 'string' && value.trim().length > 0, `events.navDots.${key} is a non-empty string`);
+}
+assert(Boolean(eventsPage.meta?.title?.trim()), 'events.meta.title is a non-empty string');
+assert(Boolean(eventsPage.meta?.description?.trim()), 'events.meta.description is a non-empty string');
+
+// The hero meta carries the counts, so the placeholders must survive.
+for (const token of ['{events}', '{categories}', '{year}'] as const) {
+  assert(Boolean(eventsHero?.meta?.includes(token)), `events.hero.meta keeps ${token}`);
+}
 
 console.log(`\n${passed} passed, ${failed} failed`);
 if (failed > 0) process.exitCode = 1;

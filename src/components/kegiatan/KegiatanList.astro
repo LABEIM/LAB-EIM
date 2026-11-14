@@ -1,17 +1,19 @@
 ---
 import type { EventEntry } from '../../utils/event-helpers';
+import type { EventsPageData } from '../../utils/types';
 import type { Locale } from '../../utils/i18n';
-import { t } from '../../utils/i18n';
 import FilterControlBar from '../common/FilterControlBar.astro';
 import Pagination from '../common/Pagination.astro';
 import KegiatanCard from './KegiatanCard.astro';
 
 interface Props {
+  content: EventsPageData['list'];
   events: EventEntry[];
   locale: Locale;
+  secondaryLabel: string;
 }
 
-const { events, locale } = Astro.props;
+const { content, events, locale, secondaryLabel } = Astro.props;
 const categories = [...new Set(events.map((event) => event.data.category).filter(Boolean))].sort();
 ---
 
@@ -24,28 +26,28 @@ const categories = [...new Set(events.map((event) => event.data.category).filter
     <div class="grid gap-6 lg:grid-cols-2 lg:items-end">
       <div>
         <p class="e-reveal font-mono text-xs uppercase tracking-[0.08em] text-brand">
-          01 — {t('events.listEyebrow', locale)}
+          01 — {content.eyebrow}
         </p>
         <h2
           id="kegiatan-list-title"
           class="e-reveal mt-4 font-display text-[clamp(2rem,4vw,3.5rem)] leading-[1.05] tracking-[-0.01em]"
         >
-          {t('events.listTitle', locale)}
+          {content.title}
         </h2>
       </div>
       <p class="e-reveal max-w-[52ch] text-[15px] leading-[1.55] text-muted-ink lg:justify-self-end">
-        {t('events.listIntro', locale)}
+        {content.intro}
       </p>
     </div>
 
     {events.length === 0 ? (
       <div class="kegiatan-empty e-reveal mt-[clamp(2.5rem,6vh,4rem)]">
-        <p class="kegiatan-empty-title">{t('events.listEmptyTitle', locale)}</p>
-        <p class="kegiatan-empty-desc">{t('events.listEmptyDesc', locale)}</p>
+        <p class="kegiatan-empty-title">{content.emptyTitle}</p>
+        <p class="kegiatan-empty-desc">{content.emptyDesc}</p>
         <div class="kegiatan-empty-actions">
-          <a class="eim-hero-cta" href="/news">{t('events.heroSecondary', locale)}</a>
+          <a class="eim-hero-cta" href="/news">{secondaryLabel}</a>
           <a class="eim-hero-secondary" href="/contact">
-            {t('events.contact', locale)} <span aria-hidden="true">→</span>
+            {content.contact} <span aria-hidden="true">→</span>
           </a>
         </div>
       </div>
@@ -53,13 +55,13 @@ const categories = [...new Set(events.map((event) => event.data.category).filter
       <div class="eim-list-filter">
         <FilterControlBar
           categories={categories}
-          searchPlaceholder={t('events.searchPlaceholder', locale)}
+          searchPlaceholder={content.searchPlaceholder}
           totalCount={events.length}
         />
 
         <div id="kegiatan-list-empty" class="kegiatan-list-empty" style="display: none;">
-          <p class="kegiatan-empty-title">{t('events.listNoMatchTitle', locale)}</p>
-          <p class="kegiatan-empty-desc">{t('events.listNoMatchDesc', locale)}</p>
+          <p class="kegiatan-empty-title">{content.noMatchTitle}</p>
+          <p class="kegiatan-empty-desc">{content.noMatchDesc}</p>
         </div>
 
         <ul id="kegiatan-list-grid" class="kegiatan-list-grid e-reveal-group">

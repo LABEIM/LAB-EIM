@@ -27,9 +27,6 @@ export function getLocalizedPath(path: string, _locale?: string): string {
  */
 export const uiTranslations: Record<Locale, Record<string, string>> = {
   id: {
-    // Navigation (page-title call sites remain until each page task migrates them)
-    'nav.event': 'Kegiatan',
-
     // Common Buttons & Badges
     'stats.dosen': 'Dosen',
     'stats.members': 'Anggota laboratorium',
@@ -144,28 +141,9 @@ export const uiTranslations: Record<Locale, Record<string, string>> = {
     // Events Page
     'events.title': 'Kegiatan & Acara',
     'events.subtitle': 'Ikuti workshop, studi banding, webinar, dan kegiatan EIM Lab.',
-    'events.metaDescription': 'Kegiatan EIM Lab — workshop, seminar, studi banding, dan program laboratorium.',
-    'events.heroEyebrow': 'Kegiatan',
-    'events.heroTitle': 'Kegiatan\nlaboratorium.',
-    'events.heroDesc': 'Workshop, seminar, studi banding, dan program EIM Lab — lengkap dengan dokumentasinya.',
-    'events.heroPrimary': 'Lihat kegiatan',
-    'events.heroSecondary': 'Artikel',
-    'events.heroMeta': '{events} kegiatan · {categories} kategori · terbaru {year}',
-    'events.heroMetaEmpty': 'Belum ada kegiatan yang dipublikasikan.',
-    'events.sectionNavLabel': 'Navigasi bagian halaman',
-    'events.navDotList': 'Daftar',
-    'events.listEyebrow': 'Daftar',
-    'events.listTitle': 'Kegiatan kami.',
-    'events.listIntro': 'Telusuri kegiatan EIM berdasarkan nama atau kategori, lalu buka detailnya untuk melihat dokumentasi.',
-    'events.searchPlaceholder': 'Cari nama kegiatan, kategori, atau penyelenggara...',
-    'events.listEmptyTitle': 'Belum ada kegiatan yang dipublikasikan.',
-    'events.listEmptyDesc': 'Kegiatan akan tampil di sini setelah dipublikasikan.',
-    'events.listNoMatchTitle': 'Kegiatan tidak ditemukan.',
-    'events.listNoMatchDesc': 'Tidak ada kegiatan yang cocok dengan pencarian atau filter Anda. Coba kata kunci lain atau reset filter.',
     'events.backToList': 'Kembali ke kegiatan',
     'events.share': 'Bagikan',
     'events.organizerFallback': 'EIM Lab',
-    'events.contact': 'Hubungi kami',
     'events.dateTbd': 'Tanggal menyusul',
     'events.relatedEyebrow': 'Kegiatan lain',
     'events.relatedTitle': 'Kegiatan lain dari EIM.',

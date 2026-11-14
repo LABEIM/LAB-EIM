@@ -42,7 +42,7 @@ const density = section.position.id === 'mahasiswa-anggota' ? '' : 'staff-grid--
         </h2>
       </div>
       <p class="e-reveal max-w-[52ch] text-[15px] leading-[1.55] text-muted-ink lg:justify-self-end">
-        {content.positionIntro.replaceAll('{n}', String(section.people.length))}
+        {content.positionIntro?.replaceAll('{n}', String(section.people.length)) ?? ''}
       </p>
     </div>
 

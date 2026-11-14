@@ -14,10 +14,17 @@ const page = getLocalizedJsonData<ContactData>('contact', locale);
 const chrome = getLocalizedJsonData<ChromeData>('chrome', locale);
 
 const socials = siteData.socials || {};
+const siteContact = siteData.contact || {};
 const contactPersons: ContactPerson[] = Array.isArray(page.contactPersons) ? page.contactPersons : [];
 
+// site.json is the single home for these three facts; the literals only cover a
+// hand-edited site.json that lost them.
+const location = siteContact.location || 'Gedung TULT Lantai 8, Ruang TULT.08.09';
+const university = siteContact.university || 'Telkom University, Bandung, Indonesia';
+const email = siteContact.email || 'lab@eimlab.org';
+
 const pageTitle = page.meta.title;
-const pageDescription = `${page.location}, ${page.university}, dan saluran komunikasi Laboratorium Enterprise Infrastructure Management (EIM) Telkom University.`;
+const pageDescription = `${location}, ${university}, dan saluran komunikasi Laboratorium Enterprise Infrastructure Management (EIM) Telkom University.`;
 
 const socialEntries = [
   { name: 'Instagram', url: socials.instagram, icon: 'fa-brands fa-instagram' },
@@ -63,12 +70,14 @@ const sectionItems = [
         <h1 id="contact-hero-title" class="eim-hero-title">{page.title}</h1>
         <p class="eim-hero-desc">{page.heroDescription}</p>
         <div class="eim-hero-actions">
-          <a class="eim-hero-cta" href="#detail">{page.hero.primaryLabel}</a>
+          {sectionOn(page.details) && (
+            <a class="eim-hero-cta" href="#detail">{page.hero.primaryLabel}</a>
+          )}
           <a class="eim-hero-secondary" href="/registration">
             {page.hero.secondaryLabel} <span aria-hidden="true">→</span>
           </a>
         </div>
-        <p class="eim-subhero-meta">{page.location} · {page.university}</p>
+        <p class="eim-subhero-meta">{location} · {university}</p>
       </div>
     </section>
 
@@ -97,24 +106,24 @@ const sectionItems = [
               <div class="grid gap-3 border-b border-line py-6 sm:grid-cols-[10rem_minmax(0,1fr)] sm:gap-8">
                 <dt class="font-mono text-[11px] uppercase tracking-[0.08em] text-muted-ink">{page.locationTitle}</dt>
                 <dd class="text-[15px] leading-[1.6]">
-                  <p>{page.location}</p>
-                  <p class="mt-1 text-muted-ink">{page.university}</p>
+                  <p>{location}</p>
+                  <p class="mt-1 text-muted-ink">{university}</p>
                 </dd>
               </div>
 
               <div class="grid gap-3 border-b border-line py-6 sm:grid-cols-[10rem_minmax(0,1fr)] sm:gap-8">
                 <dt class="font-mono text-[11px] uppercase tracking-[0.08em] text-muted-ink">{page.emailTitle}</dt>
                 <dd class="text-[15px] leading-[1.6]">
-                  <a class="text-brand underline underline-offset-4" href={`mailto:${page.email}`}>{page.email}</a>
+                  <a class="text-brand underline underline-offset-4" href={`mailto:${email}`}>{email}</a>
                   <div class="contact-action-row">
-                    <a class="contact-action" href={`mailto:${page.email}`}>
+                    <a class="contact-action" href={`mailto:${email}`}>
                       {page.details.emailAction} <span aria-hidden="true">→</span>
                     </a>
                     <button
                       type="button"
                       class="contact-action contact-copy"
                       id="copy-email-btn"
-                      data-email={page.email}
+                      data-email={email}
                       data-copied={page.details.copied}
                       data-failed={page.details.copyFailed}
                       data-status-copied={page.details.copySuccessStatus}

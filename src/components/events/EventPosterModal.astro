@@ -47,7 +47,7 @@ const preparedEvents = upcomingEvents.map((event) => {
             {preparedEvents[0].title}
           </h3>
         </div>
-        <button id="closePosterModal" class="event-modal-close-btn" aria-label="Close modal">
+        <button id="closePosterModal" class="event-modal-close-btn" aria-label={chrome.ui.aria.closeModal}>
           <i class="fa-solid fa-xmark"></i>
         </button>
       </div>
@@ -86,10 +86,10 @@ const preparedEvents = upcomingEvents.map((event) => {
         {/* Carousel Prev/Next Controls (If multiple) */}
         {preparedEvents.length > 1 && (
           <>
-            <button id="carouselPrevBtn" class="carousel-nav-btn carousel-prev" aria-label="Previous event">
+            <button id="carouselPrevBtn" class="carousel-nav-btn carousel-prev" aria-label={chrome.ui.aria.previousEvent}>
               <i class="fa-solid fa-chevron-left"></i>
             </button>
-            <button id="carouselNextBtn" class="carousel-nav-btn carousel-next" aria-label="Next event">
+            <button id="carouselNextBtn" class="carousel-nav-btn carousel-next" aria-label={chrome.ui.aria.nextEvent}>
               <i class="fa-solid fa-chevron-right"></i>
             </button>
             

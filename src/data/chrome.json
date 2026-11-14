@@ -47,5 +47,40 @@
     "vision": "Visi",
     "mission": "Misi",
     "values": "Nilai-Nilai Utama"
+  },
+  "ui": {
+    "backToHome": "Kembali ke Beranda",
+    "titleSuffix": "· EIM Lab",
+    "pagination": {
+      "previous": "Halaman Sebelumnya",
+      "previousAria": "Halaman sebelumnya",
+      "next": "Halaman Selanjutnya",
+      "nextAria": "Halaman berikutnya",
+      "info": "Halaman {page} dari {total}"
+    },
+    "filter": {
+      "clearSearch": "Hapus pencarian",
+      "resultsCount": "Menampilkan {n} item",
+      "searchPlaceholder": "Cari berdasarkan judul, kata kunci..."
+    },
+    "contentFilter": {
+      "noResults": "Tidak ada {item} ditemukan",
+      "resultsRange": "Menampilkan {from}-{to} dari {total} {item}"
+    },
+    "registration": {
+      "optional": "(Opsional)",
+      "wordCount": "Jumlah kata: {count} / {min} kata minimal"
+    },
+    "aria": {
+      "mainNav": "Navigasi utama",
+      "openMenu": "Buka menu",
+      "closeMenu": "Tutup menu",
+      "homeLink": "{name} — Beranda",
+      "mediaIntro": "Media pengantar",
+      "closeAnnouncement": "Tutup Pengumuman",
+      "closeModal": "Close modal",
+      "previousEvent": "Previous event",
+      "nextEvent": "Next event"
+    }
   }
 }

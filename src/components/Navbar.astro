@@ -50,7 +50,7 @@ const isActive = (rawHref: string) => {
 <nav
   class="navbar"
   id="navbar"
-  aria-label="Navigasi utama"
+  aria-label={chrome.ui.aria.mainNav}
   data-status={registrationData?.status || 'auto'}
   data-auto-close-after-deadline={String(registrationData?.autoCloseAfterDeadline ?? true)}
   data-timezone-offset={registrationData?.timezoneOffset || '+07:00'}
@@ -62,6 +62,8 @@ const isActive = (rawHref: string) => {
   data-selection-steps={JSON.stringify(registrationData?.selectionSteps || [])}
   data-join-label={chrome.nav.joinUs}
   data-contact-label={chrome.nav.contact}
+  data-label-menu-open={chrome.ui.aria.openMenu}
+  data-label-menu-close={chrome.ui.aria.closeMenu}
 >
   <div class="site-container">
     <a href={getLocalizedPath('/', locale)} class="logo-container">
@@ -106,7 +108,7 @@ const isActive = (rawHref: string) => {
       type="button"
       class="nav-toggle"
       id="nav-toggle"
-      aria-label="Buka menu"
+      aria-label={chrome.ui.aria.openMenu}
       aria-expanded="false"
       aria-controls="nav-links"
     >

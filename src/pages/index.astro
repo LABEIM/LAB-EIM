@@ -111,6 +111,7 @@ const sectionItems = [
       logo={chrome.brand.logoHorizontal}
       primaryHref="#reveal"
       secondaryHref="/about"
+      showPrimary={sectionOn(page.reveal)}
     />
     {sectionOn(page.reveal) && <EimReveal content={page.reveal} />}
     {sectionOn(page.focus) && <EimFocus content={page.focus} />}

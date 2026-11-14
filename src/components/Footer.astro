@@ -23,7 +23,11 @@ const navLinks = [
   <div class="site-container">
     <div class="footer-grid">
       <div class="footer-about">
-        <a href={getLocalizedPath('/', locale)} class="footer-brand" aria-label={`${siteData.name} — Beranda`}>
+        <a
+          href={getLocalizedPath('/', locale)}
+          class="footer-brand"
+          aria-label={chrome.ui.aria.homeLink.replaceAll('{name}', siteData.name)}
+        >
           <img
             src={chrome.brand.logoHorizontal}
             alt=""

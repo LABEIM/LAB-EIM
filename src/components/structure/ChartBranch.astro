@@ -13,7 +13,7 @@ const { node, content, labels } = Astro.props;
 
 const count =
   node.count > 0
-    ? content.positionCount.replaceAll('{n}', String(node.count))
+    ? (content.positionCount ?? '').replaceAll('{n}', String(node.count))
     : content.emptyPosition;
 ---
 

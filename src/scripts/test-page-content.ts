@@ -2,7 +2,8 @@ import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { sectionOn } from '../utils/page-content';
-import type { AboutData, ChromeData, ContactData, CourseDetailPageData, CoursesPageData, EventDetailPageData, EventsPageData, HomePageData, NewsDetailPageData, NewsPageData, StructurePageData } from '../utils/types';
+import type { RecruitmentConfig } from '../utils/types';
+import type { AboutData, ChromeData, ContactData, CourseDetailPageData, CoursesPageData, EventDetailPageData, EventsPageData, GalleryData, HomePageData, NewsDetailPageData, NewsPageData, StructurePageData } from '../utils/types';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '../..');
 const dataDir = join(root, 'src/data');
@@ -76,7 +77,7 @@ function containsText(haystack: string, needle: string): boolean {
   return new RegExp(pattern).test(haystack);
 }
 
-const chromeGroups: Record<keyof ChromeData, string[]> = {
+const chromeGroups: Record<Exclude<keyof ChromeData, 'ui'>, string[]> = {
   nav: ['home', 'about', 'structure', 'courses', 'event', 'news', 'register', 'contact', 'joinUs'],
   footer: ['description', 'quickLinks', 'contact', 'resources', 'assets', 'linkHub', 'rights', 'backToTop'],
   cta: ['title', 'description', 'contactLabel'],
@@ -90,14 +91,57 @@ console.log('1️⃣ Testing chrome.json:');
 const chromePath = join(dataDir, 'chrome.json');
 const chromeExists = existsSync(chromePath);
 assert(chromeExists, 'chrome.json exists');
-const chrome = (chromeExists ? JSON.parse(readFileSync(chromePath, 'utf8')) : {}) as Partial<
-  Record<keyof ChromeData, Record<string, unknown>>
->;
+const chromeRaw: unknown = chromeExists ? JSON.parse(readFileSync(chromePath, 'utf8')) : {};
+const chrome = chromeRaw as Partial<Record<keyof ChromeData, Record<string, unknown>>>;
+const chromeTyped = chromeRaw as Partial<ChromeData>;
 
 for (const [group, keys] of Object.entries(chromeGroups)) {
   for (const key of keys) {
-    const value = chrome[group as keyof ChromeData]?.[key];
+    const value = chrome[group as Exclude<keyof ChromeData, 'ui'>]?.[key];
     assert(typeof value === 'string' && value.trim().length > 0, `chrome.${group}.${key} is a non-empty string`);
+  }
+}
+
+console.log('\n1️⃣b Testing chrome.ui:');
+const ui = chromeTyped.ui;
+const uiStrings: [string, unknown][] = [
+  ['backToHome', ui?.backToHome],
+  ['titleSuffix', ui?.titleSuffix],
+  ['pagination.previous', ui?.pagination?.previous],
+  ['pagination.previousAria', ui?.pagination?.previousAria],
+  ['pagination.next', ui?.pagination?.next],
+  ['pagination.nextAria', ui?.pagination?.nextAria],
+  ['pagination.info', ui?.pagination?.info],
+  ['filter.clearSearch', ui?.filter?.clearSearch],
+  ['filter.resultsCount', ui?.filter?.resultsCount],
+  ['filter.searchPlaceholder', ui?.filter?.searchPlaceholder],
+  ['contentFilter.noResults', ui?.contentFilter?.noResults],
+  ['contentFilter.resultsRange', ui?.contentFilter?.resultsRange],
+  ['registration.optional', ui?.registration?.optional],
+  ['registration.wordCount', ui?.registration?.wordCount],
+  ['aria.mainNav', ui?.aria?.mainNav],
+  ['aria.openMenu', ui?.aria?.openMenu],
+  ['aria.closeMenu', ui?.aria?.closeMenu],
+  ['aria.homeLink', ui?.aria?.homeLink],
+  ['aria.mediaIntro', ui?.aria?.mediaIntro],
+  ['aria.closeAnnouncement', ui?.aria?.closeAnnouncement],
+  ['aria.closeModal', ui?.aria?.closeModal],
+  ['aria.previousEvent', ui?.aria?.previousEvent],
+  ['aria.nextEvent', ui?.aria?.nextEvent],
+];
+for (const [path, value] of uiStrings) {
+  assert(typeof value === 'string' && value.trim().length > 0, `chrome.ui.${path} is a non-empty string`);
+}
+for (const [path, value, tokens] of [
+  ['pagination.info', ui?.pagination?.info, ['{page}', '{total}']],
+  ['filter.resultsCount', ui?.filter?.resultsCount, ['{n}']],
+  ['contentFilter.noResults', ui?.contentFilter?.noResults, ['{item}']],
+  ['contentFilter.resultsRange', ui?.contentFilter?.resultsRange, ['{from}', '{to}', '{total}', '{item}']],
+  ['registration.wordCount', ui?.registration?.wordCount, ['{count}', '{min}']],
+  ['aria.homeLink', ui?.aria?.homeLink, ['{name}']],
+] as [string, string | undefined, string[]][]) {
+  for (const token of tokens) {
+    assert(Boolean(value?.includes(token)), `chrome.ui.${path} keeps ${token}`);
   }
 }
 
@@ -113,6 +157,25 @@ for (const key of chromeGroups.brand) {
   const file = typeof value === 'string' ? join(publicDir, value.replace(/^\//, '')) : '';
   assert(Boolean(file) && existsSync(file), `chrome.brand.${key} resolves under public/`);
 }
+
+console.log('\n3️⃣b Testing uploaded images resolve under public/:');
+const siteData = JSON.parse(readFileSync(join(dataDir, 'site.json'), 'utf8')) as { favicon?: string };
+assert(typeof siteData.favicon === 'string' && siteData.favicon.trim().length > 0, 'site.favicon is set');
+assert(
+  typeof siteData.favicon === 'string' && existsSync(join(publicDir, siteData.favicon.replace(/^\//, ''))),
+  'site.favicon resolves under public/'
+);
+
+const galleryData = JSON.parse(readFileSync(join(dataDir, 'gallery.json'), 'utf8')) as GalleryData;
+const galleryImages = [galleryData.featured?.image, ...(galleryData.photos ?? []).map((photo) => photo.image)];
+assert(galleryImages.length > 0, 'gallery.json has at least one image');
+galleryImages.forEach((image, index) => {
+  assert(typeof image === 'string' && image.trim().length > 0, `gallery image ${index} is a non-empty string`);
+  assert(
+    typeof image === 'string' && existsSync(join(publicDir, image.replace(/^\//, ''))),
+    `gallery image ${index} resolves under public/`
+  );
+});
 
 console.log('\n4️⃣ Testing pages/home.json:');
 const homePath = join(dataDir, 'pages/home.json');
@@ -640,12 +703,9 @@ for (const key of [
   'title',
   'heroDescription',
   'locationTitle',
-  'location',
-  'university',
   'mapsUrl',
   'mapsEmbedUrl',
   'emailTitle',
-  'email',
   'hoursTitle',
   'hoursText',
   'hoursSubtext',
@@ -659,9 +719,7 @@ console.log('\n1️⃣4️⃣ Testing registration.json labels:');
 const registrationPath = join(dataDir, 'registration.json');
 const registrationExists = existsSync(registrationPath);
 assert(registrationExists, 'registration.json exists');
-const registration = (registrationExists ? JSON.parse(readFileSync(registrationPath, 'utf8')) : {}) as {
-  labels?: Record<string, unknown>;
-};
+const registration = (registrationExists ? JSON.parse(readFileSync(registrationPath, 'utf8')) : {}) as Partial<RecruitmentConfig>;
 
 for (const key of [
   'fullName',
@@ -773,7 +831,14 @@ const stateDependent: Record<string, RegExp[]> = {
   'pages/news.json': [/^list\.(emptyTitle|emptyDesc|contactLabel)$/, /^hero\.metaEmpty$/],
   'pages/events.json': [/^list\.(emptyTitle|emptyDesc|contactLabel)$/, /^hero\.metaEmpty$/],
   'pages/event-detail.json': [/^gallery\.empty$/],
-  'chrome.json': [/^labels\.(featured|upcoming)$/],
+  'chrome.json': [
+    /^labels\.(featured|upcoming)$/,
+    // Rendered only on a list page that has content, or on a modal/banner state.
+    /^ui\.pagination\.(previous|previousAria|next|nextAria)$/,
+    /^ui\.filter\.(clearSearch|resultsCount|searchPlaceholder)$/,
+    /^ui\.contentFilter\./,
+    /^ui\.aria\.(closeAnnouncement|previousEvent)$/,
+  ],
 };
 
 if (!existsSync(clientDir)) {

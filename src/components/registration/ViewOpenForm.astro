@@ -31,6 +31,8 @@ const chrome = getLocalizedJsonData<ChromeData>('chrome', locale);
 const { initialStage, registrationConfig, extendedCfg, studentYears, docLimits, divisions, piTemplateUrl, minReasonWords = 30, fieldStates = {} } = Astro.props;
 
 const labels = registrationConfig.labels;
+const ui = chrome.ui.registration;
+const [wordCountPrefix, wordCountSuffix] = ui.wordCount.split('{count}');
 
 const allowedExtsCfg = (registrationConfig as any).allowedFileExtensions || {};
 const formatAccept = (extsStr?: string) => (extsStr || "pdf, png, jpg, jpeg")
@@ -207,7 +209,7 @@ for (let i = 0; i < standardDocs.length; i += 2) {
         <div class="form-group">
           <label for="angkatan">
             {labels.classYear}
-            {angkatanState === 'required' ? <span class="required-asterisk">*</span> : <span class="reg-file-label-small">(Opsional)</span>}
+            {angkatanState === 'required' ? <span class="required-asterisk">*</span> : <span class="reg-file-label-small">{ui.optional}</span>}
           </label>
           <select class="form-control" id="angkatan" required={angkatanState === 'required'}>
             <option value="" disabled selected>{labels.selectClassYear}</option>
@@ -233,7 +235,7 @@ for (let i = 0; i < standardDocs.length; i += 2) {
         <div class="form-group">
           <label for="nomor_telp">
             {labels.phone}
-            {telpState === 'required' ? <span class="required-asterisk">*</span> : <span class="reg-file-label-small">(Opsional)</span>}
+            {telpState === 'required' ? <span class="required-asterisk">*</span> : <span class="reg-file-label-small">{ui.optional}</span>}
           </label>
           <input type="tel" class="form-control" id="nomor_telp" placeholder={labels.phonePlaceholder} pattern="[0-9]+" required={telpState === 'required'} />
         </div>
@@ -267,7 +269,7 @@ for (let i = 0; i < standardDocs.length; i += 2) {
         <div class="form-group">
           <label for="divisi_2">
             {labels.div2}
-            {div2State === 'required' ? <span class="required-asterisk">*</span> : <span class="reg-file-label-small">(Opsional)</span>}
+            {div2State === 'required' ? <span class="required-asterisk">*</span> : <span class="reg-file-label-small">{ui.optional}</span>}
           </label>
           <select class="form-control" id="divisi_2" required={div2State === 'required'}>
             <option value="" disabled selected>{labels.selectDiv2}</option>
@@ -293,7 +295,7 @@ for (let i = 0; i < standardDocs.length; i += 2) {
       <label for="alasan_divisi_1">{labels.reason} 1 <span class="required-asterisk">*</span></label>
       <textarea class="form-control" id="alasan_divisi_1" rows="3" placeholder={labels.reasonPlaceholder} required></textarea>
       <small class="reg-small-desc word-count-info" id="alasan_divisi_1_counter" data-min-words={minReasonWords}>
-        Jumlah kata: <span class="word-count-val" id="alasan_divisi_1_count">0</span> / {minReasonWords} kata minimal
+        {wordCountPrefix}<span class="word-count-val" id="alasan_divisi_1_count">0</span>{wordCountSuffix.replace('{min}', String(minReasonWords))}
       </small>
     </div>
 
@@ -301,11 +303,11 @@ for (let i = 0; i < standardDocs.length; i += 2) {
       <div class="form-group reg-form-row-mt">
         <label for="alasan_divisi_2">
           {labels.reason} 2
-          {alasan2State === 'required' ? <span class="required-asterisk">*</span> : <span class="reg-file-label-small">(Opsional)</span>}
+          {alasan2State === 'required' ? <span class="required-asterisk">*</span> : <span class="reg-file-label-small">{ui.optional}</span>}
         </label>
         <textarea class="form-control" id="alasan_divisi_2" rows="3" placeholder={labels.reasonPlaceholder} required={alasan2State === 'required'}></textarea>
         <small class="reg-small-desc word-count-info" id="alasan_divisi_2_counter" data-min-words={minReasonWords}>
-          Jumlah kata: <span class="word-count-val" id="alasan_divisi_2_count">0</span> / {minReasonWords} kata minimal
+          {wordCountPrefix}<span class="word-count-val" id="alasan_divisi_2_count">0</span>{wordCountSuffix.replace('{min}', String(minReasonWords))}
         </small>
       </div>
     )}
@@ -321,7 +323,7 @@ for (let i = 0; i < standardDocs.length; i += 2) {
         <label for="portofolio_medhum" class="medhum-porto-label" id="label-medhum-porto">
           <i class="fa-solid fa-palette reg-icon-mr"></i> {labels.portfolioLink}{' '}
           <span id="porto-required-indicator">
-            <span class="reg-file-label-small">(Opsional)</span>
+            <span class="reg-file-label-small">{ui.optional}</span>
           </span>
         </label>
         <input type="url" class="form-control" id="portofolio_medhum" placeholder={labels.portfolioPlaceholder} required={false} />
@@ -337,7 +339,7 @@ for (let i = 0; i < standardDocs.length; i += 2) {
       <div class="form-group reg-form-row-mt">
         <label for="bersedia_dipindah">
           Bersedia dipindahkan ke divisi lain jika diperlukan?
-          {bersediaState === 'required' ? <span class="required-asterisk">*</span> : <span class="reg-file-label-small">(Opsional)</span>}
+          {bersediaState === 'required' ? <span class="required-asterisk">*</span> : <span class="reg-file-label-small">{ui.optional}</span>}
         </label>
         <select class="form-control" id="bersedia_dipindah" required={bersediaState === 'required'}>
           <option value="" disabled selected>-- Pilih Jawaban --</option>
@@ -361,7 +363,7 @@ for (let i = 0; i < standardDocs.length; i += 2) {
           <div class="form-group" style={row.length === 1 ? 'grid-column: 1 / -1;' : ''}>
             <label for={doc.id}>
               {doc.label} <span class="reg-file-label-small">({doc.extsDisplay} • Max {doc.maxMb}MB)</span>
-              {doc.state === 'required' ? <span class="required-asterisk">*</span> : <span class="reg-file-label-small">(Opsional)</span>}
+              {doc.state === 'required' ? <span class="required-asterisk">*</span> : <span class="reg-file-label-small">{ui.optional}</span>}
               <span class="reg-file-cta">{labels.chooseFile}</span>
             </label>
             <input type="file" class="form-control reg-file-input" id={doc.id} accept={doc.accept} data-allowed-exts={doc.exts} data-max-mb={doc.maxMb} required={doc.state === 'required'} />
@@ -376,7 +378,7 @@ for (let i = 0; i < standardDocs.length; i += 2) {
         <div class="reg-pi-label-row">
           <label for="file_pi" class="reg-mb-0">
             {labels.pi} <span class="reg-file-label-small">({piExtsDisplay} • Max {docLimits.piMb}MB)</span>
-            {piState === 'required' ? <span class="required-asterisk">*</span> : <span class="reg-file-label-small">(Opsional)</span>}
+            {piState === 'required' ? <span class="required-asterisk">*</span> : <span class="reg-file-label-small">{ui.optional}</span>}
             <span class="reg-file-cta">{labels.chooseFile}</span>
           </label>
           {piTemplateUrl && (

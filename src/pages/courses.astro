@@ -44,14 +44,16 @@ const sectionItems = [
         </h1>
         <p class="eim-hero-desc">{page.hero.description}</p>
         <div class="eim-hero-actions">
-          <a class="eim-hero-cta" href="#daftar">{page.hero.primaryLabel}</a>
+          {sectionOn(page.list) && (
+            <a class="eim-hero-cta" href="#daftar">{page.hero.primaryLabel}</a>
+          )}
           <a class="eim-hero-secondary" href="/event">
             {page.hero.secondaryLabel} <span aria-hidden="true">→</span>
           </a>
         </div>
         {courses.length > 0 && (
           <p class="eim-subhero-meta">
-            {page.hero.summary
+            {(page.hero.summary ?? '')
               .replaceAll('{n}', String(courses.length))
               .replaceAll('{p}', String(practicumCount))}
           </p>
@@ -94,7 +96,7 @@ const sectionItems = [
                       <p class="font-mono text-xs uppercase tracking-[0.08em] text-muted-ink">
                         {String(index + 1).padStart(2, '0')}
                         <span> · {course.code}</span>
-                        <span> · {chrome.labels.sks.replaceAll('{n}', String(course.sks))}</span>
+                        <span> · {(chrome.labels.sks ?? '').replaceAll('{n}', String(course.sks))}</span>
                         {course.semester && <span> · Semester {course.semester}</span>}
                         <span
                           class:list={[

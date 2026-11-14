@@ -180,6 +180,7 @@ export interface RecruitmentLabels {
   done: string;
   saveDraft: string;
   draftSaved: string;
+  resultsPlaceholder: string;
 }
 
 export interface RecruitmentConfig {
@@ -425,6 +426,41 @@ export interface ChromeData {
     vision: string;
     mission: string;
     values: string;
+  };
+  ui: {
+    backToHome: string;
+    titleSuffix: string;
+    pagination: {
+      previous: string;
+      previousAria: string;
+      next: string;
+      nextAria: string;
+      info: string;
+    };
+    filter: {
+      clearSearch: string;
+      resultsCount: string;
+      searchPlaceholder: string;
+    };
+    contentFilter: {
+      noResults: string;
+      resultsRange: string;
+    };
+    registration: {
+      optional: string;
+      wordCount: string;
+    };
+    aria: {
+      mainNav: string;
+      openMenu: string;
+      closeMenu: string;
+      homeLink: string;
+      mediaIntro: string;
+      closeAnnouncement: string;
+      closeModal: string;
+      previousEvent: string;
+      nextEvent: string;
+    };
   };
 }
 
@@ -757,12 +793,9 @@ export interface ContactData {
   title: string;
   heroDescription: string;
   locationTitle: string;
-  location: string;
-  university: string;
   mapsUrl: string;
   mapsEmbedUrl: string;
   emailTitle: string;
-  email: string;
   hoursTitle: string;
   hoursText: string;
   hoursSubtext: string;

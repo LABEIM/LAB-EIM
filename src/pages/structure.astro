@@ -58,6 +58,7 @@ const sectionItems = [
       memberCount={memberCount}
       dosenCount={dosenCount}
       positionCount={positions.length}
+      showPrimary={sectionOn(page.chart)}
     />
     {sectionOn(page.chart) && (
       <StructureChart

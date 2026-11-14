@@ -12,6 +12,7 @@ interface Props {
 const { items, label } = Astro.props;
 ---
 
+{items.length > 0 && (
 <nav class="eim-section-nav" aria-label={label}>
   <ul class="list-none">
     {items.map((item) => (
@@ -24,6 +25,7 @@ const { items, label } = Astro.props;
     ))}
   </ul>
 </nav>
+)}
 
 <script>
   import { initSectionNav } from '../../scripts/section-nav';

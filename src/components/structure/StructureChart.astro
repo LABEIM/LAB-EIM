@@ -33,7 +33,7 @@ const assistantSummary = summarizePracticumAssistants(courses, members);
 const notesFor = (id: string): string | undefined => {
   if (assistantSummary.memberCount === 0) return undefined;
   if (id === 'mahasiswa-anggota') {
-    return content.memberAssistantNote
+    return (content.memberAssistantNote ?? '')
       .replaceAll('{n}', String(assistantSummary.memberCount))
       .replaceAll('{total}', String(students));
   }

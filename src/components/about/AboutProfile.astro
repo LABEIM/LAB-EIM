@@ -4,7 +4,7 @@ import type { AboutData } from '../../utils/types';
 interface Props {
   about: AboutData;
   content: AboutData['sections']['profile'];
-  site: any;
+  site: { fullName: string; contact?: { location?: string; email?: string } };
 }
 
 const { about, content, site } = Astro.props;

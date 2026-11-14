@@ -1,6 +1,7 @@
 ---
 import BackToHomeButton from './BackToHomeButton.astro';
-import type { FieldStates, RecruitmentLabels } from '../../utils/types';
+import { getLocaleFromUrl, getLocalizedJsonData } from '../../utils/i18n';
+import type { ChromeData, FieldStates, RecruitmentLabels } from '../../utils/types';
 import FormDescriptionCard from './FormDescriptionCard.astro';
 
 interface Props {
@@ -41,6 +42,8 @@ const {
   formDescription,
   formDescriptionItems,
 } = Astro.props;
+
+const ui = getLocalizedJsonData<ChromeData>('chrome', getLocaleFromUrl(Astro.url)).ui.registration;
 
 const formatExtsLabel = (extsStr?: string) => (extsStr || "pdf, png, jpg, jpeg")
   .split(',')
@@ -101,31 +104,31 @@ const isAngkatanEnabled = fieldStates.angkatan !== 'disabled';
       {isKsmEnabled && (
         <li>
           <i class="fa-solid fa-check reg-checklist-icon"></i>
-          <span><strong>{labels.ksm}</strong> ({ksmExtsDisplay}) {fieldStates.ksm === 'optional' ? '(Opsional)' : ''} - Max {docLimits.ksmMb}MB</span>
+          <span><strong>{labels.ksm}</strong> ({ksmExtsDisplay}) {fieldStates.ksm === 'optional' ? ui.optional : ''} - Max {docLimits.ksmMb}MB</span>
         </li>
       )}
       {isKhsEnabled && (
         <li>
           <i class="fa-solid fa-check reg-checklist-icon"></i>
-          <span><strong>{labels.khs}</strong> ({khsExtsDisplay}) {fieldStates.khs === 'optional' ? '(Opsional)' : ''} - Max {docLimits.khsMb}MB</span>
+          <span><strong>{labels.khs}</strong> ({khsExtsDisplay}) {fieldStates.khs === 'optional' ? ui.optional : ''} - Max {docLimits.khsMb}MB</span>
         </li>
       )}
       {isMlEnabled && (
         <li>
           <i class="fa-solid fa-check reg-checklist-icon"></i>
-          <span><strong>{labels.ml}</strong> ({mlExtsDisplay}) {fieldStates.ml === 'optional' ? '(Opsional)' : ''} - Max {docLimits.mlMb}MB</span>
+          <span><strong>{labels.ml}</strong> ({mlExtsDisplay}) {fieldStates.ml === 'optional' ? ui.optional : ''} - Max {docLimits.mlMb}MB</span>
         </li>
       )}
       {isCvEnabled && (
         <li>
           <i class="fa-solid fa-check reg-checklist-icon"></i>
-          <span><strong>{labels.cv}</strong> ({cvExtsDisplay}) {fieldStates.cv === 'optional' ? '(Opsional)' : ''} - Max {docLimits.cvMb}MB</span>
+          <span><strong>{labels.cv}</strong> ({cvExtsDisplay}) {fieldStates.cv === 'optional' ? ui.optional : ''} - Max {docLimits.cvMb}MB</span>
         </li>
       )}
       {isPiEnabled && (
         <li>
           <i class="fa-solid fa-check reg-checklist-icon"></i>
-          <span><strong>{labels.pi}</strong> ({piExtsDisplay}) {fieldStates.pi === 'optional' ? '(Opsional)' : ''} - Max {docLimits.piMb}MB</span>
+          <span><strong>{labels.pi}</strong> ({piExtsDisplay}) {fieldStates.pi === 'optional' ? ui.optional : ''} - Max {docLimits.piMb}MB</span>
           {piTemplateUrl && (
             <a href={piTemplateUrl} target="_blank" rel="noopener noreferrer" class="checklist-download-btn">
               <i class="fa-solid fa-file-arrow-down"></i>
@@ -137,7 +140,7 @@ const isAngkatanEnabled = fieldStates.angkatan !== 'disabled';
       {isAngkatanEnabled && (
         <li>
           <i class="fa-solid fa-user-graduate reg-checklist-icon"></i>
-          <span><strong>Angkatan Mahasiswa:</strong> {studentYears.join(", ")} {fieldStates.angkatan === 'optional' ? '(Opsional)' : ''}</span>
+          <span><strong>Angkatan Mahasiswa:</strong> {studentYears.join(", ")} {fieldStates.angkatan === 'optional' ? ui.optional : ''}</span>
         </li>
       )}
     </ul>

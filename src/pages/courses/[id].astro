@@ -37,7 +37,7 @@ const positionsData = getLocalizedJsonData<{ list: unknown }>('positions', local
 const positionIndex = buildPositionIndex(parsePositions(positionsData));
 const { Content } = await render(entry);
 const { modules, assistants } = courseHasContent(course);
-const pageDescription = page.meta.description.replaceAll('{title}', course.title);
+const pageDescription = (page.meta.description ?? '').replaceAll('{title}', course.title);
 ---
 
 <Layout
@@ -59,7 +59,7 @@ const pageDescription = page.meta.description.replaceAll('{title}', course.title
 
       <header class="mt-8 max-w-[46rem]">
         <p class="font-mono text-xs uppercase tracking-[0.08em] text-muted-ink">
-          {course.code} · {chrome.labels.sks.replaceAll('{n}', String(course.sks))}
+          {course.code} · {(chrome.labels.sks ?? '').replaceAll('{n}', String(course.sks))}
           {course.semester && <span> · Semester {course.semester}</span>}
           <span class:list={['ml-2', course.hasPracticum ? 'text-brand' : 'text-muted-ink']}>
             · {course.hasPracticum ? chrome.labels.practicumYes : chrome.labels.practicumNo}

@@ -1,4 +1,9 @@
 ---
+import { getLocaleFromUrl, getLocalizedJsonData } from '../../utils/i18n';
+import type { ChromeData } from '../../utils/types';
+
+const locale = getLocaleFromUrl(Astro.url);
+const labels = getLocalizedJsonData<ChromeData>('chrome', locale).ui.pagination;
 ---
 
 <div class="pagination-container" id="pagination-container" style="display: none;">
@@ -8,8 +13,8 @@
       class="pagination-btn"
       id="pagination-prev"
       disabled
-      title="Halaman Sebelumnya"
-      aria-label="Halaman sebelumnya"
+      title={labels.previous}
+      aria-label={labels.previousAria}
     >
       <i class="fa-solid fa-chevron-left" aria-hidden="true"></i>
     </button>
@@ -21,13 +26,13 @@
       class="pagination-btn"
       id="pagination-next"
       disabled
-      title="Halaman Selanjutnya"
-      aria-label="Halaman berikutnya"
+      title={labels.next}
+      aria-label={labels.nextAria}
     >
       <i class="fa-solid fa-chevron-right" aria-hidden="true"></i>
     </button>
   </div>
-  <div class="pagination-info" id="pagination-info">
-    Halaman 1 dari 1
+  <div class="pagination-info" id="pagination-info" data-template={labels.info}>
+    {labels.info.replaceAll('{page}', '1').replaceAll('{total}', '1')}
   </div>
 </div>

@@ -1,4 +1,7 @@
 ---
+import { getLocaleFromUrl, getLocalizedJsonData } from '../../utils/i18n';
+import type { ChromeData } from '../../utils/types';
+
 interface Props {
   categories: string[];
   statuses?: { value: string; label: string }[];
@@ -6,15 +9,22 @@ interface Props {
   totalCount: number;
 }
 
+const locale = getLocaleFromUrl(Astro.url);
+const ui = getLocalizedJsonData<ChromeData>('chrome', locale).ui;
 const {
   categories = [],
   statuses = [],
-  searchPlaceholder = 'Cari berdasarkan judul, kata kunci...',
+  searchPlaceholder = ui.filter.searchPlaceholder,
   totalCount = 0,
 } = Astro.props;
 ---
 
-<div class="content-filter-bar" id="content-filter-bar">
+<div
+  class="content-filter-bar"
+  id="content-filter-bar"
+  data-label-no-results={ui.contentFilter.noResults}
+  data-label-results-range={ui.contentFilter.resultsRange}
+>
   <div class="filter-top-row">
     <!-- Search input box -->
     <div class="search-box-wrapper">
@@ -31,8 +41,8 @@ const {
         type="button"
         id="search-clear-btn"
         class="search-clear-btn"
-        title="Hapus pencarian"
-        aria-label="Hapus pencarian"
+        title={ui.filter.clearSearch}
+        aria-label={ui.filter.clearSearch}
       >
         <i class="fa-solid fa-xmark" aria-hidden="true"></i>
       </button>
@@ -80,7 +90,9 @@ const {
 
   <!-- Filter Summary & Reset Bar -->
   <div class="filter-summary-row" id="filter-summary-row">
-    <span id="filter-results-count" aria-live="polite" aria-atomic="true">Menampilkan {totalCount} item</span>
+    <span id="filter-results-count" aria-live="polite" aria-atomic="true">
+      {ui.filter.resultsCount.replaceAll('{n}', String(totalCount))}
+    </span>
     <button type="button" id="filter-reset-btn" class="filter-reset-btn" style="display: none;">
       <i class="fa-solid fa-rotate-left" aria-hidden="true"></i> Reset Filter
     </button>

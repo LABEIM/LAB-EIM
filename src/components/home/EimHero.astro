@@ -6,9 +6,10 @@ interface Props {
   logo: string;
   primaryHref: string;
   secondaryHref: string;
+  showPrimary?: boolean;
 }
 
-const { content, logo, primaryHref, secondaryHref } = Astro.props;
+const { content, logo, primaryHref, secondaryHref, showPrimary = true } = Astro.props;
 ---
 
 <section id="hero" class="eim-hero" aria-labelledby="eim-hero-title">
@@ -25,13 +26,17 @@ const { content, logo, primaryHref, secondaryHref } = Astro.props;
     />
 
     <h1 id="eim-hero-title" class="eim-hero-title">
-      {content.lines.map((line) => <span class="eim-hero-title-line">{line}</span>)}
+      {content.lines.map((line, index) => (
+        <>
+          <span class="eim-hero-title-line">{line}</span>{index < content.lines.length - 1 ? ' ' : ''}
+        </>
+      ))}
     </h1>
 
     <p class="eim-hero-desc">{content.description}</p>
 
     <div class="eim-hero-actions">
-      <a class="eim-hero-cta" href={primaryHref}>{content.primaryLabel}</a>
+      {showPrimary && <a class="eim-hero-cta" href={primaryHref}>{content.primaryLabel}</a>}
 
       <a class="eim-hero-secondary" href={secondaryHref}>
         {content.secondaryLabel} <span aria-hidden="true">→</span>

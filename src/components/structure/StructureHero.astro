@@ -6,10 +6,11 @@ interface Props {
   memberCount: number;
   dosenCount: number;
   positionCount: number;
+  showPrimary?: boolean;
 }
 
-const { content, memberCount, dosenCount, positionCount } = Astro.props;
-const meta = content.meta
+const { content, memberCount, dosenCount, positionCount, showPrimary = true } = Astro.props;
+const meta = (content.meta ?? '')
   .replaceAll('{members}', String(memberCount))
   .replaceAll('{dosen}', String(dosenCount))
   .replaceAll('{positions}', String(positionCount));
@@ -20,11 +21,15 @@ const meta = content.meta
   <div class="eim-hero-inner">
     <p class="eim-eyebrow">{content.eyebrow}</p>
     <h1 id="struct-hero-title" class="eim-hero-title">
-      {content.lines.map((line) => <span class="eim-hero-title-line">{line}</span>)}
+      {content.lines.map((line, index) => (
+        <>
+          <span class="eim-hero-title-line">{line}</span>{index < content.lines.length - 1 ? ' ' : ''}
+        </>
+      ))}
     </h1>
     <p class="eim-hero-desc">{content.description}</p>
     <div class="eim-hero-actions">
-      <a class="eim-hero-cta" href="#struktur">{content.primaryLabel}</a>
+      {showPrimary && <a class="eim-hero-cta" href="#struktur">{content.primaryLabel}</a>}
       <a class="eim-hero-secondary" href="/courses">
         {content.secondaryLabel} <span aria-hidden="true">→</span>
       </a>

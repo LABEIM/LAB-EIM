@@ -7,7 +7,7 @@ Admin Portal: https://lab-eim.vercel.app/keystatic
 ---
 
 ## Halaman (page copy)
-Every page's visible copy lives in JSON, editable under **Halaman** in Keystatic. Edit the file directly only when Keystatic is unavailable.
+Every page's visible copy lives in JSON, editable under **Halaman** in Keystatic. Shared UI strings — pagination, filter-bar states, registration status labels, screen-reader labels, back links, and the registration tab suffix — live in `src/data/chrome.json` under `ui`, editable under **Navbar, Footer & Brand**. Edit the files directly only when Keystatic is unavailable. The registration form internals (fieldset legends, countdown labels, modal bodies, upload hints, validation messages) and the filter bar's sort and status pill labels are still written in components and scripts.
 
 | Page | File |
 | --- | --- |
@@ -27,6 +27,8 @@ Every page's visible copy lives in JSON, editable under **Halaman** in Keystatic
 **Hiding a section:** every non-hero section object has an `enabled` boolean. Set it to `false` in Keystatic to remove the section from the page; section nav dots read the same flag, so the dot disappears too. Hero sections have no toggle because they hold the page `<h1>`. Upload fields on detail pages are collection fields, not page copy; only their headings and enabled switches live in the `*-detail.json` files.
 
 **Shared strings:** navigation, footer, the closing CTA, brand assets, and cross-page labels (for example "Lihat Detail", "Mendatang", statistics labels, coordinator/SKS/practicum labels) live once in `chrome.json`. Change them there rather than in a page file.
+
+**Verifying copy:** the copy-render guard in `pnpm test` compares every JSON string against the built HTML, so run a build first (`pnpm run build && pnpm test`). To also check the audit sample content, build with `PUBLIC_SHOW_AUDIT_CONTENT=true`.
 
 **`meta.title` on detail pages is only the brand suffix:** the page renders `${collection item title} · ${meta.title}`, so `"EIM Lab"` produces `Judul · EIM Lab`. On list pages `meta.title` is the whole title (`"Artikel · EIM Lab"`). Course detail's `meta.description` is a template and keeps `{title}`; that token is replaced with the course name.
 

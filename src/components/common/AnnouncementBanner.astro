@@ -2,8 +2,10 @@
 import { getLocaleFromUrl, getLocalizedJsonData } from '../../utils/i18n';
 import { getCurrentRecruitmentStage } from '../../utils/recruitment';
 import { applySimulationToConfig } from '../../utils/simulation';
+import type { ChromeData } from '../../utils/types';
 
 const locale = getLocaleFromUrl(Astro.url);
+const chrome = getLocalizedJsonData<ChromeData>('chrome', locale);
 
 // Load announcement configuration and recruitment settings
 let announcementConfig: any = {};
@@ -176,8 +178,8 @@ const isExternalCta = safeCtaLink.startsWith('http://') || safeCtaLink.startsWit
             type="button"
             class="announcement-close-btn"
             data-announcement-close
-            aria-label="Tutup Pengumuman"
-            title="Tutup Pengumuman"
+            aria-label={chrome.ui.aria.closeAnnouncement}
+            title={chrome.ui.aria.closeAnnouncement}
           >
             <i class="fa-solid fa-xmark" aria-hidden="true"></i>
           </button>

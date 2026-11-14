@@ -37,6 +37,8 @@ function youtubeEmbed(id: string): string {
   return `https://www.youtube-nocookie.com/embed/${id}?autoplay=1&mute=1&loop=1&playlist=${id}`;
 }
 
+export type IframeMedia = Extract<ResolvedMedia, { kind: 'iframe' }>;
+
 export function resolveVideoUrl(raw: string | undefined | null): ResolvedMedia | null {
   if (typeof raw !== 'string') return null;
   const url = parseHttps(raw);
@@ -100,12 +102,29 @@ export function resolveVideoUrl(raw: string | undefined | null): ResolvedMedia |
   return null;
 }
 
-// Only YouTube exposes a stable thumbnail by id; an uploaded poster covers the
-// rest, and providers without either load their iframe directly on the server.
-export function embedPoster(media: ResolvedMedia, poster?: string | null): string | null {
-  if (media.kind !== 'iframe') return null;
-  if (poster?.trim()) return poster;
-  return media.provider === 'youtube' ? `https://i.ytimg.com/vi/${media.id}/hqdefault.jpg` : null;
+// The stage embed runs unattended: muted, looping, and stripped of controls so
+// the overlay button owns every click. Drive's preview cannot autoplay or loop,
+// so it keeps the plain preview URL.
+export function buildBackgroundEmbed(media: IframeMedia): string {
+  if (media.provider === 'youtube') {
+    return `${media.src}&controls=0&rel=0&playsinline=1`;
+  }
+  if (media.provider === 'vimeo') {
+    return `${media.src}?autoplay=1&muted=1&loop=1&background=1`;
+  }
+  return media.src;
+}
+
+// The click-through player starts on the visitor's gesture, so it can play with
+// sound and keeps its controls. Direct video files never reach these builders.
+export function buildPlayerEmbed(media: IframeMedia): string {
+  if (media.provider === 'youtube') {
+    return `https://www.youtube-nocookie.com/embed/${media.id}?autoplay=1&rel=0&playsinline=1`;
+  }
+  if (media.provider === 'vimeo') {
+    return `${media.src}?autoplay=1&rel=0`;
+  }
+  return media.src;
 }
 
 export function resolveExternalImageUrl(raw: string | undefined | null): string | null {

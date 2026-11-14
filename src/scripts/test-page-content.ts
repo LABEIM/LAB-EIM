@@ -1,7 +1,7 @@
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { dirname, join, resolve, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { embedPoster, resolveExternalImageUrl, resolveVideoUrl } from '../utils/media';
+import { buildBackgroundEmbed, buildPlayerEmbed, resolveExternalImageUrl, resolveVideoUrl } from '../utils/media';
 import { sectionNumber, sectionOn, splitWordCount } from '../utils/page-content';
 import type { RecruitmentConfig } from '../utils/types';
 import type { AboutData, ChromeData, ContactData, CourseDetailPageData, CoursesPageData, EventDetailPageData, EventsPageData, GalleryData, HomePageData, Lecturer, Member, NewsDetailPageData, NewsPageData, StructurePageData } from '../utils/types';
@@ -327,46 +327,66 @@ assert(
   'EimReveal native video keeps controls so uploads stay interactive'
 );
 
-// Embeds are click-to-load. A YouTube link always yields a thumbnail, so its
-// server HTML holds the facade only; the iframe is created in the browser script.
+// Embeds autoplay muted in the stage and open a sound-on player in a modal;
+// uploads and direct video files keep their inline native player and no modal.
 const youtubeMedia = resolveVideoUrl('https://youtu.be/dQw4w9WgXcQ');
-assert(
-  youtubeMedia?.kind === 'iframe' && embedPoster(youtubeMedia, '') === 'https://i.ytimg.com/vi/dQw4w9WgXcQ/hqdefault.jpg',
-  'a YouTube embed derives its facade thumbnail from the video id'
-);
-assert(
-  youtubeMedia?.kind === 'iframe' && embedPoster(youtubeMedia, '/assets/media/poster.jpg') === '/assets/media/poster.jpg',
-  'an uploaded poster wins over the YouTube thumbnail'
-);
-for (const input of ['https://vimeo.com/76979871', 'https://drive.google.com/file/d/1AbCdEfGhIjK/view']) {
-  const resolved = resolveVideoUrl(input);
-  assert(
-    resolved?.kind === 'iframe' && embedPoster(resolved, '') === null,
-    `a posterless ${resolved?.kind === 'iframe' ? resolved.provider : ''} embed skips the facade`
-  );
+const vimeoMedia = resolveVideoUrl('https://vimeo.com/76979871');
+const driveMedia = resolveVideoUrl('https://drive.google.com/file/d/1AbCdEfGhIjK/view');
+if (youtubeMedia?.kind !== 'iframe' || vimeoMedia?.kind !== 'iframe' || driveMedia?.kind !== 'iframe') {
+  throw new Error('expected iframe media for the intro embed tests');
 }
 
-const facadeMarkup = revealComponent.slice(
-  revealComponent.indexOf('e-reveal-facade"'),
-  revealComponent.indexOf('{directIframe &&')
-);
-assert(facadeMarkup.includes('data-embed-src={iframeMedia.src}'), 'EimReveal facade carries the embed src');
-assert(facadeMarkup.includes('data-embed-provider={iframeMedia.provider}'), 'EimReveal facade carries the provider');
-assert(!facadeMarkup.includes('<iframe'), 'EimReveal facade emits no iframe in the server HTML');
+const youtubeBackground = buildBackgroundEmbed(youtubeMedia);
+for (const fragment of ['autoplay=1', 'mute=1', 'loop=1', 'playlist=dQw4w9WgXcQ', 'controls=0']) {
+  assert(youtubeBackground.includes(fragment), `youtube background embed keeps ${fragment}`);
+}
+const youtubePlayer = buildPlayerEmbed(youtubeMedia);
+assert(youtubePlayer.includes('autoplay=1'), 'youtube player embed autoplays on the click');
+assert(!youtubePlayer.includes('mute=1'), 'youtube player embed keeps sound on');
+assert(!youtubePlayer.includes('controls=0'), 'youtube player embed keeps its controls');
+assert(!youtubePlayer.includes('loop=1'), 'youtube player embed does not loop');
+
+assert(buildBackgroundEmbed(vimeoMedia).includes('background=1'), 'vimeo background embed uses background=1');
+assert(!buildPlayerEmbed(vimeoMedia).includes('background=1'), 'vimeo player embed is not a background player');
+
+assert(buildBackgroundEmbed(driveMedia) === driveMedia.src, 'drive background keeps its preview URL');
+assert(buildPlayerEmbed(driveMedia) === driveMedia.src, 'drive player keeps its preview URL');
+
+const stageMarkup = revealComponent.slice(0, revealComponent.indexOf('class="e-reveal-modal"'));
+assert(stageMarkup.includes('src={backgroundSrc}'), 'EimReveal stage iframe uses the background embed');
 assert(
-  /<button\b[^>]*\bclass="e-reveal-facade-play"[^>]*\baria-label="[^"]+"/.test(facadeMarkup),
-  'EimReveal facade play control is a button with an aria-label'
+  stageMarkup.includes('class="e-reveal-stage-media e-reveal-embed"'),
+  'EimReveal stage iframe carries the pointer-events class'
 );
-const facadeScript = revealComponent.slice(revealComponent.indexOf("document.addEventListener('click'"));
+assert(
+  /<button\b[^>]*\bclass="e-reveal-open"[^>]*\baria-label="[^"]+"/.test(stageMarkup),
+  'EimReveal overlay control is a button with a non-empty aria-label'
+);
+
+const modalMarkup = revealComponent.slice(
+  revealComponent.indexOf('id="e-reveal-modal"'),
+  revealComponent.indexOf('<script>')
+);
 for (const fragment of [
-  "createElement('iframe')",
-  "iframe.allow = 'autoplay; encrypted-media; picture-in-picture; fullscreen'",
-  'iframe.allowFullscreen = true',
-  "iframe.referrerPolicy = 'strict-origin-when-cross-origin'",
-  "iframe.setAttribute('sandbox', 'allow-scripts allow-same-origin allow-presentation allow-popups')",
-  'iframe.focus()',
+  'role="dialog"',
+  'aria-modal="true"',
+  'aria-labelledby="e-reveal-modal-title"',
+  'data-player-src={playerSrc}',
 ]) {
-  assert(facadeScript.includes(fragment), `EimReveal click builds the iframe with ${fragment}`);
+  assert(modalMarkup.includes(fragment), `EimReveal modal keeps ${fragment}`);
+}
+assert(!modalMarkup.includes('<iframe'), 'EimReveal modal emits no iframe in the server HTML (built on open)');
+
+const modalScript = revealComponent.slice(
+  revealComponent.indexOf("document.getElementById('e-reveal-modal')")
+);
+for (const fragment of [
+  "document.createElement('iframe')",
+  'iframe.src = playerSrc',
+  'playerHost.replaceChildren(iframe)',
+  'playerHost.replaceChildren()',
+]) {
+  assert(modalScript.includes(fragment), `EimReveal modal script includes ${fragment}`);
 }
 
 // Pasted links win over uploads, so a broken link must not slip into a built src.

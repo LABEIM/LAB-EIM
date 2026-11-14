@@ -2,7 +2,12 @@
 import { Image } from 'astro:assets';
 import emblem from '../../../public/assets/brand/eim-emblem.png';
 import { getLocaleFromUrl, getLocalizedJsonData } from '../../utils/i18n';
-import { embedPoster, resolveExternalImageUrl, resolveVideoUrl } from '../../utils/media';
+import {
+  buildBackgroundEmbed,
+  buildPlayerEmbed,
+  resolveExternalImageUrl,
+  resolveVideoUrl,
+} from '../../utils/media';
 import type { ChromeData, HomePageData } from '../../utils/types';
 
 /**
@@ -11,6 +16,9 @@ import type { ChromeData, HomePageData } from '../../utils/types';
  *   mediaKind: 'video' → pasted link (iframe or direct file), else `video` with `poster`
  *   mediaKind: 'image' → pasted `imageUrl`, else uploaded `image`
  *   mediaKind: 'none'  → the placeholder below
+ *
+ * An embed autoplays muted inside the stage; its overlay opens a sound-on player
+ * in a modal. Uploads and direct video files stay inline and get no modal.
  */
 interface Props {
   content: HomePageData['reveal'];
@@ -20,9 +28,8 @@ const { content } = Astro.props;
 const mediaKind = content.mediaKind ?? 'none';
 const externalVideo = resolveVideoUrl(content.videoUrl);
 const iframeMedia = mediaKind === 'video' && externalVideo?.kind === 'iframe' ? externalVideo : null;
-const facadePoster = iframeMedia ? embedPoster(iframeMedia, content.poster) : null;
-// No poster and no derivable thumbnail: keep the server-side iframe instead.
-const directIframe = iframeMedia && !facadePoster ? iframeMedia : null;
+const backgroundSrc = iframeMedia ? buildBackgroundEmbed(iframeMedia) : null;
+const playerSrc = iframeMedia ? buildPlayerEmbed(iframeMedia) : null;
 const nativeVideo =
   mediaKind === 'video' && externalVideo?.kind === 'video'
     ? externalVideo.src
@@ -36,40 +43,26 @@ const chrome = getLocalizedJsonData<ChromeData>('chrome', getLocaleFromUrl(Astro
 
 <section id="reveal" class:list={['e-reveal-stage', mediaKind === 'none' && 'is-pending']} aria-label={chrome.ui.aria.mediaIntro}>
   <figure class="e-reveal-stage-figure">
-    {facadePoster && iframeMedia && (
-      <div
-        class="e-reveal-stage-media e-reveal-facade"
-        data-embed-src={iframeMedia.src}
-        data-embed-title={content.mediaAlt}
-        data-embed-provider={iframeMedia.provider}
-      >
-        <img
-          class="e-reveal-facade-poster"
-          src={facadePoster}
-          alt=""
+    {iframeMedia && backgroundSrc && playerSrc && (
+      <>
+        <iframe
+          class="e-reveal-stage-media e-reveal-embed"
+          src={backgroundSrc}
+          title={content.mediaAlt}
           loading="lazy"
-          decoding="async"
-          referrerpolicy="no-referrer"
-        />
-        <button type="button" class="e-reveal-facade-play" aria-label="Putar video">
-          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-            <path d="M8 5v14l11-7z" fill="currentColor"></path>
-          </svg>
+          allow="autoplay; encrypted-media; picture-in-picture; fullscreen"
+          allowfullscreen
+          sandbox="allow-scripts allow-same-origin allow-presentation allow-popups"
+          referrerpolicy="strict-origin-when-cross-origin"
+        ></iframe>
+        <button type="button" class="e-reveal-open" aria-label="Buka pemutar video">
+          <span class="e-reveal-open-glyph" aria-hidden="true">
+            <svg viewBox="0 0 24 24" focusable="false">
+              <path d="M8 5v14l11-7z" fill="currentColor"></path>
+            </svg>
+          </span>
         </button>
-      </div>
-    )}
-
-    {directIframe && (
-      <iframe
-        class="e-reveal-stage-media"
-        src={directIframe.src}
-        title={content.mediaAlt}
-        loading="lazy"
-        allow="autoplay; encrypted-media; picture-in-picture; fullscreen"
-        allowfullscreen
-        sandbox="allow-scripts allow-same-origin allow-presentation allow-popups"
-        referrerpolicy="strict-origin-when-cross-origin"
-      ></iframe>
+      </>
     )}
 
     {nativeVideo && (
@@ -120,28 +113,97 @@ const chrome = getLocalizedJsonData<ChromeData>('chrome', getLocaleFromUrl(Astro
   </figure>
 </section>
 
+{iframeMedia && playerSrc && (
+  <div
+    class="e-reveal-modal"
+    id="e-reveal-modal"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="e-reveal-modal-title"
+    hidden
+    data-player-src={playerSrc}
+    data-player-title={content.mediaAlt}
+  >
+    <div class="e-reveal-modal-dialog">
+      <div class="e-reveal-modal-bar">
+        <h2 class="e-reveal-modal-title" id="e-reveal-modal-title">{content.mediaAlt}</h2>
+        <button type="button" class="e-reveal-modal-close" aria-label="Tutup video">
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path>
+          </svg>
+        </button>
+      </div>
+      <div class="e-reveal-modal-player"></div>
+    </div>
+  </div>
+)}
+
 <script>
   import { initMediaReveal } from '../../scripts/media-reveal';
 
   initMediaReveal();
 
-  // Embeds are click-to-load: the facade paints a poster, activation builds the player.
-  document.addEventListener('click', (event) => {
-    if (!(event.target instanceof Element)) return;
-    const facade = event.target.closest('.e-reveal-facade-play')?.closest<HTMLElement>('.e-reveal-facade');
-    const src = facade?.dataset.embedSrc;
-    if (!facade || !src) return;
-    const iframe = document.createElement('iframe');
-    iframe.src = src;
-    iframe.title = facade.dataset.embedTitle ?? '';
-    iframe.className = 'e-reveal-stage-media';
-    iframe.loading = 'lazy';
-    iframe.allow = 'autoplay; encrypted-media; picture-in-picture; fullscreen';
-    iframe.allowFullscreen = true;
-    iframe.referrerPolicy = 'strict-origin-when-cross-origin';
-    iframe.setAttribute('sandbox', 'allow-scripts allow-same-origin allow-presentation allow-popups');
-    iframe.tabIndex = 0;
-    facade.replaceWith(iframe);
-    iframe.focus();
-  });
+  // The stage iframe only paints the muted background; this overlay opens the
+  // sound-on player in a dialog whose iframe is built on demand (and removed on
+  // close, which stops playback).
+  const modal = document.getElementById('e-reveal-modal');
+  const trigger = document.querySelector<HTMLButtonElement>('.e-reveal-open');
+  const closeBtn = modal?.querySelector<HTMLButtonElement>('.e-reveal-modal-close');
+  const playerHost = modal?.querySelector<HTMLElement>('.e-reveal-modal-player');
+  const playerSrc = modal?.dataset.playerSrc;
+
+  if (modal && trigger && closeBtn && playerHost && playerSrc) {
+    let previousOverflow = '';
+
+    const open = () => {
+      const iframe = document.createElement('iframe');
+      iframe.src = playerSrc;
+      iframe.title = modal.dataset.playerTitle ?? '';
+      iframe.className = 'e-reveal-modal-frame';
+      iframe.allow = 'autoplay; encrypted-media; picture-in-picture; fullscreen';
+      iframe.allowFullscreen = true;
+      iframe.referrerPolicy = 'strict-origin-when-cross-origin';
+      iframe.setAttribute('sandbox', 'allow-scripts allow-same-origin allow-presentation allow-popups');
+      playerHost.replaceChildren(iframe);
+      modal.hidden = false;
+      previousOverflow = document.body.style.overflow;
+      document.body.style.overflow = 'hidden';
+      closeBtn.focus();
+    };
+
+    const close = () => {
+      if (modal.hidden) return;
+      playerHost.replaceChildren();
+      modal.hidden = true;
+      document.body.style.overflow = previousOverflow;
+      trigger.focus();
+    };
+
+    trigger.addEventListener('click', open);
+    closeBtn.addEventListener('click', close);
+    modal.addEventListener('click', (event) => {
+      if (event.target === modal) close();
+    });
+    document.addEventListener('keydown', (event) => {
+      if (modal.hidden) return;
+      if (event.key === 'Escape') {
+        close();
+        return;
+      }
+      if (event.key !== 'Tab') return;
+      const focusable = Array.from(
+        modal.querySelectorAll<HTMLElement>('button, iframe, a[href], [tabindex]:not([tabindex="-1"])')
+      ).filter((element) => !element.hasAttribute('disabled'));
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (!first || !last) return;
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
+    });
+  }
 </script>

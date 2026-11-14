@@ -16,11 +16,10 @@ const socials = siteData.socials || {};
 const contactPersons: ContactPerson[] = Array.isArray(contactPageData.contactPersons) ? contactPageData.contactPersons : [];
 
 const title = contactPageData.title || 'Hubungi Kami';
-const heroDescription = contactPageData.heroDescription || 'Laboratorium Riset Enterprise Infrastructure Management Telkom University siap melayani pertanyaan, kolaborasi riset, dan informasi kegiatan.';
+const heroDescription = contactPageData.heroDescription || 'Laboratorium Enterprise Infrastructure Management Telkom University siap melayani pertanyaan, kolaborasi riset, dan informasi kegiatan.';
 const locationTitle = contactPageData.locationTitle || 'Lokasi Laboratorium';
 const locationText = contactPageData.location || contactInfo.location || 'Gedung TULT Lantai 8, Ruang TULT.08.09';
 const universityText = contactPageData.university || contactInfo.university || 'Telkom University, Bandung, Indonesia';
-const mapsUrl = contactPageData.mapsUrl || 'https://maps.google.com/?q=Telkom+University+Bandung';
 const mapsEmbedUrl = contactPageData.mapsEmbedUrl || 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3960.3074993116813!2d107.63168547587637!3d-6.973007068278278!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e68e9ad770c0c75%3A0xb35183efb1c099c2!2sTelkom%20University%20Landmark%20Tower%20(TULT)!5e0!3m2!1sid!2sid!4v1710000000000!5m2!1sid!2sid';
 const emailTitle = contactPageData.emailTitle || 'Email Resmi';
 const emailText = contactPageData.email || contactInfo.email || 'eimlab@telkomuniversity.ac.id';
@@ -30,8 +29,8 @@ const hoursSubtext = contactPageData.hoursSubtext || 'Kunjungan offline dapat di
 const mapSectionTitle = contactPageData.mapSectionTitle || 'Peta Lokasi Laboratorium';
 const mapSectionSubtitle = contactPageData.mapSectionSubtitle || 'Temukan lokasi Gedung Telkom University Landmark Tower (TULT) di kampus Telkom University Bandung.';
 
-const pageTitle = `${title} · EIM Research Lab`;
-const pageDescription = `${locationText}, ${universityText}, dan saluran komunikasi Enterprise Infrastructure Management (EIM) Research Lab Telkom University.`;
+const pageTitle = `${title} · EIM Lab`;
+const pageDescription = `${locationText}, ${universityText}, dan saluran komunikasi Laboratorium Enterprise Infrastructure Management (EIM) Telkom University.`;
 
 const socialEntries = [
   { name: 'Instagram', url: socials.instagram, icon: 'fa-brands fa-instagram' },
@@ -39,7 +38,7 @@ const socialEntries = [
   { name: 'GitHub', url: socials.github, icon: 'fa-brands fa-github' },
 ].filter((entry) => Boolean(entry.url));
 
-const labName = [siteData.name, siteData.subName].filter(Boolean).join(' ') || siteData.fullName || 'EIM Research Lab';
+const labName = [siteData.name, siteData.subName].filter(Boolean).join(' ') || siteData.fullName || 'EIM Lab';
 
 function getSocialHandle(url: string): string {
   try {
@@ -75,9 +74,9 @@ const sectionItems = [
         <h1 id="contact-hero-title" class="eim-hero-title">{title}</h1>
         <p class="eim-hero-desc">{heroDescription}</p>
         <div class="eim-hero-actions">
-          <a class="eim-hero-cta" href={`mailto:${emailText}`}>{t('contact.heroPrimary', locale)}</a>
-          <a class="eim-hero-secondary" href={mapsUrl} target="_blank" rel="noopener noreferrer">
-            {t('contact.heroSecondary', locale)} <span aria-hidden="true">↗</span>
+          <a class="eim-hero-cta" href="#detail">{t('contact.heroPrimary', locale)}</a>
+          <a class="eim-hero-secondary" href="/registration">
+            {t('contact.heroSecondary', locale)} <span aria-hidden="true">→</span>
           </a>
         </div>
         <p class="eim-subhero-meta">{locationText} · {universityText}</p>

@@ -2,35 +2,38 @@
 import { getCollection } from 'astro:content';
 import Layout from '../layouts/Layout.astro';
 import '../styles/pages/home-eim.css';
-import { getCurrentRecruitmentStage } from '../utils/recruitment';
-import { parseDivisions, toDivisionPanels } from '../utils/division-mapper';
-import { resolveStageCta } from '../utils/constants';
-import type { AboutData, Member } from '../utils/types';
+import type { AboutData } from '../utils/types';
 import EventPosterModal from '../components/events/EventPosterModal.astro';
 import EimHero from '../components/home/EimHero.astro';
 import EimReveal from '../components/home/EimReveal.astro';
 import EimFocus from '../components/home/EimFocus.astro';
 import EimVisiMisi from '../components/home/EimVisiMisi.astro';
-import EimDivisions from '../components/home/EimDivisions.astro';
 import EimNews from '../components/home/EimNews.astro';
 import EimEvents from '../components/home/EimEvents.astro';
+import EimCourses from '../components/home/EimCourses.astro';
+import EimLabNumbers from '../components/home/EimLabNumbers.astro';
 import EimSectionNav from '../components/home/EimSectionNav.astro';
+import EimCTA from '../components/home/EimCTA.astro';
 import {
   getLocaleFromUrl,
   getLocalizedJsonData,
-  getCollectionEntriesForLocale
+  getCollectionEntriesForLocale,
+  t
 } from '../utils/i18n';
 import { filterAuditContent } from '../utils/content-helpers';
+import { resolveCourses } from '../utils/course-helpers';
+import { countPeopleByGroup, parsePositions } from '../utils/position-mapper';
+import { getCurrentRecruitmentStage } from '../utils/recruitment';
+import type { Lecturer, Member, RecruitmentConfig } from '../utils/types';
 
 const locale = getLocaleFromUrl(Astro.url);
-const divisionsData = await getLocalizedJsonData<any>('divisions', locale);
-const registrationConfig = await getLocalizedJsonData<any>('registration', locale);
+const siteData = getLocalizedJsonData<any>('site', locale);
+const registrationConfig = getLocalizedJsonData<Partial<RecruitmentConfig>>('registration', locale);
+const recruitmentStage = getCurrentRecruitmentStage(registrationConfig);
+const lecturersData = getLocalizedJsonData<{ list: Lecturer[] }>('lecturers', locale);
+const membersData = getLocalizedJsonData<{ list: Member[] }>('members', locale);
+const positionsData = getLocalizedJsonData<{ list: unknown }>('positions', locale);
 const about = await getLocalizedJsonData<AboutData>('about', locale);
-const membersData = await getLocalizedJsonData<{ list: Member[] }>('members', locale);
-
-const divisions = parseDivisions(divisionsData);
-const members = membersData?.list ?? [];
-const divisionPanels = toDivisionPanels(divisions, members);
 
 // Fetch and filter news for active locale
 const rawNews = await getCollection('news');
@@ -43,7 +46,7 @@ const latestNews = filterAuditContent(localizedNews)
     }
     return new Date(b.data.news_date).getTime() - new Date(a.data.news_date).getTime();
   })
-  .slice(0, 3);
+  .slice(0, 5);
 
 // Events: upcoming first, then most recent — the section shows the next two as large poster tiles.
 const rawEvents = await getCollection('events');
@@ -61,31 +64,60 @@ const events = filterAuditContent(rawEvents)
 
 const upcomingEvents = events.filter((event) => event.data.status === 'upcoming');
 
-// Hero CTA: server-rendered Indonesian label; initHomeCTA keeps it fresh at runtime.
-const currentStage = getCurrentRecruitmentStage(registrationConfig);
-const stageEntry = resolveStageCta(currentStage);
-const primaryLabel = stageEntry.label;
-const primaryHref = stageEntry.href;
+// Lab numbers, derived — never typed in.
+const positions = parsePositions(positionsData);
+const members = membersData?.list ?? [];
+const people = [...(lecturersData?.list ?? []), ...members];
+const groupCounts = countPeopleByGroup(people, positions);
+
+// Beranda course band: first three courses that actually run a practicum.
+const courseEntries = await getCollection('courses');
+const allCourses = resolveCourses(courseEntries, lecturersData?.list ?? [], members);
+const bandCourses = allCourses.filter((course) => course.hasPracticum).slice(0, 3);
 ---
 
-<Layout title={`EIM Research Lab · Riset infrastruktur untuk dunia nyata`} homeSkin skipLink>
+<Layout title={`EIM Lab · Infrastruktur untuk dunia nyata`} homeSkin skipLink>
   <EventPosterModal upcomingEvents={upcomingEvents} locale={locale} />
   <main id="main-content" tabindex="-1">
-    <EimSectionNav />
-    <EimHero primaryLabel={primaryLabel} primaryHref={primaryHref} />
+    <EimSectionNav
+      items={[
+        { id: 'reveal', label: t('home.navDotMedia', locale) },
+        { id: 'fokus', label: t('home.navDotFocus', locale) },
+        { id: 'visi-misi', label: t('home.navDotVision', locale) },
+        ...(bandCourses.length > 0
+          ? [{ id: 'mata-kuliah', label: t('home.navDotCourses', locale) }]
+          : []),
+        { id: 'kegiatan', label: t('home.navDotEvents', locale) },
+        { id: 'berita', label: t('home.navDotArticles', locale) },
+      ]}
+      label={t('home.sectionNavLabel', locale)}
+    />
+    <EimHero
+      primaryLabel={t('home.heroPrimary', locale)}
+      primaryHref="#reveal"
+      secondaryLabel={t('home.heroSecondary', locale)}
+      secondaryHref="/about"
+    />
     <EimReveal />
     <EimFocus />
     <EimVisiMisi about={about} />
-    <EimDivisions panels={divisionPanels} />
+    <EimLabNumbers
+      label={t('home.numbersLabel', locale)}
+      stats={[
+        { label: t('stats.dosen', locale), value: groupCounts.dosen },
+        { label: t('stats.members', locale), value: members.length },
+        { label: t('stats.courses', locale), value: allCourses.length },
+      ]}
+    />
+    <EimCourses courses={bandCourses} />
     <EimEvents events={events} locale={locale} />
     <EimNews news={latestNews} locale={locale} />
+    <EimCTA site={siteData} stage={recruitmentStage} />
   </main>
 </Layout>
 
 <script>
   import { initGlobalStageSync } from '../scripts/global-stage-sync';
-  import { initHomeCTA } from '../scripts/home-eim';
 
-  const stage = initGlobalStageSync();
-  initHomeCTA(stage);
+  initGlobalStageSync();
 </script>

@@ -1,14 +1,17 @@
 ---
-import type { Lecturer } from '../../utils/types';
+import { positionLabel } from '../../utils/position-mapper';
+import type { Lecturer, Position } from '../../utils/types';
 
 interface Props {
   lecturer: Lecturer;
+  positionIndex: Map<string, Position>;
 }
 
-const { lecturer } = Astro.props;
+const { lecturer, positionIndex } = Astro.props;
 
 const hasImage = Boolean(lecturer.image.trim());
 const hasName = Boolean(lecturer.name.trim());
+const label = positionLabel(positionIndex, lecturer.role);
 ---
 
 <article class="lecturer-card">
@@ -24,7 +27,7 @@ const hasName = Boolean(lecturer.name.trim());
     />
   </span>
   <span class="lecturer-card-body">
-    <h3 class="lecturer-card-name">{hasName ? lecturer.name : lecturer.role}</h3>
-    {hasName && <p class="lecturer-card-role">{lecturer.role}</p>}
+    <h3 class="lecturer-card-name">{hasName ? lecturer.name : label}</h3>
+    {hasName && <p class="lecturer-card-role">{label}</p>}
   </span>
 </article>

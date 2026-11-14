@@ -3,21 +3,18 @@ import { getCollection } from 'astro:content';
 import Layout from '../../layouts/Layout.astro';
 import '../../styles/pages/home-eim.css';
 import '../../styles/pages/kegiatan-eim.css';
-import EimCTA from '../../components/home/EimCTA.astro';
 import EimSectionNav from '../../components/home/EimSectionNav.astro';
 import KegiatanHero from '../../components/kegiatan/KegiatanHero.astro';
 import KegiatanList from '../../components/kegiatan/KegiatanList.astro';
 import {
   getCollectionEntriesForLocale,
   getLocaleFromUrl,
-  getLocalizedJsonData,
   t,
 } from '../../utils/i18n';
 import { filterAuditContent } from '../../utils/content-helpers';
 import { compareEventDates, getEventDateMs } from '../../utils/event-helpers';
 
 const locale = getLocaleFromUrl(Astro.url);
-const siteData = getLocalizedJsonData<any>('site', locale);
 
 const rawEvents = await getCollection('events');
 const events = filterAuditContent(getCollectionEntriesForLocale(rawEvents, locale))
@@ -36,12 +33,11 @@ const latestYear =
 const sectionItems = [
   { id: 'kegiatan', label: t('nav.event', locale) },
   { id: 'daftar', label: t('events.navDotList', locale) },
-  { id: 'gabung', label: t('events.navDotJoin', locale) },
 ];
 ---
 
 <Layout
-  title={`${t('nav.event', locale)} · EIM Research Lab`}
+  title={`${t('nav.event', locale)} · EIM Lab`}
   description={t('events.metaDescription', locale)}
   homeSkin
   skipLink
@@ -54,6 +50,5 @@ const sectionItems = [
       latestYear={latestYear}
     />
     <KegiatanList events={events} locale={locale} />
-    <EimCTA site={siteData} />
   </main>
 </Layout>

@@ -301,7 +301,7 @@ export function updateGlobalAnnouncementBanner(stage: string): void {
   let alertType = 'recruitment';
   let iconClass = 'fa-solid fa-bullhorn';
   let bText = 'REKRUTMEN';
-  let msg = 'Pendaftaran Asisten EIM Research Lab sedang berlangsung!';
+  let msg = 'Pendaftaran Asisten EIM Lab sedang berlangsung!';
   let cta = 'Lihat Informasi';
   let isVisible = true;
 
@@ -309,25 +309,25 @@ export function updateGlobalAnnouncementBanner(stage: string): void {
     alertType = 'recruitment';
     iconClass = 'fa-solid fa-user-plus';
     bText = 'REKRUTMEN DIBUKA';
-    msg = 'Pendaftaran Asisten EIM Research Lab telah resmi dibuka!';
+    msg = 'Pendaftaran Asisten EIM Lab telah resmi dibuka!';
     cta = 'Daftar Sekarang';
   } else if (stage === 'extended') {
     alertType = 'recruitment';
     iconClass = 'fa-solid fa-clock-rotate-left';
     bText = 'DIPERPANJANG';
-    msg = 'Pendaftaran Asisten EIM Research Lab diperpanjang!';
+    msg = 'Pendaftaran Asisten EIM Lab diperpanjang!';
     cta = 'Daftar Sekarang';
   } else if (stage === 'upcoming') {
     alertType = 'recruitment';
     iconClass = 'fa-solid fa-calendar-check';
     bText = 'SEGERA DIBUKA';
-    msg = 'Pendaftaran Asisten EIM Research Lab akan segera dibuka!';
+    msg = 'Pendaftaran Asisten EIM Lab akan segera dibuka!';
     cta = 'Lihat Persyaratan';
   } else if (stage === 'announcement') {
     alertType = 'success';
     iconClass = 'fa-solid fa-trophy';
     bText = 'HASIL AKHIR';
-    msg = 'Pengumuman Akhir Kelulusan Asisten EIM Research Lab!';
+    msg = 'Pengumuman Akhir Kelulusan Asisten EIM Lab!';
     cta = 'Lihat Pengumuman';
   } else if (stage.endsWith('_results') || stage === 'selection_results' || stage === 'technical_test_results') {
     alertType = 'success';

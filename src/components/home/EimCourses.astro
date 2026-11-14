@@ -1,0 +1,67 @@
+---
+import type { CourseView } from '../../utils/types';
+import { t } from '../../utils/i18n';
+import { getLocaleFromUrl } from '../../utils/i18n';
+
+interface Props {
+  courses: CourseView[];
+}
+
+const { courses } = Astro.props;
+const locale = getLocaleFromUrl(Astro.url);
+---
+
+{courses.length > 0 && (
+  <section id="mata-kuliah" class="py-[clamp(4.5rem,10vh,8.75rem)]" aria-labelledby="eim-courses-title">
+    <div class="mx-auto max-w-[1200px] px-[clamp(1.25rem,4vw,4rem)]">
+      <div class="grid gap-6 lg:grid-cols-2 lg:items-end">
+        <div>
+          <p class="e-reveal font-mono text-xs uppercase tracking-[0.08em] text-brand">
+            {t('home.coursesEyebrow', locale)}
+          </p>
+          <h2
+            id="eim-courses-title"
+            class="e-reveal mt-4 font-display text-[clamp(2rem,4vw,3.5rem)] leading-[1.05] tracking-[-0.01em]"
+          >
+            {t('home.coursesTitle', locale)}
+          </h2>
+        </div>
+        <p class="e-reveal max-w-[52ch] text-[15px] leading-[1.55] text-muted-ink lg:justify-self-end">
+          {t('home.coursesIntro', locale)}
+        </p>
+      </div>
+
+      <ul
+        class:list={[
+          'e-reveal-group mt-[clamp(2.5rem,6vh,4rem)] grid list-none gap-6 p-0',
+          courses.length === 1 ? 'sm:grid-cols-1' : 'sm:grid-cols-2',
+          courses.length >= 3 && 'lg:grid-cols-3',
+        ]}
+      >
+        {courses.map((course, index) => (
+          <li
+            class="flex flex-col gap-3 border border-line bg-background p-6"
+            style={`--i:${index}`}
+          >
+            <p class="font-mono text-xs uppercase tracking-[0.08em] text-brand">
+              {t('courses.practicumYes', locale)}
+            </p>
+            <h3 class="font-display text-[clamp(1.35rem,2vw,1.75rem)] leading-[1.15]">
+              {course.title}
+            </h3>
+            <p class="text-[15px] leading-[1.55] text-muted-ink">
+              {course.coordinator?.name.trim() || '—'}
+            </p>
+          </li>
+        ))}
+      </ul>
+
+      <a
+        href="/courses"
+        class="mt-8 inline-flex items-center gap-2 py-2 font-mono text-xs uppercase tracking-[0.08em] text-brand"
+      >
+        {t('home.coursesLink', locale)} <span aria-hidden="true">→</span>
+      </a>
+    </div>
+  </section>
+)}

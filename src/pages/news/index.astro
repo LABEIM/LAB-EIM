@@ -3,18 +3,15 @@ import { getCollection } from 'astro:content';
 import Layout from '../../layouts/Layout.astro';
 import '../../styles/pages/home-eim.css';
 import '../../styles/pages/news-eim.css';
-import EimCTA from '../../components/home/EimCTA.astro';
 import EimSectionNav from '../../components/home/EimSectionNav.astro';
 import FilterControlBar from '../../components/common/FilterControlBar.astro';
 import Pagination from '../../components/common/Pagination.astro';
-import { getCleanSlug, getCollectionEntriesForLocale, getLocaleFromUrl, getLocalizedJsonData, getLocalizedPath, t } from '../../utils/i18n';
+import { getCleanSlug, getCollectionEntriesForLocale, getLocaleFromUrl, getLocalizedPath, t } from '../../utils/i18n';
 import { filterAuditContent } from '../../utils/content-helpers';
 import { calculateReadingTime } from '../../utils/news-helpers';
 import { formatGlobalDate, parseGlobalDateStr } from '../../utils/date';
-import { DEFAULT_COVER_IMAGE } from '../../utils/constants';
 
 const locale = getLocaleFromUrl(Astro.url);
-const siteData = getLocalizedJsonData<any>('site', locale);
 
 const rawNews = await getCollection('news');
 const news = filterAuditContent(getCollectionEntriesForLocale(rawNews, locale)).sort((a, b) => {
@@ -36,11 +33,10 @@ const titleLines = t('news.heroTitle', locale).split('\n');
 const sectionItems = [
   { id: 'artikel', label: t('news.heroEyebrow', locale) },
   { id: 'daftar', label: t('news.navDotList', locale) },
-  { id: 'gabung', label: t('news.navDotCta', locale) },
 ];
 ---
 
-<Layout title={`${t('news.title', locale)} · EIM Research Lab`} description={t('news.metaDescription', locale)} homeSkin skipLink>
+<Layout title={`${t('news.title', locale)} · EIM Lab`} description={t('news.metaDescription', locale)} homeSkin skipLink>
   <main id="main-content" tabindex="-1">
     <EimSectionNav items={sectionItems} label={t('news.sectionNavLabel', locale)} />
 
@@ -115,7 +111,7 @@ const sectionItems = [
 
             <ul id="news-list-grid" class="news-list-grid e-reveal-group">
               {news.map((item, index) => {
-                const cover = item.data.image?.[0] || DEFAULT_COVER_IMAGE;
+                const cover = item.data.image?.[0];
                 const excerptText = item.data.excerpt || item.body || '';
                 const tagsText = (item.data.tags || []).join(' ');
                 const searchText = `${item.data.title} ${item.data.category} ${item.data.author || ''} ${excerptText} ${tagsText}`.toLowerCase();
@@ -132,7 +128,14 @@ const sectionItems = [
                   >
                     <a class="news-list-card" href={getLocalizedPath(`/news/${getCleanSlug(item.id)}`, locale)}>
                       <span class="news-list-media">
-                        <img src={cover} alt="" width="800" height="500" loading="lazy" decoding="async" />
+                        {cover ? (
+                          <img src={cover} alt="" width="800" height="500" loading="lazy" decoding="async" />
+                        ) : (
+                          <span class="news-list-fallback">
+                            <span class="news-list-fallback-category">{item.data.category}</span>
+                            <span class="news-list-fallback-title">{item.data.title}</span>
+                          </span>
+                        )}
                         {item.data.featured && (
                           <span class="news-list-featured">{t('news.featured', locale)}</span>
                         )}
@@ -160,7 +163,6 @@ const sectionItems = [
       </div>
     </section>
 
-    <EimCTA site={siteData} />
   </main>
 </Layout>
 

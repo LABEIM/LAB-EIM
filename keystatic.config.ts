@@ -1,4 +1,25 @@
 import { config, fields, collection, singleton } from '@keystatic/core';
+import positionsData from './src/data/positions.json';
+import lecturersData from './src/data/lecturers.json';
+
+const lecturerOptions = lecturersData.list.map((lecturer) => ({
+  label: lecturer.name || lecturer.id,
+  value: lecturer.id,
+}));
+
+const positionOptions = positionsData.list.map((position) => ({
+  label: position.label,
+  value: position.id,
+}));
+const defaultPosition =
+  positionOptions.find((option) => option.value === 'mahasiswa-anggota')?.value ??
+  positionOptions[0]?.value ??
+  '';
+const positionField = fields.select({
+  label: 'Position',
+  options: positionOptions,
+  defaultValue: defaultPosition,
+});
 
 const contactPersonsField = fields.array(
   fields.object({
@@ -55,7 +76,7 @@ const registrationSchema = {
   }),
   heroTag: fields.text({ label: 'Hero Tag', defaultValue: 'Assistant Recruitment' }),
   heroTitle: fields.text({ label: 'Hero Title', defaultValue: 'Assistant Lab Registration' }),
-  heroDescription: fields.text({ label: 'Hero Description', defaultValue: 'Join us and become a part of EIM Research Lab. Develop your potential in IT infrastructure, networks, and technology research.' }),
+  heroDescription: fields.text({ label: 'Hero Description', defaultValue: 'Join us and become a part of EIM Lab. Develop your potential in IT infrastructure, networks, and technology research.' }),
   studentYears: fields.array(fields.text({ label: 'Year' }), {
     label: 'Eligible Student Years',
     itemLabel: props => props.value,
@@ -196,15 +217,15 @@ const registrationSchema = {
   finalSelectionConfig: fields.object({
     title: fields.text({ label: 'Final Selection In Progress Title', defaultValue: 'Seleksi Akhir & Olah Nilai Sedang Berlangsung' }),
     subtitle: fields.text({ label: 'Final Selection Subtitle', defaultValue: 'Seluruh rangkaian seleksi dan sesi wawancara telah selesai.' }),
-    message: fields.text({ label: 'Notice Message', multiline: true, defaultValue: 'Terima kasih kepada seluruh kandidat yang telah mengikuti seluruh rangkaian seleksi. Tim EIM Research Lab saat ini sedang melakukan rekapitulasi nilai dan verifikasi kelulusan akhir. Pengumuman kelulusan akhir akan dipublikasikan pada 9 September 2026.' }),
+    message: fields.text({ label: 'Notice Message', multiline: true, defaultValue: 'Terima kasih kepada seluruh kandidat yang telah mengikuti seluruh rangkaian seleksi. Tim EIM Lab saat ini sedang melakukan rekapitulasi nilai dan verifikasi kelulusan akhir. Pengumuman kelulusan akhir akan dipublikasikan pada 9 September 2026.' }),
     estimatedAnnouncementDate: fields.text({ label: 'Estimated Announcement Date Text', defaultValue: '9 September 2026' }),
   }),
   announcementConfig: fields.object({
     title: fields.text({ label: 'Final Announcement Title', defaultValue: 'Final Selection Announcement' }),
     subtitle: fields.text({ label: 'Final Announcement Subtitle', defaultValue: 'Check your final selection status below. Congratulations to all accepted candidates!' }),
-    acceptedMessage: fields.text({ label: 'Default Accepted Candidate Note / Message', multiline: true, defaultValue: 'Selamat! Anda diterima menjadi asisten di EIM Research Lab.' }),
-    waitlistMessage: fields.text({ label: 'Default Waitlist Candidate Note / Message', multiline: true, defaultValue: 'Anda masuk dalam daftar cadangan (Waitlist) asisten EIM Research Lab.' }),
-    rejectedMessage: fields.text({ label: 'Default Rejected Candidate Note / Message', multiline: true, defaultValue: 'Terima kasih telah mengikuti seluruh rangkaian rekrutmen asisten EIM Research Lab.' }),
+    acceptedMessage: fields.text({ label: 'Default Accepted Candidate Note / Message', multiline: true, defaultValue: 'Selamat! Anda diterima menjadi asisten di EIM Lab.' }),
+    waitlistMessage: fields.text({ label: 'Default Waitlist Candidate Note / Message', multiline: true, defaultValue: 'Anda masuk dalam daftar cadangan (Waitlist) asisten EIM Lab.' }),
+    rejectedMessage: fields.text({ label: 'Default Rejected Candidate Note / Message', multiline: true, defaultValue: 'Terima kasih telah mengikuti seluruh rangkaian rekrutmen asisten EIM Lab.' }),
     newsUrl: fields.text({ label: 'Official News Post URL', defaultValue: '/news/pengumuman-rekrutmen-2026' }),
     documentUrl: fields.text({ label: 'PDF Document Link (Optional)', defaultValue: '' }),
   }),
@@ -336,6 +357,8 @@ export default config({
         author: fields.text({ label: 'Author', defaultValue: 'Admin EIM' }),
         news_date: fields.date({ label: 'Date' }),
         featured: fields.checkbox({ label: 'Pin as Featured News', defaultValue: false }),
+        // Preview-only flag: must survive an editor save, so it stays non-editable.
+        audit: fields.ignored(),
         excerpt: fields.text({ label: 'Excerpt / Short Summary', multiline: true }),
         tags: fields.array(fields.text({ label: 'Tag' }), {
           label: 'Tags',
@@ -348,6 +371,7 @@ export default config({
         content: fields.markdoc({
           label: 'Content',
           extension: 'md',
+          options: { image: { directory: 'public/image/content', publicPath: '/image/content/' } },
         }),
       },
     }),
@@ -373,6 +397,7 @@ export default config({
         content: fields.markdoc({
           label: 'Content',
           extension: 'md',
+          options: { image: { directory: 'public/image/content', publicPath: '/image/content/' } },
         }),
         link: fields.text({ label: 'Link (Optional)' }),
         poster: fields.text({ label: 'Poster / Banner Image URL (Optional)' }),
@@ -381,7 +406,7 @@ export default config({
           itemLabel: props => props.value,
         }),
         icon: fields.text({ label: 'FontAwesome Icon class (e.g., fa-building-columns)' }),
-        organizer: fields.text({ label: 'Organizer', defaultValue: 'EIM Research Lab' }),
+        organizer: fields.text({ label: 'Organizer', defaultValue: 'EIM Lab' }),
         benefits: fields.array(fields.text({ label: 'Benefit' }), {
           label: 'Benefits',
           itemLabel: props => props.value,
@@ -390,6 +415,45 @@ export default config({
           label: 'Requirements',
           itemLabel: props => props.value,
         }),
+        // Preview-only flag: must survive an editor save, so it stays non-editable.
+        audit: fields.ignored(),
+      },
+    }),
+    courses: collection({
+      label: 'Courses',
+      slugField: 'title',
+      path: 'src/content/courses/*',
+      format: { contentField: 'content' },
+      schema: {
+        title: fields.slug({ name: { label: 'Title' } }),
+        code: fields.text({ label: 'Course Code' }),
+        sks: fields.integer({ label: 'SKS' }),
+        semester: fields.integer({
+          label: 'Semester (optional)',
+          validation: { isRequired: false },
+        }),
+        hasPracticum: fields.checkbox({ label: 'Has practicum', defaultValue: false }),
+        modules: fields.array(
+          fields.object({
+            title: fields.text({ label: 'Module title' }),
+            topics: fields.text({ label: 'Topics', multiline: true }),
+          }),
+          {
+            label: 'Practicum modules',
+            itemLabel: (props) => props.fields.title.value || 'Module',
+          }
+        ),
+        coordinatorId: fields.select({
+          label: 'Course coordinator',
+          options: lecturerOptions,
+          defaultValue: lecturerOptions[0]?.value ?? '',
+        }),
+        assistantIds: fields.array(fields.integer({ label: 'Member ID' }), {
+          label: 'Practicum assistants',
+          itemLabel: (props) => String(props.value),
+        }),
+        order: fields.integer({ label: 'Order', defaultValue: 0 }),
+        content: fields.markdoc({ label: 'Description', extension: 'md' }),
       },
     }),
   },
@@ -448,6 +512,33 @@ export default config({
         ),
       },
     }),
+    positions: singleton({
+      label: 'Positions',
+      path: 'src/data/positions',
+      format: { data: 'json' },
+      schema: {
+        list: fields.array(
+          fields.object({
+            id: fields.text({ label: 'ID' }),
+            label: fields.text({ label: 'Label' }),
+            group: fields.select({
+              label: 'Group',
+              options: [
+                { label: 'Dosen', value: 'dosen' },
+                { label: 'Asisten', value: 'asisten' },
+                { label: 'Mahasiswa', value: 'mahasiswa' },
+              ],
+              defaultValue: 'mahasiswa',
+            }),
+            order: fields.integer({ label: 'Order' }),
+          }),
+          {
+            label: 'Positions List',
+            itemLabel: (props) => props.fields.label.value || 'Position',
+          }
+        ),
+      },
+    }),
     members: singleton({
       label: 'Members',
       path: 'src/data/members',
@@ -457,8 +548,7 @@ export default config({
           fields.object({
             id: fields.number({ label: 'ID' }),
             name: fields.text({ label: 'Name' }),
-            role: fields.text({ label: 'Role' }),
-            division: fields.text({ label: 'Division' }),
+            role: positionField,
             image: fields.text({ label: 'Image Path' }),
             scale: fields.text({ label: 'Scale Factor' }),
             position: fields.text({ label: 'Position' }),
@@ -479,7 +569,7 @@ export default config({
           fields.object({
             id: fields.text({ label: 'ID' }),
             name: fields.text({ label: 'Name' }),
-            role: fields.text({ label: 'Role' }),
+            role: positionField,
             image: fields.text({ label: 'Image Path' }),
             scale: fields.text({ label: 'Scale Factor' }),
             position: fields.text({ label: 'Position' }),
@@ -518,6 +608,39 @@ export default config({
             label: 'Core Values',
             itemLabel: props => props.fields.title.value || 'Value',
           }
+        ),
+      },
+    }),
+    gallery: singleton({
+      label: 'Photo Gallery',
+      path: 'src/data/gallery',
+      format: { data: 'json' },
+      schema: {
+        featured: fields.object(
+          {
+            image: fields.image({
+              label: 'Studio Photo',
+              directory: 'public/image/gallery',
+              publicPath: '/image/gallery/',
+              validation: { isRequired: true },
+            }),
+            alt: fields.text({ label: 'Alt Text', validation: { isRequired: true } }),
+            caption: fields.text({ label: 'Caption', validation: { isRequired: true } }),
+          },
+          { label: 'Featured Studio Photo' }
+        ),
+        photos: fields.array(
+          fields.object({
+            image: fields.image({
+              label: 'Photo',
+              directory: 'public/image/gallery',
+              publicPath: '/image/gallery/',
+              validation: { isRequired: true },
+            }),
+            alt: fields.text({ label: 'Alt Text', validation: { isRequired: true } }),
+            caption: fields.text({ label: 'Caption', validation: { isRequired: true } }),
+          }),
+          { label: 'Activity Photos', itemLabel: props => props.fields.caption.value || 'Photo' }
         ),
       },
     }),
@@ -581,7 +704,7 @@ export default config({
         }),
         icon: fields.text({ label: 'FontAwesome Icon Class (e.g. fa-solid fa-bullhorn)', defaultValue: 'fa-solid fa-bullhorn' }),
         badgeText: fields.text({ label: 'Badge Tag Text (e.g., PENGUMUMAN, MAINTENANCE)', defaultValue: 'REKRUTMEN' }),
-        message: fields.text({ label: 'Announcement Message Text', multiline: true, defaultValue: 'Pendaftaran Asisten EIM Research Lab sedang berlangsung!' }),
+        message: fields.text({ label: 'Announcement Message Text', multiline: true, defaultValue: 'Pendaftaran Asisten EIM Lab sedang berlangsung!' }),
         ctaText: fields.text({ label: 'Call-To-Action Button Text (Optional)', defaultValue: 'Daftar Sekarang' }),
         ctaLink: fields.text({ label: 'Call-To-Action Destination URL (Optional)', defaultValue: '/registration' }),
         dismissible: fields.checkbox({ label: 'Allow Visitors to Close / Dismiss Banner', defaultValue: true }),

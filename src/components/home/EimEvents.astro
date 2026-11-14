@@ -57,7 +57,7 @@ const eventsIndexHref = getLocalizedPath('/event', locale);
                       height={1000}
                       loading="lazy"
                       decoding="async"
-                      class="aspect-[4/5] w-full object-cover"
+                      class={`aspect-[4/5] w-full ${item.data.poster ? 'object-contain' : 'object-cover'}`}
                     />
                   ) : (
                     <span class="flex aspect-[4/5] w-full flex-col justify-between bg-surface-strong p-5">

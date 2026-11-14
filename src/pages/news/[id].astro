@@ -2,6 +2,7 @@
 import { getCollection, render } from 'astro:content';
 import { Image } from 'astro:assets';
 import Layout from '../../layouts/Layout.astro';
+import PhotoGallery from '../../components/common/PhotoGallery.astro';
 import '../../styles/pages/home-eim.css';
 import '../../styles/pages/news-eim.css';
 import { getLocaleFromUrl, getCleanSlug, getLocalizedPath, getCollectionEntriesForLocale, t } from '../../utils/i18n';
@@ -32,11 +33,17 @@ const relatedNews = getRelatedNews(item.id, allNews, 3);
 
 const formattedDate = formatGlobalDate(item.data.news_date);
 const readTime = calculateReadingTime(item.body);
-const metaDesc = item.data.excerpt || `${item.data.title} · EIM Research Lab`;
+const metaDesc = item.data.excerpt || `${item.data.title} · EIM Lab`;
 const newsIndexHref = getLocalizedPath('/news', locale);
 ---
 
-<Layout title={`${item.data.title} · EIM Research Lab`} description={metaDesc} homeSkin skipLink>
+<Layout
+  title={`${item.data.title} · EIM Lab`}
+  description={metaDesc}
+  homeSkin
+  skipLink
+  noindex={item.data.audit === true}
+>
   <main id="main-content" tabindex="-1">
     <section class="article-detail-hero" aria-labelledby="article-title">
       <div class="mx-auto max-w-[1200px] px-[clamp(1.25rem,4vw,4rem)]">
@@ -97,6 +104,13 @@ const newsIndexHref = getLocalizedPath('/news', locale);
       </div>
     </article>
 
+    <PhotoGallery
+      images={images.slice(1)}
+      eyebrow={t('news.galleryEyebrow', locale)}
+      title={t('news.galleryTitle', locale)}
+      altLabel={item.data.title}
+    />
+
     {relatedNews.length > 0 && (
       <section class="article-related" aria-labelledby="article-related-title">
         <div class="mx-auto max-w-[1200px] px-[clamp(1.25rem,4vw,4rem)]">
@@ -119,8 +133,7 @@ const newsIndexHref = getLocalizedPath('/news', locale);
                 <a href={getLocalizedPath(`/news/${getCleanSlug(related.id)}`, locale)}>
                   <span class="article-related-meta">
                     <time datetime={related.data.news_date}>{formatGlobalDate(related.data.news_date)}</time>
-                    <span aria-hidden="true">·</span>
-                    <span>{related.data.category}</span>
+                    <span class="article-related-category">{related.data.category}</span>
                   </span>
                   <h3 class="article-related-title">{related.data.title}</h3>
                   <span class="article-related-arrow" aria-hidden="true">→</span>

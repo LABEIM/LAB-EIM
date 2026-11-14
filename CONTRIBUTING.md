@@ -1,6 +1,6 @@
 # Contributing Guidelines
 
-Thank you for your interest in contributing to **EIM Research Lab Website**, a project under the **Enterprise Infrastructure Management (EIM) Research Laboratory**, Telkom University.
+Thank you for your interest in contributing to **EIM Lab Website**, a project under the **Enterprise Infrastructure Management (EIM) Laboratory**, Telkom University.
 
 We welcome contributions from researchers, software engineers, students, and open-source enthusiasts. This document provides clear guidelines to ensure a collaborative, transparent, and efficient workflow.
 
@@ -52,7 +52,7 @@ This project is open-source under the [MIT License](LICENSE). By contributing to
 <!-- ========================================================================= -->
 <!-- OPTION B: For Proprietary / Lab Internal Projects (All Rights Reserved)     -->
 <!-- ========================================================================= -->
-This repository and its assets are proprietary and licensed under [All Rights Reserved](LICENSE) by **Enterprise Infrastructure Management (EIM) Research Laboratory**, Telkom University.
+This repository and its assets are proprietary and licensed under [All Rights Reserved](LICENSE) by **Enterprise Infrastructure Management (EIM) Laboratory**, Telkom University.
 
 We welcome contributions from external collaborators, researchers, and students under the following terms:
 1. **Grant of Rights & Assignment:** By submitting a Pull Request, issue, patch, or code snippet, you agree that your contribution is provided to the laboratory, and you grant the laboratory all necessary rights, title, and interest to use, modify, integrate, and distribute the contributed work under the repository's proprietary terms.
@@ -241,4 +241,4 @@ Have questions, ideas, or feedback?
 - **Issue Tracker:** [https://github.com/LABEIM/LAB-EIM/issues](https://github.com/LABEIM/LAB-EIM/issues)
 - **Lab Email:** [lab@eimlab.org](mailto:lab@eimlab.org)
 - **Lab Portal:** [https://eimlab.org](https://eimlab.org)
-- **Organization:** Enterprise Infrastructure Management (EIM) Research Laboratory, Telkom University
+- **Organization:** Enterprise Infrastructure Management (EIM) Laboratory, Telkom University

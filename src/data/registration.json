@@ -22,7 +22,7 @@
   ],
   "heroTag": "Rekrutmen Asisten",
   "heroTitle": "Pendaftaran Asisten Lab",
-  "heroDescription": "Bergabunglah bersama kami menjadi bagian dari EIM Research Lab. Kembangkan potensi Anda dalam bidang infrastruktur IT, jaringan, dan riset teknologi.",
+  "heroDescription": "Bergabunglah bersama kami menjadi bagian dari EIM Lab. Kembangkan potensi Anda dalam bidang infrastruktur IT, jaringan, dan riset teknologi.",
   "studentYears": [
     "2024"
   ],
@@ -70,8 +70,8 @@
   "announcementConfig": {
     "title": "Pengumuman Seleksi Akhir",
     "subtitle": "Cek hasil kelulusan akhir Anda di bawah ini dengan cara memasukkan NIM!",
-    "acceptedMessage": "Setelah melalui seluruh tahapan seleksi yang panjang, Selamat! 🎉\nAnda dinyatakan **LOLOS** dalam seleksi akhir Asisten EIM Research Lab periode 2026/2027..\n\nSelamat bergabung di EIM Research Lab! 🫶🏻\n\nSilakan segera cek email Anda dan balas email tersebut untuk melakukan konfirmasi kepastian bergabung **maksimal 10 September 2026 · 23.59 WIB**.",
-    "rejectedMessage": "Terima kasih telah mengikuti seluruh tahapan seleksi Asisten EIM Research Lab periode 2026/2027.\n\nSetelah mempertimbangkan seluruh proses seleksi dengan cermat, kami mengabarkan bahwa Anda **belum berhasil** lolos pada tahapan akhir ini.\n\nKami sangat mengapresiasi waktu, minat, dan kerja keras yang telah Anda tunjukkan. Tetap semangat, semoga pengalaman ini membawa manfaat untuk perjalanan Anda ke depan, dan kami menyambut baik kehadiran Anda pada rekrutmen di kesempatan berikutnya.",
+    "acceptedMessage": "Setelah melalui seluruh tahapan seleksi yang panjang, Selamat! 🎉\nAnda dinyatakan **LOLOS** dalam seleksi akhir Asisten EIM Lab periode 2026/2027..\n\nSelamat bergabung di EIM Lab! 🫶🏻\n\nSilakan segera cek email Anda dan balas email tersebut untuk melakukan konfirmasi kepastian bergabung **maksimal 10 September 2026 · 23.59 WIB**.",
+    "rejectedMessage": "Terima kasih telah mengikuti seluruh tahapan seleksi Asisten EIM Lab periode 2026/2027.\n\nSetelah mempertimbangkan seluruh proses seleksi dengan cermat, kami mengabarkan bahwa Anda **belum berhasil** lolos pada tahapan akhir ini.\n\nKami sangat mengapresiasi waktu, minat, dan kerja keras yang telah Anda tunjukkan. Tetap semangat, semoga pengalaman ini membawa manfaat untuk perjalanan Anda ke depan, dan kami menyambut baik kehadiran Anda pada rekrutmen di kesempatan berikutnya.",
     "newsUrl": "/news/pengumuman-rekrutmen-2026"
   },
   "closedConfig": {
@@ -108,7 +108,7 @@
         "title": "Pengumuman Seleksi Berkas",
         "subtitle": "Cek apakah Anda lolos seleksi berkas dan berhak mengikuti tahap selanjutnya.",
         "passedMessage": "Selamat! 🎉\nAnda dinyatakan **-LOLOS-** Seleksi Administrasi dan berhak melanjutkan ke tahap Technical Test.\n\nJadwal Technical Test 29–30 Agustus 2026 \nInfo detail (waktu, lokasi/link, dan ketentuan) akan dibagikan melalui WhatsApp Group Recruitment. Pastikan Anda sudah bergabung.\n\nSampai jumpa di tahap selanjutnya!",
-        "failedMessage": "Terima kasih telah mendaftar sebagai Asisten Lab EIM Research Lab.\n\nSetelah melalui proses verifikasi berkas, untuk saat ini Anda belum berhasil melanjutkan ke tahap Technical Test.\n\nKami sangat menghargai minat dan usaha Anda. Semoga pengalaman ini tetap bermanfaat, dan jangan ragu untuk mendaftar kembali di rekrutmen berikutnya.\n\nTerima kasih atas partisipasinya."
+        "failedMessage": "Terima kasih telah mendaftar sebagai Asisten EIM Lab.\n\nSetelah melalui proses verifikasi berkas, untuk saat ini Anda belum berhasil melanjutkan ke tahap Technical Test.\n\nKami sangat menghargai minat dan usaha Anda. Semoga pengalaman ini tetap bermanfaat, dan jangan ragu untuk mendaftar kembali di rekrutmen berikutnya.\n\nTerima kasih atas partisipasinya."
       }
     },
     {
@@ -131,7 +131,7 @@
         "title": "Pengumuman Technical Test",
         "subtitle": "Cek apakah Anda lolos Technical Test dan berhak mengikuti tahap selanjutnya.",
         "passedMessage": "Selamat! 🎉\nAnda dinyatakan **-LOLOS-** Technical Test dan berhak melanjutkan ke tahap Wawancara & Microteaching.\n\nJadwal Wawancara & Microteaching 3–6 September 2026 \nInfo detail (waktu, lokasi/link, dan ketentuan) akan dibagikan melalui WhatsApp Group Recruitment. Pastikan Anda sudah bergabung.\n\nSampai jumpa di tahap selanjutnya!",
-        "failedMessage": "Terima kasih telah mendaftar sebagai Asisten Lab EIM Research Lab.\n\nSetelah melalui proses Technical Test, untuk saat ini Anda belum berhasil melanjutkan ke tahap Wawancara & Microteaching.\n\nKami sangat menghargai minat dan usaha Anda. Semoga pengalaman ini tetap bermanfaat, dan jangan ragu untuk mendaftar kembali di rekrutmen berikutnya.\n\nTerima kasih atas partisipasinya."
+        "failedMessage": "Terima kasih telah mendaftar sebagai Asisten EIM Lab.\n\nSetelah melalui proses Technical Test, untuk saat ini Anda belum berhasil melanjutkan ke tahap Wawancara & Microteaching.\n\nKami sangat menghargai minat dan usaha Anda. Semoga pengalaman ini tetap bermanfaat, dan jangan ragu untuk mendaftar kembali di rekrutmen berikutnya.\n\nTerima kasih atas partisipasinya."
       }
     },
     {
@@ -145,7 +145,7 @@
       "templateType": "in_progress",
       "inProgressConfig": {
         "title": "Tahap Wawancara & Microteaching Sedang Berlangsung",
-        "subtitle": "Sesi wawancara & microteaching kandidat sedang berlangsung bersama tim EIM Research Lab.",
+        "subtitle": "Sesi wawancara & microteaching kandidat sedang berlangsung bersama tim EIM Lab.",
         "message": "Silakan cek WhatsApp Group Recruitmen untuk informasi terkait tahap wawancara & microteaching.",
         "scheduleInfo": "03 - 06 September 2026"
       },
@@ -163,7 +163,7 @@
       "inProgressConfig": {
         "title": "Seleksi Akhir & Olah Nilai Sedang Berlangsung",
         "subtitle": "Seluruh rangkaian seleksi telah selesai.",
-        "message": "Terima kasih kepada seluruh kandidat yang telah mengikuti seluruh rangkaian seleksi. Tim EIM Research Lab saat ini sedang melakukan rekapitulasi nilai dan verifikasi kelulusan akhir. Pengumuman kelulusan akhir akan dipublikasikan pada 9 September 2026."
+        "message": "Terima kasih kepada seluruh kandidat yang telah mengikuti seluruh rangkaian seleksi. Tim EIM Lab saat ini sedang melakukan rekapitulasi nilai dan verifikasi kelulusan akhir. Pengumuman kelulusan akhir akan dipublikasikan pada 9 September 2026."
       },
       "resultsConfig": {}
     }

@@ -1,20 +1,36 @@
 {
   "list": [
     {
-      "id": "dosen-koordinator",
-      "name": "",
-      "role": "Dosen Koordinator",
+      "id": "dosen-ketua",
+      "name": "Nama Dosen",
+      "role": "ketua-lab",
       "image": "",
-      "scale": "",
-      "position": ""
+      "scale": "1",
+      "position": "center"
     },
     {
-      "id": "dosen-lab-1",
-      "name": "",
-      "role": "Dosen Lab",
+      "id": "dosen-wakil",
+      "name": "Nama Dosen",
+      "role": "wakil-ketua-lab",
       "image": "",
-      "scale": "",
-      "position": ""
+      "scale": "1",
+      "position": "center"
+    },
+    {
+      "id": "dosen-anggota-1",
+      "name": "Nama Dosen",
+      "role": "dosen-anggota",
+      "image": "",
+      "scale": "1",
+      "position": "center"
+    },
+    {
+      "id": "dosen-koordinator-matkul-1",
+      "name": "Nama Dosen",
+      "role": "koordinator-matkul",
+      "image": "",
+      "scale": "1",
+      "position": "center"
     }
   ]
 }

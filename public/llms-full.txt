@@ -1,10 +1,10 @@
-# EIM Research Lab Website — Comprehensive Context (llms-full.txt)
+# EIM Lab Website — Comprehensive Context (llms-full.txt)
 
-> Full technical specifications, routes, architecture, directory structure, and development guidelines for EIM Research Lab Website at the Enterprise Infrastructure Management (EIM) Research Laboratory.
+> Full technical specifications, routes, architecture, directory structure, and development guidelines for EIM Lab Website at the Enterprise Infrastructure Management (EIM) Laboratory.
 
 ## 1. Project Overview
-- **Project Name:** EIM Research Lab Website
-- **Organization:** Enterprise Infrastructure Management (EIM) Research Laboratory, Telkom University
+- **Project Name:** EIM Lab Website
+- **Organization:** Enterprise Infrastructure Management (EIM) Laboratory, Telkom University
 - **Campus Location:** TULT Building 8th Floor, Room TULT.08.09, Bandung, Indonesia
 - **Official Website:** https://eimlab.org
 - **Repository:** https://github.com/LABEIM/LAB-EIM
@@ -13,7 +13,7 @@
 - **Maintainer Contact:** lab@eimlab.org
 
 ### Purpose & Scope
-The EIM Research Lab Website is the official public site of the Enterprise Infrastructure Management (EIM) Research Laboratory at Telkom University. It presents laboratory news, events, research divisions, staff profiles, and recruitment announcements. The site is statically generated with Astro and its content is managed through Keystatic CMS as Markdown collections and JSON data files; there is no database backend or authentication layer.
+The EIM Lab Website is the official public site of the Enterprise Infrastructure Management (EIM) Laboratory at Telkom University. It presents laboratory news, events, courses and practicums, the laboratory role structure, staff profiles, and recruitment announcements. The site is statically generated with Astro and its content is managed through Keystatic CMS as Markdown collections and JSON data files; there is no database backend or authentication layer.
 
 ---
 
@@ -38,7 +38,8 @@ The EIM Research Lab Website is the official public site of the Enterprise Infra
         ▼
 [ Static Astro Build ]
    ├── Markdown content (news, events)
-   ├── JSON data (site, members, divisions, registration)
+   ├── JSON data (site, members, lecturers, positions, divisions, registration)
+   ├── Markdown collections (news, events, courses)
    └── React islands (client-side interactivity)
         │
         ▼
@@ -79,7 +80,9 @@ The EIM Research Lab Website is the official public site of the Enterprise Infra
 | `GET` | `/about` | Laboratory profile and history | No |
 | `GET` | `/assets` | Brand and email asset hub | No |
 | `GET` | `/contact` | Contact information | No |
-| `GET` | `/structure` | Divisions and staff profiles | No |
+| `GET` | `/structure` | Laboratory role hierarchy and staff profiles | No |
+| `GET` | `/courses` | Courses with code, SKS, practicum status, coordinator | No |
+| `GET` | `/courses/<slug>` | One course: modules, coordinator, assistants | No |
 | `GET` | `/news` | News listing | No |
 | `GET` | `/news/[id]` | News article detail | No |
 | `GET` | `/event` | Event listing | No |

@@ -51,12 +51,6 @@ export function getEventDateLabel(event: EventEntry, locale: Locale): string {
   return ms === 0 ? t('events.dateTbd', locale) : formatGlobalDate(ms);
 }
 
-export function getEventStatusLabel(event: EventEntry, locale: Locale): string {
-  if (event.data.status === 'completed') return t('badge.completed', locale);
-  if (event.data.status === 'ongoing') return t('badge.ongoing', locale);
-  return t('badge.upcoming', locale);
-}
-
 export function getEventSearchText(event: EventEntry): string {
   return [event.data.title, event.data.category, event.data.description, event.data.organizer]
     .map((value) => (value ?? '').trim())

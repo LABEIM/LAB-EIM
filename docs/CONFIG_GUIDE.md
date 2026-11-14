@@ -1,50 +1,56 @@
-# EIM Research Lab - Configuration Guide & Templates
+# EIM Lab - Configuration Guide & Templates
 
-This guide explains how to update the laboratory divisions, staff members, and recruitment registration details using the JSON files in the `src/data/` directory.
+This guide explains how to update the laboratory positions, members, courses, and recruitment registration details using the JSON files in `src/data/` and the Markdown collections in `src/content/`.
 
 Admin Portal: https://lab-eim.vercel.app/keystatic
 
 ---
 
-## 1. Divisions Configuration (`src/data/divisions.json`)
-This file defines all operational divisions in the laboratory. Adding or updating a division here or via **Keystatic Admin > Singletons > Divisions Configuration** automatically updates the homepage grid, the `/structure` org chart and division sections, and the dropdown choices on the registration page.
+## 1. Positions Configuration (`src/data/positions.json`)
+This file defines the laboratory's role hierarchy. The `/structure` chart and role sections and the Keystatic `Position` dropdowns on members and lecturers all read from it.
+
+The hierarchy is fixed in code (`STRUCTURE_TREE` in `src/utils/position-mapper.ts`): Ketua Lab → Wakil Ketua Lab → Dosen Anggota / Koordinator Mata Kuliah / Koordinator Asisten Lab → Asisten Koordinator Praktikum / Mahasiswa Anggota, and Asisten Praktikum sits under Asisten Koordinator Praktikum. Tim Adhoc was removed from the structure. Ketua Kelompok Keilmuan and Ka.Ur.Lab FRI are faculty-level and intentionally not listed. Asisten Praktikum belongs to a course, not to this structure.
 
 ### Fields Explanation
-* **`id`** (String): A unique, lowercase identifier for the division. Member `division` values are resolved against this id and the `aliases` list (e.g. `core` → `inti`, `research` → `riset`, `community` → `care`).
-* **`name`** (String): The title-case name of the division. (e.g. `"Cyber Security"`)
-* **`displayName`** (String): The display label used on the homepage division cards, the `/structure` org chart, and each division section heading. (e.g. `"CYBER SECURITY"`)
-* **`description`** (String): A brief description of the division's role, displayed on the homepage division grid and the `/structure` division section.
-* **`registrationLabel`** (String): The text displayed in the division choices selection dropdowns on the registration page.
-* **`registrationValue`** (String): The database/Sheets value sent upon registration (historically Indonesian terms, e.g. `"Inti"`, `"Riset"`, `"Lomba"`, etc.).
-* **`aliases`** (Array of Strings): Alternative keys that map legacy member `division` values and links to this division. For example, `community` members render under `care`, and `core` members render under `inti`.
-* **`borderColor`** (String): A CSS color string defining the border glow of the member cards in this division. (Supports `rgba()`, `hex`, or theme custom properties).
-* **`roleColor`** (String): A CSS color string defining the coordinator/staff role text color.
+* **`id`** (String): Unique lowercase identifier. Member and lecturer `role` values must match one of these.
+* **`label`** (String): Display label used in the chart, section headings, and member cards.
+* **`group`** (String): One of `dosen`, `asisten`, `mahasiswa`. Controls the eyebrow label above each section.
+* **`order`** (Integer): Sort order. Roles with equal `order` keep the array order.
 
-### Division Template
+### Position Template
 ```json
   {
-    "id": "security",
-    "name": "Cyber Security",
-    "displayName": "CYBER SECURITY",
-    "description": "Focuses on network defense, penetration testing, security audits, and cryptography studies.",
-    "registrationLabel": "Cyber Security (Defense & Penetration Testing)",
-    "registrationValue": "Security",
-    "aliases": ["security", "keamanan"],
-    "borderColor": "rgba(231, 76, 60, 0.3)",
-    "roleColor": "#e74c3c"
+    "id": "dosen-anggota",
+    "label": "Dosen Anggota Laboratorium",
+    "group": "dosen",
+    "order": 3
   }
 ```
+Sections render only for positions that hold at least one person; the chart shows the positions in `STRUCTURE_TREE` (`src/utils/position-mapper.ts`), so add a position to that tree as well as to `positions.json` if it belongs in the chart.
+
+The numbers on Beranda ("Laboratorium dalam angka") and Tentang Kami are derived — dosen and anggota counts come from `positions.json` plus `members.json`/`lecturers.json`, and the third Beranda number is the course count from `src/content/courses/` (Tentang Kami shows the dosen count instead). Nothing is typed in, so the numbers follow the data automatically.
+
+---
+
+## 1b. Registration Divisions (`src/data/divisions.json`)
+The recruitment form still uses divisions as a dropdown and as the trigger for the portfolio requirement. This file is not used by `/structure`, `/about`, or Beranda any more; it only feeds `/registration`.
+
+* **`id`**: lowercase identifier used by `aliases` and by the old `?div=` links.
+* **`registrationLabel`** / **`registrationValue`**: dropdown text and the value sent to the registration sheet.
+* **`aliases`**: alternative keys accepted when importing recruitment results (e.g. `core` → `inti`, `community` → `care`).
+* **`borderColor`** / **`roleColor`**: unused by the current pages; kept so the schema stays stable.
+
+Do not delete this file without also changing the registration form.
 
 ---
 
 ## 2. Members Directory (`src/data/members.json`)
-This file contains the list of all active laboratory assistants. On `/structure`, core members and division coordinators render as compact photo cards, while staff (anggota) render as a smaller photo-card grid under each division coordinator.
+This file lists student members and assistants. On `/structure` each person renders under their position section. Photos still live in `/image/division/...`; those folder names are historical and unrelated to the current structure.
 
 ### Fields Explanation
-* **`id`** (Number): A unique numeric ID for the member.
+* **`id`** (Number): A unique numeric ID for the member. Course assistant lists reference these ids.
 * **`name`** (String): Full name of the assistant.
-* **`role`** (String): Role or title in the lab (e.g. `"EIM Lab Coordinator"`, `"Staff"`, `"Research Coordinator"`).
-* **`division`** (String): Must match the **`id`** or an **alias** of a division in `divisions.json` (e.g. `"core"` → `inti`, `"research"` → `riset`, `"community"` → `care`).
+* **`role`** (String): A position id from `positions.json` (Keystatic shows it as a Position dropdown).
 * **`image`** (String): Path to the member's avatar image starting from `/image/`.
 * **`scale`** (String, Optional): CSS transform scale value for positioning adjustments in the square avatar frame (e.g. `"2.5"`, `"3"`, `"1"`).
 * **`position`** (String, Optional): CSS transform-origin values to focus/center the avatar face inside the square avatar crop (e.g. `"center 32%"`, `"50% 15%"`).
@@ -53,14 +59,15 @@ This file contains the list of all active laboratory assistants. On `/structure`
 ```json
   {
     "id": 26,
-    "name": "Jane Doe",
-    "role": "Staff",
-    "division": "research",
+    "name": "Nama Anggota",
+    "role": "mahasiswa-anggota",
     "image": "/image/division/research/RESEARCH_Member_JDOE_Jane-Doe_00.avif",
     "scale": "2.8",
     "position": "50% 25%"
   }
 ```
+
+Portraits under `public/image/division/` are full-resolution originals. `pnpm run generate:assets` mirrors them into `public/image/division/thumbs/` at 640px, and the Struktur page serves those thumbnails; add a member's portrait, then re-run the command so the page never ships the multi-megabyte original.
 
 ---
 
@@ -121,9 +128,10 @@ News articles are stored as Markdown (`.md`) files in `src/content/news/`.
 ### Fields Explanation
 * **`title`** (String): The title of the news article.
 * **`category`** (String): The category tag (e.g., `"Beasiswa"`, `"Pengumuman"`, `"Riset"`).
-* **`author`** (String): The publisher or author name (e.g., `"EIM Research Lab"`, `"UK Government"`).
+* **`author`** (String): The publisher or author name (e.g., `"EIM Lab"`, `"UK Government"`).
 * **`news_date`** (String): Date of publication in `YYYY-MM-DD` format.
 * **`image`** (Array of Strings): Optional image URLs or paths to display as featured images.
+* **`audit`** (Boolean, Optional): Marks preview-only content. Audit entries are reachable by direct URL (with `noindex`) but hidden from production listings.
 
 ### News Template
 A helper template is located at [src/content/news/_template.md](file:///home/arukast/Projects/website-eim/src/content/news/_template.md).
@@ -155,7 +163,7 @@ Events are stored as Markdown (`.md`) files in `src/content/events/`.
 * **`poster`** (String, Optional): Poster image URL. Used as the list card cover, and on the detail page only as the cover fallback when `image` is empty.
 * **`image`** (Array of Strings, Optional): Optional image URLs/paths. The first non-blank image is used as the detail page cover; the remaining images render as the documentation gallery.
 * **`icon`** (String, Optional): FontAwesome icon class name (e.g., `"fa-building-columns"`, `"fa-solid fa-calendar-days"`).
-* **`organizer`** (String, Optional): Name of the organizer (defaults to `"EIM Research Lab"`).
+* **`organizer`** (String, Optional): Name of the organizer (defaults to `"EIM Lab"`).
 * **`benefits`** (Array of Strings, Optional): Accepted by the schema but not rendered on the detail page.
 * **`requirements`** (Array of Strings, Optional): Accepted by the schema but not rendered on the detail page.
 * **`audit`** (Boolean, Optional): Marks benchmark-only content. Audit entries are reachable by direct URL but hidden from production listings and related-event pools.
@@ -174,7 +182,7 @@ link: "https://example.com/optional-registration-link"
 image:
   - "https://images.unsplash.com/photo-1541701494587-cb58502866ab?auto=format&fit=crop&q=80&w=600"
 icon: "fa-solid fa-calendar-days"
-organizer: "EIM Research Lab"
+organizer: "EIM Lab"
 benefits:
   - "Benefit 1"
   - "Benefit 2"
@@ -193,9 +201,9 @@ The Markdown body is rendered on `/event/[id]`. Start body sections at `##` — 
 This file configures the global branding, tab information, and social links of the laboratory website.
 
 ### Fields Explanation
-* **`name`** (String): Short name of the lab (e.g. `"EIM"`). Used in the Navbar logo and title.
-* **`subName`** (String): Subtitle suffix for the logo (e.g. `"Research Lab"`).
-* **`fullName`** (String): Complete formal name (e.g. `"Enterprise Infrastructure Management Research Laboratory"`). Used in copyright text and about summaries.
+* **`name`** (String): Short name of the lab (e.g. `"EIM"`). Used in the logo `alt` text, the footer lockup, and page titles.
+* **`subName`** (String): Subtitle suffix for the logo (e.g. `"Lab"`).
+* **`fullName`** (String): Complete formal name (e.g. `"Enterprise Infrastructure Management Laboratory"`). Used in copyright text and about summaries.
 * **`defaultTitle`** (String): The default window/tab title for pages that do not override it.
 * **`defaultDescription`** (String): Fallback meta description for search engines.
 * **`defaultKeywords`** (String): Fallback meta keywords list for SEO.
@@ -214,11 +222,11 @@ This file configures the global branding, tab information, and social links of t
 ```json
 {
   "name": "EIM",
-  "subName": "Research Lab",
-  "fullName": "Enterprise Infrastructure Management Research Laboratory",
-  "defaultTitle": "EIM Research Lab - Enterprise Infrastructure Management",
-  "defaultDescription": "Website Resmi Enterprise Infrastructure Management (EIM) Research Lab Telkom University.",
-  "defaultKeywords": "EIM, EIM Research Lab, Telkom University, Enterprise Infrastructure Management, Laboratorium Jaringan, Cloud Computing, Riset Jaringan",
+  "subName": "Lab",
+  "fullName": "Enterprise Infrastructure Management Laboratory",
+  "defaultTitle": "EIM Lab - Enterprise Infrastructure Management",
+  "defaultDescription": "Website Resmi Laboratorium Enterprise Infrastructure Management (EIM) Telkom University.",
+  "defaultKeywords": "EIM, EIM Lab, Telkom University, Enterprise Infrastructure Management, Laboratorium Jaringan, Cloud Computing, Praktikum Jaringan",
   "favicon": "/image/eim/logo_EIM.avif",
   "logo": "/image/eim/logo_EIM.avif",
   "timezone": "Asia/Jakarta",
@@ -278,32 +286,28 @@ Site administrators can toggle and configure a top global announcement banner th
 
 ---
 
-## 9. Lecturers / Pembina (`src/data/lecturers.json`)
+## 9. Lecturers (`src/data/lecturers.json`)
+This file holds the dosen entries. Each entry's `role` is a position id from `positions.json`, so a lecturer appears in the matching `/structure` section.
 
-This file configures the Pembina tier of the `/structure` org chart and the `#pembina` section. Manage it via **Keystatic Admin > Singletons > Lecturers**. Any number of entries is supported; entries whose `role` contains "Koordinator" render in the Dosen Koordinator column, and the rest render in the Dosen Lab column. The chart puts the first Dosen Koordinator in the centre and collapses all Dosen Lab into one side card with an overlapping avatar stack and a count, so adding more lecturers never widens the chart; the `#pembina` section lists every entry individually.
+Manage it via **Keystatic Admin > Singletons > Lecturers**. Entries with an empty `image` fall back to the placeholder avatar.
 
 ### Fields Explanation
-* **`id`** (String): Unique identifier for the lecturer entry (e.g. `"dosen-koordinator"`, `"dosen-lab-1"`).
-* **`name`** (String): Lecturer name. May be left empty — the card then uses `role` as its title.
-* **`role`** (String): Role label (e.g. `"Dosen Koordinator"`, `"Dosen Lab"`).
-* **`image`** (String): Path to the lecturer photo starting from `/image/`. Leave empty to render the shared `/image/placeholder-avatar.svg` placeholder.
-* **`scale`** (String, Optional): CSS transform scale value for the square avatar crop.
-* **`position`** (String, Optional): CSS transform-origin value for the square avatar crop (e.g. `"center 32%"`).
+* **`id`** (String): Unique id. Course `coordinatorId` values reference these ids.
+* **`name`** (String): Full name, with title.
+* **`role`** (String): A position id from `positions.json` (`ketua-lab`, `wakil-ketua-lab`, `dosen-anggota`, `koordinator-matkul`, …).
+* **`image`**, **`scale`**, **`position`**: Same meaning as on members.
 
 ### Lecturer Template
 ```json
   {
-    "id": "dosen-lab-1",
-    "name": "",
-    "role": "Dosen Lab",
+    "id": "dosen-koordinator-matkul-1",
+    "name": "Nama Dosen",
+    "role": "koordinator-matkul",
     "image": "",
-    "scale": "",
-    "position": ""
+    "scale": "1",
+    "position": "center"
   }
 ```
-
----
-
 ## 10. Contact Page (`src/data/contact.json`)
 
 Configures the `/contact` page. Manage it via **Keystatic Admin > Singletons > Contact Page**.
@@ -341,3 +345,56 @@ Configures the `/contact` page. Manage it via **Keystatic Admin > Singletons > C
 
 
 
+
+---
+
+## 11. Course Catalog (`src/content/courses/`)
+One Markdown file per course. The `/courses` page lists every entry (code, SKS, title, status, coordinator); `/courses/<slug>` adds the module topics and the full assistant list. The Beranda band shows the first three courses that have a practicum. Manage it via **Keystatic Admin > Collections > Courses**.
+
+> The three files in the repository are placeholders (`Mata Kuliah Contoh 1–3`). Replace them with real courses before publishing.
+
+### Fields Explanation
+* **`title`** (String, required): Course name.
+* **`code`** (String, required): Course code, shown on the list and detail page.
+* **`sks`** (Number, required): Credit units, shown as "N SKS".
+* **`semester`** (Number, optional): Semester number, shown when present.
+* **`hasPracticum`** (Boolean, required): Whether the course has a practicum. When `false`, modules and assistants are not rendered even if data is still attached.
+* **`modules`** (Array, optional): `title` plus a `topics` line. Module files cannot be shared, so only the topic list is published.
+* **`coordinatorId`** (String, required): `id` of an entry in `lecturers.json`.
+* **`assistantIds`** (Array of Numbers, optional): `id` values from `members.json`. Missing ids are skipped.
+* **`order`** (Number, required): Sort order on the page, ties broken by title.
+* Markdown body: the course description.
+
+### Course Template
+```markdown
+---
+title: Nama Mata Kuliah
+code: SI2xxx
+sks: 3
+semester: 4
+hasPracticum: true
+modules:
+  - title: Modul 1 — Nama Modul
+    topics: Topik pertama, topik kedua.
+coordinatorId: dosen-koordinator-matkul-1
+assistantIds:
+  - 1
+order: 1
+---
+
+Deskripsi singkat mata kuliah dan cakupan praktikumnya.
+```
+
+## 12. Photo Gallery (`src/data/gallery.json`)
+Photos shown on the Tentang Kami page. The featured studio portrait renders as a full-width band after the numbers; the activity photos render as a grid at the end of the page. The grid is hidden when there are no photos; the band is hidden when the featured photo is empty.
+
+### Fields Explanation
+* **`featured`** (Object): The special studio portrait.
+  * **`image`** (String): Photo path. Upload through Keystatic; files are written to `public/image/gallery/`.
+  * **`alt`** (String): Alt text for screen readers. Required.
+  * **`caption`** (String): Caption shown under the band.
+* **`photos`** (Array): Activity photos, each with `image`, `alt`, and `caption`. Three across at desktop, two at tablet, one at phone. The first six are shown; any extras wait behind a "Lihat semua foto" control that expands them in place.
+
+### Notes
+* The shipped entry points at `public/image/gallery/placeholder.svg` so the layout is visible. Replace it with the real portrait and activity photos in Keystatic; the placeholder can stay in the repo.
+* Images are referenced by path, like member photos and news images, so keep files reasonably sized (roughly 1600px wide, under 400 KB) before uploading.

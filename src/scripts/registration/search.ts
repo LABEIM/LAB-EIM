@@ -443,16 +443,16 @@ export function initRegistrationSearch() {
         if (!defaultOutcomeNote) {
           if (isAccepted) {
             defaultOutcomeNote = isEn
-              ? 'Congratulations! You have been accepted as an assistant at EIM Research Lab.'
-              : announcementCfg.acceptedMessage || announcementCfg.passedMessage || 'Selamat! Anda dinyatakan diterima sebagai asisten di EIM Research Lab.';
+              ? 'Congratulations! You have been accepted as an assistant at EIM Lab.'
+              : announcementCfg.acceptedMessage || announcementCfg.passedMessage || 'Selamat! Anda dinyatakan diterima sebagai asisten di EIM Lab.';
           } else if (isWaitlist) {
             defaultOutcomeNote = isEn
               ? 'You are on the recruitment waitlist.'
-              : announcementCfg.waitlistMessage || 'Anda masuk dalam daftar cadangan (Waitlist) asisten EIM Research Lab.';
+              : announcementCfg.waitlistMessage || 'Anda masuk dalam daftar cadangan (Waitlist) asisten EIM Lab.';
           } else {
             defaultOutcomeNote = isEn
               ? 'Thank you for participating in this recruitment cycle.'
-              : announcementCfg.rejectedMessage || announcementCfg.failedMessage || 'Terima kasih telah mengikuti seluruh rangkaian rekrutmen asisten EIM Research Lab.';
+              : announcementCfg.rejectedMessage || announcementCfg.failedMessage || 'Terima kasih telah mengikuti seluruh rangkaian rekrutmen asisten EIM Lab.';
           }
         }
 

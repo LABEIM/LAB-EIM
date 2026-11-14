@@ -51,10 +51,9 @@ const sectionItems = [
         </div>
         {courses.length > 0 && (
           <p class="eim-subhero-meta">
-            {t('courses.summary', locale, {
-              n: String(courses.length),
-              p: String(practicumCount),
-            })}
+            {page.hero.summary
+              .replaceAll('{n}', String(courses.length))
+              .replaceAll('{p}', String(practicumCount))}
           </p>
         )}
       </div>

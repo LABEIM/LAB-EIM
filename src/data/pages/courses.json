@@ -14,6 +14,7 @@
       "dan praktikum."
     ],
     "description": "Daftar mata kuliah di bidang studi EIM Lab, lengkap dengan status praktikum, modul, dosen koordinator, dan asisten praktikumnya.",
+    "summary": "{n} mata kuliah · {p} dengan praktikum",
     "primaryLabel": "Lihat daftar",
     "secondaryLabel": "Kegiatan"
   },

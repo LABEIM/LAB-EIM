@@ -744,6 +744,10 @@ export default config({
               itemLabel: (props) => props.value,
             }),
             description: fields.text({ label: 'Deskripsi', multiline: true }),
+            summary: fields.text({
+              label: 'Ringkasan jumlah di bawah tombol',
+              description: 'Jumlah diisi otomatis. Jangan hapus {n} (jumlah mata kuliah) atau {p} (jumlah dengan praktikum).',
+            }),
             primaryLabel: fields.text({ label: 'Label tombol utama' }),
             secondaryLabel: fields.text({ label: 'Label tautan kedua' }),
           },

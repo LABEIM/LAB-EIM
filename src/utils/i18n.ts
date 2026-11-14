@@ -137,7 +137,6 @@ export const uiTranslations: Record<Locale, Record<string, string>> = {
     'stage.fallback': 'Formulir Cadangan',
 
     // Courses Page
-    'courses.summary': '{n} mata kuliah · {p} dengan praktikum',
     'courses.practicumYes': 'Praktikum',
     'courses.practicumNo': 'Tanpa praktikum',
     'courses.modulesTitle': 'Modul praktikum',

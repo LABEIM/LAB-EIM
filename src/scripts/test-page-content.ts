@@ -254,6 +254,14 @@ assert(
   Array.isArray(coursesHero?.lines) && coursesHero.lines.length >= 1 && coursesHero.lines.length <= 3,
   'courses.hero.lines has 1 to 3 lines'
 );
+assert(
+  typeof coursesHero?.summary === 'string' && coursesHero.summary.trim().length > 0,
+  'courses.hero.summary is a non-empty string'
+);
+assert(
+  Boolean(coursesHero?.summary?.includes('{n}') && coursesHero?.summary?.includes('{p}')),
+  'courses.hero.summary keeps {n} and {p}'
+);
 
 const coursesList = coursesPage.list;
 for (const key of ['eyebrow', 'title', 'intro', 'empty'] as const) {

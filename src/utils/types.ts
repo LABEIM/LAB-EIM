@@ -514,6 +514,7 @@ export interface CoursesPageData {
     eyebrow: string;
     lines: string[];
     description: string;
+    summary: string;
     primaryLabel: string;
     secondaryLabel: string;
   };

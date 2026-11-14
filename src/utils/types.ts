@@ -535,7 +535,9 @@ export interface HomePageData {
     mediaKind?: 'none' | 'image' | 'video';
     image?: string;
     video?: string;
-    /** Pasted link; wins over the uploaded file when it resolves. */
+    /** Background-only link; loses to the upload, wins over `videoUrl`. */
+    backgroundUrl?: string;
+    /** Pasted player link; a direct file also serves as a fallback background. */
     videoUrl?: string;
     imageUrl?: string;
     poster?: string;

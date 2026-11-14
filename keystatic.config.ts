@@ -594,6 +594,11 @@ export default config({
               directory: 'public/assets/media',
               publicPath: '/assets/media/',
             }),
+            backgroundUrl: fields.text({
+              label: 'Tautan video latar',
+              description:
+                'Tautan khusus untuk video latar (loop): YouTube, Vimeo, atau berkas video langsung (.mp4/.webm), misalnya tautan R2/CDN. Bila kosong, unggahan dipakai; bila keduanya kosong, tautan pemutar dipakai sebagai latar.',
+            }),
             poster: fields.image({
               label: 'Poster video',
               description: 'Gambar yang tampil sebelum video diputar.',
@@ -603,7 +608,7 @@ export default config({
             videoUrl: fields.text({
               label: 'Tautan video eksternal',
               description:
-                'Tempel tautan YouTube, Vimeo, atau Google Drive untuk pemutar saat video diklik. Tautan berkas video langsung (.mp4/.webm) dipakai sebagai latar. Jika berkas juga diunggah, unggahan menjadi latar dan tautan menjadi pemutar. Untuk Google Drive, pastikan berkas dibagikan publik.',
+                'Tempel tautan YouTube, Vimeo, atau Google Drive untuk pemutar saat video diklik. Tautan berkas video langsung (.mp4/.webm) dipakai sebagai latar bila tidak ada unggahan atau tautan latar. Jika berkas juga diunggah, unggahan menjadi latar dan tautan menjadi pemutar. Untuk Google Drive, pastikan berkas dibagikan publik.',
             }),
             imageUrl: fields.text({
               label: 'Tautan gambar eksternal',

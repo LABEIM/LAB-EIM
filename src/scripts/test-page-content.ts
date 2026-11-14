@@ -289,7 +289,7 @@ assert(
 // The pasted image link wins over the upload, and a pasted video link may stand
 // in for the upload, so a file is only required when the matching URL is empty.
 // The URL itself is checked further down.
-type RevealMedia = Pick<HomePageData['reveal'], 'mediaKind' | 'mediaAlt' | 'image' | 'video' | 'poster' | 'imageUrl' | 'videoUrl'>;
+type RevealMedia = Pick<HomePageData['reveal'], 'mediaKind' | 'mediaAlt' | 'image' | 'video' | 'poster' | 'imageUrl' | 'backgroundUrl' | 'videoUrl'>;
 function assertRevealMedia(value: RevealMedia | undefined) {
   if (value?.mediaKind === 'image' || value?.mediaKind === 'video') {
     assert(Boolean(value.mediaAlt?.trim()), `home.reveal.mediaAlt is set for ${value.mediaKind} media`);
@@ -298,7 +298,7 @@ function assertRevealMedia(value: RevealMedia | undefined) {
     assert(typeof value.image === 'string' && value.image.trim().length > 0, 'home.reveal.image is a non-empty string');
     assert(existsSync(publicFile(value.image)), 'home.reveal.image resolves under public/');
   }
-  if (value?.mediaKind === 'video' && !value.videoUrl?.trim()) {
+  if (value?.mediaKind === 'video' && !value.videoUrl?.trim() && !value.backgroundUrl?.trim()) {
     assert(typeof value.video === 'string' && value.video.trim().length > 0, 'home.reveal.video is a non-empty string');
     assert(existsSync(publicFile(value.video)), 'home.reveal.video resolves under public/');
   }
@@ -310,6 +310,7 @@ assertRevealMedia(reveal);
 // A page using only the pasted link must pass; this is the documented precedence.
 assertRevealMedia({ mediaKind: 'image', mediaAlt: 'intro', imageUrl: 'https://cdn.example.com/intro.jpg' });
 assertRevealMedia({ mediaKind: 'video', mediaAlt: 'intro', videoUrl: 'https://youtu.be/dQw4w9WgXcQ' });
+assertRevealMedia({ mediaKind: 'video', mediaAlt: 'intro', backgroundUrl: 'https://youtu.be/dQw4w9WgXcQ' });
 
 // A hand-edited home.json may drop mediaKind entirely; the component must still
 // land on the placeholder state instead of an empty stage.
@@ -332,10 +333,10 @@ assert(
   'EimReveal overlay and modal render only when the link provides a player'
 );
 
-// The two roles: an uploaded or direct file loops as the background; an
-// embeddable link is the click-to-open player. These plans mirror the rendered
-// matrix (controls, background iframe, overlay, modal).
-const hybridPlan = planRevealVideo('/assets/media/intro.mp4', 'https://youtu.be/dQw4w9WgXcQ');
+// The three roles: the upload or `backgroundUrl` loops as the background; a
+// provider `videoUrl` is the click-to-open player. These plans mirror the
+// rendered matrix (controls, background iframe, overlay, modal).
+const hybridPlan = planRevealVideo('/assets/media/intro.mp4', '', 'https://youtu.be/dQw4w9WgXcQ');
 assert(hybridPlan.nativeSrc === '/assets/media/intro.mp4', 'hybrid: the upload is the native background');
 assert(hybridPlan.controls === false, 'hybrid: the native background drops controls and is passive');
 assert(hybridPlan.backgroundSrc === null, 'hybrid: no background iframe next to the native video');
@@ -344,12 +345,12 @@ assert(
   'hybrid: the overlay opens the modal player'
 );
 
-const uploadPlan = planRevealVideo('/assets/media/intro.mp4', '');
+const uploadPlan = planRevealVideo('/assets/media/intro.mp4', '', '');
 assert(uploadPlan.nativeSrc === '/assets/media/intro.mp4', 'upload only: the file is the native video');
 assert(uploadPlan.controls === true, 'upload only: the native video keeps its own controls');
 assert(uploadPlan.playerSrc === null && uploadPlan.backgroundSrc === null, 'upload only: no overlay, modal, or background iframe');
 
-const embedPlan = planRevealVideo('', 'https://youtu.be/dQw4w9WgXcQ');
+const embedPlan = planRevealVideo('', '', 'https://youtu.be/dQw4w9WgXcQ');
 assert(embedPlan.nativeSrc === null, 'youtube only: no native video');
 assert(
   embedPlan.backgroundSrc?.includes('controls=0') === true,
@@ -357,20 +358,61 @@ assert(
 );
 assert(embedPlan.playerSrc !== null, 'youtube only: the overlay and modal accompany the background');
 
-const directPlan = planRevealVideo('', 'https://cdn.example.com/intro.mp4');
+const directPlan = planRevealVideo('', '', 'https://cdn.example.com/intro.mp4');
 assert(directPlan.nativeSrc === 'https://cdn.example.com/intro.mp4', 'direct mp4: the link is the native background');
 assert(directPlan.controls === true && directPlan.playerSrc === null, 'direct mp4: inline player, no modal');
 
-const driveOnlyPlan = planRevealVideo('', 'https://drive.google.com/file/d/1AbCdEfGhIjK/view');
+const driveOnlyPlan = planRevealVideo('', '', 'https://drive.google.com/file/d/1AbCdEfGhIjK/view');
 assert(
   driveOnlyPlan.backgroundSrc !== null && driveOnlyPlan.backgroundSrc === driveOnlyPlan.playerSrc,
   'drive only: the preview serves as both background and modal player'
 );
-const driveHybridPlan = planRevealVideo('/assets/media/intro.mp4', 'https://drive.google.com/file/d/1AbCdEfGhIjK/view');
+const driveHybridPlan = planRevealVideo('/assets/media/intro.mp4', '', 'https://drive.google.com/file/d/1AbCdEfGhIjK/view');
 assert(
   driveHybridPlan.nativeSrc === '/assets/media/intro.mp4' && driveHybridPlan.playerSrc !== null,
   'drive hybrid: upload loops behind the drive modal'
 );
+
+// Case 2: a direct background link plays natively while a provider link only
+// opens the modal.
+const linkBackgroundPlan = planRevealVideo('', 'https://cdn.example.com/bg.mp4', 'https://youtu.be/dQw4w9WgXcQ');
+assert(linkBackgroundPlan.nativeSrc === 'https://cdn.example.com/bg.mp4', 'link background: the backgroundUrl file is native');
+assert(linkBackgroundPlan.controls === false, 'link background: controls drop while the player overlay exists');
+assert(linkBackgroundPlan.backgroundSrc === null, 'link background: no iframe beside the native background');
+assert(
+  linkBackgroundPlan.playerSrc?.includes('/embed/dQw4w9WgXcQ') === true,
+  'link background: the player comes from videoUrl'
+);
+
+// Case 3: a short provider loop as background and a different full video as
+// the modal player.
+const shortId = 'abcdefghijk';
+const fullId = 'dQw4w9WgXcQ';
+const loopPlan = planRevealVideo('', `https://youtu.be/${shortId}`, `https://youtu.be/${fullId}`);
+assert(loopPlan.nativeSrc === null, 'loop: no native video when both links are providers');
+assert(
+  loopPlan.backgroundSrc?.includes(`/embed/${shortId}`) === true && loopPlan.backgroundSrc?.includes('controls=0') === true,
+  'loop: the short video is the muted background embed'
+);
+assert(
+  loopPlan.playerSrc?.includes(`/embed/${fullId}`) === true,
+  'loop: the modal player uses the full video'
+);
+assert(loopPlan.backgroundSrc !== loopPlan.playerSrc, 'loop: background and player embeds differ');
+assert(loopPlan.controls === false, 'loop: the background iframe needs no native controls');
+
+// Precedence: upload, then backgroundUrl, then a direct videoUrl.
+const precedencePlan = planRevealVideo('/assets/media/intro.mp4', 'https://cdn.example.com/bg.mp4', 'https://cdn.example.com/player.mp4');
+assert(precedencePlan.nativeSrc === '/assets/media/intro.mp4', 'precedence: the upload wins over backgroundUrl');
+const linkWinsPlan = planRevealVideo('', 'https://cdn.example.com/bg.mp4', 'https://cdn.example.com/player.mp4');
+assert(linkWinsPlan.nativeSrc === 'https://cdn.example.com/bg.mp4', 'precedence: backgroundUrl wins over a direct videoUrl');
+assert(linkWinsPlan.playerSrc === null, 'precedence: a direct videoUrl is not a modal player');
+const backgroundProviderPlan = planRevealVideo('', 'https://youtu.be/dQw4w9WgXcQ', 'https://cdn.example.com/player.mp4');
+assert(
+  backgroundProviderPlan.backgroundSrc !== null && backgroundProviderPlan.playerSrc === null,
+  'precedence: a provider backgroundUrl needs no player link'
+);
+assert(backgroundProviderPlan.controls === true, 'precedence: no player means controls stay available');
 
 // Embeds autoplay muted in the stage and open a sound-on player in a modal;
 // a file with no link keeps its inline native player and no modal.
@@ -438,6 +480,12 @@ for (const fragment of [
 // link must not slip into a built src.
 if (reveal?.videoUrl) {
   assert(resolveVideoUrl(reveal.videoUrl) !== null, 'home.reveal.videoUrl resolves to a supported provider or video file');
+}
+if (reveal?.backgroundUrl) {
+  assert(
+    resolveVideoUrl(reveal.backgroundUrl) !== null,
+    'home.reveal.backgroundUrl resolves to a supported provider or video file'
+  );
 }
 if (reveal?.imageUrl) {
   assert(resolveExternalImageUrl(reveal.imageUrl) !== null, 'home.reveal.imageUrl resolves to an https image');

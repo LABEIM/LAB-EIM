@@ -8,14 +8,16 @@ import type { ChromeData, HomePageData } from '../../utils/types';
 /**
  * Intro media comes from the Beranda singleton (`reveal` section):
  *
- *   mediaKind: 'video' → `video`/direct `.mp4` link as the background loop,
- *                        `videoUrl` provider link as the click-to-open player
+ *   mediaKind: 'video' → `video` upload or `backgroundUrl` link as the
+ *                        background loop, `videoUrl` provider link as the
+ *                        click-to-open player
  *   mediaKind: 'image' → pasted `imageUrl`, else uploaded `image`
  *   mediaKind: 'none'  → the placeholder below
  *
- * An upload or direct file plays muted and looping behind the stage. A provider
- * link (YouTube/Vimeo/Drive) adds an overlay that opens a sound-on player in a
- * modal; with no upload or direct file, that link's embed is the background too.
+ * Background precedence is upload, then `backgroundUrl`, then a direct-file
+ * `videoUrl`. A provider link (YouTube/Vimeo/Drive) in `videoUrl` adds an
+ * overlay that opens a sound-on player in a modal; with no upload or direct
+ * file, that link's embed is the background too.
  */
 interface Props {
   content: HomePageData['reveal'];
@@ -23,7 +25,7 @@ interface Props {
 
 const { content } = Astro.props;
 const mediaKind = content.mediaKind ?? 'none';
-const videoPlan = mediaKind === 'video' ? planRevealVideo(content.video, content.videoUrl) : null;
+const videoPlan = mediaKind === 'video' ? planRevealVideo(content.video, content.backgroundUrl, content.videoUrl) : null;
 const nativeVideo = videoPlan?.nativeSrc ?? null;
 const backgroundSrc = videoPlan?.backgroundSrc ?? null;
 const playerSrc = videoPlan?.playerSrc ?? null;

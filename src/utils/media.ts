@@ -128,32 +128,47 @@ export function buildPlayerEmbed(media: IframeMedia): string {
 }
 
 export interface RevealVideoPlan {
-  /** Native <video> src; the uploaded file wins over a direct file link. */
+  /** Native <video> src; the upload wins over a direct background link. */
   nativeSrc: string | null;
   /** Controls stay only when no embed provides the click-to-open modal. */
   controls: boolean;
-  /** Muted background iframe; set only when the link is the sole source. */
+  /** Background iframe src from a provider link, when no native source exists. */
   backgroundSrc: string | null;
   /** Click-to-open player src; also gates the overlay and modal. */
   playerSrc: string | null;
 }
 
-// The intro has two roles: an uploaded or direct file loops as the background,
-// and an embeddable link opens in the modal. A link-only intro uses the embed
-// for both, so it still autoplays muted behind the overlay.
+// The intro has two roles: `video` (upload) or `backgroundUrl` loops as the
+// background, and `videoUrl`'s embeddable link opens in the modal. A direct
+// `videoUrl` file only stands in as background when nothing else fills it.
 export function planRevealVideo(
   video: string | undefined | null,
+  backgroundUrl: string | undefined | null,
   videoUrl: string | undefined | null
 ): RevealVideoPlan {
-  const resolved = resolveVideoUrl(videoUrl);
-  const embed = resolved?.kind === 'iframe' ? resolved : null;
+  const playerResolved = resolveVideoUrl(videoUrl);
+  const playerEmbed = playerResolved?.kind === 'iframe' ? playerResolved : null;
+  const backgroundResolved = resolveVideoUrl(backgroundUrl);
   const upload = typeof video === 'string' && video.trim() ? video : null;
-  const nativeSrc = upload ?? (resolved?.kind === 'video' ? resolved.src : null);
+  const fallback = !upload && !backgroundResolved ? playerResolved : null;
+
+  const nativeSrc =
+    upload ??
+    (backgroundResolved?.kind === 'video' ? backgroundResolved.src : null) ??
+    (fallback?.kind === 'video' ? fallback.src : null);
+
+  const backgroundEmbed =
+    !upload && backgroundResolved?.kind === 'iframe'
+      ? backgroundResolved
+      : !upload && !backgroundResolved
+        ? playerEmbed
+        : null;
+
   return {
     nativeSrc,
-    controls: !embed,
-    backgroundSrc: !nativeSrc && embed ? buildBackgroundEmbed(embed) : null,
-    playerSrc: embed ? buildPlayerEmbed(embed) : null,
+    controls: !playerEmbed,
+    backgroundSrc: backgroundEmbed ? buildBackgroundEmbed(backgroundEmbed) : null,
+    playerSrc: playerEmbed ? buildPlayerEmbed(playerEmbed) : null,
   };
 }
 

@@ -175,6 +175,7 @@ export interface RecruitmentLabels {
   dataUse: string;
   submit: string;
   submitting: string;
+  sendingTitle: string;
   saveDraft: string;
   draftSaved: string;
 }
@@ -197,7 +198,7 @@ export interface RecruitmentConfig {
   formDescriptionTitle?: string;
   formDescription?: string;
   formDescriptionItems?: string[];
-  labels?: RecruitmentLabels;
+  labels: RecruitmentLabels;
   studentYears?: string[];
   fieldStates?: FieldStates;
   documentLimits?: DocumentLimits;

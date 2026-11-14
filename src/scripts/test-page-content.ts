@@ -640,6 +640,7 @@ for (const key of [
   'dataUse',
   'submit',
   'submitting',
+  'sendingTitle',
   'saveDraft',
   'draftSaved',
 ] as const) {

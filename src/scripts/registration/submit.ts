@@ -121,7 +121,7 @@ export function initRegistrationSubmit(
       modalActions.classList.remove('is-hidden');
       modalActions.style.display = 'block';
     }
-    if (modalCloseBtn) modalCloseBtn.innerText = isEn ? 'Close & Edit Form' : 'Tutup & Periksa Form';
+    if (modalCloseBtn) modalCloseBtn.innerText = isEn ? 'Close & Edit Form' : (modalCloseBtn.dataset.labelClose || 'Tutup & Periksa Form');
   };
 
   const showModalSuccess = (isRevision: boolean) => {
@@ -154,7 +154,7 @@ export function initRegistrationSubmit(
       modalActions.classList.remove('is-hidden');
       modalActions.style.display = 'block';
     }
-    if (modalCloseBtn) modalCloseBtn.innerText = isEn ? 'Done' : 'Selesai';
+    if (modalCloseBtn) modalCloseBtn.innerText = isEn ? 'Done' : (modalCloseBtn.dataset.labelClose || 'Selesai');
   };
 
   const hideProgressModal = () => {
@@ -194,14 +194,14 @@ export function initRegistrationSubmit(
       isSubmitting = false;
       if (submitBtn && btnText) {
         submitBtn.disabled = false;
-        btnText.innerHTML = `${isEn ? 'Submit Application' : 'Kirim Pendaftaran'} <i class="fa-solid fa-paper-plane" style="margin-left: 8px;"></i>`;
+        btnText.innerHTML = `${isEn ? 'Submit Application' : (submitBtn.dataset.labelSubmit || 'Kirim Pendaftaran')} <i class="fa-solid fa-paper-plane" style="margin-left: 8px;"></i>`;
       }
       return;
     }
 
     if (submitBtn && btnText) {
       submitBtn.disabled = true;
-      btnText.innerHTML = `${isEn ? 'Processing...' : 'Memproses...'} <i class="fa-solid fa-circle-notch fa-spin" style="margin-left: 8px;"></i>`;
+      btnText.innerHTML = `${isEn ? 'Processing...' : (submitBtn.dataset.labelSubmitting || 'Memproses...')} <i class="fa-solid fa-circle-notch fa-spin" style="margin-left: 8px;"></i>`;
     }
 
     if (alertError) alertError.style.display = 'none';
@@ -210,7 +210,7 @@ export function initRegistrationSubmit(
     // Show initial Progress Modal (Stage 1: Validation)
     if (progressModal) progressModal.style.display = 'flex';
     if (modalIcon) modalIcon.innerHTML = `<i class="fa-solid fa-cloud-arrow-up fa-bounce" style="color: var(--accent-cyan);"></i>`;
-    if (modalTitle) modalTitle.innerText = isEn ? 'Submitting Registration' : 'Mengirim Pendaftaran';
+    if (modalTitle) modalTitle.innerText = isEn ? 'Submitting Registration' : (modalTitle.dataset.labelSendingTitle || 'Mengirim Pendaftaran');
     if (modalSubtitle) modalSubtitle.innerText = isEn ? 'Please stay on this page while we process your documents and transmit data.' : 'Mohon tetap di halaman ini selagi sistem memproses dokumen dan mengirim data.';
     if (modalActions) {
       modalActions.classList.add('is-hidden');
@@ -223,7 +223,7 @@ export function initRegistrationSubmit(
       isSubmitting = false;
       if (submitBtn && btnText) {
         submitBtn.disabled = false;
-        btnText.innerHTML = `${isEn ? 'Submit Application' : 'Kirim Pendaftaran'} <i class="fa-solid fa-paper-plane" style="margin-left: 8px;"></i>`;
+        btnText.innerHTML = `${isEn ? 'Submit Application' : (submitBtn.dataset.labelSubmit || 'Kirim Pendaftaran')} <i class="fa-solid fa-paper-plane" style="margin-left: 8px;"></i>`;
       }
     };
 

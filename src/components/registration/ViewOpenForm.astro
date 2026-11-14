@@ -1,7 +1,7 @@
 ---
 import type { DivisionConfig } from '../../utils/division-mapper';
 import { getLocaleFromUrl, getLocalizedJsonData } from '../../utils/i18n';
-import type { ChromeData, FieldStates, RecruitmentLabels } from '../../utils/types';
+import type { ChromeData, FieldStates } from '../../utils/types';
 import FormDescriptionCard from './FormDescriptionCard.astro';
 
 interface Props {
@@ -30,7 +30,7 @@ const locale = getLocaleFromUrl(Astro.url);
 const chrome = getLocalizedJsonData<ChromeData>('chrome', locale);
 const { initialStage, registrationConfig, extendedCfg, studentYears, docLimits, divisions, piTemplateUrl, minReasonWords = 30, fieldStates = {} } = Astro.props;
 
-const labels = registrationConfig.labels as RecruitmentLabels;
+const labels = registrationConfig.labels;
 
 const allowedExtsCfg = (registrationConfig as any).allowedFileExtensions || {};
 const formatAccept = (extsStr?: string) => (extsStr || "pdf, png, jpg, jpeg")
@@ -396,7 +396,7 @@ for (let i = 0; i < standardDocs.length; i += 2) {
     <p class="reg-data-use">{labels.dataUse}</p>
 
     <div class="form-actions form-actions-submit">
-      <button type="submit" id="submit-btn" class="btn btn-primary btn-submit-registration">
+      <button type="submit" id="submit-btn" class="btn btn-primary btn-submit-registration" data-label-submit={labels.submit} data-label-submitting={labels.submitting}>
         <span id="btn-text">{labels.submit} <i class="fa-solid fa-paper-plane reg-icon-ml-xs"></i></span>
       </button>
       <button type="button" id="clear-draft-btn" class="btn btn-clear-draft is-hidden">
@@ -438,7 +438,7 @@ for (let i = 0; i < standardDocs.length; i += 2) {
         <div id="progress-modal-icon" class="progress-modal-icon-wrapper">
           <i class="fa-solid fa-cloud-arrow-up fa-bounce footer-icon-cyan"></i>
         </div>
-        <h3 id="progress-modal-title" class="progress-modal-title">{labels.submitting}</h3>
+        <h3 id="progress-modal-title" class="progress-modal-title" data-label-sending-title={labels.sendingTitle}>{labels.submitting}</h3>
         <p id="progress-modal-subtitle" class="progress-modal-subtitle">
           Mohon tetap di halaman ini selagi sistem memproses dokumen dan mengirim data Anda.
         </p>
@@ -477,7 +477,7 @@ for (let i = 0; i < standardDocs.length; i += 2) {
 
       <!-- Modal Action Buttons -->
       <div id="progress-modal-actions" class="progress-modal-actions is-hidden">
-        <button type="button" id="modal-close-btn" class="btn btn-primary reg-modal-btn-w">{chrome.labels.close}</button>
+        <button type="button" id="modal-close-btn" class="btn btn-primary reg-modal-btn-w" data-label-close={chrome.labels.close}>{chrome.labels.close}</button>
       </div>
     </div>
   </div>

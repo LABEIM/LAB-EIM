@@ -1,13 +1,12 @@
 ---
-import { getLocaleFromUrl, t } from '../../utils/i18n';
-import type { GalleryItem } from '../../utils/types';
+import type { AboutData, GalleryItem } from '../../utils/types';
 
 interface Props {
   photos: GalleryItem[];
+  content: AboutData['sections']['gallery'];
 }
 
-const { photos } = Astro.props;
-const locale = getLocaleFromUrl(Astro.url);
+const { photos, content } = Astro.props;
 
 // A CMS row can exist before its upload lands; skip those instead of a broken image.
 const items = photos.filter((photo) => photo.image);
@@ -20,12 +19,12 @@ const remaining = items.slice(FIRST_BATCH);
 {items.length > 0 && (
   <section id="galeri" class="border-t border-line py-[clamp(4.5rem,10vh,8.75rem)]" aria-labelledby="gallery-title">
     <div class="mx-auto max-w-[1200px] px-[clamp(1.25rem,4vw,4rem)]">
-      <p class="e-reveal font-mono text-xs uppercase tracking-[0.08em] text-brand">{t('about.galleryEyebrow', locale)}</p>
+      <p class="e-reveal font-mono text-xs uppercase tracking-[0.08em] text-brand">{content.eyebrow}</p>
       <div class="mt-4 grid gap-6 lg:grid-cols-[minmax(0,7fr)_minmax(0,4fr)] lg:items-end">
         <h2 id="gallery-title" class="e-reveal font-display text-[clamp(2rem,4vw,3.5rem)] leading-[1.05] tracking-[-0.01em]">
-          {t('about.galleryTitle', locale)}
+          {content.title}
         </h2>
-        <p class="e-reveal text-[15px] leading-[1.6] text-muted-ink">{t('about.galleryIntro', locale)}</p>
+        <p class="e-reveal text-[15px] leading-[1.6] text-muted-ink">{content.intro}</p>
       </div>
 
       <ul class="e-reveal-group mt-10 grid list-none gap-6 sm:grid-cols-2 lg:grid-cols-3" role="list">
@@ -50,8 +49,8 @@ const remaining = items.slice(FIRST_BATCH);
       {remaining.length > 0 && (
         <details class="group mt-8">
           <summary class="inline-flex cursor-pointer list-none items-center gap-2 font-mono text-xs uppercase tracking-[0.08em] text-brand [&::-webkit-details-marker]:hidden">
-            <span class="group-open:hidden">{t('about.galleryShowAll', locale)}</span>
-            <span class="hidden group-open:inline">{t('about.galleryHideAll', locale)}</span>
+            <span class="group-open:hidden">{content.showAll}</span>
+            <span class="hidden group-open:inline">{content.hideAll}</span>
             <span aria-hidden="true" class="transition-transform group-open:rotate-45">+</span>
           </summary>
           <ul class="mt-8 grid list-none gap-6 sm:grid-cols-2 lg:grid-cols-3" role="list">

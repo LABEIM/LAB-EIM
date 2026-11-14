@@ -676,6 +676,9 @@ export default config({
             featured: fields.text({ label: 'Label artikel utama' }),
             search: fields.text({ label: 'Label pencarian' }),
             close: fields.text({ label: 'Label tutup' }),
+            vision: fields.text({ label: 'Label visi', description: 'Dipakai di Beranda dan Tentang Kami.' }),
+            mission: fields.text({ label: 'Label misi', description: 'Dipakai di Beranda dan Tentang Kami.' }),
+            values: fields.text({ label: 'Label nilai-nilai utama', description: 'Dipakai di Beranda dan Tentang Kami.' }),
           },
           { label: 'Label umum' }
         ),
@@ -808,31 +811,157 @@ export default config({
       },
     }),
     about: singleton({
-      label: 'About Page',
+      label: 'Tentang Kami',
       path: 'src/data/about',
       format: { data: 'json' },
       schema: {
-        title: fields.text({ label: 'Title' }),
-        description: fields.text({ label: 'Hero Description' }),
-        overviewTitle: fields.text({ label: 'Overview Title' }),
-        overviewContent1: fields.text({ label: 'Overview Paragraph 1', multiline: true }),
-        overviewContent2: fields.text({ label: 'Overview Paragraph 2', multiline: true }),
-        overviewImage: fields.text({ label: 'Overview Image' }),
-        vision: fields.text({ label: 'Vision Statement', multiline: true }),
-        missions: fields.array(fields.text({ label: 'Mission Point' }), {
-          label: 'Missions',
-          itemLabel: props => props.value,
+        meta: fields.object(
+          {
+            title: fields.text({
+              label: 'Judul halaman',
+              description: 'Tampil di tab browser dan hasil pencarian.',
+              validation: { isRequired: true },
+            }),
+          },
+          { label: 'Meta halaman' }
+        ),
+        sectionLabel: fields.text({ label: 'Label navigasi bagian halaman' }),
+        navDots: fields.object(
+          {
+            profile: fields.text({ label: 'Label titik profil' }),
+            stats: fields.text({ label: 'Label titik angka' }),
+            vision: fields.text({ label: 'Label titik visi & misi' }),
+            gallery: fields.text({
+              label: 'Label titik galeri',
+              description: 'Hanya tampil saat galeri berisi foto.',
+            }),
+            cta: fields.text({ label: 'Label titik gabung' }),
+          },
+          {
+            label: 'Navigasi titik bagian',
+            description: 'Titik navigasi di tepi halaman. Titik ikut hilang saat bagiannya dimatikan.',
+          }
+        ),
+        sections: fields.object(
+          {
+            hero: fields.object(
+              {
+                eyebrow: fields.text({ label: 'Teks kecil di atas judul' }),
+                lines: fields.array(fields.text({ label: 'Baris judul', validation: { isRequired: true } }), {
+                  label: 'Judul utama',
+                  description: 'Satu item per baris, maksimal tiga baris.',
+                  validation: { length: { min: 1, max: 3 } },
+                  itemLabel: (props) => props.value,
+                }),
+                description: fields.text({ label: 'Deskripsi', multiline: true }),
+                meta: fields.text({ label: 'Teks kecil di bawah tombol' }),
+                primaryLabel: fields.text({ label: 'Label tombol utama' }),
+                secondaryLabel: fields.text({ label: 'Label tautan kedua' }),
+              },
+              { label: 'Hero' }
+            ),
+            profile: fields.object(
+              {
+                enabled: fields.checkbox({ label: 'Tampilkan bagian ini', defaultValue: true }),
+                eyebrow: fields.text({ label: 'Teks kecil di atas ikhtisar' }),
+                factsLabel: fields.text({ label: 'Judul tabel identitas' }),
+                factName: fields.text({ label: 'Label baris nama resmi' }),
+                factFaculty: fields.text({ label: 'Label baris fakultas' }),
+                factFacultyValue: fields.text({ label: 'Isi baris fakultas' }),
+                factProgram: fields.text({ label: 'Label baris program studi' }),
+                factProgramValue: fields.text({ label: 'Isi baris program studi' }),
+                factLocation: fields.text({ label: 'Label baris lokasi' }),
+                factEmail: fields.text({ label: 'Label baris email' }),
+              },
+              { label: 'Profil', description: 'Nama resmi, lokasi, dan email dibaca dari Site Metadata.' }
+            ),
+            stats: fields.object(
+              {
+                enabled: fields.checkbox({ label: 'Tampilkan bagian ini', defaultValue: true }),
+                label: fields.text({ label: 'Label bagian' }),
+                membersValue: fields.integer({
+                  label: 'Nilai anggota laboratorium (opsional)',
+                  description: 'Kosongkan agar dihitung otomatis dari data anggota.',
+                  validation: { isRequired: false },
+                }),
+                coursesValue: fields.integer({
+                  label: 'Nilai mata kuliah (opsional)',
+                  description: 'Kosongkan agar dihitung otomatis dari data mata kuliah.',
+                  validation: { isRequired: false },
+                }),
+                dosenValue: fields.integer({
+                  label: 'Nilai dosen (opsional)',
+                  description: 'Kosongkan agar dihitung otomatis dari data posisi.',
+                  validation: { isRequired: false },
+                }),
+              },
+              { label: 'Laboratorium dalam angka', description: 'Label statistik diambil dari Navbar, Footer & Brand.' }
+            ),
+            teamLink: fields.object(
+              {
+                enabled: fields.checkbox({ label: 'Tampilkan bagian ini', defaultValue: true }),
+                label: fields.text({ label: 'Label tautan ke struktur' }),
+              },
+              { label: 'Tautan struktur', description: 'Tautan diarahkan ke halaman Struktur.' }
+            ),
+            galleryBand: fields.object(
+              {
+                enabled: fields.checkbox({ label: 'Tampilkan bagian ini', defaultValue: true }),
+                label: fields.text({ label: 'Label untuk pembaca layar' }),
+              },
+              { label: 'Foto studio', description: 'Hanya tampil saat galeri punya foto studio.' }
+            ),
+            visiMisi: fields.object(
+              {
+                enabled: fields.checkbox({ label: 'Tampilkan bagian ini', defaultValue: true }),
+                heading: fields.text({
+                  label: 'Judul bagian',
+                  description: 'Isi visi, misi, dan nilai dibaca dari isian di bagian bawah halaman ini.',
+                }),
+              },
+              { label: 'Visi & misi' }
+            ),
+            gallery: fields.object(
+              {
+                enabled: fields.checkbox({ label: 'Tampilkan bagian ini', defaultValue: true }),
+                eyebrow: fields.text({ label: 'Teks kecil di atas judul' }),
+                title: fields.text({ label: 'Judul bagian' }),
+                intro: fields.text({ label: 'Paragraf pengantar', multiline: true }),
+                showAll: fields.text({ label: 'Label tombol lihat semua foto' }),
+                hideAll: fields.text({ label: 'Label tombol sembunyikan foto' }),
+              },
+              { label: 'Galeri' }
+            ),
+            cta: fields.object(
+              {
+                enabled: fields.checkbox({ label: 'Tampilkan bagian ini', defaultValue: true }),
+              },
+              { label: 'Ajakan bergabung', description: 'Teksnya diatur di Navbar, Footer & Brand.' }
+            ),
+          },
+          { label: 'Bagian halaman' }
+        ),
+        title: fields.text({ label: 'Judul cadangan', description: 'Tidak tampil di halaman; dipertahankan agar nilai lama tidak hilang.' }),
+        description: fields.text({ label: 'Deskripsi meta halaman', multiline: true }),
+        overviewTitle: fields.text({ label: 'Judul ikhtisar' }),
+        overviewContent1: fields.text({ label: 'Paragraf ikhtisar pertama', multiline: true }),
+        overviewContent2: fields.text({ label: 'Paragraf ikhtisar kedua', multiline: true }),
+        overviewImage: fields.text({ label: 'Gambar ikhtisar', description: 'Belum dipakai halaman mana pun.' }),
+        vision: fields.text({ label: 'Pernyataan visi', multiline: true }),
+        missions: fields.array(fields.text({ label: 'Poin misi' }), {
+          label: 'Misi',
+          itemLabel: (props) => props.value,
         }),
         values: fields.array(
           fields.object({
-            title: fields.text({ label: 'Title' }),
-            description: fields.text({ label: 'Description', multiline: true }),
-            icon: fields.text({ label: 'FontAwesome Icon' }),
-            isAccent: fields.checkbox({ label: 'Red Accent Icon' }),
+            title: fields.text({ label: 'Judul nilai' }),
+            description: fields.text({ label: 'Deskripsi nilai', multiline: true }),
+            icon: fields.text({ label: 'Ikon FontAwesome' }),
+            isAccent: fields.checkbox({ label: 'Ikon beraksen merah' }),
           }),
           {
-            label: 'Core Values',
-            itemLabel: props => props.fields.title.value || 'Value',
+            label: 'Nilai-nilai utama',
+            itemLabel: (props) => props.fields.title.value || 'Nilai',
           }
         ),
       },

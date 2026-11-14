@@ -28,7 +28,6 @@ export function getLocalizedPath(path: string, _locale?: string): string {
 export const uiTranslations: Record<Locale, Record<string, string>> = {
   id: {
     // Navigation (page-title call sites remain until each page task migrates them)
-    'nav.about': 'Tentang Kami',
     'nav.courses': 'Mata Kuliah',
     'nav.event': 'Kegiatan',
 
@@ -189,39 +188,6 @@ export const uiTranslations: Record<Locale, Record<string, string>> = {
     'courses.sectionNavLabel': 'Navigasi bagian halaman',
     'courses.navDotList': 'Daftar',
 
-    // About Page
-    'about.vision': 'Visi',
-    'about.mission': 'Misi',
-    'about.values': 'Nilai-Nilai Utama',
-    'about.heroEyebrow': 'Tentang Kami',
-    'about.heroTitle': 'Kami mempelajari sistem yang menopang dunia digital.',
-    'about.heroDesc': 'Laboratorium Enterprise Infrastructure Management Telkom University — tempat riset, pembelajaran, dan kolaborasi di bidang infrastruktur enterprise.',
-    'about.heroPrimary': 'Profil lab',
-    'about.heroSecondary': 'Struktur',
-    'about.heroMeta': 'Telkom University · Fakultas Rekayasa Industri · S1 Sistem Informasi',
-    'about.profileEyebrow': 'Profil',
-    'about.factsLabel': 'Identitas',
-    'about.factName': 'Nama resmi',
-    'about.factFaculty': 'Fakultas',
-    'about.factProgram': 'Program studi',
-    'about.factLocation': 'Lokasi',
-    'about.factEmail': 'Email',
-    'about.factFacultyValue': 'Fakultas Rekayasa Industri',
-    'about.factProgramValue': 'S1 Sistem Informasi',
-    'about.galleryEyebrow': 'Galeri',
-    'about.galleryTitle': 'Galeri kegiatan.',
-    'about.galleryIntro': 'Suasana praktikum, kunjungan, dan kegiatan lain di lab.',
-    'about.galleryNavDot': 'Galeri',
-    'about.studioLabel': 'Foto studio tim',
-    'about.galleryShowAll': 'Lihat semua foto',
-    'about.galleryHideAll': 'Sembunyikan foto',
-    'about.statsLabel': 'EIM dalam angka',
-    'about.teamLink': 'Lihat seluruh struktur',
-    'about.sectionNavLabel': 'Navigasi bagian halaman',
-    'about.navDotProfile': 'Profil',
-    'about.navDotStats': 'Angka',
-    'about.navDotCta': 'Gabung',
-
     // Events Page
     'events.title': 'Kegiatan & Acara',
     'events.subtitle': 'Ikuti workshop, studi banding, webinar, dan kegiatan EIM Lab.',
@@ -317,11 +283,6 @@ export const uiTranslations: Record<Locale, Record<string, string>> = {
     'contact.copyFailedStatus': 'Email gagal disalin.',
     'contact.picsTitle': 'Hubungi PIC kami.',
     'contact.picsSubtitle': 'Pilih PIC sesuai kebutuhan: rekrutmen dan kegiatan, atau riset dan kolaborasi.',
-
-    // Beranda copy moved to src/data/pages/home.json. These two stay until /about
-    // migrates its Visi & Misi heading and section dot.
-    'home.vmTitle': 'Visi & Misi',
-    'home.navDotVision': 'Visi & Misi',
   },
 };
 

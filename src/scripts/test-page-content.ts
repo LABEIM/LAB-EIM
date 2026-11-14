@@ -2,7 +2,7 @@ import { existsSync, readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { sectionOn } from '../utils/page-content';
-import type { ChromeData, HomePageData } from '../utils/types';
+import type { AboutData, ChromeData, HomePageData } from '../utils/types';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '../..');
 const dataDir = join(root, 'src/data');
@@ -27,7 +27,7 @@ const chromeGroups: Record<keyof ChromeData, string[]> = {
   footer: ['description', 'quickLinks', 'contact', 'resources', 'assets', 'linkHub', 'rights', 'backToTop'],
   cta: ['title', 'description', 'contactLabel'],
   brand: ['logoHorizontal', 'logoIcon'],
-  labels: ['upcoming', 'details', 'learnMore', 'statsDosen', 'statsMembers', 'statsCourses', 'organizerFallback', 'coordinator', 'sks', 'practicumYes', 'practicumNo', 'featured', 'search', 'close'],
+  labels: ['upcoming', 'details', 'learnMore', 'statsDosen', 'statsMembers', 'statsCourses', 'organizerFallback', 'coordinator', 'sks', 'practicumYes', 'practicumNo', 'featured', 'search', 'close', 'vision', 'mission', 'values'],
 };
 
 console.log('🧪 Running Page Content Guard Tests...\n');
@@ -91,6 +91,91 @@ assert(
   Array.isArray(home.hero?.lines) && home.hero.lines.length >= 1 && home.hero.lines.length <= 3,
   'home.hero.lines has 1 to 3 lines'
 );
+
+console.log('\n5️⃣ Testing about.json:');
+const aboutPath = join(dataDir, 'about.json');
+const aboutExists = existsSync(aboutPath);
+assert(aboutExists, 'about.json exists');
+const about = (aboutExists ? JSON.parse(readFileSync(aboutPath, 'utf8')) : {}) as Partial<AboutData>;
+
+for (const key of [
+  'title',
+  'description',
+  'overviewTitle',
+  'overviewContent1',
+  'overviewContent2',
+  'overviewImage',
+  'vision',
+  'sectionLabel',
+] as const) {
+  const value = about[key];
+  assert(typeof value === 'string' && value.trim().length > 0, `about.${key} is a non-empty string`);
+}
+assert(Array.isArray(about.missions) && about.missions.length > 0, 'about.missions is a non-empty array');
+assert(Array.isArray(about.values) && about.values.length > 0, 'about.values is a non-empty array');
+
+assert(Boolean(about.meta?.title?.trim()), 'about.meta.title is a non-empty string');
+
+const aboutSections = ['hero', 'profile', 'stats', 'teamLink', 'galleryBand', 'visiMisi', 'gallery', 'cta'] as const;
+for (const key of aboutSections) {
+  const section = about.sections?.[key];
+  assert(Boolean(section) && typeof section === 'object', `about.sections.${key} exists`);
+}
+
+for (const key of ['profile', 'stats', 'teamLink', 'galleryBand', 'visiMisi', 'gallery', 'cta'] as const) {
+  assert(typeof about.sections?.[key]?.enabled === 'boolean', `about.sections.${key}.enabled is a boolean`);
+}
+const aboutHero = about.sections?.hero;
+assert(Boolean(aboutHero) && !('enabled' in (aboutHero as object)), 'about.sections.hero has no enabled toggle');
+for (const key of ['eyebrow', 'description', 'meta', 'primaryLabel', 'secondaryLabel'] as const) {
+  const value = aboutHero?.[key];
+  assert(typeof value === 'string' && value.trim().length > 0, `about.sections.hero.${key} is a non-empty string`);
+}
+assert(
+  Array.isArray(aboutHero?.lines) && aboutHero.lines.length >= 1 && aboutHero.lines.length <= 3,
+  'about.sections.hero.lines has 1 to 3 lines'
+);
+
+const aboutProfile = about.sections?.profile;
+for (const key of [
+  'eyebrow',
+  'factsLabel',
+  'factName',
+  'factFaculty',
+  'factFacultyValue',
+  'factProgram',
+  'factProgramValue',
+  'factLocation',
+  'factEmail',
+] as const) {
+  const value = aboutProfile?.[key];
+  assert(typeof value === 'string' && value.trim().length > 0, `about.sections.profile.${key} is a non-empty string`);
+}
+
+const aboutStats = about.sections?.stats;
+assert(Boolean(aboutStats?.label?.trim()), 'about.sections.stats.label is a non-empty string');
+assert(
+  !Object.prototype.hasOwnProperty.call(aboutStats ?? {}, 'stats'),
+  'about.sections.stats carries no stats array'
+);
+
+for (const key of ['teamLink', 'galleryBand'] as const) {
+  const value = about.sections?.[key]?.label;
+  assert(typeof value === 'string' && value.trim().length > 0, `about.sections.${key}.label is a non-empty string`);
+}
+
+assert(Boolean(about.sections?.visiMisi?.heading?.trim()), 'about.sections.visiMisi.heading is a non-empty string');
+
+const aboutGallery = about.sections?.gallery;
+for (const key of ['eyebrow', 'intro', 'title', 'showAll', 'hideAll'] as const) {
+  const value = aboutGallery?.[key];
+  assert(typeof value === 'string' && value.trim().length > 0, `about.sections.gallery.${key} is a non-empty string`);
+}
+
+for (const key of ['profile', 'stats', 'vision', 'cta', 'gallery'] as const) {
+  const value = about.navDots?.[key];
+  assert(typeof value === 'string' && value.trim().length > 0, `about.navDots.${key} is a non-empty string`);
+}
 
 console.log(`\n${passed} passed, ${failed} failed`);
 if (failed > 0) process.exitCode = 1;

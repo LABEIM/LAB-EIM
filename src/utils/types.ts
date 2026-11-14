@@ -383,6 +383,9 @@ export interface ChromeData {
     featured: string;
     search: string;
     close: string;
+    vision: string;
+    mission: string;
+    values: string;
   };
 }
 
@@ -466,6 +469,69 @@ export interface AboutData {
   vision: string;
   missions: string[];
   values: { title: string; description: string; icon: string; isAccent?: boolean }[];
+  meta: {
+    title: string;
+  };
+  sectionLabel: string;
+  navDots: {
+    profile: string;
+    stats: string;
+    vision: string;
+    cta: string;
+    gallery: string;
+  };
+  sections: {
+    hero: {
+      eyebrow: string;
+      lines: string[];
+      description: string;
+      meta: string;
+      primaryLabel: string;
+      secondaryLabel: string;
+    };
+    profile: {
+      enabled: boolean;
+      eyebrow: string;
+      factsLabel: string;
+      factName: string;
+      factFaculty: string;
+      factFacultyValue: string;
+      factProgram: string;
+      factProgramValue: string;
+      factLocation: string;
+      factEmail: string;
+    };
+    stats: {
+      enabled: boolean;
+      label: string;
+      dosenValue?: number | null;
+      membersValue?: number | null;
+      coursesValue?: number | null;
+    };
+    teamLink: {
+      enabled: boolean;
+      label: string;
+    };
+    galleryBand: {
+      enabled: boolean;
+      label: string;
+    };
+    visiMisi: {
+      enabled: boolean;
+      heading: string;
+    };
+    gallery: {
+      enabled: boolean;
+      eyebrow: string;
+      intro: string;
+      title: string;
+      showAll: string;
+      hideAll: string;
+    };
+    cta: {
+      enabled: boolean;
+    };
+  };
 }
 
 

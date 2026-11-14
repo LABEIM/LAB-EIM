@@ -114,7 +114,17 @@ const sectionItems = [
     />
     {sectionOn(page.reveal) && <EimReveal content={page.reveal} />}
     {sectionOn(page.focus) && <EimFocus content={page.focus} />}
-    {sectionOn(page.visiMisi) && <EimVisiMisi content={page.visiMisi} about={about} />}
+    {sectionOn(page.visiMisi) && (
+      <EimVisiMisi
+        content={{
+          title: page.visiMisi.title,
+          visionLabel: chrome.labels.vision,
+          missionLabel: chrome.labels.mission,
+          valuesLabel: chrome.labels.values,
+        }}
+        about={about}
+      />
+    )}
     {sectionOn(page.numbers) && <EimLabNumbers content={page.numbers} stats={numberStats} />}
     {sectionOn(page.courses) && bandCourses.length > 0 && (
       <EimCourses courses={bandCourses} content={page.courses} />

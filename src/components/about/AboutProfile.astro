@@ -1,14 +1,13 @@
 ---
 import type { AboutData } from '../../utils/types';
-import { getLocaleFromUrl, t } from '../../utils/i18n';
 
 interface Props {
   about: AboutData;
+  content: AboutData['sections']['profile'];
   site: any;
 }
 
-const { about, site } = Astro.props;
-const locale = getLocaleFromUrl(Astro.url);
+const { about, content, site } = Astro.props;
 const contact = site?.contact ?? {};
 ---
 
@@ -24,27 +23,27 @@ const contact = site?.contact ?? {};
       </div>
 
       <div class="e-reveal lg:order-first">
-        <p class="font-mono text-xs uppercase tracking-[0.08em] text-brand">{t('about.profileEyebrow', locale)}</p>
-        <p class="mt-6 font-mono text-[11px] uppercase tracking-[0.08em] text-muted-ink">{t('about.factsLabel', locale)}</p>
+        <p class="font-mono text-xs uppercase tracking-[0.08em] text-brand">{content.eyebrow}</p>
+        <p class="mt-6 font-mono text-[11px] uppercase tracking-[0.08em] text-muted-ink">{content.factsLabel}</p>
         <dl class="mt-2 border-t border-line lg:sticky lg:top-28">
           <div class="grid grid-cols-[auto_1fr] gap-4 border-b border-line py-4">
-            <dt class="font-mono text-[11px] uppercase tracking-[0.08em] text-muted-ink">{t('about.factName', locale)}</dt>
+            <dt class="font-mono text-[11px] uppercase tracking-[0.08em] text-muted-ink">{content.factName}</dt>
             <dd class="text-sm leading-[1.5]">{site.fullName}</dd>
           </div>
           <div class="grid grid-cols-[auto_1fr] gap-4 border-b border-line py-4">
-            <dt class="font-mono text-[11px] uppercase tracking-[0.08em] text-muted-ink">{t('about.factFaculty', locale)}</dt>
-            <dd class="text-sm leading-[1.5]">{t('about.factFacultyValue', locale)}</dd>
+            <dt class="font-mono text-[11px] uppercase tracking-[0.08em] text-muted-ink">{content.factFaculty}</dt>
+            <dd class="text-sm leading-[1.5]">{content.factFacultyValue}</dd>
           </div>
           <div class="grid grid-cols-[auto_1fr] gap-4 border-b border-line py-4">
-            <dt class="font-mono text-[11px] uppercase tracking-[0.08em] text-muted-ink">{t('about.factProgram', locale)}</dt>
-            <dd class="text-sm leading-[1.5]">{t('about.factProgramValue', locale)}</dd>
+            <dt class="font-mono text-[11px] uppercase tracking-[0.08em] text-muted-ink">{content.factProgram}</dt>
+            <dd class="text-sm leading-[1.5]">{content.factProgramValue}</dd>
           </div>
           <div class="grid grid-cols-[auto_1fr] gap-4 border-b border-line py-4">
-            <dt class="font-mono text-[11px] uppercase tracking-[0.08em] text-muted-ink">{t('about.factLocation', locale)}</dt>
+            <dt class="font-mono text-[11px] uppercase tracking-[0.08em] text-muted-ink">{content.factLocation}</dt>
             <dd class="text-sm leading-[1.5]">{contact.location}</dd>
           </div>
           <div class="grid grid-cols-[auto_1fr] gap-4 border-b border-line py-4">
-            <dt class="font-mono text-[11px] uppercase tracking-[0.08em] text-muted-ink">{t('about.factEmail', locale)}</dt>
+            <dt class="font-mono text-[11px] uppercase tracking-[0.08em] text-muted-ink">{content.factEmail}</dt>
             <dd class="text-sm leading-[1.5]">
               <a class="text-brand underline underline-offset-4" href={`mailto:${contact.email}`}>{contact.email}</a>
             </dd>

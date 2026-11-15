@@ -402,7 +402,7 @@ One Markdown file per course. The `/courses` page lists every entry (code, SKS, 
 * **`hasPracticum`** (Boolean, required): Whether the course has a practicum. When `false`, modules and assistants are not rendered even if data is still attached.
 * **`modules`** (Array, optional): `title` plus a `topics` line. Module files cannot be shared, so only the topic list is published.
 * **`coordinatorId`** (String, required): `id` of an entry in `lecturers.json`.
-* **`assistantIds`** (Array of Strings, optional): Member codes (`id`) from `members.json`. Missing codes are skipped.
+* **`assistantIds`** (Array of Strings, optional): Member codes (`id`) from `members.json`. Missing codes are skipped. Renaming a member code requires updating every course that references it; new members appear in the assistant picker after the next deploy.
 * **`order`** (Number, required): Sort order on the page, ties broken by title.
 * Markdown body: the course description.
 

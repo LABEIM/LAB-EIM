@@ -278,10 +278,33 @@ const lecturerIds = lecturersData.list.map((lecturer) => String(lecturer.id));
 assert(lecturerIds.every((id) => LECTURER_CODE.test(id)), 'every lecturer id is a 3-letter code');
 assert(new Set(lecturerIds).size === lecturerIds.length, 'lecturer ids are unique');
 
-const positionsData = JSON.parse(readFileSync(join(dataDir, 'positions.json'), 'utf8')) as { list: { id: string }[] };
+const positionsData = JSON.parse(readFileSync(join(dataDir, 'positions.json'), 'utf8')) as { list: { id: string; group: string }[] };
 const positionIds = new Set(positionsData.list.map((position) => position.id));
 assert(membersData.list.every((member) => positionIds.has(member.role)), 'every member role resolves to a position');
 assert(lecturersData.list.every((lecturer) => positionIds.has(lecturer.role)), 'every lecturer role resolves to a position');
+
+// Lecturers render as cards and members as tiles, split by the position group.
+const positionGroups = new Map(positionsData.list.map((position) => [position.id, position.group]));
+assert(lecturersData.list.every((lecturer) => positionGroups.get(lecturer.role) === 'dosen'), 'every lecturer sits in a dosen position');
+assert(membersData.list.every((member) => positionGroups.get(member.role) !== 'dosen'), 'no member sits in a dosen position');
+
+// A renamed or mistyped code would silently drop the person from a course.
+for (const file of collectFiles(join(root, 'src/content/courses'), ['.md'])) {
+  const source = readFileSync(file, 'utf8');
+  const name = file.slice(root.length + 1);
+  const coordinator = /^coordinatorId:\s*(\S+)\s*$/m.exec(source)?.[1] ?? '';
+  assert(lecturerIds.includes(coordinator), `${name} coordinatorId resolves to a lecturer`);
+
+  const inline = /^assistantIds:\s*\[(.*)\]\s*$/m.exec(source)?.[1];
+  const block = /^assistantIds:\s*\n((?:\s+-\s+.*\n?)+)/m.exec(source)?.[1];
+  const assistantIds = inline !== undefined
+    ? inline.split(',').map((id) => id.trim().replace(/^['"]|['"]$/g, '')).filter(Boolean)
+    : [...(block ?? '').matchAll(/^\s*-\s*(\S+)\s*$/gm)].map((match) => match[1]);
+  assert(
+    assistantIds.every((id) => memberIds.includes(id)),
+    `${name} assistantIds resolve to members`,
+  );
+}
 
 console.log('\n4️⃣ Testing pages/home.json:');
 const homePath = join(dataDir, 'pages/home.json');

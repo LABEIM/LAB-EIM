@@ -82,7 +82,7 @@ Do not delete this file without also changing the registration form.
 This file lists student members and assistants. On `/structure` each person renders under their position section. Photos still live in `/image/division/...`; those folder names are historical and unrelated to the current structure.
 
 ### Fields Explanation
-* **`id`** (Number): A unique numeric ID for the member. Course assistant lists reference these ids.
+* **`id`** (String): The member's unique 4-letter assistant code (uppercase, e.g. `DAYY`). Course assistant lists reference these codes, and the code appears next to the role on `/structure` and the course detail page.
 * **`name`** (String): Full name of the assistant.
 * **`role`** (String): A position id from `positions.json` (Keystatic shows it as a Position dropdown).
 * **`image`** (String, Optional): Path to the member's avatar image starting from `/image/`. Upload it through Keystatic's **Foto** field (files are written to `public/image/division/`). Clearing the field omits the `image` key entirely and the card falls back to the member's initials. Crop the photo to the avatar tile's aspect ratio before uploading.
@@ -92,7 +92,7 @@ This file lists student members and assistants. On `/structure` each person rend
 ### Member Template
 ```json
   {
-    "id": 26,
+    "id": "DAYY",
     "name": "Nama Anggota",
     "role": "mahasiswa-anggota",
     "image": "/image/division/research/RESEARCH_Member_JDOE_Jane-Doe_00.avif",
@@ -327,7 +327,7 @@ This file holds the dosen entries. Each entry's `role` is a position id from `po
 Manage it via **Keystatic Admin > Singletons > Lecturers**. Upload the portrait through the **Foto** field (files are written to `public/image/division/`); clearing the field omits the `image` key and the card falls back to the placeholder avatar.
 
 ### Fields Explanation
-* **`id`** (String): Unique id. Course `coordinatorId` values reference these ids.
+* **`id`** (String): Unique 3-letter lecturer code (uppercase, e.g. `MTK`). Course `coordinatorId` values reference these codes, and the code appears next to the role on `/structure` and the course detail page.
 * **`name`** (String): Full name, with title.
 * **`role`** (String): A position id from `positions.json` (`ketua-lab`, `wakil-ketua-lab`, `dosen-anggota`, `koordinator-matkul`, …).
 * **`image`**, **`scale`**, **`position`**: Same meaning as on members.
@@ -335,7 +335,7 @@ Manage it via **Keystatic Admin > Singletons > Lecturers**. Upload the portrait 
 ### Lecturer Template
 ```json
   {
-    "id": "dosen-koordinator-matkul-1",
+    "id": "MTK",
     "name": "Nama Dosen",
     "role": "koordinator-matkul",
     "scale": "1",
@@ -402,7 +402,7 @@ One Markdown file per course. The `/courses` page lists every entry (code, SKS, 
 * **`hasPracticum`** (Boolean, required): Whether the course has a practicum. When `false`, modules and assistants are not rendered even if data is still attached.
 * **`modules`** (Array, optional): `title` plus a `topics` line. Module files cannot be shared, so only the topic list is published.
 * **`coordinatorId`** (String, required): `id` of an entry in `lecturers.json`.
-* **`assistantIds`** (Array of Numbers, optional): `id` values from `members.json`. Missing ids are skipped.
+* **`assistantIds`** (Array of Strings, optional): Member codes (`id`) from `members.json`. Missing codes are skipped. Renaming a member code requires updating every course that references it; new members appear in the assistant picker after the next deploy.
 * **`order`** (Number, required): Sort order on the page, ties broken by title.
 * Markdown body: the course description.
 
@@ -417,9 +417,9 @@ hasPracticum: true
 modules:
   - title: Modul 1 — Nama Modul
     topics: Topik pertama, topik kedua.
-coordinatorId: dosen-koordinator-matkul-1
+coordinatorId: AWJ
 assistantIds:
-  - 1
+  - WOKY
 order: 1
 ---
 

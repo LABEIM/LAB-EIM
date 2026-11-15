@@ -335,7 +335,7 @@ export interface CourseData {
   hasPracticum: boolean;
   modules: CourseModule[];
   coordinatorId: string;
-  assistantIds: number[];
+  assistantIds: string[];
   order: number;
 }
 
@@ -346,7 +346,7 @@ export interface CourseView extends CourseData {
 }
 
 export interface Member {
-  id: number;
+  id: string;
   name: string;
   role: string;
   // Optional fields serialize to an omitted key once an editor clears them.

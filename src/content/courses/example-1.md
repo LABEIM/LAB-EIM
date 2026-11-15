@@ -8,9 +8,9 @@ modules:
     topics: Topik contoh pertama, topik contoh kedua.
   - title: Modul 2 — Topik Lanjutan
     topics: Topik contoh ketiga.
-coordinatorId: dosen-koordinator-matkul-1
+coordinatorId: AWJ
 assistantIds:
-  - 2
+  - WOKY
 order: 1
 ---
 [placeholder] Deskripsi mata kuliah contoh. Ganti lewat Keystatic Admin > Collections > Courses.

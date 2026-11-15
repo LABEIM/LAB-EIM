@@ -48,7 +48,7 @@ const coursesCollection = defineCollection({
       .array(z.object({ title: z.string(), topics: z.string() }))
       .default([]),
     coordinatorId: z.string(),
-    assistantIds: z.array(z.number()).default([]),
+    assistantIds: z.array(z.string()).default([]),
     order: z.number(),
   }),
 });

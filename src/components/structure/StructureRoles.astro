@@ -13,11 +13,9 @@ interface Props {
 
 const { content, labels, section, index, positionIndex } = Astro.props;
 
-const isLecturer = (person: Member | Lecturer): person is Lecturer =>
-  typeof person.id === 'string';
-
-const lecturers = section.people.filter(isLecturer);
-const members = section.people.filter((person): person is Member => !isLecturer(person));
+const isLecturerSection = section.position.group === 'dosen';
+const lecturers = isLecturerSection ? (section.people as Lecturer[]) : [];
+const members = isLecturerSection ? [] : (section.people as Member[]);
 const titleId = `pos-${section.position.id}-title`;
 // Every role except the member roster reads as centred portrait cards.
 const density = section.position.id === 'mahasiswa-anggota' ? '' : 'staff-grid--lead';

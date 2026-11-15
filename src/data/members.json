@@ -1,15 +1,23 @@
 {
   "list": [
     {
-      "id": 1,
-      "name": "Ferdyansyah Adi Saputra",
+      "id": "DAYY",
+      "name": "Ferdiansyah Adi Saputra",
       "role": "koordinator-asisten",
       "image": "/image/division/list/0/image.avif",
       "scale": "3",
       "position": "center 32%"
     },
     {
-      "id": 2,
+      "id": "KSAZ",
+      "name": "Kania Shafa Az Zahra",
+      "role": "mahasiswa-anggota",
+      "image": "/image/division/list/2/image.avif",
+      "scale": "2.7",
+      "position": "45% 52%"
+    },
+    {
+      "id": "WOKY",
       "name": "Raffi Raditya Sofwan",
       "role": "mahasiswa-anggota",
       "image": "/image/division/list/1/image.avif",
@@ -17,55 +25,22 @@
       "position": "55% 35%"
     },
     {
-      "id": 3,
-      "name": "Kania Shafa",
-      "role": "mahasiswa-anggota",
-      "image": "/image/division/list/2/image.avif",
-      "scale": "2.7",
-      "position": "45% 52%"
+      "id": "REAN",
+      "name": "Muhammad Raihan",
+      "role": "mahasiswa-anggota"
     },
     {
-      "id": 4,
-      "name": "Ardy Maulana Nayottama Nugroho",
-      "role": "mahasiswa-anggota",
-      "image": "/image/division/list/3/image.avif",
-      "scale": "2.3",
-      "position": "53% 15%"
+      "id": "REII",
+      "name": "Riehand Muhammad",
+      "role": "asisten-koordinator-praktikum"
     },
     {
-      "id": 5,
-      "name": "Tb. Alta Ulil Abshor",
-      "role": "mahasiswa-anggota",
-      "image": "/image/division/list/4/image.avif",
-      "scale": "3",
-      "position": "49% 35%"
+      "id": "NIAR",
+      "name": "Dinda Juniar",
+      "role": "mahasiswa-anggota"
     },
     {
-      "id": 6,
-      "name": "Nayla Aulia Rusyda",
-      "role": "mahasiswa-anggota",
-      "image": "/image/division/list/5/image.avif",
-      "scale": "3",
-      "position": "52% 43%"
-    },
-    {
-      "id": 7,
-      "name": "Hana Humaira",
-      "role": "mahasiswa-anggota",
-      "image": "/image/division/list/6/image.avif",
-      "scale": "3",
-      "position": "center 40%"
-    },
-    {
-      "id": 8,
-      "name": "Dara Saifa Mahiroh",
-      "role": "mahasiswa-anggota",
-      "image": "/image/division/list/7/image.avif",
-      "scale": "2.5",
-      "position": "48% 34%"
-    },
-    {
-      "id": 9,
+      "id": "VAND",
       "name": "Winsenlaus Alfero Krisna Ivander Lael",
       "role": "mahasiswa-anggota",
       "image": "/image/division/list/8/image.avif",
@@ -73,15 +48,7 @@
       "position": "50% 13%"
     },
     {
-      "id": 10,
-      "name": "Fakhri Muhammad Habibi",
-      "role": "mahasiswa-anggota",
-      "image": "/image/division/list/9/image.avif",
-      "scale": "2.8",
-      "position": "50% 15%"
-    },
-    {
-      "id": 11,
+      "id": "FADH",
       "name": "Faiz Dhya Muhamad Rahmantyo",
       "role": "mahasiswa-anggota",
       "image": "/image/division/list/10/image.avif",
@@ -89,7 +56,35 @@
       "position": "50% 15%"
     },
     {
-      "id": 12,
+      "id": "KANG",
+      "name": "Fakhri Muhammad Habibi",
+      "role": "mahasiswa-anggota",
+      "image": "/image/division/list/9/image.avif",
+      "scale": "2.8",
+      "position": "50% 15%"
+    },
+    {
+      "id": "YAYA",
+      "name": "Hafsya Khairin Nurwandi",
+      "role": "mahasiswa-anggota"
+    },
+    {
+      "id": "GASS",
+      "name": "Ramdani Cahyo Bagaskara",
+      "role": "mahasiswa-anggota"
+    },
+    {
+      "id": "CAKI",
+      "name": "Syakirah Syifa Falihah",
+      "role": "mahasiswa-anggota"
+    },
+    {
+      "id": "NJII",
+      "name": "Kadek Panji Agustama Surya",
+      "role": "mahasiswa-anggota"
+    },
+    {
+      "id": "JAAA",
       "name": "Akchmad Reza Zandri",
       "role": "mahasiswa-anggota",
       "image": "/image/division/list/11/image.avif",
@@ -97,15 +92,7 @@
       "position": "49% 35%"
     },
     {
-      "id": 13,
-      "name": "Ganda Dwiyana",
-      "role": "mahasiswa-anggota",
-      "image": "/image/division/list/12/image.avif",
-      "scale": "2.8",
-      "position": "50% 31%"
-    },
-    {
-      "id": 14,
+      "id": "FACL",
       "name": "Frixtho Alex Credorius Latumahina",
       "role": "mahasiswa-anggota",
       "image": "/image/division/list/13/image.avif",
@@ -113,7 +100,15 @@
       "position": "48% 25%"
     },
     {
-      "id": 15,
+      "id": "NDAA",
+      "name": "Ganda Dwiyana",
+      "role": "mahasiswa-anggota",
+      "image": "/image/division/list/12/image.avif",
+      "scale": "2.8",
+      "position": "50% 31%"
+    },
+    {
+      "id": "FZRY",
       "name": "Muhammad Fizry Alifta",
       "role": "mahasiswa-anggota",
       "image": "/image/division/list/14/image.avif",
@@ -121,39 +116,27 @@
       "position": "50% 36%"
     },
     {
-      "id": 17,
-      "name": "Aura Haya Azka",
-      "role": "mahasiswa-anggota",
-      "image": "/image/division/list/15/image.avif",
-      "scale": "2.2",
-      "position": "50% 40%"
+      "id": "PRTZ",
+      "name": "Anindya Zafirah Pratista Ryananta Kurniawan",
+      "role": "mahasiswa-anggota"
     },
     {
-      "id": 18,
-      "name": "Firman Zuhdi Affandi",
-      "role": "mahasiswa-anggota",
-      "image": "/image/division/list/16/image.avif",
-      "scale": "2.8",
-      "position": "50% 33%"
+      "id": "ASYA",
+      "name": "Nazwa Nandita Asya",
+      "role": "mahasiswa-anggota"
     },
     {
-      "id": 19,
-      "name": "Affan Maulana Raffi",
-      "role": "mahasiswa-anggota",
-      "image": "/image/division/list/17/image.avif",
-      "scale": "2.4",
-      "position": "48% 19%"
+      "id": "SANZ",
+      "name": "Ihsan Khoirul Imam",
+      "role": "mahasiswa-anggota"
     },
     {
-      "id": 20,
-      "name": "Wildan Zaaqi",
-      "role": "mahasiswa-anggota",
-      "image": "/image/division/list/18/image.avif",
-      "scale": "2.4",
-      "position": "51% 45%"
+      "id": "DEDE",
+      "name": "Gede Devanda Pratama Putra",
+      "role": "mahasiswa-anggota"
     },
     {
-      "id": 21,
+      "id": "ASAP",
       "name": "Bagas Haris Saputro",
       "role": "mahasiswa-anggota",
       "image": "/image/division/list/19/image.avif",
@@ -161,7 +144,7 @@
       "position": "50% 20%"
     },
     {
-      "id": 22,
+      "id": "RYLA",
       "name": "Levi Soraya",
       "role": "mahasiswa-anggota",
       "image": "/image/division/list/20/image.avif",
@@ -169,15 +152,7 @@
       "position": "50% 18%"
     },
     {
-      "id": 23,
-      "name": "Salman Alfarisy",
-      "role": "mahasiswa-anggota",
-      "image": "/image/division/list/21/image.avif",
-      "scale": "2.3",
-      "position": "50% 43%"
-    },
-    {
-      "id": 24,
+      "id": "KAYS",
       "name": "Deidanisa Aulia Pradina Kya",
       "role": "mahasiswa-anggota",
       "image": "/image/division/list/22/image.avif",
@@ -185,9 +160,144 @@
       "position": "50% 45%"
     },
     {
-      "id": 25,
-      "name": "Riehand Muhammad",
-      "role": "asisten-koordinator-praktikum"
+      "id": "SLMN",
+      "name": "Salman Alfarisy",
+      "role": "mahasiswa-anggota",
+      "image": "/image/division/list/21/image.avif",
+      "scale": "2.3",
+      "position": "50% 43%"
+    },
+    {
+      "id": "HANZ",
+      "name": "M Farhan Izza",
+      "role": "mahasiswa-anggota"
+    },
+    {
+      "id": "LELE",
+      "name": "Emir Rasyid Putra Adjie",
+      "role": "mahasiswa-anggota"
+    },
+    {
+      "id": "KIMM",
+      "name": "kayla alifa nathania",
+      "role": "mahasiswa-anggota"
+    },
+    {
+      "id": "NAKA",
+      "name": "Nabila Azka Lathifah",
+      "role": "mahasiswa-anggota"
+    },
+    {
+      "id": "NYTM",
+      "name": "Ardy Maulana Nayottama Nugroho",
+      "role": "mahasiswa-anggota",
+      "image": "/image/division/list/3/image.avif",
+      "scale": "2.3",
+      "position": "53% 15%"
+    },
+    {
+      "id": "DSFA",
+      "name": "Dara Saifa Mahiroh",
+      "role": "mahasiswa-anggota",
+      "image": "/image/division/list/7/image.avif",
+      "scale": "2.5",
+      "position": "48% 34%"
+    },
+    {
+      "id": "NAYL",
+      "name": "Nayla Aulia Rusyda",
+      "role": "mahasiswa-anggota",
+      "image": "/image/division/list/5/image.avif",
+      "scale": "3",
+      "position": "52% 43%"
+    },
+    {
+      "id": "ALTA",
+      "name": "Tb. Alta Ulil Abshor",
+      "role": "mahasiswa-anggota",
+      "image": "/image/division/list/4/image.avif",
+      "scale": "3",
+      "position": "49% 35%"
+    },
+    {
+      "id": "NARA",
+      "name": "Hana Humaira",
+      "role": "mahasiswa-anggota",
+      "image": "/image/division/list/6/image.avif",
+      "scale": "3",
+      "position": "center 40%"
+    },
+    {
+      "id": "SHAA",
+      "name": "Nesha Aghisna Ramaniya Ranzi",
+      "role": "mahasiswa-anggota"
+    },
+    {
+      "id": "PAEL",
+      "name": "Muhammad Rafael Albani",
+      "role": "mahasiswa-anggota"
+    },
+    {
+      "id": "MAWL",
+      "name": "Muhammad Maulidha Ilham",
+      "role": "mahasiswa-anggota"
+    },
+    {
+      "id": "WEYN",
+      "name": "Reyvan Dima Winata",
+      "role": "mahasiswa-anggota"
+    },
+    {
+      "id": "AUZA",
+      "name": "Aura Haya Azka",
+      "role": "mahasiswa-anggota",
+      "image": "/image/division/list/15/image.avif",
+      "scale": "2.2",
+      "position": "50% 40%"
+    },
+    {
+      "id": "WILD",
+      "name": "Wildan Zaaqi",
+      "role": "mahasiswa-anggota",
+      "image": "/image/division/list/18/image.avif",
+      "scale": "2.4",
+      "position": "51% 45%"
+    },
+    {
+      "id": "AFMR",
+      "name": "Affan Maulana Raffi",
+      "role": "mahasiswa-anggota",
+      "image": "/image/division/list/17/image.avif",
+      "scale": "2.4",
+      "position": "48% 19%"
+    },
+    {
+      "id": "FIZI",
+      "name": "Firman Zuhdi Affandi",
+      "role": "mahasiswa-anggota",
+      "image": "/image/division/list/16/image.avif",
+      "scale": "2.8",
+      "position": "50% 33%"
+    },
+    {
+      "id": "IZRA",
+      "name": "Muhammad Izaz Naufal",
+      "role": "mahasiswa-anggota"
+    },
+    {
+      "id": "GEKA",
+      "name": "Geoffrey Putra",
+      "role": "mahasiswa-anggota"
+    },
+    {
+      "id": "KURR",
+      "name": "Aditya Daffa Kurniawan",
+      "role": "mahasiswa-anggota"
+    },
+    {
+      "id": "IYAA",
+      "name": "Indriya Maheswari Wiyoto",
+      "role": "mahasiswa-anggota"
     }
   ]
 }

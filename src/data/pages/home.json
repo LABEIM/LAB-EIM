@@ -1,7 +1,6 @@
 {
   "meta": {
-    "title": "EIM Lab · Infrastruktur untuk dunia nyata",
-    "description": ""
+    "title": "EIM Lab · Infrastruktur untuk dunia nyata"
   },
   "navDots": {
     "reveal": "Media",
@@ -23,13 +22,11 @@
   },
   "reveal": {
     "enabled": true,
-    "caption": "Lebih dekat dengan EIM.",
     "pending": "Video pengantar sedang disiapkan.",
     "pendingCta": "Kenali lab kami",
-    "mediaKind": "none",
-    "image": "",
-    "poster": "",
-    "mediaAlt": ""
+    "mediaKind": "video",
+    "backgroundUrl": "/assets/video/intro-test-11-2026.mp4",
+    "videoUrl": "https://youtu.be/A5N3GOMHZyU"
   },
   "focus": {
     "enabled": true,

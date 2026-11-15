@@ -1506,7 +1506,7 @@ export default config({
             image: fields.image({
               label: 'Foto',
               description:
-                'Potong foto ke rasio bingkai sebelum diunggah. Kosongkan untuk memakai inisial nama. Untuk berkas yang sudah dipotong, atur Scale ke 1 dan Position ke center.',
+                'Potong foto ke rasio bingkai sebelum diunggah. Kosongkan untuk memakai inisial nama. Untuk berkas yang sudah dipotong, atur Scale ke 1 dan Position ke center. Ekspor 640 px persegi (1:1), format WebP atau AVIF, maksimal ±150 KB.',
               directory: 'public/image/division',
               publicPath: '/image/division/',
             }),
@@ -1539,7 +1539,7 @@ export default config({
             image: fields.image({
               label: 'Foto',
               description:
-                'Potong foto ke rasio bingkai sebelum diunggah. Kosongkan untuk memakai avatar cadangan. Untuk berkas yang sudah dipotong, atur Scale ke 1 dan Position ke center.',
+                'Potong foto ke rasio bingkai sebelum diunggah. Kosongkan untuk memakai avatar cadangan. Untuk berkas yang sudah dipotong, atur Scale ke 1 dan Position ke center. Ekspor 640 px persegi (1:1), format WebP atau AVIF, maksimal ±150 KB.',
               directory: 'public/image/division',
               publicPath: '/image/division/',
             }),
@@ -1723,6 +1723,7 @@ export default config({
           {
             image: fields.image({
               label: 'Studio Photo',
+              description: 'Ekspor maksimal 1200 px lebar, format WebP atau AVIF, maksimal ±300 KB.',
               directory: 'public/image/gallery',
               publicPath: '/image/gallery/',
               validation: { isRequired: true },
@@ -1736,6 +1737,7 @@ export default config({
           fields.object({
             image: fields.image({
               label: 'Photo',
+              description: 'Ekspor maksimal 1200 px lebar, format WebP atau AVIF, maksimal ±300 KB.',
               directory: 'public/image/gallery',
               publicPath: '/image/gallery/',
               validation: { isRequired: true },

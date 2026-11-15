@@ -4,7 +4,7 @@ import { fileURLToPath } from 'node:url';
 import { buildBackgroundEmbed, buildPlayerEmbed, planRevealVideo, resolveExternalImageUrl, resolveVideoUrl } from '../utils/media';
 import { sectionNumber, sectionOn, splitWordCount } from '../utils/page-content';
 import type { RecruitmentConfig } from '../utils/types';
-import type { AboutData, ChromeData, ContactData, CourseDetailPageData, CoursesPageData, EventDetailPageData, EventsPageData, GalleryData, HomePageData, Lecturer, Member, NewsDetailPageData, NewsPageData, NodeData, StructurePageData } from '../utils/types';
+import type { AboutData, ChromeData, ContactData, CourseDetailPageData, CoursesPageData, EventDetailPageData, EventsPageData, HomePageData, Lecturer, Member, NewsDetailPageData, NewsPageData, NodeData, StructurePageData } from '../utils/types';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '../..');
 const dataDir = join(root, 'src/data');
@@ -210,17 +210,6 @@ assert(
   existsSync(publicFile(siteData.favicon)),
   'site.favicon resolves under public/'
 );
-
-const galleryData = JSON.parse(readFileSync(join(dataDir, 'gallery.json'), 'utf8')) as GalleryData;
-const galleryImages = [galleryData.featured?.image, ...(galleryData.photos ?? []).map((photo) => photo.image)];
-assert(galleryImages.length > 0, 'gallery.json has at least one image');
-galleryImages.forEach((image, index) => {
-  assert(typeof image === 'string' && image.trim().length > 0, `gallery image ${index} is a non-empty string`);
-  assert(
-    existsSync(publicFile(image)),
-    `gallery image ${index} resolves under public/`
-  );
-});
 
 const nodesPath = join(dataDir, 'nodes.json');
 assert(existsSync(nodesPath), 'nodes.json exists');

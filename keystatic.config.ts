@@ -1579,9 +1579,9 @@ export default config({
             profile: fields.text({ label: 'Label titik profil', validation: { isRequired: true } }),
             stats: fields.text({ label: 'Label titik angka', validation: { isRequired: true } }),
             vision: fields.text({ label: 'Label titik visi & misi', validation: { isRequired: true } }),
-            gallery: fields.text({
-              label: 'Label titik galeri',
-              description: 'Hanya tampil saat galeri berisi foto.',
+            nodes: fields.text({
+              label: 'Label titik sejarah node',
+              description: 'Hanya tampil saat sudah ada foto node.',
               validation: { isRequired: true },
             }),
             cta: fields.text({ label: 'Label titik gabung', validation: { isRequired: true } }),
@@ -1653,13 +1653,6 @@ export default config({
               },
               { label: 'Tautan struktur', description: 'Tautan diarahkan ke halaman Struktur.' }
             ),
-            galleryBand: fields.object(
-              {
-                enabled: fields.checkbox({ label: 'Tampilkan bagian ini', defaultValue: true }),
-                label: fields.text({ label: 'Label untuk pembaca layar', validation: { isRequired: true } }),
-              },
-              { label: 'Foto studio', description: 'Hanya tampil saat galeri punya foto studio.' }
-            ),
             visiMisi: fields.object(
               {
                 enabled: fields.checkbox({ label: 'Tampilkan bagian ini', defaultValue: true }),
@@ -1671,16 +1664,16 @@ export default config({
               },
               { label: 'Visi & misi' }
             ),
-            gallery: fields.object(
+            nodes: fields.object(
               {
                 enabled: fields.checkbox({ label: 'Tampilkan bagian ini', defaultValue: true }),
                 eyebrow: fields.text({ label: 'Teks kecil di atas judul', validation: { isRequired: true } }),
                 title: fields.text({ label: 'Judul bagian', validation: { isRequired: true } }),
                 intro: fields.text({ label: 'Paragraf pengantar', multiline: true, validation: { isRequired: true } }),
-                showAll: fields.text({ label: 'Label tombol lihat semua foto', validation: { isRequired: true } }),
-                hideAll: fields.text({ label: 'Label tombol sembunyikan foto', validation: { isRequired: true } }),
+                latestLabel: fields.text({ label: 'Label penanda node terbaru', validation: { isRequired: true } }),
+                archiveLabel: fields.text({ label: 'Judul daftar node sebelumnya', validation: { isRequired: true } }),
               },
-              { label: 'Galeri' }
+              { label: 'Sejarah Node', description: 'Foto dan tahun dibaca dari menu Sejarah Node.' }
             ),
             cta: fields.object(
               {
@@ -1714,38 +1707,33 @@ export default config({
         ),
       },
     }),
-    gallery: singleton({
-      label: 'Photo Gallery',
-      path: 'src/data/gallery',
+    node_history: singleton({
+      label: 'Sejarah Node',
+      path: 'src/data/nodes',
       format: { data: 'json' },
       schema: {
-        featured: fields.object(
-          {
-            image: fields.image({
-              label: 'Studio Photo',
-              description: 'Ekspor maksimal 1200 px lebar, format WebP atau AVIF, maksimal ±300 KB.',
-              directory: 'public/image/gallery',
-              publicPath: '/image/gallery/',
-              validation: { isRequired: true },
-            }),
-            alt: fields.text({ label: 'Alt Text', validation: { isRequired: true } }),
-            caption: fields.text({ label: 'Caption', validation: { isRequired: true } }),
-          },
-          { label: 'Featured Studio Photo' }
-        ),
-        photos: fields.array(
+        list: fields.array(
           fields.object({
+            year: fields.integer({
+              label: 'Tahun',
+              description: 'Tahun kepengurusan node, misal 2026.',
+              validation: { isRequired: true, min: 2000, max: 2100 },
+            }),
+            label: fields.text({ label: 'Nama Node', validation: { isRequired: true } }),
             image: fields.image({
-              label: 'Photo',
+              label: 'Foto studio',
               description: 'Ekspor maksimal 1200 px lebar, format WebP atau AVIF, maksimal ±300 KB.',
-              directory: 'public/image/gallery',
-              publicPath: '/image/gallery/',
+              directory: 'public/image/nodes',
+              publicPath: '/image/nodes/',
               validation: { isRequired: true },
             }),
             alt: fields.text({ label: 'Alt Text', validation: { isRequired: true } }),
-            caption: fields.text({ label: 'Caption', validation: { isRequired: true } }),
           }),
-          { label: 'Activity Photos', itemLabel: props => props.fields.caption.value || 'Photo' }
+          {
+            label: 'Node',
+            description: 'Urutan bebas; bagian terbaru selalu tampil paling besar.',
+            itemLabel: (props) => props.fields.label.value || 'Node',
+          }
         ),
       },
     }),
@@ -1916,7 +1904,7 @@ export default config({
         'positions',
         'members',
         'lecturers',
-        'gallery',
+        'node_history',
         'registration',
         'recruitment_results',
         'announcement',

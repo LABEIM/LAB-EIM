@@ -1277,7 +1277,7 @@ const stateDependent: Record<string, RegExp[]> = {
     /^announcementConfig\.(accepted|rejected)Message$/,
     /^selectionSteps\[\d+\]\.resultsConfig\.(passed|failed)Message$/,
   ],
-  'pages/home.json': [/^events\.empty$/, /^news\.empty$/],
+  'pages/home.json': [/^events\.empty$/, /^news\.empty$/, /^reveal\.(pending|pendingCta)$/],
   'pages/structure.json': [/^chart\.emptyPosition$/],
   'pages/courses.json': [/^list\.(emptyTitle|empty)$/],
   'pages/news.json': [/^list\.(emptyTitle|emptyDesc|contactLabel)$/, /^hero\.metaEmpty$/],

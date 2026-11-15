@@ -426,16 +426,17 @@ order: 1
 Deskripsi singkat mata kuliah dan cakupan praktikumnya.
 ```
 
-## 12. Photo Gallery (`src/data/gallery.json`)
-Photos shown on the Tentang Kami page. The featured studio portrait renders as a full-width band after the numbers; the activity photos render as a grid at the end of the page. The grid is hidden when there are no photos; the band is hidden when the featured photo is empty.
+## 12. Sejarah Node (`src/data/nodes.json`)
+Foto studio tiap Node kepengurusan, tampil di halaman Tentang Kami sebagai arsip per tahun. Node terbaru tampil paling besar dengan penanda "Node terbaru"; tahun-tahun sebelumnya tersusun sebagai kartu di bawahnya. Bagian ini hilang otomatis saat belum ada foto node.
 
 ### Fields Explanation
-* **`featured`** (Object): The special studio portrait.
-  * **`image`** (String): Photo path. Upload through Keystatic; files are written to `public/image/gallery/`.
-  * **`alt`** (String): Alt text for screen readers. Required.
-  * **`caption`** (String): Caption shown under the band.
-* **`photos`** (Array): Activity photos, each with `image`, `alt`, and `caption`. Three across at desktop, two at tablet, one at phone. The first six are shown; any extras wait behind a "Lihat semua foto" control that expands them in place.
+* **`list`** (Array): Daftar node. Urutan isian bebas — halaman selalu menaruh tahun terbesar paling depan.
+  * **`year`** (Integer): Tahun kepengurusan, misal `2026`.
+  * **`label`** (String): Nama node, misal `Node 2026`.
+  * **`image`** (String): Path foto studio. Upload melalui Keystatic; file ditulis ke `public/image/nodes/`.
+  * **`alt`** (String): Alt text untuk pembaca layar. Wajib.
 
 ### Notes
-* The shipped entry points at `public/image/gallery/placeholder.svg` so the layout is visible. Replace it with the real portrait and activity photos in Keystatic; the placeholder can stay in the repo.
-* Images are referenced by path, like member photos and news images, so keep files reasonably sized (roughly 1600px wide, under 400 KB) before uploading.
+* Satu foto studio per node. Baris yang fotonya belum diunggah dilewati, bukan ditampilkan sebagai gambar rusak.
+* Ekspor foto maksimal 1200 px lebar, format WebP atau AVIF, maksimal ±300 KB sebelum diunggah.
+

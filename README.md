@@ -38,7 +38,7 @@ For detailed instructions on local development, deployment, backend integrations
 1. **[Deployment & Hosting Guide](docs/DEPLOYMENT.md)**: Local development setup, Cloudflare Workers primary deployment, Keystatic Cloud configuration, Vercel backup hosting, and dual-hosting CI/CD pipeline.
 2. **[Brand & Email Assets Hub](docs/ASSETS.md)**: Public CDN endpoints, email-optimized logos, dark/light banners, and social icons for email templates.
 3. **[Registration Setup & Operations Guide](docs/REGISTRATION_SETUP.md)**: Google Apps Script (`code.gs`) backend setup, Google Drive permissions, recruitment pipeline stages, and candidate selection announcement management.
-4. **[Data & Content Configuration Guide](docs/CONFIG_GUIDE.md)**: Customizing laboratory roles, staff member profiles, courses, the photo gallery, site metadata, and Keystatic CMS singletons.
+4. **[Data & Content Configuration Guide](docs/CONFIG_GUIDE.md)**: Customizing laboratory roles, staff member profiles, courses, the node history photo archive, site metadata, and Keystatic CMS singletons.
 5. **[Design Token Reference](docs/DESIGN_TOKENS.md)**: Token layers, naming rules, preferred spacing/type subsets, the full token index, and the starter recipe for a new lab site.
 
 ---
@@ -47,7 +47,7 @@ For detailed instructions on local development, deployment, backend integrations
 
 - `src/content.config.ts`: Defines Zod schemas and loaders for static markdown content collections (`news`, `events`, `courses`).
 - `src/content/`: Contains static Markdown files representing news articles and laboratory events.
-- `src/data/`: Contains JSON files (`site.json`, `members.json`, `lecturers.json`, `positions.json`, `gallery.json`, `registration.json`) for website-wide metadata, the role model and team configuration, and the guide in `docs/CONFIG_GUIDE.md`.
+- `src/data/`: Contains JSON files (`site.json`, `members.json`, `lecturers.json`, `positions.json`, `nodes.json`, `registration.json`) for website-wide metadata, the role model and team configuration, and the guide in `docs/CONFIG_GUIDE.md`.
 - `src/pages/`: File-system routing directories for Astro.
 - `src/layouts/`: Base wrapper page layout (`Layout.astro`).
 - `src/components/`: Reusable components such as `Navbar.astro` and `Footer.astro`.

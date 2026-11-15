@@ -92,6 +92,11 @@ export function initTopologyField(): void {
   let targetY = 0;
   let pointerReady = false;
   let following = false;
+  /* Raw viewport coords from the last pointer move, resolved against the canvas
+     once per frame instead of reading layout inside the input handler. */
+  let pendingX = 0;
+  let pendingY = 0;
+  let pendingPointer = false;
 
   let visible = true;
   let reduced = reduceQuery.matches;
@@ -273,6 +278,7 @@ export function initTopologyField(): void {
     if (nodes.length === 0) return;
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
+    applyPointer();
     if (following && pointerReady) {
       smoothX += (targetX - smoothX) * 0.1;
       smoothY += (targetY - smoothY) * 0.1;
@@ -318,9 +324,17 @@ export function initTopologyField(): void {
 
   function onPointerMove(event: PointerEvent): void {
     if (!followQuery.matches || nodes.length === 0) return;
+    pendingX = event.clientX;
+    pendingY = event.clientY;
+    pendingPointer = true;
+  }
+
+  function applyPointer(): void {
+    if (!pendingPointer) return;
+    pendingPointer = false;
     const rect = canvas.getBoundingClientRect();
-    const x = event.clientX - rect.left;
-    const y = event.clientY - rect.top;
+    const x = pendingX - rect.left;
+    const y = pendingY - rect.top;
     if (x < 0 || y < 0 || x > rect.width || y > rect.height) {
       resetFollow();
       return;

@@ -51,11 +51,11 @@ function collectEntries(value: unknown, path = ''): { path: string; value: strin
 function decodeEntities(value: string): string {
   return value
     .replace(/&nbsp;/g, ' ')
-    .replace(/&amp;/g, '&')
     .replace(/&#0?39;/g, "'")
     .replace(/&quot;/g, '"')
     .replace(/&lt;/g, '<')
-    .replace(/&gt;/g, '>');
+    .replace(/&gt;/g, '>')
+    .replace(/&amp;/g, '&');
 }
 
 function normaliseHtml(html: string): string {
@@ -94,6 +94,11 @@ const chromeGroups: Record<Exclude<keyof ChromeData, 'ui'>, string[]> = {
 };
 
 console.log('🧪 Running Page Content Guard Tests...\n');
+
+console.log('0️⃣ Testing entity decoding:');
+// &amp; decodes last so `&amp;lt;` becomes `&lt;`, never a second `<`.
+assert(decodeEntities('&amp;lt;') === '&lt;', 'decodeEntities unescapes & once, not twice');
+assert(decodeEntities('&amp;amp;') === '&amp;', 'decodeEntities keeps a double-encoded &amp;amp; at one level');
 
 console.log('1️⃣ Testing chrome.json:');
 const chromePath = join(dataDir, 'chrome.json');

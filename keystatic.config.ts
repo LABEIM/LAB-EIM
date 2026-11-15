@@ -1,10 +1,16 @@
 import { config, fields, collection, singleton } from '@keystatic/core';
 import positionsData from './src/data/positions.json';
 import lecturersData from './src/data/lecturers.json';
+import membersData from './src/data/members.json';
 
 const lecturerOptions = lecturersData.list.map((lecturer) => ({
-  label: lecturer.name || lecturer.id,
+  label: `${lecturer.id} — ${lecturer.name || lecturer.id}`,
   value: lecturer.id,
+}));
+
+const memberOptions = membersData.list.map((member) => ({
+  label: `${member.id} — ${member.name || member.id}`,
+  value: member.id,
 }));
 
 const positionOptions = positionsData.list.map((position) => ({
@@ -507,10 +513,13 @@ export default config({
           options: lecturerOptions,
           defaultValue: lecturerOptions[0]?.value ?? '',
         }),
-        assistantIds: fields.array(fields.integer({ label: 'Member ID' }), {
-          label: 'Practicum assistants',
-          itemLabel: (props) => String(props.value),
-        }),
+        assistantIds: fields.array(
+          fields.select({ label: 'Assistant', options: memberOptions, defaultValue: memberOptions[0]?.value ?? '' }),
+          {
+            label: 'Practicum assistants',
+            itemLabel: (props) => props.value,
+          }
+        ),
         order: fields.integer({ label: 'Order', defaultValue: 0 }),
         content: fields.markdoc({ label: 'Description', extension: 'md' }),
       },
@@ -1500,7 +1509,7 @@ export default config({
       schema: {
         list: fields.array(
           fields.object({
-            id: fields.number({ label: 'ID' }),
+            id: fields.text({ label: 'Kode Asisten', description: 'Empat huruf kapital, unik, mis. DAYY. Dipakai sebagai ID di data mata kuliah.', validation: { isRequired: true } }),
             name: fields.text({ label: 'Name' }),
             role: positionField,
             image: fields.image({
@@ -1533,7 +1542,7 @@ export default config({
       schema: {
         list: fields.array(
           fields.object({
-            id: fields.text({ label: 'ID' }),
+            id: fields.text({ label: 'Kode Dosen', description: 'Tiga huruf kapital, unik, mis. MTK. Dipakai sebagai ID di data mata kuliah.' }),
             name: fields.text({ label: 'Name' }),
             role: positionField,
             image: fields.image({

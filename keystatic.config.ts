@@ -591,31 +591,25 @@ export default config({
               ],
               defaultValue: 'none',
             }),
-            image: fields.image({
-              label: 'Gambar pengantar',
-              description: 'Dipakai saat jenis media "Gambar".',
-              directory: 'public/assets/media',
-              publicPath: '/assets/media/',
+            imageUrl: fields.text({
+              label: 'Gambar pengantar (URL)',
+              description:
+                'Satu-satunya sumber gambar. Tempel tautan https (mis. https://cdn.eimlab.org/media/intro.webp) atau path di situs (mis. /assets/media/intro.webp).',
             }),
             backgroundUrl: fields.text({
               label: 'Tautan video latar',
               description:
                 'Tautan khusus untuk video latar (loop): YouTube, Vimeo, atau berkas video langsung (.mp4/.webm). Untuk berkas yang ikut diunggah ke situs, tulis path-nya, mis. /assets/media/intro.mp4; untuk berkas di luar situs, tempel tautan https R2/CDN. Encode dulu berkasnya: ffmpeg -i raw.mp4 -an -vf "scale=1920:-2" -c:v libx264 -crf 23 -preset slow -movflags +faststart intro.mp4 (target 6–10 detik, 2–4 MB). Bila kosong, tautan pemutar dipakai sebagai latar.',
             }),
-            poster: fields.image({
-              label: 'Poster video',
-              description: 'Gambar yang tampil sebelum video diputar.',
-              directory: 'public/assets/media',
-              publicPath: '/assets/media/',
+            poster: fields.text({
+              label: 'Poster video (URL)',
+              description:
+                'Tempel tautan https (mis. https://cdn.eimlab.org/media/poster.webp) atau path di situs (mis. /assets/media/poster.webp). Gambar yang tampil sebelum video diputar.',
             }),
             videoUrl: fields.text({
               label: 'Tautan video eksternal',
               description:
                 'Tempel tautan YouTube, Vimeo, atau Google Drive untuk pemutar saat video diklik. Tautan berkas video langsung (.mp4/.webm) dipakai sebagai latar bila tautan latar kosong. Untuk Google Drive, pastikan berkas dibagikan publik.',
-            }),
-            imageUrl: fields.text({
-              label: 'Tautan gambar eksternal',
-              description: 'Tempel tautan gambar eksternal (https). Diutamakan di atas gambar yang diunggah.',
             }),
             mediaAlt: fields.text({
               label: 'Teks alternatif media',

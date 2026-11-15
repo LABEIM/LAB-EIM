@@ -359,17 +359,15 @@ assert(
   'home.reveal.mediaKind is none, image, or video'
 );
 
-// The pasted image link wins over the upload, and video comes from links only,
-// so a file is only required when the matching URL is empty. The URL itself is
-// checked further down.
-type RevealMedia = Pick<HomePageData['reveal'], 'mediaKind' | 'mediaAlt' | 'image' | 'poster' | 'imageUrl' | 'backgroundUrl' | 'videoUrl'>;
+// The pasted image link is the only image source, and video comes from links
+// only. The URL itself is checked further down.
+type RevealMedia = Pick<HomePageData['reveal'], 'mediaKind' | 'mediaAlt' | 'poster' | 'imageUrl' | 'backgroundUrl' | 'videoUrl'>;
 function assertRevealMedia(value: RevealMedia | undefined) {
   if (value?.mediaKind === 'image' || value?.mediaKind === 'video') {
     assert(Boolean(value.mediaAlt?.trim()), `home.reveal.mediaAlt is set for ${value.mediaKind} media`);
   }
-  if (value?.mediaKind === 'image' && !value.imageUrl?.trim()) {
-    assert(typeof value.image === 'string' && value.image.trim().length > 0, 'home.reveal.image is a non-empty string');
-    assert(existsSync(publicFile(value.image)), 'home.reveal.image resolves under public/');
+  if (value?.mediaKind === 'image') {
+    assert(resolveMediaSrc(value.imageUrl) !== null, 'home.reveal.imageUrl is set for image media');
   }
   if (value?.mediaKind === 'video') {
     assert(
@@ -378,7 +376,7 @@ function assertRevealMedia(value: RevealMedia | undefined) {
     );
   }
   if (value?.poster) {
-    assert(existsSync(publicFile(value.poster)), 'home.reveal.poster resolves under public/');
+    assertMedia(value.poster, 'home.reveal.poster');
   }
 }
 assertRevealMedia(reveal);
@@ -393,6 +391,10 @@ const revealComponent = readFileSync(join(root, 'src/components/home/EimReveal.a
 assert(
   revealComponent.includes("content.mediaKind ?? 'none'"),
   "EimReveal treats a missing mediaKind as 'none'"
+);
+assert(
+  !/content\.image\b/.test(revealComponent),
+  'EimReveal no longer reads the removed reveal.image upload'
 );
 assert(
   revealComponent.includes('allow="autoplay; encrypted-media; picture-in-picture; fullscreen"'),
@@ -559,7 +561,7 @@ if (reveal?.backgroundUrl) {
   );
 }
 if (reveal?.imageUrl) {
-  assert(resolveExternalImageUrl(reveal.imageUrl) !== null, 'home.reveal.imageUrl resolves to an https image');
+  assert(resolveMediaSrc(reveal.imageUrl) !== null, 'home.reveal.imageUrl resolves to an https image');
 }
 
 console.log('\n4️⃣c Testing external media URL resolution:');

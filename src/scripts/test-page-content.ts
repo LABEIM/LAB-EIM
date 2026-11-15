@@ -1330,7 +1330,7 @@ if (!existsSync(clientDir)) {
 } else {
   const aboutHtml = readFileSync(join(clientDir, 'about/index.html'), 'utf8');
   const featuredScale = String(featuredData.height / 100);
-  const featuredLabel = about.sections.featuredPhoto.label;
+  const featuredLabel = about.sections?.featuredPhoto?.label ?? '';
   assert(
     aboutHtml.includes(`--photo-scale:${featuredScale}`),
     'about page renders the featured photo band at the configured height'

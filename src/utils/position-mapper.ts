@@ -65,17 +65,19 @@ export function countPeopleByGroup<T extends { role: string }>(
 }
 
 /**
- * Dosen members are the plain members plus course coordinators: a coordinator
- * is still a lab member, so the chart counts them once as a member and notes
- * the overlap instead of adding a second card.
+ * Overlap for one dosen card: how many of the card's holders are also a course
+ * PIC. Any dosen role can coordinate a course, not only the PIC position.
  */
-export function summarizeDosenMembers(people: Array<{ role: string }>): {
-  total: number;
-  coordinators: number;
-} {
-  const coordinators = people.filter((person) => person.role === 'koordinator-matkul').length;
-  const members = people.filter((person) => person.role === 'dosen-anggota').length;
-  return { total: members + coordinators, coordinators };
+export function summarizeDosenCard(
+  people: Array<{ id: string; role: string }>,
+  roles: readonly string[],
+  coordinatorIds: ReadonlySet<string>,
+): { total: number; coordinators: number } {
+  const ids = people.filter((person) => roles.includes(person.role)).map((person) => person.id);
+  return {
+    total: ids.length,
+    coordinators: ids.filter((id) => coordinatorIds.has(id)).length,
+  };
 }
 
 export interface ChartNode {

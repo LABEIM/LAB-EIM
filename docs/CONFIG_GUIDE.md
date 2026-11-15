@@ -453,3 +453,29 @@ Studio photos for each management Node, shown on the Tentang Kami page as a year
 ### Notes
 * One studio photo per node. A row saved before its upload lands is skipped rather than rendered as a broken image.
 * Export photos at most 1200 px wide, WebP or AVIF, roughly 300 KB or less before uploading.
+
+## 13. Featured Photo (`src/data/featured.json`)
+
+The full-bleed photo band on the Tentang Kami page, between the structure link and Visi & Misi. Its top and bottom edges fade into the page, and its height is set per photo rather than in code. The section hides itself when no photo is set.
+
+### Fields Explanation
+* **`image`** (String): Photo path. Upload through Keystatic; files are written to `public/image/featured/`.
+* **`alt`** (String): Alt text for screen readers. Required.
+* **`caption`** (String): Caption under the photo, rendered in mono uppercase. Required.
+* **`height`** (Integer): Photo height as a percentage of the band's base height, `50`–`150`. `100` is the default; `90` makes the photo ten percent shorter, `150` makes it half again as tall. Below 640px wide the height is capped at `120%`, so a phone does not get a near-fullscreen crop.
+
+### Featured Photo Template
+```json
+{
+  "image": "/image/featured/image.avif",
+  "alt": "Foto Company Visit EIM to Huawei 2026",
+  "caption": "Company Visit EIM to Huawei 2026",
+  "height": 100
+}
+```
+
+### Notes
+* The photo fills the band width, so the crop depends on the screen: wide screens cut the top and bottom, narrow screens cut the sides. Keep the subject away from every edge.
+* The band also has a "Foto utama" toggle and a screen-reader label under Bagian halaman on the Tentang Kami page; the toggle hides the band without deleting the photo.
+* Export photos at most 1600 px wide, WebP or AVIF, roughly 300 KB or less before uploading.
+

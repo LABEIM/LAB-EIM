@@ -5,13 +5,14 @@ import '../styles/pages/home-eim.css';
 import { getLocaleFromUrl, getLocalizedJsonData } from '../utils/i18n';
 import { countPeopleByGroup, parsePositions } from '../utils/position-mapper';
 import { getCurrentRecruitmentStage } from '../utils/recruitment';
-import type { AboutData, ChromeData, Lecturer, Member, NodeData, RecruitmentConfig, SiteData } from '../utils/types';
+import type { AboutData, ChromeData, FeaturedPhotoData, Lecturer, Member, NodeData, RecruitmentConfig, SiteData } from '../utils/types';
 import AboutHero from '../components/about/AboutHero.astro';
 import AboutProfile from '../components/about/AboutProfile.astro';
 import EimVisiMisi from '../components/home/EimVisiMisi.astro';
 import EimLabNumbers from '../components/home/EimLabNumbers.astro';
 import EimCTA from '../components/home/EimCTA.astro';
 import NodeHistory from '../components/about/NodeHistory.astro';
+import FeaturedPhoto from '../components/about/FeaturedPhoto.astro';
 import EimSectionNav from '../components/home/EimSectionNav.astro';
 import { sectionOn } from '../utils/page-content';
 
@@ -24,6 +25,7 @@ const lecturersData = getLocalizedJsonData<{ list: Lecturer[] }>('lecturers', lo
 const positionsData = getLocalizedJsonData<{ list: unknown }>('positions', locale);
 const registrationConfig = getLocalizedJsonData<Partial<RecruitmentConfig>>('registration', locale);
 const nodes = getLocalizedJsonData<NodeData>('nodes', locale).list ?? [];
+const featured = getLocalizedJsonData<FeaturedPhotoData>('featured', locale);
 const recruitmentStage = getCurrentRecruitmentStage(registrationConfig);
 
 const positions = parsePositions(positionsData);
@@ -74,6 +76,9 @@ const sectionItems = [
           {sections.teamLink.label} <span aria-hidden="true">→</span>
         </a>
       </div>
+    )}
+    {sectionOn(sections.featuredPhoto) && featured.image && (
+      <FeaturedPhoto photo={featured} content={sections.featuredPhoto} />
     )}
     {sectionOn(sections.visiMisi) && (
       <EimVisiMisi

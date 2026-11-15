@@ -4,7 +4,7 @@ import { fileURLToPath } from 'node:url';
 import { buildBackgroundEmbed, buildPlayerEmbed, planRevealVideo, resolveExternalImageUrl, resolveVideoUrl } from '../utils/media';
 import { sectionNumber, sectionOn, splitWordCount } from '../utils/page-content';
 import type { RecruitmentConfig } from '../utils/types';
-import type { AboutData, ChromeData, ContactData, CourseDetailPageData, CoursesPageData, EventDetailPageData, EventsPageData, HomePageData, Lecturer, Member, NewsDetailPageData, NewsPageData, NodeData, StructurePageData } from '../utils/types';
+import type { AboutData, ChromeData, ContactData, CourseDetailPageData, CoursesPageData, EventDetailPageData, EventsPageData, FeaturedPhotoData, HomePageData, Lecturer, Member, NewsDetailPageData, NewsPageData, NodeData, StructurePageData } from '../utils/types';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '../..');
 const dataDir = join(root, 'src/data');
@@ -230,6 +230,19 @@ for (const [index, node] of nodesData.list.entries()) {
   assert(typeof node.alt === 'string' && node.alt.trim().length > 0, `node ${index} alt is a non-empty string`);
   assert(existsSync(publicFile(node.image)), `node ${index} image resolves under public/`);
 }
+
+console.log('\n3️⃣e Testing src/data/featured.json:');
+const featuredPath = join(dataDir, 'featured.json');
+assert(existsSync(featuredPath), 'featured.json exists');
+const featuredData = JSON.parse(readFileSync(featuredPath, 'utf8')) as FeaturedPhotoData;
+assert(typeof featuredData.image === 'string' && featuredData.image.trim().length > 0, 'featured.image is a non-empty string');
+assert(existsSync(publicFile(featuredData.image)), 'featured.image resolves under public/');
+assert(typeof featuredData.alt === 'string' && featuredData.alt.trim().length > 0, 'featured.alt is a non-empty string');
+assert(typeof featuredData.caption === 'string' && featuredData.caption.trim().length > 0, 'featured.caption is a non-empty string');
+assert(
+  Number.isInteger(featuredData.height) && featuredData.height >= 50 && featuredData.height <= 150,
+  'featured.height is an integer between 50 and 150'
+);
 
 console.log('\n3️⃣c Testing member and lecturer portraits:');
 // Placeholder rows ("Nama Asisten" / "Nama Dosen") ship with an empty image and
@@ -675,13 +688,13 @@ assert(!Object.prototype.hasOwnProperty.call(about, 'title'), 'about carries no 
 
 assert(Boolean(about.meta?.title?.trim()), 'about.meta.title is a non-empty string');
 
-const aboutSections = ['hero', 'profile', 'stats', 'teamLink', 'visiMisi', 'nodes', 'cta'] as const;
+const aboutSections = ['hero', 'profile', 'stats', 'teamLink', 'featuredPhoto', 'visiMisi', 'nodes', 'cta'] as const;
 for (const key of aboutSections) {
   const section = about.sections?.[key];
   assert(Boolean(section) && typeof section === 'object', `about.sections.${key} exists`);
 }
 
-for (const key of ['profile', 'stats', 'teamLink', 'visiMisi', 'nodes', 'cta'] as const) {
+for (const key of ['profile', 'stats', 'teamLink', 'featuredPhoto', 'visiMisi', 'nodes', 'cta'] as const) {
   assert(typeof about.sections?.[key]?.enabled === 'boolean', `about.sections.${key}.enabled is a boolean`);
 }
 const aboutHero = about.sections?.hero;
@@ -718,7 +731,7 @@ assert(
   'about.sections.stats carries no stats array'
 );
 
-for (const key of ['teamLink'] as const) {
+for (const key of ['teamLink', 'featuredPhoto'] as const) {
   const value = about.sections?.[key]?.label;
   assert(typeof value === 'string' && value.trim().length > 0, `about.sections.${key}.label is a non-empty string`);
 }
@@ -1310,6 +1323,17 @@ const stateDependent: Record<string, RegExp[]> = {
 if (!existsSync(clientDir)) {
   console.log('  ⚠️ SKIPPED: dist/client is missing. Run `PUBLIC_SHOW_AUDIT_CONTENT=true pnpm run build` first to enable this guard.');
 } else {
+  const aboutHtml = readFileSync(join(clientDir, 'about/index.html'), 'utf8');
+  const featuredScale = String(featuredData.height / 100);
+  assert(
+    aboutHtml.includes(`--photo-scale:${featuredScale}`),
+    'about page renders the featured photo band at the configured height'
+  );
+  assert(
+    aboutHtml.includes(`src="${featuredData.image}"`),
+    'about page renders the configured featured photo'
+  );
+
   // Production builds hide the audit sample content, so list pages only render their
   // empty state; skip the copy that belongs to the other branch of that same page.
   const contentBranch: Record<string, { marker: string; content: RegExp }> = {

@@ -41,6 +41,10 @@
       "enabled": true,
       "label": "Lihat seluruh struktur"
     },
+    "featuredPhoto": {
+      "enabled": true,
+      "label": "Foto studio tim"
+    },
     "visiMisi": {
       "enabled": true,
       "heading": "Visi & Misi"

@@ -386,6 +386,13 @@ export interface NodeData {
   list: NodeItem[];
 }
 
+export interface FeaturedPhotoData {
+  image: string;
+  alt: string;
+  caption: string;
+  height: number;
+}
+
 export interface SiteData {
   name: string;
   subName: string;
@@ -905,6 +912,10 @@ export interface AboutData {
       coursesValue?: number | null;
     };
     teamLink: {
+      enabled: boolean;
+      label: string;
+    };
+    featuredPhoto: {
       enabled: boolean;
       label: string;
     };

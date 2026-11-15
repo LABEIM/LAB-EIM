@@ -244,7 +244,6 @@ This file configures the global branding, tab information, and social links of t
 * **`defaultDescription`** (String): Fallback meta description for search engines.
 * **`defaultKeywords`** (String): Fallback meta keywords list for SEO.
 * **`favicon`** (String): Favicon/tab icon, as an https URL or a root-relative path for a file under `public/` (see **Media fields** above).
-* **`logo`** (String): Path to the logo image.
 * **`timezone`** (String): Global IANA timezone name for the website (e.g. `"Asia/Jakarta"`).
 * **`timezoneOffset`** (String): Global UTC offset for the website (e.g. `"+07:00"` for WIB).
 * **`contact`** (Object):
@@ -263,8 +262,7 @@ This file configures the global branding, tab information, and social links of t
   "defaultTitle": "EIM Lab - Enterprise Infrastructure Management",
   "defaultDescription": "Website Resmi Laboratorium Enterprise Infrastructure Management (EIM) Telkom University.",
   "defaultKeywords": "EIM, EIM Lab, Telkom University, Enterprise Infrastructure Management, Laboratorium Jaringan, Cloud Computing, Praktikum Jaringan",
-  "favicon": "/image/eim/logo_EIM.avif",
-  "logo": "/image/eim/logo_EIM.avif",
+  "favicon": "/image/eim/favicon.png",
   "timezone": "Asia/Jakarta",
   "timezoneOffset": "+07:00",
   "contact": {

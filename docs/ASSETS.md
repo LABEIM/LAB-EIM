@@ -16,7 +16,6 @@ https://eimlab.org/assets/
 
 Site media may also be served from `https://cdn.eimlab.org/…`; any such URL can be pasted directly into a media field (logo, favicon, photo, poster) in Keystatic. See **Media fields** in `docs/CONFIG_GUIDE.md` for the accepted forms.
 
-
 ---
 
 ## Email-Optimized Assets (`/assets/email/`)

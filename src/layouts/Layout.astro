@@ -69,12 +69,12 @@ try {
     {/* Dynamic favicon type helper */}
     {(() => {
       const fav = resolveMediaSrc(siteData.favicon) ?? '/image/eim/favicon.png';
-      const pathname = fav.split('?')[0];
+      const pathname = fav.split(/[?#]/)[0].toLowerCase();
       let type = 'image/x-icon';
       if (pathname.endsWith('.png')) type = 'image/png';
       else if (pathname.endsWith('.svg')) type = 'image/svg+xml';
       else if (pathname.endsWith('.avif')) type = 'image/avif';
-      return <link rel="icon" type={type} href={fav} />;
+      return <link rel="icon" type={type} href={fav} referrerpolicy="no-referrer" />;
     })()}
     
     {/* Preconnect to Font origins for early connection establishment */}

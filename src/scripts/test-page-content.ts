@@ -1,7 +1,7 @@
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { dirname, join, resolve, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { buildBackgroundEmbed, buildPlayerEmbed, planRevealVideo, resolveExternalImageUrl, resolveMediaSrc, resolveVideoUrl } from '../utils/media';
+import { buildBackgroundEmbed, buildPlayerEmbed, divisionThumbPath, planRevealVideo, resolveExternalImageUrl, resolveMediaSrc, resolveVideoUrl } from '../utils/media';
 import { sectionNumber, sectionOn, splitWordCount } from '../utils/page-content';
 import type { RecruitmentConfig } from '../utils/types';
 import type { AboutData, ChromeData, ContactData, CourseDetailPageData, CoursesPageData, EventDetailPageData, EventsPageData, FeaturedPhotoData, HomePageData, Lecturer, Member, NewsDetailPageData, NewsPageData, NodeData, StructurePageData } from '../utils/types';
@@ -210,6 +210,19 @@ for (const key of chromeGroups.brand) {
   assert(typeof value === 'string' && value.trim().length > 0, `chrome.brand.${key} is set`);
   if (typeof value === 'string') assertMedia(value, `chrome.brand.${key}`);
 }
+const homeHtmlPath = join(root, 'dist/client/index.html');
+const brandHorizontal = chrome.brand?.logoHorizontal;
+if (typeof brandHorizontal === 'string' && existsSync(homeHtmlPath)) {
+  assert(
+    readFileSync(homeHtmlPath, 'utf8').includes(`class="logo-brand" src="${resolveMediaSrc(brandHorizontal)}"`),
+    'home page renders the brand logo through the media resolver'
+  );
+}
+const layoutSource = readFileSync(join(root, 'src/layouts/Layout.astro'), 'utf8');
+assert(
+  layoutSource.includes('fav.split(/[?#]/)[0].toLowerCase()'),
+  'favicon type detection ignores a query string, a fragment, and case'
+);
 
 console.log('\n3️⃣b Testing site favicon:');
 const siteData = JSON.parse(readFileSync(join(dataDir, 'site.json'), 'utf8')) as { favicon?: string };
@@ -380,7 +393,7 @@ function assertRevealMedia(value: RevealMedia | undefined) {
   }
 }
 assertRevealMedia(reveal);
-// A page using only the pasted link must pass; this is the documented precedence.
+// A page carrying only the image link must pass.
 assertRevealMedia({ mediaKind: 'image', mediaAlt: 'intro', imageUrl: 'https://cdn.example.com/intro.jpg' });
 assertRevealMedia({ mediaKind: 'video', mediaAlt: 'intro', videoUrl: 'https://youtu.be/dQw4w9WgXcQ' });
 assertRevealMedia({ mediaKind: 'video', mediaAlt: 'intro', backgroundUrl: 'https://youtu.be/dQw4w9WgXcQ' });
@@ -725,6 +738,16 @@ assert(
   'root-relative path trimmed and accepted'
 );
 assertMedia('https://cdn.eimlab.org/media/probe.webp', 'assertMedia accepts an https media URL');
+assert(
+  resolveMediaSrc('/image/eim/EIM 2.png') === '/image/eim/EIM 2.png',
+  'root-relative path with a space is accepted'
+);
+assert(divisionThumbPath('https://cdn.eimlab.org/division/foto.webp') === null, 'a CDN portrait gets no thumbnail path');
+assert(
+  divisionThumbPath('/image/division/list/0/image.avif') === '/image/division/thumbs/list/0/image.avif',
+  'a local portrait maps to the thumbnail tree'
+);
+assert(divisionThumbPath(null) === null, 'a missing portrait gets no thumbnail path');
 for (const rejected of [
   'image/x.avif',
   './image/x.avif',
@@ -1417,7 +1440,7 @@ if (!existsSync(clientDir)) {
     'about page serves the featured photo without a referrer'
   );
   assert(
-    /class="lecturer-card-media"><img[^>]*referrerpolicy="no-referrer"/.test(readFileSync(join(clientDir, 'structure/index.html'), 'utf8')),
+    /class="lecturer-card-media"><img src="(?!\/image\/placeholder-avatar\.svg")[^"]+"[^>]*referrerpolicy="no-referrer"/.test(readFileSync(join(clientDir, 'structure/index.html'), 'utf8')),
     'structure page serves portraits without a referrer'
   );
 

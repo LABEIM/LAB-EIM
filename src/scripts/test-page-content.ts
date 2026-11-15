@@ -561,6 +561,8 @@ for (const [input, expected] of [
   ['https://cdn.example.com/intro.mp4?token=x', 'https://cdn.example.com/intro.mp4?token=x'],
   ['https://cdn.example.com/intro.WEBM', 'https://cdn.example.com/intro.WEBM'],
   ['https://cdn.example.com/intro.ogv', 'https://cdn.example.com/intro.ogv'],
+  ['/assets/media/intro.mp4', '/assets/media/intro.mp4'],
+  ['  /assets/media/intro.webm  ', '/assets/media/intro.webm'],
 ] as [string, string][]) {
   const resolved = resolveVideoUrl(input);
   assert(resolved?.kind === 'video' && resolved.src === expected, `direct video URL resolves: ${input}`);
@@ -571,6 +573,10 @@ for (const input of [
   'javascript:alert(1)',
   'data:video/mp4;base64,AAAA',
   '//www.youtube.com/watch?v=dQw4w9WgXcQ',
+  '//cdn.example.com/intro.mp4',
+  '/\\cdn.example.com/intro.mp4',
+  '/assets/media/intro.txt',
+  '/assets/media/../secret.mp4',
   'https://youtube.com.evil.test/watch?v=dQw4w9WgXcQ',
   'https://www.youtube.com/watch?v=abc',
   'https://vimeo.com/not-a-number',

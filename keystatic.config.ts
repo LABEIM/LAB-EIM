@@ -1730,7 +1730,7 @@ export default config({
         caption: fields.text({ label: 'Caption', validation: { isRequired: true } }),
         height: fields.integer({
           label: 'Tinggi foto (%)',
-          description: '50–150. 100 = tinggi default; 90 = sepuluh persen lebih pendek, 150 = setengah kali lebih tinggi.',
+          description: '50–150. 100 = tinggi default; 90 = sepuluh persen lebih pendek, 150 = setengah kali lebih tinggi. Di ponsel, tinggi dibatasi 120% agar foto tidak terpotong berlebihan.',
           defaultValue: 100,
           validation: { isRequired: true, min: 50, max: 150 },
         }),

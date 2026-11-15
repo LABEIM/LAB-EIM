@@ -100,6 +100,13 @@ html {
   );
 }
 
+/* Phones: a tall percentage makes the band taller than it is wide, which crops the group away. */
+@media (max-width: 640px) {
+  .eim-photo-band {
+    height: calc(clamp(260px, 58vh, 720px) * min(var(--photo-scale, 1), 1.2));
+  }
+}
+
 /* == Hero == */
 
 .eim-hero {

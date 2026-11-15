@@ -26,13 +26,15 @@ Every page's visible copy lives in JSON, editable under **Halaman** in Keystatic
 
 **Hiding a section:** every non-hero section object has an `enabled` boolean. Set it to `false` in Keystatic to remove the section from the page; section nav dots read the same flag, so the dot disappears too. Numbered sections (`01 — …`) count only the visible sections, so hiding one leaves no gap in the sequence. Hero sections have no toggle because they hold the page `<h1>`. Upload fields on detail pages are collection fields, not page copy; only their headings and enabled switches live in the `*-detail.json` files.
 
-**Intro media (Beranda):** the `reveal` section shows one of three states chosen by `mediaKind` — `none` keeps the placeholder text, `image` shows an image, `video` shows a video. The `video` state takes links only, with a fixed precedence for the background: `backgroundUrl` (YouTube, Vimeo, Google Drive, a direct `.mp4`/`.webm`/`.ogv` file such as an R2/CDN URL, or a root-relative path such as `/assets/media/intro.mp4` for a file committed under `public/`), then a direct file in `videoUrl`. The optional `backgroundUrl` is the way to pair a native or provider background with a separate provider player — for example a short YouTube loop behind a different full YouTube video. A `videoUrl` link to YouTube, Vimeo, or Google Drive is the player opened by the overlay, and only a provider link produces the overlay and modal; `backgroundUrl` never opens a modal. If no background link is set, a provider `videoUrl` serves as both the background and the player; if only a direct file is set, the native player stays inline with its own controls and no modal. `poster` is the still frame shown before a direct-file background starts. In short: **isi `backgroundUrl` untuk latar berjalan otomatis; tempel tautan YouTube/Vimeo/Drive di `videoUrl` untuk pemutar saat diklik; jika hanya `videoUrl`, tautan itu menjadi latar sekaligus pemutar.** An external image may come from any https host at the editor's choice (the editor is trusted with all copy) and is served with `referrerpolicy="no-referrer"`; video links are restricted to those providers or a direct video file, and IP-literal hosts are rejected. The intro image upload lands in `public/assets/media/`. A pasted embed (YouTube or Vimeo) autoplays muted and looping inside the section; clicking it opens a full player with sound and normal controls in a modal, which stops playback when closed. Google Drive previews cannot autoplay or loop, so they show their own preview player in the section and in the modal. An absent `mediaKind` falls back to `none`, and the copy guard (`pnpm test`) requires a non-empty `mediaAlt` whenever `mediaKind` is `image` or `video`, plus a resolvable URL whenever `imageUrl`, `backgroundUrl`, or `videoUrl` is set (Keystatic itself does not mark these fields required).
+**Media fields:** every media field (brand logos, favicon, member and lecturer photos, featured and node photos, intro image and poster) accepts either an https URL — for example `https://cdn.eimlab.org/…` — or a root-relative path for a file committed under `public/`, such as `/image/featured/image.avif`. Values are resolved by `resolveMediaSrc`; a bare host (`cdn.eimlab.org/x.png`), a protocol-relative `//host` URL, or a `data:` URI renders nothing instead of loading from another origin. The copy guard in `pnpm test` accepts either form and still checks that a root-relative path exists under `public/`.
+
+**Intro media (Beranda):** the `reveal` section shows one of three states chosen by `mediaKind` — `none` keeps the placeholder text, `image` shows an image, `video` shows a video. The `video` state takes links only, with a fixed precedence for the background: `backgroundUrl` (YouTube, Vimeo, Google Drive, a direct `.mp4`/`.webm`/`.ogv` file such as an R2/CDN URL, or a root-relative path such as `/assets/media/intro.mp4` for a file committed under `public/`), then a direct file in `videoUrl`. The optional `backgroundUrl` is the way to pair a native or provider background with a separate provider player — for example a short YouTube loop behind a different full YouTube video. A `videoUrl` link to YouTube, Vimeo, or Google Drive is the player opened by the overlay, and only a provider link produces the overlay and modal; `backgroundUrl` never opens a modal. If no background link is set, a provider `videoUrl` serves as both the background and the player; if only a direct file is set, the native player stays inline with its own controls and no modal. `poster` is the still frame shown before a direct-file background starts. In short: **isi `backgroundUrl` untuk latar berjalan otomatis; tempel tautan YouTube/Vimeo/Drive di `videoUrl` untuk pemutar saat diklik; jika hanya `videoUrl`, tautan itu menjadi latar sekaligus pemutar.** An external image may come from any https host at the editor's choice (the editor is trusted with all copy) and is served with `referrerpolicy="no-referrer"`; video links are restricted to those providers or a direct video file, and IP-literal hosts are rejected. `imageUrl` is the only image source — there is no upload field for the intro image — and it and `poster` accept the same https-or-path form as every other media field. A pasted embed (YouTube or Vimeo) autoplays muted and looping inside the section; clicking it opens a full player with sound and normal controls in a modal, which stops playback when closed. Google Drive previews cannot autoplay or loop, so they show their own preview player in the section and in the modal. An absent `mediaKind` falls back to `none`, and the copy guard (`pnpm test`) requires a non-empty `mediaAlt` whenever `mediaKind` is `image` or `video`, plus a resolvable URL whenever `imageUrl`, `backgroundUrl`, or `videoUrl` is set (Keystatic itself does not mark these fields required).
 
 **Preparing the background loop:** re-encode before committing — `ffmpeg -i raw.mp4 -an -vf "scale=1920:-2" -c:v libx264 -crf 23 -preset slow -movflags +faststart intro.mp4`. `-an` drops the audio track (the loop plays muted), `+faststart` moves the index to the front so playback can begin before the download finishes, and `-crf 23` is a good quality/size point for a background. Target 6–10 seconds and 2–4 MB; keep the clip short rather than lowering quality further. Cut the clip so its last frame flows into its first, otherwise the native `<video loop>` restart will still show a jump.
 
 **Empty states and filter nouns:** each listing page has its own `list` copy. Mata Kuliah uses `list.emptyTitle` with `list.empty` as the description; Artikel and Kegiatan use `list.emptyTitle` / `list.emptyDesc`. Artikel and Kegiatan also name their content type in `list.item` ("Artikel", "Kegiatan"), which fills the filter results line ("Menampilkan 1-6 dari 12 Artikel").
 
-**Shared strings:** navigation, footer, the closing CTA, brand assets, and cross-page labels (for example "Lihat Detail", "Mendatang", statistics labels, coordinator/SKS/practicum labels) live once in `chrome.json`. Change them there rather than in a page file.
+**Shared strings:** navigation, footer, the closing CTA, brand assets, and cross-page labels (for example "Lihat Detail", "Mendatang", statistics labels, coordinator/SKS/practicum labels) live once in `chrome.json`. Change them there rather than in a page file. The two brand logo fields (`brand.logoHorizontal`, `brand.logoIcon`) follow the **Media fields** rule above: an https URL or a root-relative path.
 
 **Verifying copy:** the copy-render guard in `pnpm test` compares every JSON string against the built HTML, so run a build first (`pnpm run build && pnpm test`). To also check the audit sample content, build with `PUBLIC_SHOW_AUDIT_CONTENT=true`.
 
@@ -85,7 +87,7 @@ This file lists student members and assistants. On `/structure` each person rend
 * **`id`** (String): The member's unique 4-letter assistant code (uppercase, e.g. `DAYY`). Course assistant lists reference these codes, and the code appears next to the role on `/structure` and the course detail page.
 * **`name`** (String): Full name of the assistant.
 * **`role`** (String): A position id from `positions.json` (Keystatic shows it as a Position dropdown).
-* **`image`** (String, Optional): Path to the member's avatar image starting from `/image/`. Upload it through Keystatic's **Foto** field (files are written to `public/image/division/`). Clearing the field omits the `image` key entirely and the card falls back to the member's initials. Crop the photo to the avatar tile's aspect ratio before uploading.
+* **`image`** (String, Optional): Member photo, as an https URL or a root-relative path for a file under `public/` (see **Media fields** above). Paste it into Keystatic's **Foto (URL)** field. Clearing the field omits the `image` key entirely and the card falls back to the member's initials. Crop the photo to the avatar tile's aspect ratio first.
 * **`scale`** (String, Optional): CSS transform scale value for positioning adjustments in the square avatar frame (e.g. `"2.5"`, `"3"`, `"1"`). Only needed for an un-cropped upload; a pre-cropped photo uses `"1"`.
 * **`position`** (String, Optional): CSS transform-origin values to focus/center the avatar face inside the square avatar crop (e.g. `"center 32%"`, `"50% 15%"`). Only needed for an un-cropped upload; a pre-cropped photo uses `"center"`.
 
@@ -241,7 +243,7 @@ This file configures the global branding, tab information, and social links of t
 * **`defaultTitle`** (String): The default window/tab title for pages that do not override it.
 * **`defaultDescription`** (String): Fallback meta description for search engines.
 * **`defaultKeywords`** (String): Fallback meta keywords list for SEO.
-* **`favicon`** (String): Path to the favicon/tab icon.
+* **`favicon`** (String): Favicon/tab icon, as an https URL or a root-relative path for a file under `public/` (see **Media fields** above).
 * **`logo`** (String): Path to the logo image.
 * **`timezone`** (String): Global IANA timezone name for the website (e.g. `"Asia/Jakarta"`).
 * **`timezoneOffset`** (String): Global UTC offset for the website (e.g. `"+07:00"` for WIB).
@@ -324,7 +326,7 @@ Site administrators can toggle and configure a top global announcement banner th
 ## 9. Lecturers (`src/data/lecturers.json`)
 This file holds the dosen entries. Each entry's `role` is a position id from `positions.json`, so a lecturer appears in the matching `/structure` section.
 
-Manage it via **Keystatic Admin > Singletons > Lecturers**. Upload the portrait through the **Foto** field (files are written to `public/image/division/`); clearing the field omits the `image` key and the card falls back to the placeholder avatar.
+Manage it via **Keystatic Admin > Singletons > Lecturers**. Paste the portrait's https URL or site path into the **Foto (URL)** field; clearing the field omits the `image` key and the card falls back to the placeholder avatar.
 
 ### Fields Explanation
 * **`id`** (String): Unique 3-letter lecturer code (uppercase, e.g. `MTK`). Course `coordinatorId` values reference these codes, and the code appears next to the role on `/structure` and the course detail page.
@@ -342,7 +344,7 @@ Manage it via **Keystatic Admin > Singletons > Lecturers**. Upload the portrait 
     "position": "center"
   }
 ```
-An empty **Foto** field is saved as an omitted `image` key; the card then shows the placeholder avatar.
+An empty **Foto (URL)** field is saved as an omitted `image` key; the card then shows the placeholder avatar.
 
 ## 10. Contact Page (`src/data/contact.json`)
 
@@ -451,7 +453,7 @@ Studio photos for each management Node, shown on the Tentang Kami page as a year
 ```
 
 ### Notes
-* One studio photo per node. A row saved before its upload lands is skipped rather than rendered as a broken image.
+* One studio photo per node. A row whose photo is empty or not an https URL or root-relative path is skipped rather than rendered as a broken image.
 * Export photos at most 1200 px wide, WebP or AVIF, roughly 300 KB or less before uploading.
 
 ## 13. Featured Photo (`src/data/featured.json`)
@@ -459,7 +461,7 @@ Studio photos for each management Node, shown on the Tentang Kami page as a year
 The full-bleed photo band on the Tentang Kami page, between the structure link and Visi & Misi. Its top and bottom edges fade into the page, and its height is set per photo rather than in code. The section hides itself when no photo is set.
 
 ### Fields Explanation
-* **`image`** (String): Photo path. Upload through Keystatic; files are written to `public/image/featured/`.
+* **`image`** (String): Photo as an https URL or a root-relative path for a file under `public/` (see **Media fields** above).
 * **`alt`** (String): Alt text for screen readers. Required.
 * **`caption`** (String): Caption under the photo, rendered in mono uppercase. Required.
 * **`height`** (Integer): Photo height as a percentage of the band's base height, `50`–`150`. `100` is the default; `90` makes the photo ten percent shorter, `150` makes it half again as tall. Below 640px wide the height is capped at `120%`, so a phone does not get a near-fullscreen crop.

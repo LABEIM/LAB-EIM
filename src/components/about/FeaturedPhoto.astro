@@ -1,20 +1,20 @@
 ---
-import type { FeaturedPhotoData } from '../../utils/types';
+import type { AboutData, FeaturedPhotoData } from '../../utils/types';
 
 interface Props {
   photo: FeaturedPhotoData;
-  label: string;
+  content: AboutData['sections']['featuredPhoto'];
 }
 
-const { photo, label } = Astro.props;
+const { photo, content } = Astro.props;
 // The CMS stores a percent; clamp so a stale or hand-edited value cannot break the layout.
-const scale = Math.min(100, Math.max(50, Math.round(Number(photo.height)) || 100)) / 100;
+const scale = Math.min(100, Math.max(50, Math.round(photo.height) || 100)) / 100;
 ---
 
-<section aria-label={label} class="mt-[clamp(1.5rem,4.5vh,2.5rem)]">
-  <figure class="e-reveal w-full">
+<section aria-label={content.label} class="mt-[clamp(1.5rem,4.5vh,2.5rem)]">
+  <figure class="e-reveal">
     <img
-      class="photo-band w-full object-cover"
+      class="eim-photo-band w-full object-cover"
       style={`--photo-scale:${scale}`}
       src={photo.image}
       alt={photo.alt || photo.caption}

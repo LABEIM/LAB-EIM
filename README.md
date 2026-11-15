@@ -47,7 +47,7 @@ For detailed instructions on local development, deployment, backend integrations
 
 - `src/content.config.ts`: Defines Zod schemas and loaders for static markdown content collections (`news`, `events`, `courses`).
 - `src/content/`: Contains static Markdown files representing news articles and laboratory events.
-- `src/data/`: Contains JSON files (`site.json`, `members.json`, `lecturers.json`, `positions.json`, `nodes.json`, `registration.json`) for website-wide metadata, the role model and team configuration, and the guide in `docs/CONFIG_GUIDE.md`.
+- `src/data/`: Contains JSON files (`site.json`, `members.json`, `lecturers.json`, `positions.json`, `nodes.json`, `featured.json`, `registration.json`) for website-wide metadata, the role model and team configuration, and the guide in `docs/CONFIG_GUIDE.md`.
 - `src/pages/`: File-system routing directories for Astro.
 - `src/layouts/`: Base wrapper page layout (`Layout.astro`).
 - `src/components/`: Reusable components such as `Navbar.astro` and `Footer.astro`.

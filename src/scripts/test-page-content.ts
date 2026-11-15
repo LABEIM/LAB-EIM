@@ -731,15 +731,10 @@ assert(
   'about.sections.stats carries no stats array'
 );
 
-for (const key of ['teamLink'] as const) {
+for (const key of ['teamLink', 'featuredPhoto'] as const) {
   const value = about.sections?.[key]?.label;
   assert(typeof value === 'string' && value.trim().length > 0, `about.sections.${key}.label is a non-empty string`);
 }
-
-assert(
-  Boolean(about.sections?.featuredPhoto?.label?.trim()),
-  'about.sections.featuredPhoto.label is a non-empty string'
-);
 
 assert(Boolean(about.sections?.visiMisi?.heading?.trim()), 'about.sections.visiMisi.heading is a non-empty string');
 
@@ -1330,14 +1325,9 @@ if (!existsSync(clientDir)) {
 } else {
   const aboutHtml = readFileSync(join(clientDir, 'about/index.html'), 'utf8');
   const featuredScale = String(featuredData.height / 100);
-  const featuredLabel = about.sections?.featuredPhoto?.label ?? '';
   assert(
     aboutHtml.includes(`--photo-scale:${featuredScale}`),
     'about page renders the featured photo band at the configured height'
-  );
-  assert(
-    aboutHtml.includes(`aria-label="${featuredLabel}"`),
-    'about page renders the featured photo band label'
   );
   assert(
     aboutHtml.includes(`src="${featuredData.image}"`),

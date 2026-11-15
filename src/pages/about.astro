@@ -78,7 +78,7 @@ const sectionItems = [
       </div>
     )}
     {sectionOn(sections.featuredPhoto) && featured.image && (
-      <FeaturedPhoto photo={featured} label={sections.featuredPhoto.label} />
+      <FeaturedPhoto photo={featured} content={sections.featuredPhoto} />
     )}
     {sectionOn(sections.visiMisi) && (
       <EimVisiMisi

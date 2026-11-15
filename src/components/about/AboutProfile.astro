@@ -25,24 +25,24 @@ const contact = site?.contact ?? {};
       <div class="e-reveal lg:order-first">
         <p class="font-mono text-xs uppercase tracking-[0.08em] text-brand">{content.eyebrow}</p>
         <p class="mt-6 font-mono text-[11px] uppercase tracking-[0.08em] text-muted-ink">{content.factsLabel}</p>
-        <dl class="mt-2 border-t border-line lg:sticky lg:top-28">
-          <div class="grid grid-cols-[auto_1fr] gap-4 border-b border-line py-4">
+        <dl class="mt-2 grid grid-cols-[max-content_minmax(0,1fr)] border-t border-line lg:sticky lg:top-28">
+          <div class="col-span-2 grid grid-cols-subgrid gap-4 border-b border-line py-4">
             <dt class="font-mono text-[11px] uppercase tracking-[0.08em] text-muted-ink">{content.factName}</dt>
             <dd class="text-sm leading-[1.5]">{site.fullName}</dd>
           </div>
-          <div class="grid grid-cols-[auto_1fr] gap-4 border-b border-line py-4">
+          <div class="col-span-2 grid grid-cols-subgrid gap-4 border-b border-line py-4">
             <dt class="font-mono text-[11px] uppercase tracking-[0.08em] text-muted-ink">{content.factFaculty}</dt>
             <dd class="text-sm leading-[1.5]">{content.factFacultyValue}</dd>
           </div>
-          <div class="grid grid-cols-[auto_1fr] gap-4 border-b border-line py-4">
+          <div class="col-span-2 grid grid-cols-subgrid gap-4 border-b border-line py-4">
             <dt class="font-mono text-[11px] uppercase tracking-[0.08em] text-muted-ink">{content.factProgram}</dt>
             <dd class="text-sm leading-[1.5]">{content.factProgramValue}</dd>
           </div>
-          <div class="grid grid-cols-[auto_1fr] gap-4 border-b border-line py-4">
+          <div class="col-span-2 grid grid-cols-subgrid gap-4 border-b border-line py-4">
             <dt class="font-mono text-[11px] uppercase tracking-[0.08em] text-muted-ink">{content.factLocation}</dt>
             <dd class="text-sm leading-[1.5]">{contact.location}</dd>
           </div>
-          <div class="grid grid-cols-[auto_1fr] gap-4 border-b border-line py-4">
+          <div class="col-span-2 grid grid-cols-subgrid gap-4 border-b border-line py-4">
             <dt class="font-mono text-[11px] uppercase tracking-[0.08em] text-muted-ink">{content.factEmail}</dt>
             <dd class="text-sm leading-[1.5]">
               <a class="text-brand underline underline-offset-4" href={`mailto:${contact.email}`}>{contact.email}</a>

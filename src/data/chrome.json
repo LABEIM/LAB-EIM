@@ -22,12 +22,12 @@
   },
   "cta": {
     "title": "Ingin tumbuh bersama kami?",
-    "description": "Pendaftaran asisten dibuka setiap periode. Untuk kolaborasi riset, kunjungan, atau pertanyaan lain, kami terbuka.",
+    "description": "Pendaftaran asisten dibuka setiap periode. Untuk kolaborasi riset, media partner, kunjungan, atau pertanyaan lain, kami terbuka.",
     "contactLabel": "Hubungi Kami"
   },
   "brand": {
-    "logoHorizontal": "/assets/brand/eim-logo-horizontal-640.avif",
-    "logoIcon": "/assets/brand/eim-logo-icon.png"
+    "logoHorizontal": "/assets/brand/brand/logoHorizontal.avif",
+    "logoIcon": "/assets/brand/brand/logoIcon.png"
   },
   "labels": {
     "upcoming": "Mendatang",

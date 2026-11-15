@@ -4,7 +4,7 @@
   },
   "navDots": {
     "reveal": "Media",
-    "focus": "Fokus",
+    "focus": "Pilar",
     "vision": "Visi & Misi",
     "courses": "Mata Kuliah",
     "events": "Kegiatan",
@@ -13,10 +13,10 @@
   "hero": {
     "kicker": "EIM Lab",
     "lines": [
-      "Infrastruktur untuk",
-      "dunia nyata."
+      "NO DRAMA",
+      "JUST EXECUTION!"
     ],
-    "description": "Laboratorium Enterprise Infrastructure Management Telkom University — jaringan, cloud, sistem operasi, keamanan siber.",
+    "description": "Architecting Resilient Infrastructure & Advanced Network Systems",
     "primaryLabel": "Jelajahi lab",
     "secondaryLabel": "Tentang Kami"
   },
@@ -31,24 +31,24 @@
   },
   "focus": {
     "enabled": true,
-    "title": "Fokus Riset & Laboratorium",
-    "intro": "Empat penguasaan inti yang kami asah lewat riset dan praktik.",
+    "title": "Pilar Keilmuan & Riset",
+    "intro": "Fokus riset infrastruktur dan jaringan di Laboratorium EIM",
     "rows": [
       {
-        "title": "Jaringan",
-        "description": "Arsitektur, protokol routing & switching, dan optimasi infrastruktur komunikasi data skala enterprise."
+        "title": "Enterprise Networking",
+        "description": "Routing & Switching tingkat lanjut, implementasi protokol jaringan enterprise, virtual network topology, dan sertifikasi industri."
       },
       {
-        "title": "Cloud Computing",
-        "description": "Layanan cloud, kontainerisasi (Docker, Kubernetes), virtualisasi server & jaringan, dan data center hibrida."
+        "title": "Cloud & Virtualization",
+        "description": "Arsitektur cloud computing publik & privat, server virtualization VMware/Proxmox, container orchestration Docker/Kubernetes."
       },
       {
-        "title": "Sistem Operasi",
-        "description": "Linux, administrasi server, otomasi sistem, dan pengelolaan infrastruktur berbasis OS."
+        "title": "Server Administration",
+        "description": "Manajemen Linux/Windows server tingkat tinggi, high-availability clustering, distributed storage systems, automasi Ansible, dan server monitoring."
       },
       {
-        "title": "Keamanan Siber",
-        "description": "Keamanan jaringan, analisis kerentanan, pengujian penetrasi, dan perlindungan aset informasi digital."
+        "title": "Cybersecurity & Defense",
+        "description": "Pertahanan perimeter jaringan, firewall Next-Gen, Intrusion Detection System (IDS/IPS), audit kerentanan infrastruktur, dan SOC operations."
       }
     ]
   },

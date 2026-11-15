@@ -1,36 +1,53 @@
 {
   "list": [
     {
-      "id": "dosen-ketua",
-      "name": "Nama Dosen",
+      "id": "MTK",
+      "name": "Dr. Mochamad Teguh Kurniawan, S.T., M.T.",
       "role": "ketua-lab",
-      "image": "",
+      "image": "/image/division/list/0/image.webp",
       "scale": "1",
       "position": "center"
     },
     {
-      "id": "dosen-wakil",
-      "name": "Nama Dosen",
-      "role": "wakil-ketua-lab",
-      "image": "",
-      "scale": "1",
-      "position": "center"
-    },
-    {
-      "id": "dosen-anggota-1",
-      "name": "Nama Dosen",
+      "id": "ROH",
+      "name": "Rd. Rohmat Saedudin, S.T., M.T., Ph.D",
       "role": "dosen-anggota",
-      "image": "",
+      "image": "/image/division/list/1/image.webp",
       "scale": "1",
       "position": "center"
     },
     {
-      "id": "dosen-koordinator-matkul-1",
-      "name": "Nama Dosen",
-      "role": "koordinator-matkul",
-      "image": "",
+      "id": "AVB",
+      "name": "Avon Budiyono, S.T., M.T.",
+      "role": "dosen-anggota",
+      "image": "/image/division/list/2/image.webp",
       "scale": "1",
       "position": "center"
+    },
+    {
+      "id": "AWJ",
+      "name": "Adityas Widjajarto, S.T., M.T",
+      "role": "koordinator-matkul",
+      "image": "/image/division/list/3/image.webp",
+      "scale": "1",
+      "position": "center"
+    },
+    {
+      "id": "UMY",
+      "name": "Umar Yunan Kurnia Septo Hediyanto, S.T., M.T.",
+      "role": "dosen-anggota",
+      "image": "/image/division/list/4/image.webp"
+    },
+    {
+      "id": "MFA",
+      "name": "Muhammad Fathinuddin, S.Si., M.T.",
+      "role": "dosen-anggota",
+      "image": "/image/division/list/5/image.webp"
+    },
+    {
+      "id": "wakil-sementara",
+      "name": "PLACEHOLDER WAKIL",
+      "role": "wakil-ketua-lab"
     }
   ]
 }

@@ -1272,12 +1272,12 @@ export default config({
           {
             logoHorizontal: fields.text({
               label: 'Logo horizontal (URL)',
-              description: 'Tempel tautan https, mis. https://cdn.eimlab.org/brand/logo.png, atau path di situs, mis. /assets/brand/logo.avif.',
+              description: 'Tempel tautan https (mis. https://cdn.eimlab.org/brand/logo.png) atau path di situs (mis. /assets/brand/logo.avif). SVG tidak didukung; pakai PNG, WebP, atau AVIF.',
               validation: { isRequired: true },
             }),
             logoIcon: fields.text({
               label: 'Ikon logo (URL)',
-              description: 'Tempel tautan https, mis. https://cdn.eimlab.org/brand/logo-icon.png, atau path di situs, mis. /assets/brand/logoIcon.png.',
+              description: 'Tempel tautan https (mis. https://cdn.eimlab.org/brand/logo-icon.png) atau path di situs (mis. /assets/brand/logoIcon.png). SVG tidak didukung; pakai PNG, WebP, atau AVIF.',
               validation: { isRequired: true },
             }),
           },
@@ -1422,7 +1422,7 @@ export default config({
         defaultKeywords: fields.text({ label: 'Default Meta Keywords', multiline: true }),
         favicon: fields.text({
           label: 'Favicon (URL)',
-          description: 'Tempel tautan https, mis. https://cdn.eimlab.org/brand/favicon.png, atau path di situs, mis. /image/eim/favicon.png.',
+          description: 'Tempel tautan https (mis. https://cdn.eimlab.org/brand/favicon.png) atau path di situs (mis. /image/eim/favicon.png). SVG tidak didukung; pakai PNG atau AVIF.',
           validation: { isRequired: true },
         }),
         timezone: fields.text({ label: 'Global IANA Timezone (e.g. Asia/Jakarta)', defaultValue: 'Asia/Jakarta' }),

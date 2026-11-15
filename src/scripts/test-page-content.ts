@@ -18,8 +18,8 @@ function publicFile(value: unknown): string {
 }
 
 // Media is an https URL or a file shipped under public/; both must resolve.
-function assertMedia(value: unknown, label: string) {
-  const src = resolveMediaSrc(value as string);
+function assertMedia(value: string | undefined | null, label: string) {
+  const src = resolveMediaSrc(value);
   assert(src !== null, `${label} is an https URL or a root-relative path`);
   if (src?.startsWith('/')) assert(existsSync(publicFile(src)), `${label} resolves under public/`);
 }
@@ -208,7 +208,7 @@ console.log('\n3️⃣ Testing chrome.brand files:');
 for (const key of chromeGroups.brand) {
   const value = chrome.brand?.[key];
   assert(typeof value === 'string' && value.trim().length > 0, `chrome.brand.${key} is set`);
-  assertMedia(value, `chrome.brand.${key}`);
+  if (typeof value === 'string') assertMedia(value, `chrome.brand.${key}`);
 }
 
 console.log('\n3️⃣b Testing site favicon:');
@@ -367,7 +367,7 @@ function assertRevealMedia(value: RevealMedia | undefined) {
     assert(Boolean(value.mediaAlt?.trim()), `home.reveal.mediaAlt is set for ${value.mediaKind} media`);
   }
   if (value?.mediaKind === 'image') {
-    assert(resolveMediaSrc(value.imageUrl) !== null, 'home.reveal.imageUrl is set for image media');
+    assertMedia(value.imageUrl, 'home.reveal.imageUrl');
   }
   if (value?.mediaKind === 'video') {
     assert(
@@ -561,7 +561,7 @@ if (reveal?.backgroundUrl) {
   );
 }
 if (reveal?.imageUrl) {
-  assert(resolveMediaSrc(reveal.imageUrl) !== null, 'home.reveal.imageUrl resolves to an https image');
+  assertMedia(reveal.imageUrl, 'home.reveal.imageUrl');
 }
 
 console.log('\n4️⃣c Testing external media URL resolution:');
@@ -717,12 +717,18 @@ console.log('\n4️⃣d Testing media source resolution:');
 const mediaHttps = 'https://cdn.eimlab.org/brand/logo.png';
 assert(resolveMediaSrc(mediaHttps) === mediaHttps, 'https media URL accepted unchanged');
 assert(
+  resolveMediaSrc('https://cdn.eimlab.org/logo.png?v=2') === 'https://cdn.eimlab.org/logo.png?v=2',
+  'https media URL keeps its query string'
+);
+assert(
   resolveMediaSrc(' /image/division/list/0/image.avif ') === '/image/division/list/0/image.avif',
   'root-relative path trimmed and accepted'
 );
+assertMedia('https://cdn.eimlab.org/media/probe.webp', 'assertMedia accepts an https media URL');
 for (const rejected of [
   'image/x.avif',
   './image/x.avif',
+  'example.com/x.png',
   '//cdn.eimlab.org/x.png',
   '/\\cdn.eimlab.org/x.png',
   '/image/../../.env',
@@ -1401,9 +1407,18 @@ if (!existsSync(clientDir)) {
     aboutHtml.includes(`--photo-scale:${featuredScale}`),
     'about page renders the featured photo band at the configured height'
   );
+  // Compare the resolved value: a CDN URL is normalized by the URL parser.
   assert(
-    aboutHtml.includes(`src="${featuredData.image}"`),
+    aboutHtml.includes(`src="${resolveMediaSrc(featuredData.image)}"`),
     'about page renders the configured featured photo'
+  );
+  assert(
+    /class="eim-photo-band[^"]*"[^>]*referrerpolicy="no-referrer"/.test(aboutHtml),
+    'about page serves the featured photo without a referrer'
+  );
+  assert(
+    /class="lecturer-card-media"><img[^>]*referrerpolicy="no-referrer"/.test(readFileSync(join(clientDir, 'structure/index.html'), 'utf8')),
+    'structure page serves portraits without a referrer'
   );
 
   // Production builds hide the audit sample content, so list pages only render their

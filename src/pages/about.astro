@@ -78,7 +78,7 @@ const sectionItems = [
         </a>
       </div>
     )}
-    {sectionOn(sections.featuredPhoto) && resolveMediaSrc(featured.image) && (
+    {sectionOn(sections.featuredPhoto) && (
       <FeaturedPhoto photo={featured} content={sections.featuredPhoto} />
     )}
     {sectionOn(sections.visiMisi) && (

@@ -68,7 +68,7 @@ try {
 
     {/* Dynamic favicon type helper */}
     {(() => {
-      const fav = resolveMediaSrc(siteData.favicon) ?? '/image/eim/logo_EIM_crop.png';
+      const fav = resolveMediaSrc(siteData.favicon) ?? '/image/eim/favicon.png';
       const pathname = fav.split('?')[0];
       let type = 'image/x-icon';
       if (pathname.endsWith('.png')) type = 'image/png';

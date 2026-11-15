@@ -69,7 +69,7 @@ const isActive = (rawHref: string) => {
   data-label-menu-close={chrome.ui.aria.closeMenu}
 >
   <div class="site-container">
-    <a href={getLocalizedPath('/', locale)} class="logo-container">
+    <a href={getLocalizedPath('/', locale)} class="logo-container" aria-label={`${siteData.name} ${siteData.subName}`}>
       {logoBrand && (
         <img
           class="logo-brand"
@@ -78,6 +78,7 @@ const isActive = (rawHref: string) => {
           width="221"
           height="40"
           decoding="async"
+          referrerpolicy="no-referrer"
         />
       )}
       {logoMark && (
@@ -88,6 +89,7 @@ const isActive = (rawHref: string) => {
           width="40"
           height="40"
           decoding="async"
+          referrerpolicy="no-referrer"
         />
       )}
     </a>

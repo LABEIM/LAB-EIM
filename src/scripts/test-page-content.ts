@@ -688,13 +688,13 @@ assert(!Object.prototype.hasOwnProperty.call(about, 'title'), 'about carries no 
 
 assert(Boolean(about.meta?.title?.trim()), 'about.meta.title is a non-empty string');
 
-const aboutSections = ['hero', 'profile', 'stats', 'teamLink', 'visiMisi', 'nodes', 'cta'] as const;
+const aboutSections = ['hero', 'profile', 'stats', 'teamLink', 'featuredPhoto', 'visiMisi', 'nodes', 'cta'] as const;
 for (const key of aboutSections) {
   const section = about.sections?.[key];
   assert(Boolean(section) && typeof section === 'object', `about.sections.${key} exists`);
 }
 
-for (const key of ['profile', 'stats', 'teamLink', 'visiMisi', 'nodes', 'cta'] as const) {
+for (const key of ['profile', 'stats', 'teamLink', 'featuredPhoto', 'visiMisi', 'nodes', 'cta'] as const) {
   assert(typeof about.sections?.[key]?.enabled === 'boolean', `about.sections.${key}.enabled is a boolean`);
 }
 const aboutHero = about.sections?.hero;
@@ -735,6 +735,11 @@ for (const key of ['teamLink'] as const) {
   const value = about.sections?.[key]?.label;
   assert(typeof value === 'string' && value.trim().length > 0, `about.sections.${key}.label is a non-empty string`);
 }
+
+assert(
+  Boolean(about.sections?.featuredPhoto?.label?.trim()),
+  'about.sections.featuredPhoto.label is a non-empty string'
+);
 
 assert(Boolean(about.sections?.visiMisi?.heading?.trim()), 'about.sections.visiMisi.heading is a non-empty string');
 
@@ -1323,6 +1328,10 @@ const stateDependent: Record<string, RegExp[]> = {
 if (!existsSync(clientDir)) {
   console.log('  ⚠️ SKIPPED: dist/client is missing. Run `PUBLIC_SHOW_AUDIT_CONTENT=true pnpm run build` first to enable this guard.');
 } else {
+  const aboutHtml = readFileSync(join(clientDir, 'about/index.html'), 'utf8');
+  assert(aboutHtml.includes('--photo-scale:1'), 'about page renders the featured photo band at the default height');
+  assert(aboutHtml.includes('aria-label="Foto studio tim"'), 'about page renders the featured photo band label');
+
   // Production builds hide the audit sample content, so list pages only render their
   // empty state; skip the copy that belongs to the other branch of that same page.
   const contentBranch: Record<string, { marker: string; content: RegExp }> = {

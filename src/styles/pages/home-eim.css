@@ -79,6 +79,13 @@ html {
   }
 }
 
+/* Full-bleed featured photo: height comes from the CMS percentage, edges dissolve into the page. */
+.photo-band {
+  height: calc(clamp(260px, 52vh, 640px) * var(--photo-scale, 1));
+  -webkit-mask-image: linear-gradient(to bottom, transparent, #000 56px, #000 calc(100% - 56px), transparent);
+  mask-image: linear-gradient(to bottom, transparent, #000 56px, #000 calc(100% - 56px), transparent);
+}
+
 /* == Hero == */
 
 .eim-hero {

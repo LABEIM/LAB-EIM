@@ -6,6 +6,7 @@ import AnnouncementBanner from '../components/common/AnnouncementBanner.astro';
 import { getLocaleFromUrl, getLocalizedJsonData } from '../utils/i18n';
 import { getCurrentRecruitmentStage } from '../utils/recruitment';
 import { applySimulationToConfig } from '../utils/simulation';
+import { resolveMediaSrc } from '../utils/media';
 import type { SiteData } from '../utils/types';
 
 interface Props {
@@ -67,11 +68,12 @@ try {
 
     {/* Dynamic favicon type helper */}
     {(() => {
-      const fav = siteData.favicon || '/image/eim/logo_EIM_crop.png';
+      const fav = resolveMediaSrc(siteData.favicon) ?? '/image/eim/logo_EIM_crop.png';
+      const pathname = fav.split('?')[0];
       let type = 'image/x-icon';
-      if (fav.endsWith('.png')) type = 'image/png';
-      else if (fav.endsWith('.svg')) type = 'image/svg+xml';
-      else if (fav.endsWith('.avif')) type = 'image/avif';
+      if (pathname.endsWith('.png')) type = 'image/png';
+      else if (pathname.endsWith('.svg')) type = 'image/svg+xml';
+      else if (pathname.endsWith('.avif')) type = 'image/avif';
       return <link rel="icon" type={type} href={fav} />;
     })()}
     

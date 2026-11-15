@@ -17,6 +17,13 @@ function publicFile(value: unknown): string {
   return file.startsWith(publicDir + sep) ? file : '';
 }
 
+// Media is an https URL or a file shipped under public/; both must resolve.
+function assertMedia(value: unknown, label: string) {
+  const src = resolveMediaSrc(value as string);
+  assert(src !== null, `${label} is an https URL or a root-relative path`);
+  if (src?.startsWith('/')) assert(existsSync(publicFile(src)), `${label} resolves under public/`);
+}
+
 let passed = 0;
 let failed = 0;
 
@@ -199,17 +206,15 @@ assert(
 
 console.log('\n3️⃣ Testing chrome.brand files:');
 for (const key of chromeGroups.brand) {
-  const file = publicFile(chrome.brand?.[key]);
-  assert(Boolean(file) && existsSync(file), `chrome.brand.${key} resolves under public/`);
+  const value = chrome.brand?.[key];
+  assert(typeof value === 'string' && value.trim().length > 0, `chrome.brand.${key} is set`);
+  assertMedia(value, `chrome.brand.${key}`);
 }
 
-console.log('\n3️⃣b Testing uploaded images resolve under public/:');
+console.log('\n3️⃣b Testing site favicon:');
 const siteData = JSON.parse(readFileSync(join(dataDir, 'site.json'), 'utf8')) as { favicon?: string };
 assert(typeof siteData.favicon === 'string' && siteData.favicon.trim().length > 0, 'site.favicon is set');
-assert(
-  existsSync(publicFile(siteData.favicon)),
-  'site.favicon resolves under public/'
-);
+assertMedia(siteData.favicon, 'site.favicon');
 
 console.log('\n3️⃣d Testing src/data/nodes.json:');
 const nodesPath = join(dataDir, 'nodes.json');

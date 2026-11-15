@@ -1276,16 +1276,14 @@ export default config({
         ),
         brand: fields.object(
           {
-            logoHorizontal: fields.image({
-              label: 'Logo horizontal',
-              directory: 'public/assets/brand',
-              publicPath: '/assets/brand/',
+            logoHorizontal: fields.text({
+              label: 'Logo horizontal (URL)',
+              description: 'Tempel tautan https, mis. https://cdn.eimlab.org/brand/logo.png, atau path di situs, mis. /assets/brand/logo.avif.',
               validation: { isRequired: true },
             }),
-            logoIcon: fields.image({
-              label: 'Ikon logo',
-              directory: 'public/assets/brand',
-              publicPath: '/assets/brand/',
+            logoIcon: fields.text({
+              label: 'Ikon logo (URL)',
+              description: 'Tempel tautan https, mis. https://cdn.eimlab.org/brand/logo-icon.png, atau path di situs, mis. /assets/brand/logoIcon.png.',
               validation: { isRequired: true },
             }),
           },
@@ -1428,10 +1426,9 @@ export default config({
         defaultTitle: fields.text({ label: 'Default Page Title' }),
         defaultDescription: fields.text({ label: 'Default Meta Description', multiline: true }),
         defaultKeywords: fields.text({ label: 'Default Meta Keywords', multiline: true }),
-        favicon: fields.image({
-          label: 'Favicon',
-          directory: 'public/image/eim',
-          publicPath: '/image/eim/',
+        favicon: fields.text({
+          label: 'Favicon (URL)',
+          description: 'Tempel tautan https, mis. https://cdn.eimlab.org/brand/favicon.png, atau path di situs, mis. /image/eim/favicon.png.',
           validation: { isRequired: true },
         }),
         timezone: fields.text({ label: 'Global IANA Timezone (e.g. Asia/Jakarta)', defaultValue: 'Asia/Jakarta' }),

@@ -1,10 +1,12 @@
 ---
 import { getLocaleFromUrl, getLocalizedPath, getLocalizedJsonData } from '../utils/i18n';
+import { resolveMediaSrc } from '../utils/media';
 import type { ChromeData, SiteData } from '../utils/types';
 
 const locale = getLocaleFromUrl(Astro.url);
 const siteData = getLocalizedJsonData<SiteData>('site', locale);
 const chrome = getLocalizedJsonData<ChromeData>('chrome', locale);
+const logo = resolveMediaSrc(chrome.brand.logoHorizontal);
 const currentYear = new Date().getFullYear();
 
 const navLinks = [
@@ -28,13 +30,15 @@ const navLinks = [
           class="footer-brand"
           aria-label={(chrome.ui.aria.homeLink ?? '').replaceAll('{name}', siteData.name)}
         >
-          <img
-            src={chrome.brand.logoHorizontal}
-            alt=""
-            width="221"
-            height="40"
-            decoding="async"
-          />
+          {logo && (
+            <img
+              src={logo}
+              alt=""
+              width="221"
+              height="40"
+              decoding="async"
+            />
+          )}
         </a>
 
         <p class="footer-desc">{chrome.footer.description}</p>

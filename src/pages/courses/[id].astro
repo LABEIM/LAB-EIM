@@ -7,6 +7,7 @@ import { getLocaleFromUrl, getLocalizedJsonData } from '../../utils/i18n';
 import { sectionOn } from '../../utils/page-content';
 import { buildPositionIndex, parsePositions, positionLabel } from '../../utils/position-mapper';
 import { getInitials } from '../../utils/initials';
+import { resolveMediaSrc } from '../../utils/media';
 import type { ChromeData, CourseDetailPageData, CourseView, Lecturer, Member } from '../../utils/types';
 
 export async function getStaticPaths() {
@@ -38,6 +39,7 @@ const positionIndex = buildPositionIndex(parsePositions(positionsData));
 const { Content } = await render(entry);
 const { modules, assistants } = courseHasContent(course);
 const pageDescription = (page.meta.description ?? '').replaceAll('{title}', course.title);
+const coordinatorImage = resolveMediaSrc(course.coordinator?.image ?? null);
 ---
 
 <Layout
@@ -70,9 +72,9 @@ const pageDescription = (page.meta.description ?? '').replaceAll('{title}', cour
         </h1>
         <div class="mt-6 flex items-center gap-4">
           <span class="h-16 w-16 shrink-0 overflow-hidden rounded-card bg-surface-strong">
-            {course.coordinator?.image ? (
+            {coordinatorImage ? (
               <img
-                src={course.coordinator.image}
+                src={coordinatorImage}
                 alt=""
                 loading="eager"
                 fetchpriority="high"
@@ -136,12 +138,14 @@ const pageDescription = (page.meta.description ?? '').replaceAll('{title}', cour
             {page.assistants.heading} · {assistants.length}
           </h2>
           <ul class="mt-4 grid list-none gap-x-8 gap-y-1 p-0 sm:grid-cols-2 lg:grid-cols-3">
-            {assistants.map((assistant) => (
+            {assistants.map((assistant) => {
+              const assistantImage = resolveMediaSrc(assistant.image);
+              return (
               <li class="flex items-center gap-3 border-b border-line py-2">
                 <span class="h-10 w-10 shrink-0 overflow-hidden rounded-card bg-surface-strong">
-                  {assistant.image ? (
+                  {assistantImage ? (
                     <img
-                      src={assistant.image}
+                      src={assistantImage}
                       alt=""
                       loading="lazy"
                       decoding="async"
@@ -159,7 +163,8 @@ const pageDescription = (page.meta.description ?? '').replaceAll('{title}', cour
                   <span class="font-mono text-[11px] tracking-[0.08em] text-muted-ink">· {assistant.id}</span>
                 </span>
               </li>
-            ))}
+              );
+            })}
           </ul>
         </section>
       )}

@@ -1509,12 +1509,10 @@ export default config({
             id: fields.text({ label: 'Kode Asisten', description: 'Empat huruf kapital, unik, mis. DAYY. Dipakai sebagai ID di data mata kuliah.', validation: { isRequired: true } }),
             name: fields.text({ label: 'Name' }),
             role: positionField,
-            image: fields.image({
-              label: 'Foto',
+            image: fields.text({
+              label: 'Foto (URL)',
               description:
-                'Potong foto ke rasio bingkai sebelum diunggah. Kosongkan untuk memakai inisial nama. Untuk berkas yang sudah dipotong, atur Scale ke 1 dan Position ke center. Ekspor 640 px persegi (1:1), format WebP atau AVIF, maksimal ±150 KB.',
-              directory: 'public/image/division',
-              publicPath: '/image/division/',
+                'Tempel tautan https (mis. https://cdn.eimlab.org/division/foto.webp) atau path di situs (mis. /image/division/foto.webp). Kosongkan untuk memakai inisial nama. Untuk berkas yang sudah dipotong, atur Scale ke 1 dan Position ke center. Ekspor 640 px persegi (1:1), format WebP atau AVIF, maksimal ±150 KB.',
             }),
             scale: fields.text({
               label: 'Scale Factor',
@@ -1542,12 +1540,10 @@ export default config({
             id: fields.text({ label: 'Kode Dosen', description: 'Tiga huruf kapital, unik, mis. MTK. Dipakai sebagai ID di data mata kuliah.' }),
             name: fields.text({ label: 'Name' }),
             role: positionField,
-            image: fields.image({
-              label: 'Foto',
+            image: fields.text({
+              label: 'Foto (URL)',
               description:
-                'Potong foto ke rasio bingkai sebelum diunggah. Kosongkan untuk memakai avatar cadangan. Untuk berkas yang sudah dipotong, atur Scale ke 1 dan Position ke center. Ekspor 640 px persegi (1:1), format WebP atau AVIF, maksimal ±150 KB.',
-              directory: 'public/image/division',
-              publicPath: '/image/division/',
+                'Tempel tautan https (mis. https://cdn.eimlab.org/division/foto.webp) atau path di situs (mis. /image/division/foto.webp). Kosongkan untuk memakai avatar cadangan. Untuk berkas yang sudah dipotong, atur Scale ke 1 dan Position ke center. Ekspor 640 px persegi (1:1), format WebP atau AVIF, maksimal ±150 KB.',
             }),
             scale: fields.text({
               label: 'Scale Factor',

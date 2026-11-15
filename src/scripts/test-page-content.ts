@@ -258,7 +258,7 @@ membersData.list.forEach((member, index) => {
   const label = `member ${index} (${member.name || member.id})`;
   assert(member.image == null || typeof member.image === 'string', `${label} image is a string when present`);
   if (member.image?.trim()) {
-    assert(existsSync(publicFile(member.image)), `${label} image resolves under public/`);
+    assertMedia(member.image, `${label} image`);
   }
 });
 
@@ -268,7 +268,7 @@ lecturersData.list.forEach((lecturer, index) => {
   const label = `lecturer ${index} (${lecturer.id})`;
   assert(lecturer.image == null || typeof lecturer.image === 'string', `${label} image is a string when present`);
   if (lecturer.image?.trim()) {
-    assert(existsSync(publicFile(lecturer.image)), `${label} image resolves under public/`);
+    assertMedia(lecturer.image, `${label} image`);
   }
 });
 

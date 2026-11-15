@@ -670,13 +670,13 @@ assert(!Object.prototype.hasOwnProperty.call(about, 'title'), 'about carries no 
 
 assert(Boolean(about.meta?.title?.trim()), 'about.meta.title is a non-empty string');
 
-const aboutSections = ['hero', 'profile', 'stats', 'teamLink', 'galleryBand', 'visiMisi', 'gallery', 'cta'] as const;
+const aboutSections = ['hero', 'profile', 'stats', 'teamLink', 'visiMisi', 'nodes', 'cta'] as const;
 for (const key of aboutSections) {
   const section = about.sections?.[key];
   assert(Boolean(section) && typeof section === 'object', `about.sections.${key} exists`);
 }
 
-for (const key of ['profile', 'stats', 'teamLink', 'galleryBand', 'visiMisi', 'gallery', 'cta'] as const) {
+for (const key of ['profile', 'stats', 'teamLink', 'visiMisi', 'nodes', 'cta'] as const) {
   assert(typeof about.sections?.[key]?.enabled === 'boolean', `about.sections.${key}.enabled is a boolean`);
 }
 const aboutHero = about.sections?.hero;
@@ -713,20 +713,20 @@ assert(
   'about.sections.stats carries no stats array'
 );
 
-for (const key of ['teamLink', 'galleryBand'] as const) {
+for (const key of ['teamLink'] as const) {
   const value = about.sections?.[key]?.label;
   assert(typeof value === 'string' && value.trim().length > 0, `about.sections.${key}.label is a non-empty string`);
 }
 
 assert(Boolean(about.sections?.visiMisi?.heading?.trim()), 'about.sections.visiMisi.heading is a non-empty string');
 
-const aboutGallery = about.sections?.gallery;
-for (const key of ['eyebrow', 'intro', 'title', 'showAll', 'hideAll'] as const) {
-  const value = aboutGallery?.[key];
-  assert(typeof value === 'string' && value.trim().length > 0, `about.sections.gallery.${key} is a non-empty string`);
+const aboutNodes = about.sections?.nodes;
+for (const key of ['eyebrow', 'intro', 'title', 'latestLabel', 'archiveLabel'] as const) {
+  const value = aboutNodes?.[key];
+  assert(typeof value === 'string' && value.trim().length > 0, `about.sections.nodes.${key} is a non-empty string`);
 }
 
-for (const key of ['profile', 'stats', 'vision', 'cta', 'gallery'] as const) {
+for (const key of ['profile', 'stats', 'vision', 'cta', 'nodes'] as const) {
   const value = about.navDots?.[key];
   assert(typeof value === 'string' && value.trim().length > 0, `about.navDots.${key} is a non-empty string`);
 }
@@ -1278,7 +1278,7 @@ const renderTargets: [string, string[]][] = [
 // Copy that only renders in a state the sample content does not reach: empty lists,
 // collapsed gallery controls, disabled upload fields, or candidate-specific messages.
 const stateDependent: Record<string, RegExp[]> = {
-  'about.json': [/^sections\.gallery\.(showAll|hideAll)$/],
+  'about.json': [/^sections\.nodes\./],
   'contact.json': [/^details\.pics(Title|Subtitle)$/],
   'registration.json': [
     /^labels\.ksm$/,

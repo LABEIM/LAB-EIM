@@ -5,14 +5,13 @@ import '../styles/pages/home-eim.css';
 import { getLocaleFromUrl, getLocalizedJsonData } from '../utils/i18n';
 import { countPeopleByGroup, parsePositions } from '../utils/position-mapper';
 import { getCurrentRecruitmentStage } from '../utils/recruitment';
-import type { AboutData, ChromeData, GalleryData, Lecturer, Member, RecruitmentConfig, SiteData } from '../utils/types';
+import type { AboutData, ChromeData, Lecturer, Member, NodeData, RecruitmentConfig, SiteData } from '../utils/types';
 import AboutHero from '../components/about/AboutHero.astro';
 import AboutProfile from '../components/about/AboutProfile.astro';
 import EimVisiMisi from '../components/home/EimVisiMisi.astro';
 import EimLabNumbers from '../components/home/EimLabNumbers.astro';
 import EimCTA from '../components/home/EimCTA.astro';
-import GalleryBand from '../components/about/GalleryBand.astro';
-import AboutGallery from '../components/about/AboutGallery.astro';
+import NodeHistory from '../components/about/NodeHistory.astro';
 import EimSectionNav from '../components/home/EimSectionNav.astro';
 import { sectionOn } from '../utils/page-content';
 
@@ -24,7 +23,7 @@ const membersData = getLocalizedJsonData<{ list: Member[] }>('members', locale);
 const lecturersData = getLocalizedJsonData<{ list: Lecturer[] }>('lecturers', locale);
 const positionsData = getLocalizedJsonData<{ list: unknown }>('positions', locale);
 const registrationConfig = getLocalizedJsonData<Partial<RecruitmentConfig>>('registration', locale);
-const gallery = getLocalizedJsonData<GalleryData>('gallery', locale);
+const nodeHistory = getLocalizedJsonData<NodeData>('nodes', locale);
 const recruitmentStage = getCurrentRecruitmentStage(registrationConfig);
 
 const positions = parsePositions(positionsData);
@@ -49,8 +48,8 @@ const sectionItems = [
   ...(sectionOn(sections.profile) ? [{ id: 'profil', label: aboutData.navDots.profile }] : []),
   ...(sectionOn(sections.stats) ? [{ id: 'angka', label: aboutData.navDots.stats }] : []),
   ...(sectionOn(sections.visiMisi) ? [{ id: 'visi-misi', label: aboutData.navDots.vision }] : []),
-  ...(sectionOn(sections.gallery) && gallery.photos?.length
-    ? [{ id: 'galeri', label: aboutData.navDots.gallery }]
+  ...(sectionOn(sections.nodes) && nodeHistory.list?.some((node) => node.image)
+    ? [{ id: 'node', label: aboutData.navDots.nodes }]
     : []),
   ...(sectionOn(sections.cta) ? [{ id: 'gabung', label: aboutData.navDots.cta }] : []),
 ];
@@ -76,14 +75,6 @@ const sectionItems = [
         </a>
       </div>
     )}
-    {sectionOn(sections.galleryBand) && gallery.featured?.image && (
-      <GalleryBand
-        image={gallery.featured.image}
-        alt={gallery.featured.alt}
-        caption={gallery.featured.caption}
-        label={sections.galleryBand.label}
-      />
-    )}
     {sectionOn(sections.visiMisi) && (
       <EimVisiMisi
         content={{
@@ -95,8 +86,8 @@ const sectionItems = [
         about={aboutData}
       />
     )}
-    {sectionOn(sections.gallery) && (
-      <AboutGallery photos={gallery.photos ?? []} content={sections.gallery} />
+    {sectionOn(sections.nodes) && (
+      <NodeHistory nodes={nodeHistory.list ?? []} content={sections.nodes} />
     )}
     {sectionOn(sections.cta) && (
       <EimCTA content={chrome.cta} contact={siteData.contact} stage={recruitmentStage} />

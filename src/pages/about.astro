@@ -15,6 +15,7 @@ import NodeHistory from '../components/about/NodeHistory.astro';
 import FeaturedPhoto from '../components/about/FeaturedPhoto.astro';
 import EimSectionNav from '../components/home/EimSectionNav.astro';
 import { sectionOn } from '../utils/page-content';
+import { resolveMediaSrc } from '../utils/media';
 
 const locale = getLocaleFromUrl(Astro.url);
 const aboutData = getLocalizedJsonData<AboutData>('about', locale);
@@ -50,7 +51,7 @@ const sectionItems = [
   ...(sectionOn(sections.profile) ? [{ id: 'profil', label: aboutData.navDots.profile }] : []),
   ...(sectionOn(sections.stats) ? [{ id: 'angka', label: aboutData.navDots.stats }] : []),
   ...(sectionOn(sections.visiMisi) ? [{ id: 'visi-misi', label: aboutData.navDots.vision }] : []),
-  ...(sectionOn(sections.nodes) && nodes.some((node) => node.image)
+  ...(sectionOn(sections.nodes) && nodes.some((node) => resolveMediaSrc(node.image))
     ? [{ id: 'node', label: aboutData.navDots.nodes }]
     : []),
   ...(sectionOn(sections.cta) ? [{ id: 'gabung', label: aboutData.navDots.cta }] : []),
@@ -77,7 +78,7 @@ const sectionItems = [
         </a>
       </div>
     )}
-    {sectionOn(sections.featuredPhoto) && featured.image && (
+    {sectionOn(sections.featuredPhoto) && resolveMediaSrc(featured.image) && (
       <FeaturedPhoto photo={featured} content={sections.featuredPhoto} />
     )}
     {sectionOn(sections.visiMisi) && (

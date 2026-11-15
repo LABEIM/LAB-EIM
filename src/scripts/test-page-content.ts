@@ -233,7 +233,7 @@ for (const [index, node] of nodesData.list.entries()) {
   assert(typeof node.label === 'string' && node.label.trim().length > 0, `node ${index} label is a non-empty string`);
   assert(typeof node.image === 'string' && node.image.trim().length > 0, `node ${index} image is a non-empty string`);
   assert(typeof node.alt === 'string' && node.alt.trim().length > 0, `node ${index} alt is a non-empty string`);
-  assert(existsSync(publicFile(node.image)), `node ${index} image resolves under public/`);
+  assertMedia(node.image, `node ${index} image`);
 }
 
 console.log('\n3️⃣e Testing src/data/featured.json:');
@@ -241,7 +241,7 @@ const featuredPath = join(dataDir, 'featured.json');
 assert(existsSync(featuredPath), 'featured.json exists');
 const featuredData = JSON.parse(readFileSync(featuredPath, 'utf8')) as FeaturedPhotoData;
 assert(typeof featuredData.image === 'string' && featuredData.image.trim().length > 0, 'featured.image is a non-empty string');
-assert(existsSync(publicFile(featuredData.image)), 'featured.image resolves under public/');
+assertMedia(featuredData.image, 'featured.image');
 assert(typeof featuredData.alt === 'string' && featuredData.alt.trim().length > 0, 'featured.alt is a non-empty string');
 assert(typeof featuredData.caption === 'string' && featuredData.caption.trim().length > 0, 'featured.caption is a non-empty string');
 assert(

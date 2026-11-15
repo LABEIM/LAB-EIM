@@ -1,5 +1,6 @@
 ---
 import type { AboutData, NodeItem } from '../../utils/types';
+import { resolveMediaSrc } from '../../utils/media';
 
 interface Props {
   nodes: NodeItem[];
@@ -8,8 +9,13 @@ interface Props {
 
 const { nodes, content } = Astro.props;
 
-// A CMS row can exist before its upload lands; skip those instead of a broken image.
-const [latest, ...archive] = nodes.filter((node) => node.image).sort((a, b) => b.year - a.year);
+// A CMS row can exist before its photo lands; skip those instead of a broken image.
+type ResolvedNode = NodeItem & { src: string };
+const resolved = nodes.flatMap((node): ResolvedNode[] => {
+  const src = resolveMediaSrc(node.image);
+  return src ? [{ ...node, src }] : [];
+});
+const [latest, ...archive] = resolved.sort((a, b) => b.year - a.year);
 // The label usually already carries the year ("Node 2026"); only print the year when it does not.
 const hasYearInLabel = (node: NodeItem) => node.label.includes(String(node.year));
 ---
@@ -29,7 +35,7 @@ const hasYearInLabel = (node: NodeItem) => node.label.includes(String(node.year)
     <figure class="e-reveal mt-[clamp(2rem,5vh,3.5rem)]">
       <img
         class="h-[clamp(220px,45vh,560px)] w-full object-cover"
-        src={latest.image}
+        src={latest.src}
         alt={latest.alt}
         loading="lazy"
         decoding="async"
@@ -66,7 +72,7 @@ const hasYearInLabel = (node: NodeItem) => node.label.includes(String(node.year)
                 <div class="aspect-[4/3] overflow-hidden rounded-media border border-line bg-surface">
                   <img
                     class="h-full w-full object-cover"
-                    src={node.image}
+                    src={node.src}
                     alt={node.alt}
                     loading="lazy"
                     decoding="async"

@@ -1721,11 +1721,9 @@ export default config({
       path: 'src/data/featured',
       format: { data: 'json' },
       schema: {
-        image: fields.image({
-          label: 'Foto',
-          description: 'Ekspor maksimal 1600 px lebar, format WebP atau AVIF, maksimal ±300 KB.',
-          directory: 'public/image/featured',
-          publicPath: '/image/featured/',
+        image: fields.text({
+          label: 'Foto (URL)',
+          description: 'Tempel tautan https (mis. https://cdn.eimlab.org/featured/foto.webp) atau path di situs (mis. /image/featured/foto.avif). Ekspor maksimal 1600 px lebar, format WebP atau AVIF, maksimal ±300 KB.',
           validation: { isRequired: true },
         }),
         alt: fields.text({ label: 'Alt Text', validation: { isRequired: true } }),
@@ -1751,11 +1749,9 @@ export default config({
               validation: { isRequired: true, min: 2000, max: 2100 },
             }),
             label: fields.text({ label: 'Nama Node', validation: { isRequired: true } }),
-            image: fields.image({
-              label: 'Foto studio',
-              description: 'Ekspor maksimal 1200 px lebar, format WebP atau AVIF, maksimal ±300 KB.',
-              directory: 'public/image/nodes',
-              publicPath: '/image/nodes/',
+            image: fields.text({
+              label: 'Foto studio (URL)',
+              description: 'Tempel tautan https (mis. https://cdn.eimlab.org/nodes/node.webp) atau path di situs (mis. /image/nodes/node.avif). Ekspor maksimal 1200 px lebar, format WebP atau AVIF, maksimal ±300 KB.',
               validation: { isRequired: true },
             }),
             alt: fields.text({ label: 'Alt Text', validation: { isRequired: true } }),

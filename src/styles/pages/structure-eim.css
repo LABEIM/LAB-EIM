@@ -127,6 +127,15 @@
   margin: var(--space-16) 0 0;
 }
 
+/* Cards fill their grid row, so a wrapped name cannot leave one card shorter. */
+.staff-grid > li {
+  display: flex;
+}
+
+.staff-grid > li > :is(.member-tile, .lecturer-card) {
+  flex: 1;
+}
+
 @media (min-width: 640px) {
   .staff-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -142,6 +151,8 @@
 /* Every role except the member roster reads as portrait cards, centred. */
 .staff-grid--lead {
   grid-template-columns: minmax(0, 1fr);
+  /* One height for every card in the section, not just per row. */
+  grid-auto-rows: 1fr;
 }
 
 @media (min-width: 640px) {
@@ -313,5 +324,7 @@
 
   .chart-node-head {
     width: min(100%, 18rem);
+    /* Matches the tallest two-line label so sibling cards line up. */
+    min-height: 7.375rem;
   }
 }

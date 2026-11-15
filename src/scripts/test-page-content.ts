@@ -1,7 +1,7 @@
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { dirname, join, resolve, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { buildBackgroundEmbed, buildPlayerEmbed, planRevealVideo, resolveExternalImageUrl, resolveVideoUrl } from '../utils/media';
+import { buildBackgroundEmbed, buildPlayerEmbed, planRevealVideo, resolveExternalImageUrl, resolveMediaSrc, resolveVideoUrl } from '../utils/media';
 import { sectionNumber, sectionOn, splitWordCount } from '../utils/page-content';
 import type { RecruitmentConfig } from '../utils/types';
 import type { AboutData, ChromeData, ContactData, CourseDetailPageData, CoursesPageData, EventDetailPageData, EventsPageData, FeaturedPhotoData, HomePageData, Lecturer, Member, NewsDetailPageData, NewsPageData, NodeData, StructurePageData } from '../utils/types';
@@ -705,6 +705,31 @@ for (const [input, expected] of [
   }
   assert(!threw && resolved === expected, `image URL with quotes or line breaks is handled: ${JSON.stringify(input)}`);
 }
+
+console.log('\n4️⃣d Testing media source resolution:');
+const mediaHttps = 'https://cdn.eimlab.org/brand/logo.png';
+assert(resolveMediaSrc(mediaHttps) === mediaHttps, 'https media URL accepted unchanged');
+assert(
+  resolveMediaSrc(' /image/division/list/0/image.avif ') === '/image/division/list/0/image.avif',
+  'root-relative path trimmed and accepted'
+);
+for (const rejected of [
+  'image/x.avif',
+  './image/x.avif',
+  '//cdn.eimlab.org/x.png',
+  '/\\cdn.eimlab.org/x.png',
+  '/image/../../.env',
+  'http://cdn.eimlab.org/x.png',
+  'javascript:alert(1)',
+  'data:image/png;base64,AAAA',
+  'https://cdn.eimlab.org/x.svg',
+  'https://192.168.1.10/a.png',
+  '',
+  '   ',
+]) {
+  assert(resolveMediaSrc(rejected) === null, `media source rejected: ${JSON.stringify(rejected)}`);
+}
+assert(resolveMediaSrc(undefined) === null && resolveMediaSrc(null) === null, 'missing media source resolves to null');
 
 console.log('\n5️⃣ Testing about.json:');
 const aboutPath = join(dataDir, 'about.json');

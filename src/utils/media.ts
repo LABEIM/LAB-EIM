@@ -180,3 +180,18 @@ export function resolveExternalImageUrl(raw: string | undefined | null): string 
   if (UNSAFE_IMAGE_EXTENSIONS.test(url.pathname)) return null;
   return url.href;
 }
+
+// Site media is either an upload under public/ referenced by a root-relative
+// path, or a file on the CDN referenced by https. A bare host, a
+// protocol-relative URL, or a data: URI would fetch from the wrong origin, so
+// only those two shapes reach a built src.
+const LOCAL_MEDIA_PATH = new RegExp('^/(?!/)[A-Za-z0-9._/-]+$');
+
+export function resolveMediaSrc(raw: string | undefined | null): string | null {
+  const external = resolveExternalImageUrl(raw);
+  if (external) return external;
+  if (typeof raw !== 'string') return null;
+  const value = raw.trim();
+  if (!LOCAL_MEDIA_PATH.test(value) || value.includes('..')) return null;
+  return value;
+}

@@ -4,7 +4,7 @@ import { fileURLToPath } from 'node:url';
 import { buildBackgroundEmbed, buildPlayerEmbed, planRevealVideo, resolveExternalImageUrl, resolveVideoUrl } from '../utils/media';
 import { sectionNumber, sectionOn, splitWordCount } from '../utils/page-content';
 import type { RecruitmentConfig } from '../utils/types';
-import type { AboutData, ChromeData, ContactData, CourseDetailPageData, CoursesPageData, EventDetailPageData, EventsPageData, HomePageData, Lecturer, Member, NewsDetailPageData, NewsPageData, NodeData, StructurePageData } from '../utils/types';
+import type { AboutData, ChromeData, ContactData, CourseDetailPageData, CoursesPageData, EventDetailPageData, EventsPageData, FeaturedPhotoData, HomePageData, Lecturer, Member, NewsDetailPageData, NewsPageData, NodeData, StructurePageData } from '../utils/types';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '../..');
 const dataDir = join(root, 'src/data');
@@ -230,6 +230,19 @@ for (const [index, node] of nodesData.list.entries()) {
   assert(typeof node.alt === 'string' && node.alt.trim().length > 0, `node ${index} alt is a non-empty string`);
   assert(existsSync(publicFile(node.image)), `node ${index} image resolves under public/`);
 }
+
+console.log('\n3️⃣e Testing src/data/featured.json:');
+const featuredPath = join(dataDir, 'featured.json');
+assert(existsSync(featuredPath), 'featured.json exists');
+const featuredData = JSON.parse(readFileSync(featuredPath, 'utf8')) as FeaturedPhotoData;
+assert(typeof featuredData.image === 'string' && featuredData.image.trim().length > 0, 'featured.image is a non-empty string');
+assert(existsSync(publicFile(featuredData.image)), 'featured.image resolves under public/');
+assert(typeof featuredData.alt === 'string' && featuredData.alt.trim().length > 0, 'featured.alt is a non-empty string');
+assert(typeof featuredData.caption === 'string' && featuredData.caption.trim().length > 0, 'featured.caption is a non-empty string');
+assert(
+  Number.isInteger(featuredData.height) && featuredData.height >= 50 && featuredData.height <= 100,
+  'featured.height is an integer between 50 and 100'
+);
 
 console.log('\n3️⃣c Testing member and lecturer portraits:');
 // Placeholder rows ("Nama Asisten" / "Nama Dosen") ship with an empty image and

@@ -453,3 +453,28 @@ Studio photos for each management Node, shown on the Tentang Kami page as a year
 ### Notes
 * One studio photo per node. A row saved before its upload lands is skipped rather than rendered as a broken image.
 * Export photos at most 1200 px wide, WebP or AVIF, roughly 300 KB or less before uploading.
+
+## 13. Featured Photo (`src/data/featured.json`)
+
+The full-bleed photo band on the Tentang Kami page, between the structure link and Visi & Misi. Its top and bottom edges fade into the page, and its height is set per photo rather than in code. The section hides itself when no photo is set.
+
+### Fields Explanation
+* **`image`** (String): Photo path. Upload through Keystatic; files are written to `public/image/featured/`.
+* **`alt`** (String): Alt text for screen readers. Required.
+* **`caption`** (String): Caption under the photo, rendered in mono uppercase. Required.
+* **`height`** (Integer): Photo height as a percentage of the band's base height, `50`–`100`. `100` is the default and the tallest setting; `90` makes the photo ten percent shorter.
+
+### Featured Photo Template
+```json
+{
+  "image": "/image/featured/image.avif",
+  "alt": "Foto Company Visit EIM to Huawei 2026",
+  "caption": "Company Visit EIM to Huawei 2026",
+  "height": 100
+}
+```
+
+### Notes
+* The photo is cropped to fill the band width, so keep the subject away from the extreme top and bottom edges.
+* Export photos at most 1600 px wide, WebP or AVIF, roughly 300 KB or less before uploading.
+

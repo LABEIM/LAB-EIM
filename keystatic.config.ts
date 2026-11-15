@@ -1653,6 +1653,13 @@ export default config({
               },
               { label: 'Tautan struktur', description: 'Tautan diarahkan ke halaman Struktur.' }
             ),
+            featuredPhoto: fields.object(
+              {
+                enabled: fields.checkbox({ label: 'Tampilkan bagian ini', defaultValue: true }),
+                label: fields.text({ label: 'Label untuk pembaca layar', validation: { isRequired: true } }),
+              },
+              { label: 'Foto utama', description: 'Hanya tampil saat foto utama diisi.' }
+            ),
             visiMisi: fields.object(
               {
                 enabled: fields.checkbox({ label: 'Tampilkan bagian ini', defaultValue: true }),
@@ -1705,6 +1712,28 @@ export default config({
             itemLabel: (props) => props.fields.title.value || 'Nilai',
           }
         ),
+      },
+    }),
+    featured_photo: singleton({
+      label: 'Foto Utama',
+      path: 'src/data/featured',
+      format: { data: 'json' },
+      schema: {
+        image: fields.image({
+          label: 'Foto',
+          description: 'Ekspor maksimal 1600 px lebar, format WebP atau AVIF, maksimal ±300 KB.',
+          directory: 'public/image/featured',
+          publicPath: '/image/featured/',
+          validation: { isRequired: true },
+        }),
+        alt: fields.text({ label: 'Alt Text', validation: { isRequired: true } }),
+        caption: fields.text({ label: 'Caption', validation: { isRequired: true } }),
+        height: fields.integer({
+          label: 'Tinggi foto (%)',
+          description: '50–100. 100 = tinggi default; 90 = sepuluh persen lebih pendek.',
+          defaultValue: 100,
+          validation: { isRequired: true, min: 50, max: 100 },
+        }),
       },
     }),
     node_history: singleton({
@@ -1904,6 +1933,7 @@ export default config({
         'positions',
         'members',
         'lecturers',
+        'featured_photo',
         'node_history',
         'registration',
         'recruitment_results',

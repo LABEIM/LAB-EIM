@@ -26,7 +26,8 @@
     "pendingCta": "Kenali lab kami",
     "mediaKind": "video",
     "backgroundUrl": "/assets/video/intro-test-11-2026.mp4",
-    "videoUrl": "https://youtu.be/A5N3GOMHZyU"
+    "videoUrl": "https://youtu.be/A5N3GOMHZyU",
+    "mediaAlt": "Video pengantar EIM"
   },
   "focus": {
     "enabled": true,

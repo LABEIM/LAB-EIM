@@ -376,7 +376,11 @@ html {
   position: sticky;
   /* Never tuck under the fixed header (it grows with the announcement bar). */
   top: max(12vh, calc(var(--site-header-height, 5rem) + 0.75rem));
-  height: 76vh;
+  /* Fix the box to the video's ratio. A viewport-height box changed its ratio
+     per screen, so the same clip was cropped differently everywhere. */
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  height: auto;
   max-width: 1200px;
   margin: 0 auto;
   overflow: hidden;
@@ -880,6 +884,7 @@ body.home-skin :is(a, button):focus-visible {
   flex-direction: column;
   justify-content: center;
   gap: 0.75rem;
+  aspect-ratio: auto;
   height: auto;
   min-height: 9rem;
   padding: clamp(1.25rem, 3vw, 2rem);

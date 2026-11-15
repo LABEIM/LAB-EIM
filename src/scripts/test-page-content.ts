@@ -240,8 +240,8 @@ assert(existsSync(publicFile(featuredData.image)), 'featured.image resolves unde
 assert(typeof featuredData.alt === 'string' && featuredData.alt.trim().length > 0, 'featured.alt is a non-empty string');
 assert(typeof featuredData.caption === 'string' && featuredData.caption.trim().length > 0, 'featured.caption is a non-empty string');
 assert(
-  Number.isInteger(featuredData.height) && featuredData.height >= 50 && featuredData.height <= 100,
-  'featured.height is an integer between 50 and 100'
+  Number.isInteger(featuredData.height) && featuredData.height >= 50 && featuredData.height <= 150,
+  'featured.height is an integer between 50 and 150'
 );
 
 console.log('\n3️⃣c Testing member and lecturer portraits:');

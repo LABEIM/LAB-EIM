@@ -462,7 +462,7 @@ The full-bleed photo band on the Tentang Kami page, between the structure link a
 * **`image`** (String): Photo path. Upload through Keystatic; files are written to `public/image/featured/`.
 * **`alt`** (String): Alt text for screen readers. Required.
 * **`caption`** (String): Caption under the photo, rendered in mono uppercase. Required.
-* **`height`** (Integer): Photo height as a percentage of the band's base height, `50`–`100`. `100` is the default and the tallest setting; `90` makes the photo ten percent shorter.
+* **`height`** (Integer): Photo height as a percentage of the band's base height, `50`–`150`. `100` is the default; `90` makes the photo ten percent shorter, `150` makes it half again as tall.
 
 ### Featured Photo Template
 ```json

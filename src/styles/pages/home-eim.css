@@ -83,7 +83,7 @@ html {
    The fade scales with the band so a short crop is not mostly ramp. */
 .eim-photo-band {
   --photo-fade: clamp(24px, 9%, 48px);
-  height: calc(clamp(260px, 52vh, 640px) * var(--photo-scale, 1));
+  height: calc(clamp(260px, 58vh, 720px) * var(--photo-scale, 1));
   -webkit-mask-image: linear-gradient(
     to bottom,
     transparent,

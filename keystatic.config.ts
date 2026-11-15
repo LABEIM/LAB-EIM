@@ -1730,9 +1730,9 @@ export default config({
         caption: fields.text({ label: 'Caption', validation: { isRequired: true } }),
         height: fields.integer({
           label: 'Tinggi foto (%)',
-          description: '50–100. 100 = tinggi default; 90 = sepuluh persen lebih pendek.',
+          description: '50–150. 100 = tinggi default; 90 = sepuluh persen lebih pendek, 150 = setengah kali lebih tinggi.',
           defaultValue: 100,
-          validation: { isRequired: true, min: 50, max: 100 },
+          validation: { isRequired: true, min: 50, max: 150 },
         }),
       },
     }),

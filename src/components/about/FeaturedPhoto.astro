@@ -8,7 +8,7 @@ interface Props {
 
 const { photo, content } = Astro.props;
 // The CMS stores a percent; clamp so a stale or hand-edited value cannot break the layout.
-const scale = Math.min(100, Math.max(50, Math.round(photo.height) || 100)) / 100;
+const scale = Math.min(150, Math.max(50, Math.round(photo.height) || 100)) / 100;
 ---
 
 <section aria-label={content.label} class="mt-[clamp(1.5rem,4.5vh,2.5rem)]">

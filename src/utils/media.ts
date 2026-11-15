@@ -128,7 +128,7 @@ export function buildPlayerEmbed(media: IframeMedia): string {
 }
 
 export interface RevealVideoPlan {
-  /** Native <video> src; the upload wins over a direct background link. */
+  /** Native <video> src, from a direct background link. */
   nativeSrc: string | null;
   /** Controls stay only when no embed provides the click-to-open modal. */
   controls: boolean;
@@ -138,31 +138,24 @@ export interface RevealVideoPlan {
   playerSrc: string | null;
 }
 
-// The intro has two roles: `video` (upload) or `backgroundUrl` loops as the
-// background, and `videoUrl`'s embeddable link opens in the modal. A direct
-// `videoUrl` file only stands in as background when nothing else fills it.
+// The intro has two roles: `backgroundUrl` loops as the background, and
+// `videoUrl`'s embeddable link opens in the modal. A direct `videoUrl` file only
+// stands in as background when `backgroundUrl` is empty.
 export function planRevealVideo(
-  video: string | undefined | null,
   backgroundUrl: string | undefined | null,
   videoUrl: string | undefined | null
 ): RevealVideoPlan {
   const playerResolved = resolveVideoUrl(videoUrl);
   const playerEmbed = playerResolved?.kind === 'iframe' ? playerResolved : null;
   const backgroundResolved = resolveVideoUrl(backgroundUrl);
-  const upload = typeof video === 'string' && video.trim() ? video : null;
-  const fallback = !upload && !backgroundResolved ? playerResolved : null;
+  const fallback = !backgroundResolved ? playerResolved : null;
 
   const nativeSrc =
-    upload ??
     (backgroundResolved?.kind === 'video' ? backgroundResolved.src : null) ??
     (fallback?.kind === 'video' ? fallback.src : null);
 
   const backgroundEmbed =
-    !upload && backgroundResolved?.kind === 'iframe'
-      ? backgroundResolved
-      : !upload && !backgroundResolved
-        ? playerEmbed
-        : null;
+    backgroundResolved?.kind === 'iframe' ? backgroundResolved : !backgroundResolved ? playerEmbed : null;
 
   return {
     nativeSrc,

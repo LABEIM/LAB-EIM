@@ -535,8 +535,7 @@ export interface HomePageData {
     pendingCta: string;
     mediaKind?: 'none' | 'image' | 'video';
     image?: string;
-    video?: string;
-    /** Background-only link; loses to the upload, wins over `videoUrl`. */
+    /** Background-only link; wins over `videoUrl`. */
     backgroundUrl?: string;
     /** Pasted player link; a direct file also serves as a fallback background. */
     videoUrl?: string;

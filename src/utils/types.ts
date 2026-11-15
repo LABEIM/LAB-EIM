@@ -375,15 +375,15 @@ export interface DivisionSection {
   staff: Member[];
 }
 
-export interface GalleryItem {
+export interface NodeItem {
+  year: number;
+  label: string;
   image: string;
   alt: string;
-  caption: string;
 }
 
-export interface GalleryData {
-  featured?: GalleryItem;
-  photos?: GalleryItem[];
+export interface NodeData {
+  list: NodeItem[];
 }
 
 export interface SiteData {

@@ -4,7 +4,7 @@ import { fileURLToPath } from 'node:url';
 import { buildBackgroundEmbed, buildPlayerEmbed, planRevealVideo, resolveExternalImageUrl, resolveVideoUrl } from '../utils/media';
 import { sectionNumber, sectionOn, splitWordCount } from '../utils/page-content';
 import type { RecruitmentConfig } from '../utils/types';
-import type { AboutData, ChromeData, ContactData, CourseDetailPageData, CoursesPageData, EventDetailPageData, EventsPageData, GalleryData, HomePageData, Lecturer, Member, NewsDetailPageData, NewsPageData, StructurePageData } from '../utils/types';
+import type { AboutData, ChromeData, ContactData, CourseDetailPageData, CoursesPageData, EventDetailPageData, EventsPageData, GalleryData, HomePageData, Lecturer, Member, NewsDetailPageData, NewsPageData, NodeData, StructurePageData } from '../utils/types';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '../..');
 const dataDir = join(root, 'src/data');
@@ -221,6 +221,21 @@ galleryImages.forEach((image, index) => {
     `gallery image ${index} resolves under public/`
   );
 });
+
+const nodesPath = join(dataDir, 'nodes.json');
+assert(existsSync(nodesPath), 'nodes.json exists');
+const nodesData = JSON.parse(readFileSync(nodesPath, 'utf8')) as NodeData;
+assert(Array.isArray(nodesData.list), 'nodes.list is an array');
+const nodeYears = new Set<number>();
+for (const [index, node] of nodesData.list.entries()) {
+  assert(Number.isInteger(node.year) && node.year >= 2000, `node ${index} year is a 4-digit year`);
+  assert(!nodeYears.has(node.year), `node ${index} year ${node.year} is unique`);
+  nodeYears.add(node.year);
+  assert(typeof node.label === 'string' && node.label.trim().length > 0, `node ${index} label is a non-empty string`);
+  assert(typeof node.image === 'string' && node.image.trim().length > 0, `node ${index} image is a non-empty string`);
+  assert(typeof node.alt === 'string' && node.alt.trim().length > 0, `node ${index} alt is a non-empty string`);
+  assert(existsSync(publicFile(node.image)), `node ${index} image resolves under public/`);
+}
 
 console.log('\n3️⃣c Testing member and lecturer portraits:');
 // Placeholder rows ("Nama Asisten" / "Nama Dosen") ship with an empty image and

@@ -11,7 +11,7 @@ const { photo, label } = Astro.props;
 const scale = Math.min(100, Math.max(50, Math.round(Number(photo.height)) || 100)) / 100;
 ---
 
-<section aria-label={label}>
+<section aria-label={label} class="mt-[clamp(1.5rem,4.5vh,2.5rem)]">
   <figure class="e-reveal w-full">
     <img
       class="photo-band w-full object-cover"

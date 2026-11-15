@@ -79,11 +79,25 @@ html {
   }
 }
 
-/* Full-bleed featured photo: height comes from the CMS percentage, edges dissolve into the page. */
+/* Full-bleed featured photo: height comes from the CMS percentage, edges dissolve into the page.
+   The fade scales with the band so a short crop is not mostly ramp. */
 .photo-band {
+  --photo-fade: clamp(24px, 9%, 48px);
   height: calc(clamp(260px, 52vh, 640px) * var(--photo-scale, 1));
-  -webkit-mask-image: linear-gradient(to bottom, transparent, #000 56px, #000 calc(100% - 56px), transparent);
-  mask-image: linear-gradient(to bottom, transparent, #000 56px, #000 calc(100% - 56px), transparent);
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    transparent,
+    #000 var(--photo-fade),
+    #000 calc(100% - var(--photo-fade)),
+    transparent
+  );
+  mask-image: linear-gradient(
+    to bottom,
+    transparent,
+    #000 var(--photo-fade),
+    #000 calc(100% - var(--photo-fade)),
+    transparent
+  );
 }
 
 /* == Hero == */

@@ -39,9 +39,17 @@ function youtubeEmbed(id: string): string {
 
 export type IframeMedia = Extract<ResolvedMedia, { kind: 'iframe' }>;
 
+// A loop that ships with the site (public/…) is referenced by a root-relative
+// path, so preview and production read the same file. `//host` and `/\host` are
+// protocol-relative URLs, hence the lookahead.
+const LOCAL_VIDEO_PATH = /^\/(?!\/)[A-Za-z0-9._\-/]+\.(?:mp4|webm|ogv)$/i;
+
 export function resolveVideoUrl(raw: string | undefined | null): ResolvedMedia | null {
   if (typeof raw !== 'string') return null;
-  const url = parseHttps(raw);
+  const value = raw.trim();
+  if (LOCAL_VIDEO_PATH.test(value) && !value.includes('..')) return { kind: 'video', src: value };
+
+  const url = parseHttps(value);
   if (!url) return null;
 
   const host = url.hostname;

@@ -426,17 +426,30 @@ order: 1
 Deskripsi singkat mata kuliah dan cakupan praktikumnya.
 ```
 
-## 12. Sejarah Node (`src/data/nodes.json`)
-Foto studio tiap Node kepengurusan, tampil di halaman Tentang Kami sebagai arsip per tahun. Node terbaru tampil paling besar dengan penanda "Node terbaru"; tahun-tahun sebelumnya tersusun sebagai kartu di bawahnya. Bagian ini hilang otomatis saat belum ada foto node.
+## 12. Node History (`src/data/nodes.json`)
+Studio photos for each management Node, shown on the Tentang Kami page as a year-by-year archive. The newest node renders as the large photo with a "Node terbaru" tag; earlier years follow as a card grid under "Node sebelumnya". The whole section hides itself until at least one node has a photo.
 
 ### Fields Explanation
-* **`list`** (Array): Daftar node. Urutan isian bebas — halaman selalu menaruh tahun terbesar paling depan.
-  * **`year`** (Integer): Tahun kepengurusan, misal `2026`.
-  * **`label`** (String): Nama node, misal `Node 2026`.
-  * **`image`** (String): Path foto studio. Upload melalui Keystatic; file ditulis ke `public/image/nodes/`.
-  * **`alt`** (String): Alt text untuk pembaca layar. Wajib.
+* **`list`** (Array): The nodes. Entry order is free — the page always renders the highest year first.
+  * **`year`** (Integer): Management year, for example `2026`.
+  * **`label`** (String): Node name, for example `Node 2026`. When the label already contains the year, the year is not printed twice.
+  * **`image`** (String): Studio photo path. Upload through Keystatic; files are written to `public/image/nodes/`.
+  * **`alt`** (String): Alt text for screen readers. Required.
+
+### Node Template
+```json
+{
+  "list": [
+    {
+      "year": 2026,
+      "label": "Node 2026",
+      "image": "/image/nodes/2026-studio.avif",
+      "alt": "Foto studio Node 2026"
+    }
+  ]
+}
+```
 
 ### Notes
-* Satu foto studio per node. Baris yang fotonya belum diunggah dilewati, bukan ditampilkan sebagai gambar rusak.
-* Ekspor foto maksimal 1200 px lebar, format WebP atau AVIF, maksimal ±300 KB sebelum diunggah.
-
+* One studio photo per node. A row saved before its upload lands is skipped rather than rendered as a broken image.
+* Export photos at most 1200 px wide, WebP or AVIF, roughly 300 KB or less before uploading.

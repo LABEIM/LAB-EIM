@@ -211,15 +211,20 @@ assert(
   'site.favicon resolves under public/'
 );
 
+console.log('\n3️⃣d Testing src/data/nodes.json:');
 const nodesPath = join(dataDir, 'nodes.json');
 assert(existsSync(nodesPath), 'nodes.json exists');
 const nodesData = JSON.parse(readFileSync(nodesPath, 'utf8')) as NodeData;
 assert(Array.isArray(nodesData.list), 'nodes.list is an array');
-const nodeYears = new Set<number>();
+assert(
+  new Set(nodesData.list.map((node) => node.year)).size === nodesData.list.length,
+  'node years are unique'
+);
 for (const [index, node] of nodesData.list.entries()) {
-  assert(Number.isInteger(node.year) && node.year >= 2000, `node ${index} year is a 4-digit year`);
-  assert(!nodeYears.has(node.year), `node ${index} year ${node.year} is unique`);
-  nodeYears.add(node.year);
+  assert(
+    Number.isInteger(node.year) && node.year >= 2000 && node.year <= 2100,
+    `node ${index} year is between 2000 and 2100`
+  );
   assert(typeof node.label === 'string' && node.label.trim().length > 0, `node ${index} label is a non-empty string`);
   assert(typeof node.image === 'string' && node.image.trim().length > 0, `node ${index} image is a non-empty string`);
   assert(typeof node.alt === 'string' && node.alt.trim().length > 0, `node ${index} alt is a non-empty string`);

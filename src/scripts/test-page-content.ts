@@ -267,6 +267,22 @@ lecturersData.list.forEach((lecturer, index) => {
   }
 });
 
+const MEMBER_CODE = /^[A-Z]{4}$/;
+const LECTURER_CODE = /^[A-Z]{3}$/;
+const memberIds = membersData.list.map((member) => String(member.id));
+assert(membersData.list.length === 46, 'members.json lists 46 people');
+assert(memberIds.every((id) => MEMBER_CODE.test(id)), 'every member id is a 4-letter code');
+assert(new Set(memberIds).size === memberIds.length, 'member ids are unique');
+
+const lecturerIds = lecturersData.list.map((lecturer) => String(lecturer.id));
+assert(lecturerIds.every((id) => LECTURER_CODE.test(id)), 'every lecturer id is a 3-letter code');
+assert(new Set(lecturerIds).size === lecturerIds.length, 'lecturer ids are unique');
+
+const positionsData = JSON.parse(readFileSync(join(dataDir, 'positions.json'), 'utf8')) as { list: { id: string }[] };
+const positionIds = new Set(positionsData.list.map((position) => position.id));
+assert(membersData.list.every((member) => positionIds.has(member.role)), 'every member role resolves to a position');
+assert(lecturersData.list.every((lecturer) => positionIds.has(lecturer.role)), 'every lecturer role resolves to a position');
+
 console.log('\n4️⃣ Testing pages/home.json:');
 const homePath = join(dataDir, 'pages/home.json');
 const homeExists = existsSync(homePath);

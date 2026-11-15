@@ -679,12 +679,12 @@ assert(STRUCTURE_TREE[0].id === 'ketua-lab', 'tree starts at ketua-lab');
 console.log('\n15. Testing Course Helpers:');
 const courseLecturers = [{ id: 'dosen-koordinator-matkul-1', name: 'Dosen A', role: 'koordinator-matkul', image: '', scale: '1', position: 'center' }];
 const courseMembers = [
-  { id: 1, name: 'Asisten A', role: 'mahasiswa-anggota', image: '', scale: '1', position: 'center' },
-  { id: 2, name: 'Asisten B', role: 'mahasiswa-anggota', image: '', scale: '1', position: 'center' },
+  { id: 'DAYY', name: 'Asisten A', role: 'mahasiswa-anggota', image: '', scale: '1', position: 'center' },
+  { id: 'WOKY', name: 'Asisten B', role: 'mahasiswa-anggota', image: '', scale: '1', position: 'center' },
 ];
 const courseEntries = [
-  { id: 'b', data: { title: 'Kedua', code: 'B', sks: 3, hasPracticum: true, modules: [{ title: 'Modul 1', topics: 'Topik' }], coordinatorId: 'dosen-koordinator-matkul-1', assistantIds: [1, 1, 2, 99], order: 2 } },
-  { id: 'a', data: { title: 'Pertama', code: 'A', sks: 2, hasPracticum: false, modules: [{ title: 'Stale', topics: 'Stale' }], coordinatorId: 'missing', assistantIds: [2], order: 1 } },
+  { id: 'b', data: { title: 'Kedua', code: 'B', sks: 3, hasPracticum: true, modules: [{ title: 'Modul 1', topics: 'Topik' }], coordinatorId: 'dosen-koordinator-matkul-1', assistantIds: ['DAYY', 'DAYY', 'WOKY', 'ZZXX'], order: 2 } },
+  { id: 'a', data: { title: 'Pertama', code: 'A', sks: 2, hasPracticum: false, modules: [{ title: 'Stale', topics: 'Stale' }], coordinatorId: 'missing', assistantIds: ['WOKY'], order: 1 } },
 ];
 const resolvedCourses = resolveCourses(courseEntries, courseLecturers, courseMembers);
 assert(resolvedCourses.length === 2, 'every course resolves');
@@ -700,13 +700,13 @@ assert(courseHasContent(resolvedCourses[1]).assistants[0].name === 'Asisten A', 
 // 16. Practicum assistant overlap
 console.log('\n16. Testing Practicum Assistant Summary:');
 const overlapCourses = [
-  { id: 'a', data: { title: 'A', code: 'X', sks: 3, hasPracticum: true, modules: [], coordinatorId: 'x', assistantIds: [1, 2], order: 1 } },
-  { id: 'b', data: { title: 'B', code: 'Y', sks: 3, hasPracticum: true, modules: [], coordinatorId: 'x', assistantIds: [2, 3], order: 2 } },
-  { id: 'c', data: { title: 'C', code: 'Z', sks: 2, hasPracticum: false, modules: [], coordinatorId: 'x', assistantIds: [4], order: 3 } },
+  { id: 'a', data: { title: 'A', code: 'X', sks: 3, hasPracticum: true, modules: [], coordinatorId: 'x', assistantIds: ['DAYY', 'WOKY'], order: 1 } },
+  { id: 'b', data: { title: 'B', code: 'Y', sks: 3, hasPracticum: true, modules: [], coordinatorId: 'x', assistantIds: ['WOKY', 'ZZXX'], order: 2 } },
+  { id: 'c', data: { title: 'C', code: 'Z', sks: 2, hasPracticum: false, modules: [], coordinatorId: 'x', assistantIds: ['ZZXX'], order: 3 } },
 ];
 const overlapMembers = [
-  { id: 1, name: 'A', role: 'mahasiswa-anggota', image: '', scale: '1', position: 'center' },
-  { id: 2, name: 'B', role: 'koordinator-asisten', image: '', scale: '1', position: 'center' },
+  { id: 'DAYY', name: 'A', role: 'mahasiswa-anggota', image: '', scale: '1', position: 'center' },
+  { id: 'WOKY', name: 'B', role: 'koordinator-asisten', image: '', scale: '1', position: 'center' },
 ];
 const overlap = summarizePracticumAssistants(
   overlapCourses.map((course) => course.data),
@@ -719,7 +719,7 @@ assert(
   'the note numerator never exceeds its denominator',
 );
 const noPracticum = summarizePracticumAssistants(
-  [{ title: 'D', code: 'W', sks: 2, hasPracticum: false, modules: [], coordinatorId: 'x', assistantIds: [1], order: 1 }],
+  [{ title: 'D', code: 'W', sks: 2, hasPracticum: false, modules: [], coordinatorId: 'x', assistantIds: ['DAYY'], order: 1 }],
   overlapMembers,
 );
 assert(noPracticum.distinctCount === 0 && noPracticum.memberCount === 0, 'no practicum yields zero assistants');

@@ -6,9 +6,9 @@ hasPracticum: true
 modules:
   - title: Modul 1 — Topik Praktikum
     topics: Topik contoh untuk mata kuliah kedua.
-coordinatorId: dosen-koordinator-matkul-1
+coordinatorId: AWJ
 assistantIds:
-  - 2
+  - WOKY
 order: 2
 ---
 

@@ -1329,8 +1329,20 @@ if (!existsSync(clientDir)) {
   console.log('  ⚠️ SKIPPED: dist/client is missing. Run `PUBLIC_SHOW_AUDIT_CONTENT=true pnpm run build` first to enable this guard.');
 } else {
   const aboutHtml = readFileSync(join(clientDir, 'about/index.html'), 'utf8');
-  assert(aboutHtml.includes('--photo-scale:1'), 'about page renders the featured photo band at the default height');
-  assert(aboutHtml.includes('aria-label="Foto studio tim"'), 'about page renders the featured photo band label');
+  const featuredScale = String(featuredData.height / 100);
+  const featuredLabel = about.sections.featuredPhoto.label;
+  assert(
+    aboutHtml.includes(`--photo-scale:${featuredScale}`),
+    'about page renders the featured photo band at the configured height'
+  );
+  assert(
+    aboutHtml.includes(`aria-label="${featuredLabel}"`),
+    'about page renders the featured photo band label'
+  );
+  assert(
+    aboutHtml.includes(`src="${featuredData.image}"`),
+    'about page renders the configured featured photo'
+  );
 
   // Production builds hide the audit sample content, so list pages only render their
   // empty state; skip the copy that belongs to the other branch of that same page.

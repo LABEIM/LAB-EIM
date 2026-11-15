@@ -475,6 +475,7 @@ The full-bleed photo band on the Tentang Kami page, between the structure link a
 ```
 
 ### Notes
-* The photo is cropped to fill the band width, so keep the subject away from the extreme top and bottom edges.
+* The photo fills the band width, so the crop depends on the screen: wide screens cut the top and bottom, narrow screens cut the sides. Keep the subject away from every edge.
+* The band also has a "Foto utama" toggle and a screen-reader label under Bagian halaman on the Tentang Kami page; the toggle hides the band without deleting the photo.
 * Export photos at most 1600 px wide, WebP or AVIF, roughly 300 KB or less before uploading.
 

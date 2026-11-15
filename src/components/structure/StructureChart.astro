@@ -4,7 +4,7 @@ import {
   PRACTICUM_ASSISTANT_ID,
   STRUCTURE_TREE,
   positionLabel,
-  summarizeDosenCard,
+  summarizeDosenMembers,
   type ChartNode,
 } from '../../utils/position-mapper';
 import { summarizePracticumAssistants } from '../../utils/course-helpers';
@@ -37,8 +37,7 @@ const coordinatorIds = new Set(
     .map((course) => course.coordinator?.id)
     .filter((id): id is string => Boolean(id)),
 );
-const DOSEN_MEMBER_ROLES = ['dosen-anggota', 'koordinator-matkul'];
-const dosenMembers = summarizeDosenCard(people, DOSEN_MEMBER_ROLES, coordinatorIds);
+const dosenMembers = summarizeDosenMembers(people, coordinatorIds);
 
 const notesFor = (id: string): string | undefined => {
   if (id === 'mahasiswa-anggota' && assistantSummary.memberCount > 0) {
@@ -46,14 +45,9 @@ const notesFor = (id: string): string | undefined => {
       .replaceAll('{n}', String(assistantSummary.memberCount))
       .replaceAll('{total}', String(students));
   }
-  // Any dosen can coordinate a course; only the PIC card itself would be redundant.
-  if (byId.get(id)?.group === 'dosen' && id !== 'koordinator-matkul') {
-    const card = id === 'dosen-anggota'
-      ? dosenMembers
-      : summarizeDosenCard(people, [id], coordinatorIds);
-    if (card.coordinators > 0) {
-      return `${card.coordinators} dari ${card.total} juga ${positionLabel(byId, 'koordinator-matkul')}`;
-    }
+  // Any dosen can coordinate a course, but only the member card explains it.
+  if (id === 'dosen-anggota' && dosenMembers.coordinators > 0) {
+    return `${dosenMembers.coordinators} dari ${dosenMembers.total} juga ${positionLabel(byId, 'koordinator-matkul')}`;
   }
   return undefined;
 };

@@ -10,7 +10,7 @@ import { calculateStageFromDates } from './registration/stage';
 import { safeLink, internalHref } from '../utils/safe-link';
 import { selectVisibleCards, type FilterCard, type FilterState, type FilterResult } from './content-filter';
 import { resolveStageCta } from '../utils/constants';
-import { parsePositions, buildPositionIndex, positionLabel, groupPeople, countPeopleByGroup, summarizeDosenCard, STRUCTURE_TREE, type Position } from '../utils/position-mapper';
+import { parsePositions, buildPositionIndex, positionLabel, groupPeople, countPeopleByGroup, summarizeDosenMembers, STRUCTURE_TREE, type Position } from '../utils/position-mapper';
 import positionsData from '../data/positions.json';
 import { resolveCourses, courseHasContent, summarizePracticumAssistants } from '../utils/course-helpers';
 
@@ -736,18 +736,12 @@ const dosenPeople = [
   { id: 'AWJ', role: 'koordinator-matkul' },
   { id: 'DAYY', role: 'mahasiswa-anggota' },
 ];
-const dosenMemberRoles = ['dosen-anggota', 'koordinator-matkul'];
-const dosenSummary = summarizeDosenCard(dosenPeople, dosenMemberRoles, new Set(['AWJ']));
+const dosenSummary = summarizeDosenMembers(dosenPeople, new Set(['AWJ']));
 assert(dosenSummary.total === 5, 'course coordinators count as dosen members');
 assert(dosenSummary.coordinators === 1, 'the summary counts dosen members who coordinate a course');
-const dosenWithoutCoordinator = summarizeDosenCard(dosenPeople, dosenMemberRoles, new Set());
+const dosenWithoutCoordinator = summarizeDosenMembers(dosenPeople, new Set());
 assert(dosenWithoutCoordinator.total === 5, 'without a coordinator the total keeps every dosen member');
 assert(dosenWithoutCoordinator.coordinators === 0, 'without a coordinator the overlap is zero');
-
-const ketuaCard = summarizeDosenCard(dosenPeople, ['ketua-lab'], new Set(['MTK']));
-assert(ketuaCard.total === 1 && ketuaCard.coordinators === 1, 'the ketua card notes a coordinator');
-const wakilCard = summarizeDosenCard(dosenPeople, ['wakil-ketua-lab'], new Set(['MTK']));
-assert(wakilCard.total === 1 && wakilCard.coordinators === 0, 'another card does not borrow the overlap');
 
 console.log(`\n${passed} passed, ${failed} failed`);
 if (failed > 0) process.exitCode = 1;

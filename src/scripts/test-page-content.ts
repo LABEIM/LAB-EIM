@@ -297,6 +297,7 @@ for (const file of collectFiles(join(root, 'src/content/courses'), ['.md'])) {
 
   const inline = /^assistantIds:\s*\[(.*)\]\s*$/m.exec(source)?.[1];
   const block = /^assistantIds:\s*\n((?:\s+-\s+.*\n?)+)/m.exec(source)?.[1];
+  assert(inline !== undefined || block !== undefined, `${name} assistantIds is parseable`);
   const assistantIds = inline !== undefined
     ? inline.split(',').map((id) => id.trim().replace(/^['"]|['"]$/g, '')).filter(Boolean)
     : [...(block ?? '').matchAll(/^\s*-\s*(\S+)\s*$/gm)].map((match) => match[1]);

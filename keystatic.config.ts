@@ -591,31 +591,25 @@ export default config({
               ],
               defaultValue: 'none',
             }),
-            image: fields.image({
-              label: 'Gambar pengantar',
-              description: 'Dipakai saat jenis media "Gambar".',
-              directory: 'public/assets/media',
-              publicPath: '/assets/media/',
+            imageUrl: fields.text({
+              label: 'Gambar pengantar (URL)',
+              description:
+                'Satu-satunya sumber gambar. Tempel tautan https (mis. https://cdn.eimlab.org/media/intro.webp) atau path di situs (mis. /assets/media/intro.webp).',
             }),
             backgroundUrl: fields.text({
               label: 'Tautan video latar',
               description:
                 'Tautan khusus untuk video latar (loop): YouTube, Vimeo, atau berkas video langsung (.mp4/.webm). Untuk berkas yang ikut diunggah ke situs, tulis path-nya, mis. /assets/media/intro.mp4; untuk berkas di luar situs, tempel tautan https R2/CDN. Encode dulu berkasnya: ffmpeg -i raw.mp4 -an -vf "scale=1920:-2" -c:v libx264 -crf 23 -preset slow -movflags +faststart intro.mp4 (target 6–10 detik, 2–4 MB). Bila kosong, tautan pemutar dipakai sebagai latar.',
             }),
-            poster: fields.image({
-              label: 'Poster video',
-              description: 'Gambar yang tampil sebelum video diputar.',
-              directory: 'public/assets/media',
-              publicPath: '/assets/media/',
+            poster: fields.text({
+              label: 'Poster video (URL)',
+              description:
+                'Tempel tautan https (mis. https://cdn.eimlab.org/media/poster.webp) atau path di situs (mis. /assets/media/poster.webp). Gambar yang tampil sebelum video diputar.',
             }),
             videoUrl: fields.text({
               label: 'Tautan video eksternal',
               description:
                 'Tempel tautan YouTube, Vimeo, atau Google Drive untuk pemutar saat video diklik. Tautan berkas video langsung (.mp4/.webm) dipakai sebagai latar bila tautan latar kosong. Untuk Google Drive, pastikan berkas dibagikan publik.',
-            }),
-            imageUrl: fields.text({
-              label: 'Tautan gambar eksternal',
-              description: 'Tempel tautan gambar eksternal (https). Diutamakan di atas gambar yang diunggah.',
             }),
             mediaAlt: fields.text({
               label: 'Teks alternatif media',
@@ -1276,16 +1270,14 @@ export default config({
         ),
         brand: fields.object(
           {
-            logoHorizontal: fields.image({
-              label: 'Logo horizontal',
-              directory: 'public/assets/brand',
-              publicPath: '/assets/brand/',
+            logoHorizontal: fields.text({
+              label: 'Logo horizontal (URL)',
+              description: 'Tempel tautan https (mis. https://cdn.eimlab.org/brand/logo.png) atau path di situs (mis. /assets/brand/logo.avif). SVG hanya didukung untuk path lokal; untuk tautan https pakai PNG, WebP, atau AVIF.',
               validation: { isRequired: true },
             }),
-            logoIcon: fields.image({
-              label: 'Ikon logo',
-              directory: 'public/assets/brand',
-              publicPath: '/assets/brand/',
+            logoIcon: fields.text({
+              label: 'Ikon logo (URL)',
+              description: 'Tempel tautan https (mis. https://cdn.eimlab.org/brand/logo-icon.png) atau path di situs (mis. /assets/brand/logoIcon.png). SVG hanya didukung untuk path lokal; untuk tautan https pakai PNG, WebP, atau AVIF.',
               validation: { isRequired: true },
             }),
           },
@@ -1428,10 +1420,9 @@ export default config({
         defaultTitle: fields.text({ label: 'Default Page Title' }),
         defaultDescription: fields.text({ label: 'Default Meta Description', multiline: true }),
         defaultKeywords: fields.text({ label: 'Default Meta Keywords', multiline: true }),
-        favicon: fields.image({
-          label: 'Favicon',
-          directory: 'public/image/eim',
-          publicPath: '/image/eim/',
+        favicon: fields.text({
+          label: 'Favicon (URL)',
+          description: 'Tempel tautan https (mis. https://cdn.eimlab.org/brand/favicon.png) atau path di situs (mis. /image/eim/favicon.png). SVG hanya didukung untuk path lokal; untuk tautan https pakai PNG atau AVIF.',
           validation: { isRequired: true },
         }),
         timezone: fields.text({ label: 'Global IANA Timezone (e.g. Asia/Jakarta)', defaultValue: 'Asia/Jakarta' }),
@@ -1512,12 +1503,10 @@ export default config({
             id: fields.text({ label: 'Kode Asisten', description: 'Empat huruf kapital, unik, mis. DAYY. Dipakai sebagai ID di data mata kuliah.', validation: { isRequired: true } }),
             name: fields.text({ label: 'Name' }),
             role: positionField,
-            image: fields.image({
-              label: 'Foto',
+            image: fields.text({
+              label: 'Foto (URL)',
               description:
-                'Potong foto ke rasio bingkai sebelum diunggah. Kosongkan untuk memakai inisial nama. Untuk berkas yang sudah dipotong, atur Scale ke 1 dan Position ke center. Ekspor 640 px persegi (1:1), format WebP atau AVIF, maksimal ±150 KB.',
-              directory: 'public/image/division',
-              publicPath: '/image/division/',
+                'Tempel tautan https (mis. https://cdn.eimlab.org/division/foto.webp) atau path di situs (mis. /image/division/foto.webp). Kosongkan untuk memakai inisial nama. Untuk berkas yang sudah dipotong, atur Scale ke 1 dan Position ke center. Ekspor 640 px persegi (1:1), format WebP atau AVIF, maksimal ±150 KB.',
             }),
             scale: fields.text({
               label: 'Scale Factor',
@@ -1545,12 +1534,10 @@ export default config({
             id: fields.text({ label: 'Kode Dosen', description: 'Tiga huruf kapital, unik, mis. MTK. Dipakai sebagai ID di data mata kuliah.' }),
             name: fields.text({ label: 'Name' }),
             role: positionField,
-            image: fields.image({
-              label: 'Foto',
+            image: fields.text({
+              label: 'Foto (URL)',
               description:
-                'Potong foto ke rasio bingkai sebelum diunggah. Kosongkan untuk memakai avatar cadangan. Untuk berkas yang sudah dipotong, atur Scale ke 1 dan Position ke center. Ekspor 640 px persegi (1:1), format WebP atau AVIF, maksimal ±150 KB.',
-              directory: 'public/image/division',
-              publicPath: '/image/division/',
+                'Tempel tautan https (mis. https://cdn.eimlab.org/division/foto.webp) atau path di situs (mis. /image/division/foto.webp). Kosongkan untuk memakai avatar cadangan. Untuk berkas yang sudah dipotong, atur Scale ke 1 dan Position ke center. Ekspor 640 px persegi (1:1), format WebP atau AVIF, maksimal ±150 KB.',
             }),
             scale: fields.text({
               label: 'Scale Factor',
@@ -1728,11 +1715,9 @@ export default config({
       path: 'src/data/featured',
       format: { data: 'json' },
       schema: {
-        image: fields.image({
-          label: 'Foto',
-          description: 'Ekspor maksimal 1600 px lebar, format WebP atau AVIF, maksimal ±300 KB.',
-          directory: 'public/image/featured',
-          publicPath: '/image/featured/',
+        image: fields.text({
+          label: 'Foto (URL)',
+          description: 'Tempel tautan https (mis. https://cdn.eimlab.org/featured/foto.webp) atau path di situs (mis. /image/featured/foto.avif). Ekspor maksimal 1600 px lebar, format WebP atau AVIF, maksimal ±300 KB.',
           validation: { isRequired: true },
         }),
         alt: fields.text({ label: 'Alt Text', validation: { isRequired: true } }),
@@ -1758,11 +1743,9 @@ export default config({
               validation: { isRequired: true, min: 2000, max: 2100 },
             }),
             label: fields.text({ label: 'Nama Node', validation: { isRequired: true } }),
-            image: fields.image({
-              label: 'Foto studio',
-              description: 'Ekspor maksimal 1200 px lebar, format WebP atau AVIF, maksimal ±300 KB.',
-              directory: 'public/image/nodes',
-              publicPath: '/image/nodes/',
+            image: fields.text({
+              label: 'Foto studio (URL)',
+              description: 'Tempel tautan https (mis. https://cdn.eimlab.org/nodes/node.webp) atau path di situs (mis. /image/nodes/node.avif). Ekspor maksimal 1200 px lebar, format WebP atau AVIF, maksimal ±300 KB.',
               validation: { isRequired: true },
             }),
             alt: fields.text({ label: 'Alt Text', validation: { isRequired: true } }),

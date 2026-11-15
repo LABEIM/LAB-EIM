@@ -1,5 +1,6 @@
 ---
 import { positionLabel } from '../../utils/position-mapper';
+import { resolveMediaSrc } from '../../utils/media';
 import type { Lecturer, Position } from '../../utils/types';
 
 interface Props {
@@ -9,7 +10,8 @@ interface Props {
 
 const { lecturer, positionIndex } = Astro.props;
 
-const hasImage = Boolean(lecturer.image?.trim());
+const imageSrc = resolveMediaSrc(lecturer.image);
+const hasImage = Boolean(imageSrc);
 const hasName = Boolean(lecturer.name.trim());
 const label = positionLabel(positionIndex, lecturer.role);
 ---
@@ -17,10 +19,11 @@ const label = positionLabel(positionIndex, lecturer.role);
 <article class="lecturer-card">
   <span class="lecturer-card-media">
     <img
-      src={hasImage && lecturer.image ? lecturer.image : '/image/placeholder-avatar.svg'}
+      src={imageSrc ?? '/image/placeholder-avatar.svg'}
       alt=""
       loading="lazy"
       decoding="async"
+      referrerpolicy="no-referrer"
       style={hasImage
         ? `transform: scale(${lecturer.scale || '1'}); transform-origin: ${lecturer.position || 'center'};`
         : undefined}

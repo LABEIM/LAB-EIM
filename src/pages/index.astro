@@ -24,6 +24,7 @@ import { filterAuditContent } from '../utils/content-helpers';
 import { resolveCourses } from '../utils/course-helpers';
 import { countPeopleByGroup, parsePositions } from '../utils/position-mapper';
 import { getCurrentRecruitmentStage } from '../utils/recruitment';
+import { resolveMediaSrc } from '../utils/media';
 
 const locale = getLocaleFromUrl(Astro.url);
 const page = getLocalizedJsonData<HomePageData>('pages/home', locale);
@@ -108,7 +109,7 @@ const sectionItems = [
     <EimSectionNav items={sectionItems} label={chrome.labels.sectionNav} />
     <EimHero
       content={page.hero}
-      logo={chrome.brand.logoHorizontal}
+      logo={resolveMediaSrc(chrome.brand.logoHorizontal) ?? ''}
       primaryHref="#reveal"
       secondaryHref="/about"
       showPrimary={sectionOn(page.reveal)}

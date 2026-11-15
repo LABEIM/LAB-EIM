@@ -2,7 +2,7 @@
 import { Image } from 'astro:assets';
 import emblem from '../../../public/assets/brand/eim-emblem.png';
 import { getLocaleFromUrl, getLocalizedJsonData } from '../../utils/i18n';
-import { planRevealVideo, resolveExternalImageUrl } from '../../utils/media';
+import { planRevealVideo, resolveMediaSrc } from '../../utils/media';
 import type { ChromeData, HomePageData } from '../../utils/types';
 
 /**
@@ -10,7 +10,7 @@ import type { ChromeData, HomePageData } from '../../utils/types';
  *
  *   mediaKind: 'video' → `backgroundUrl` link as the background loop,
  *                        `videoUrl` provider link as the click-to-open player
- *   mediaKind: 'image' → pasted `imageUrl`, else uploaded `image`
+ *   mediaKind: 'image' → the pasted `imageUrl`
  *   mediaKind: 'none'  → the placeholder below
  *
  * The background prefers `backgroundUrl` and falls back to a direct-file
@@ -28,7 +28,8 @@ const videoPlan = mediaKind === 'video' ? planRevealVideo(content.backgroundUrl,
 const nativeVideo = videoPlan?.nativeSrc ?? null;
 const backgroundSrc = videoPlan?.backgroundSrc ?? null;
 const playerSrc = videoPlan?.playerSrc ?? null;
-const imageSrc = mediaKind === 'image' ? resolveExternalImageUrl(content.imageUrl) ?? content.image : null;
+const imageSrc = mediaKind === 'image' ? resolveMediaSrc(content.imageUrl) : null;
+const posterSrc = resolveMediaSrc(content.poster);
 const showPlaceholder = !nativeVideo && !backgroundSrc && !imageSrc;
 const chrome = getLocalizedJsonData<ChromeData>('chrome', getLocaleFromUrl(Astro.url));
 ---
@@ -52,7 +53,7 @@ const chrome = getLocalizedJsonData<ChromeData>('chrome', getLocaleFromUrl(Astro
       <video
         class:list={['e-reveal-stage-media', playerSrc && 'e-reveal-passive']}
         src={nativeVideo}
-        poster={content.poster}
+        poster={posterSrc ?? undefined}
         muted
         loop
         playsinline

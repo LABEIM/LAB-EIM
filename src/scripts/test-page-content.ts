@@ -1,7 +1,7 @@
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { dirname, join, resolve, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { buildBackgroundEmbed, buildPlayerEmbed, planRevealVideo, resolveExternalImageUrl, resolveVideoUrl } from '../utils/media';
+import { buildBackgroundEmbed, buildPlayerEmbed, divisionThumbPath, planRevealVideo, resolveExternalImageUrl, resolveMediaSrc, resolveVideoUrl } from '../utils/media';
 import { sectionNumber, sectionOn, splitWordCount } from '../utils/page-content';
 import type { RecruitmentConfig } from '../utils/types';
 import type { AboutData, ChromeData, ContactData, CourseDetailPageData, CoursesPageData, EventDetailPageData, EventsPageData, FeaturedPhotoData, HomePageData, Lecturer, Member, NewsDetailPageData, NewsPageData, NodeData, StructurePageData } from '../utils/types';
@@ -15,6 +15,13 @@ function publicFile(value: unknown): string {
   if (typeof value !== 'string') return '';
   const file = resolve(publicDir, value.replace(/^\//, ''));
   return file.startsWith(publicDir + sep) ? file : '';
+}
+
+// Media is an https URL or a file shipped under public/; both must resolve.
+function assertMedia(value: string | undefined | null, label: string) {
+  const src = resolveMediaSrc(value);
+  assert(src !== null, `${label} is an https URL or a root-relative path`);
+  if (src?.startsWith('/')) assert(existsSync(publicFile(src)), `${label} resolves under public/`);
 }
 
 let passed = 0;
@@ -199,17 +206,28 @@ assert(
 
 console.log('\n3️⃣ Testing chrome.brand files:');
 for (const key of chromeGroups.brand) {
-  const file = publicFile(chrome.brand?.[key]);
-  assert(Boolean(file) && existsSync(file), `chrome.brand.${key} resolves under public/`);
+  const value = chrome.brand?.[key];
+  assert(typeof value === 'string' && value.trim().length > 0, `chrome.brand.${key} is set`);
+  if (typeof value === 'string') assertMedia(value, `chrome.brand.${key}`);
 }
+const homeHtmlPath = join(root, 'dist/client/index.html');
+const brandHorizontal = chrome.brand?.logoHorizontal;
+if (typeof brandHorizontal === 'string' && existsSync(homeHtmlPath)) {
+  assert(
+    readFileSync(homeHtmlPath, 'utf8').includes(`class="logo-brand" src="${resolveMediaSrc(brandHorizontal)}"`),
+    'home page renders the brand logo through the media resolver'
+  );
+}
+const layoutSource = readFileSync(join(root, 'src/layouts/Layout.astro'), 'utf8');
+assert(
+  layoutSource.includes('fav.split(/[?#]/)[0].toLowerCase()'),
+  'favicon type detection ignores a query string, a fragment, and case'
+);
 
-console.log('\n3️⃣b Testing uploaded images resolve under public/:');
+console.log('\n3️⃣b Testing site favicon:');
 const siteData = JSON.parse(readFileSync(join(dataDir, 'site.json'), 'utf8')) as { favicon?: string };
 assert(typeof siteData.favicon === 'string' && siteData.favicon.trim().length > 0, 'site.favicon is set');
-assert(
-  existsSync(publicFile(siteData.favicon)),
-  'site.favicon resolves under public/'
-);
+assertMedia(siteData.favicon, 'site.favicon');
 
 console.log('\n3️⃣d Testing src/data/nodes.json:');
 const nodesPath = join(dataDir, 'nodes.json');
@@ -228,7 +246,7 @@ for (const [index, node] of nodesData.list.entries()) {
   assert(typeof node.label === 'string' && node.label.trim().length > 0, `node ${index} label is a non-empty string`);
   assert(typeof node.image === 'string' && node.image.trim().length > 0, `node ${index} image is a non-empty string`);
   assert(typeof node.alt === 'string' && node.alt.trim().length > 0, `node ${index} alt is a non-empty string`);
-  assert(existsSync(publicFile(node.image)), `node ${index} image resolves under public/`);
+  assertMedia(node.image, `node ${index} image`);
 }
 
 console.log('\n3️⃣e Testing src/data/featured.json:');
@@ -236,7 +254,7 @@ const featuredPath = join(dataDir, 'featured.json');
 assert(existsSync(featuredPath), 'featured.json exists');
 const featuredData = JSON.parse(readFileSync(featuredPath, 'utf8')) as FeaturedPhotoData;
 assert(typeof featuredData.image === 'string' && featuredData.image.trim().length > 0, 'featured.image is a non-empty string');
-assert(existsSync(publicFile(featuredData.image)), 'featured.image resolves under public/');
+assertMedia(featuredData.image, 'featured.image');
 assert(typeof featuredData.alt === 'string' && featuredData.alt.trim().length > 0, 'featured.alt is a non-empty string');
 assert(typeof featuredData.caption === 'string' && featuredData.caption.trim().length > 0, 'featured.caption is a non-empty string');
 assert(
@@ -253,7 +271,7 @@ membersData.list.forEach((member, index) => {
   const label = `member ${index} (${member.name || member.id})`;
   assert(member.image == null || typeof member.image === 'string', `${label} image is a string when present`);
   if (member.image?.trim()) {
-    assert(existsSync(publicFile(member.image)), `${label} image resolves under public/`);
+    assertMedia(member.image, `${label} image`);
   }
 });
 
@@ -263,7 +281,7 @@ lecturersData.list.forEach((lecturer, index) => {
   const label = `lecturer ${index} (${lecturer.id})`;
   assert(lecturer.image == null || typeof lecturer.image === 'string', `${label} image is a string when present`);
   if (lecturer.image?.trim()) {
-    assert(existsSync(publicFile(lecturer.image)), `${label} image resolves under public/`);
+    assertMedia(lecturer.image, `${label} image`);
   }
 });
 
@@ -354,17 +372,15 @@ assert(
   'home.reveal.mediaKind is none, image, or video'
 );
 
-// The pasted image link wins over the upload, and video comes from links only,
-// so a file is only required when the matching URL is empty. The URL itself is
-// checked further down.
-type RevealMedia = Pick<HomePageData['reveal'], 'mediaKind' | 'mediaAlt' | 'image' | 'poster' | 'imageUrl' | 'backgroundUrl' | 'videoUrl'>;
+// The pasted image link is the only image source, and video comes from links
+// only. The URL itself is checked further down.
+type RevealMedia = Pick<HomePageData['reveal'], 'mediaKind' | 'mediaAlt' | 'poster' | 'imageUrl' | 'backgroundUrl' | 'videoUrl'>;
 function assertRevealMedia(value: RevealMedia | undefined) {
   if (value?.mediaKind === 'image' || value?.mediaKind === 'video') {
     assert(Boolean(value.mediaAlt?.trim()), `home.reveal.mediaAlt is set for ${value.mediaKind} media`);
   }
-  if (value?.mediaKind === 'image' && !value.imageUrl?.trim()) {
-    assert(typeof value.image === 'string' && value.image.trim().length > 0, 'home.reveal.image is a non-empty string');
-    assert(existsSync(publicFile(value.image)), 'home.reveal.image resolves under public/');
+  if (value?.mediaKind === 'image') {
+    assertMedia(value.imageUrl, 'home.reveal.imageUrl');
   }
   if (value?.mediaKind === 'video') {
     assert(
@@ -373,11 +389,11 @@ function assertRevealMedia(value: RevealMedia | undefined) {
     );
   }
   if (value?.poster) {
-    assert(existsSync(publicFile(value.poster)), 'home.reveal.poster resolves under public/');
+    assertMedia(value.poster, 'home.reveal.poster');
   }
 }
 assertRevealMedia(reveal);
-// A page using only the pasted link must pass; this is the documented precedence.
+// A page carrying only the image link must pass.
 assertRevealMedia({ mediaKind: 'image', mediaAlt: 'intro', imageUrl: 'https://cdn.example.com/intro.jpg' });
 assertRevealMedia({ mediaKind: 'video', mediaAlt: 'intro', videoUrl: 'https://youtu.be/dQw4w9WgXcQ' });
 assertRevealMedia({ mediaKind: 'video', mediaAlt: 'intro', backgroundUrl: 'https://youtu.be/dQw4w9WgXcQ' });
@@ -388,6 +404,10 @@ const revealComponent = readFileSync(join(root, 'src/components/home/EimReveal.a
 assert(
   revealComponent.includes("content.mediaKind ?? 'none'"),
   "EimReveal treats a missing mediaKind as 'none'"
+);
+assert(
+  !/content\.image\b/.test(revealComponent),
+  'EimReveal no longer reads the removed reveal.image upload'
 );
 assert(
   revealComponent.includes('allow="autoplay; encrypted-media; picture-in-picture; fullscreen"'),
@@ -554,7 +574,7 @@ if (reveal?.backgroundUrl) {
   );
 }
 if (reveal?.imageUrl) {
-  assert(resolveExternalImageUrl(reveal.imageUrl) !== null, 'home.reveal.imageUrl resolves to an https image');
+  assertMedia(reveal.imageUrl, 'home.reveal.imageUrl');
 }
 
 console.log('\n4️⃣c Testing external media URL resolution:');
@@ -705,6 +725,47 @@ for (const [input, expected] of [
   }
   assert(!threw && resolved === expected, `image URL with quotes or line breaks is handled: ${JSON.stringify(input)}`);
 }
+
+console.log('\n4️⃣d Testing media source resolution:');
+const mediaHttps = 'https://cdn.eimlab.org/brand/logo.png';
+assert(resolveMediaSrc(mediaHttps) === mediaHttps, 'https media URL accepted unchanged');
+assert(
+  resolveMediaSrc('https://cdn.eimlab.org/logo.png?v=2') === 'https://cdn.eimlab.org/logo.png?v=2',
+  'https media URL keeps its query string'
+);
+assert(
+  resolveMediaSrc(' /image/division/list/0/image.avif ') === '/image/division/list/0/image.avif',
+  'root-relative path trimmed and accepted'
+);
+assertMedia('https://cdn.eimlab.org/media/probe.webp', 'assertMedia accepts an https media URL');
+assert(
+  resolveMediaSrc('/image/eim/EIM 2.png') === '/image/eim/EIM 2.png',
+  'root-relative path with a space is accepted'
+);
+assert(divisionThumbPath('https://cdn.eimlab.org/division/foto.webp') === null, 'a CDN portrait gets no thumbnail path');
+assert(
+  divisionThumbPath('/image/division/list/0/image.avif') === '/image/division/thumbs/list/0/image.avif',
+  'a local portrait maps to the thumbnail tree'
+);
+assert(divisionThumbPath(null) === null, 'a missing portrait gets no thumbnail path');
+for (const rejected of [
+  'image/x.avif',
+  './image/x.avif',
+  'example.com/x.png',
+  '//cdn.eimlab.org/x.png',
+  '/\\cdn.eimlab.org/x.png',
+  '/image/../../.env',
+  'http://cdn.eimlab.org/x.png',
+  'javascript:alert(1)',
+  'data:image/png;base64,AAAA',
+  'https://cdn.eimlab.org/x.svg',
+  'https://192.168.1.10/a.png',
+  '',
+  '   ',
+]) {
+  assert(resolveMediaSrc(rejected) === null, `media source rejected: ${JSON.stringify(rejected)}`);
+}
+assert(resolveMediaSrc(undefined) === null && resolveMediaSrc(null) === null, 'missing media source resolves to null');
 
 console.log('\n5️⃣ Testing about.json:');
 const aboutPath = join(dataDir, 'about.json');
@@ -1369,9 +1430,18 @@ if (!existsSync(clientDir)) {
     aboutHtml.includes(`--photo-scale:${featuredScale}`),
     'about page renders the featured photo band at the configured height'
   );
+  // Compare the resolved value: a CDN URL is normalized by the URL parser.
   assert(
-    aboutHtml.includes(`src="${featuredData.image}"`),
+    aboutHtml.includes(`src="${resolveMediaSrc(featuredData.image)}"`),
     'about page renders the configured featured photo'
+  );
+  assert(
+    /class="eim-photo-band[^"]*"[^>]*referrerpolicy="no-referrer"/.test(aboutHtml),
+    'about page serves the featured photo without a referrer'
+  );
+  assert(
+    /class="lecturer-card-media"><img src="(?!\/image\/placeholder-avatar\.svg")[^"]+"[^>]*referrerpolicy="no-referrer"/.test(readFileSync(join(clientDir, 'structure/index.html'), 'utf8')),
+    'structure page serves portraits without a referrer'
   );
 
   // Production builds hide the audit sample content, so list pages only render their

@@ -591,7 +591,7 @@ export default config({
             backgroundUrl: fields.text({
               label: 'Tautan video latar',
               description:
-                'Tautan khusus untuk video latar (loop): YouTube, Vimeo, atau berkas video langsung (.mp4/.webm), misalnya tautan R2/CDN. Bila kosong, tautan pemutar dipakai sebagai latar.',
+                'Tautan khusus untuk video latar (loop): YouTube, Vimeo, atau berkas video langsung (.mp4/.webm). Untuk berkas yang ikut diunggah ke situs, tulis path-nya, mis. /assets/media/intro.mp4; untuk berkas di luar situs, tempel tautan https R2/CDN. Bila kosong, tautan pemutar dipakai sebagai latar.',
             }),
             poster: fields.image({
               label: 'Poster video',

@@ -375,15 +375,15 @@ export interface DivisionSection {
   staff: Member[];
 }
 
-export interface GalleryItem {
+export interface NodeItem {
+  year: number;
+  label: string;
   image: string;
   alt: string;
-  caption: string;
 }
 
-export interface GalleryData {
-  featured?: GalleryItem;
-  photos?: GalleryItem[];
+export interface NodeData {
+  list: NodeItem[];
 }
 
 export interface SiteData {
@@ -874,7 +874,7 @@ export interface AboutData {
     stats: string;
     vision: string;
     cta: string;
-    gallery: string;
+    nodes: string;
   };
   sections: {
     hero: {
@@ -908,21 +908,17 @@ export interface AboutData {
       enabled: boolean;
       label: string;
     };
-    galleryBand: {
-      enabled: boolean;
-      label: string;
-    };
     visiMisi: {
       enabled: boolean;
       heading: string;
     };
-    gallery: {
+    nodes: {
       enabled: boolean;
       eyebrow: string;
-      intro: string;
       title: string;
-      showAll: string;
-      hideAll: string;
+      intro: string;
+      latestLabel: string;
+      archiveLabel: string;
     };
     cta: {
       enabled: boolean;

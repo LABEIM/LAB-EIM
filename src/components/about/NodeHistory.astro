@@ -1,0 +1,90 @@
+---
+import type { AboutData, NodeItem } from '../../utils/types';
+
+interface Props {
+  nodes: NodeItem[];
+  content: AboutData['sections']['nodes'];
+}
+
+const { nodes, content } = Astro.props;
+
+// A CMS row can exist before its upload lands; skip those instead of a broken image.
+const [latest, ...archive] = nodes.filter((node) => node.image).sort((a, b) => b.year - a.year);
+// The label usually already carries the year ("Node 2026"); only print the year when it does not.
+const hasYearInLabel = (node: NodeItem) => node.label.includes(String(node.year));
+---
+
+{latest && (
+  <section id="node" aria-labelledby="node-title" class="border-t border-line py-[clamp(4.5rem,10vh,8.75rem)]">
+    <div class="mx-auto max-w-[1200px] px-[clamp(1.25rem,4vw,4rem)]">
+      <p class="e-reveal font-mono text-xs uppercase tracking-[0.08em] text-brand">{content.eyebrow}</p>
+      <div class="mt-4 grid gap-6 lg:grid-cols-[minmax(0,7fr)_minmax(0,4fr)] lg:items-end">
+        <h2 id="node-title" class="e-reveal font-display text-[clamp(2rem,4vw,3.5rem)] leading-[1.05] tracking-[-0.01em]">
+          {content.title}
+        </h2>
+        <p class="e-reveal max-w-[52ch] text-[15px] leading-[1.6] text-muted-ink lg:justify-self-end">{content.intro}</p>
+      </div>
+    </div>
+
+    <figure class="e-reveal mt-[clamp(2rem,5vh,3.5rem)]">
+      <img
+        class="h-[clamp(220px,45vh,560px)] w-full object-cover"
+        src={latest.image}
+        alt={latest.alt}
+        loading="lazy"
+        decoding="async"
+      />
+      <figcaption
+        class="mx-auto mt-4 flex max-w-[1200px] flex-wrap items-baseline justify-between gap-x-6 gap-y-2 px-[clamp(1.25rem,4vw,4rem)]"
+      >
+        <time
+          datetime={String(latest.year)}
+          class="flex min-w-0 flex-wrap items-baseline gap-x-3 gap-y-1"
+        >
+          <span class="font-display text-[clamp(1.75rem,3vw,2.5rem)] leading-none break-words">{latest.label}</span>
+          {!hasYearInLabel(latest) && (
+            <span class="font-mono text-xs uppercase tracking-[0.08em] text-muted-ink">{latest.year}</span>
+          )}
+        </time>
+        <span class="font-mono text-xs uppercase tracking-[0.08em] text-muted-ink">{content.latestLabel}</span>
+      </figcaption>
+    </figure>
+
+    {archive.length > 0 && (
+      <div class="mx-auto max-w-[1200px] px-[clamp(1.25rem,4vw,4rem)] pt-[clamp(3rem,7vh,5rem)]">
+        <h3 id="node-archive-title" class="e-reveal font-mono text-xs uppercase tracking-[0.08em] text-brand">
+          {content.archiveLabel}
+        </h3>
+        <ul
+          class="e-reveal-group mt-6 grid list-none gap-6 sm:grid-cols-2 lg:grid-cols-3"
+          role="list"
+          aria-labelledby="node-archive-title"
+        >
+          {archive.map((node, index) => (
+            <li style={`--i:${index}`}>
+              <figure>
+                <div class="aspect-[4/3] overflow-hidden rounded-media border border-line bg-surface">
+                  <img
+                    class="h-full w-full object-cover"
+                    src={node.image}
+                    alt={node.alt}
+                    loading="lazy"
+                    decoding="async"
+                  />
+                </div>
+                <figcaption class="mt-3 flex flex-wrap items-baseline gap-x-2 gap-y-1">
+                  <time datetime={String(node.year)} class="flex min-w-0 flex-wrap items-baseline gap-x-2 gap-y-1">
+                    <span class="font-display text-[clamp(1.35rem,2vw,1.75rem)] leading-none break-words">{node.label}</span>
+                    {!hasYearInLabel(node) && (
+                      <span class="font-mono text-[11px] uppercase tracking-[0.08em] text-muted-ink">{node.year}</span>
+                    )}
+                  </time>
+                </figcaption>
+              </figure>
+            </li>
+          ))}
+        </ul>
+      </div>
+    )}
+  </section>
+)}

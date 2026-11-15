@@ -4,7 +4,7 @@ import { fileURLToPath } from 'node:url';
 import { buildBackgroundEmbed, buildPlayerEmbed, planRevealVideo, resolveExternalImageUrl, resolveVideoUrl } from '../utils/media';
 import { sectionNumber, sectionOn, splitWordCount } from '../utils/page-content';
 import type { RecruitmentConfig } from '../utils/types';
-import type { AboutData, ChromeData, ContactData, CourseDetailPageData, CoursesPageData, EventDetailPageData, EventsPageData, GalleryData, HomePageData, Lecturer, Member, NewsDetailPageData, NewsPageData, StructurePageData } from '../utils/types';
+import type { AboutData, ChromeData, ContactData, CourseDetailPageData, CoursesPageData, EventDetailPageData, EventsPageData, HomePageData, Lecturer, Member, NewsDetailPageData, NewsPageData, NodeData, StructurePageData } from '../utils/types';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '../..');
 const dataDir = join(root, 'src/data');
@@ -211,16 +211,25 @@ assert(
   'site.favicon resolves under public/'
 );
 
-const galleryData = JSON.parse(readFileSync(join(dataDir, 'gallery.json'), 'utf8')) as GalleryData;
-const galleryImages = [galleryData.featured?.image, ...(galleryData.photos ?? []).map((photo) => photo.image)];
-assert(galleryImages.length > 0, 'gallery.json has at least one image');
-galleryImages.forEach((image, index) => {
-  assert(typeof image === 'string' && image.trim().length > 0, `gallery image ${index} is a non-empty string`);
+console.log('\n3️⃣d Testing src/data/nodes.json:');
+const nodesPath = join(dataDir, 'nodes.json');
+assert(existsSync(nodesPath), 'nodes.json exists');
+const nodesData = JSON.parse(readFileSync(nodesPath, 'utf8')) as NodeData;
+assert(Array.isArray(nodesData.list), 'nodes.list is an array');
+assert(
+  new Set(nodesData.list.map((node) => node.year)).size === nodesData.list.length,
+  'node years are unique'
+);
+for (const [index, node] of nodesData.list.entries()) {
   assert(
-    existsSync(publicFile(image)),
-    `gallery image ${index} resolves under public/`
+    Number.isInteger(node.year) && node.year >= 2000 && node.year <= 2100,
+    `node ${index} year is between 2000 and 2100`
   );
-});
+  assert(typeof node.label === 'string' && node.label.trim().length > 0, `node ${index} label is a non-empty string`);
+  assert(typeof node.image === 'string' && node.image.trim().length > 0, `node ${index} image is a non-empty string`);
+  assert(typeof node.alt === 'string' && node.alt.trim().length > 0, `node ${index} alt is a non-empty string`);
+  assert(existsSync(publicFile(node.image)), `node ${index} image resolves under public/`);
+}
 
 console.log('\n3️⃣c Testing member and lecturer portraits:');
 // Placeholder rows ("Nama Asisten" / "Nama Dosen") ship with an empty image and
@@ -666,13 +675,13 @@ assert(!Object.prototype.hasOwnProperty.call(about, 'title'), 'about carries no 
 
 assert(Boolean(about.meta?.title?.trim()), 'about.meta.title is a non-empty string');
 
-const aboutSections = ['hero', 'profile', 'stats', 'teamLink', 'galleryBand', 'visiMisi', 'gallery', 'cta'] as const;
+const aboutSections = ['hero', 'profile', 'stats', 'teamLink', 'visiMisi', 'nodes', 'cta'] as const;
 for (const key of aboutSections) {
   const section = about.sections?.[key];
   assert(Boolean(section) && typeof section === 'object', `about.sections.${key} exists`);
 }
 
-for (const key of ['profile', 'stats', 'teamLink', 'galleryBand', 'visiMisi', 'gallery', 'cta'] as const) {
+for (const key of ['profile', 'stats', 'teamLink', 'visiMisi', 'nodes', 'cta'] as const) {
   assert(typeof about.sections?.[key]?.enabled === 'boolean', `about.sections.${key}.enabled is a boolean`);
 }
 const aboutHero = about.sections?.hero;
@@ -709,20 +718,20 @@ assert(
   'about.sections.stats carries no stats array'
 );
 
-for (const key of ['teamLink', 'galleryBand'] as const) {
+for (const key of ['teamLink'] as const) {
   const value = about.sections?.[key]?.label;
   assert(typeof value === 'string' && value.trim().length > 0, `about.sections.${key}.label is a non-empty string`);
 }
 
 assert(Boolean(about.sections?.visiMisi?.heading?.trim()), 'about.sections.visiMisi.heading is a non-empty string');
 
-const aboutGallery = about.sections?.gallery;
-for (const key of ['eyebrow', 'intro', 'title', 'showAll', 'hideAll'] as const) {
-  const value = aboutGallery?.[key];
-  assert(typeof value === 'string' && value.trim().length > 0, `about.sections.gallery.${key} is a non-empty string`);
+const aboutNodes = about.sections?.nodes;
+for (const key of ['eyebrow', 'intro', 'title', 'latestLabel', 'archiveLabel'] as const) {
+  const value = aboutNodes?.[key];
+  assert(typeof value === 'string' && value.trim().length > 0, `about.sections.nodes.${key} is a non-empty string`);
 }
 
-for (const key of ['profile', 'stats', 'vision', 'cta', 'gallery'] as const) {
+for (const key of ['profile', 'stats', 'vision', 'cta', 'nodes'] as const) {
   const value = about.navDots?.[key];
   assert(typeof value === 'string' && value.trim().length > 0, `about.navDots.${key} is a non-empty string`);
 }
@@ -1274,7 +1283,7 @@ const renderTargets: [string, string[]][] = [
 // Copy that only renders in a state the sample content does not reach: empty lists,
 // collapsed gallery controls, disabled upload fields, or candidate-specific messages.
 const stateDependent: Record<string, RegExp[]> = {
-  'about.json': [/^sections\.gallery\.(showAll|hideAll)$/],
+  'about.json': [/^sections\.nodes\./],
   'contact.json': [/^details\.pics(Title|Subtitle)$/],
   'registration.json': [
     /^labels\.ksm$/,

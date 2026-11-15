@@ -426,16 +426,30 @@ order: 1
 Deskripsi singkat mata kuliah dan cakupan praktikumnya.
 ```
 
-## 12. Photo Gallery (`src/data/gallery.json`)
-Photos shown on the Tentang Kami page. The featured studio portrait renders as a full-width band after the numbers; the activity photos render as a grid at the end of the page. The grid is hidden when there are no photos; the band is hidden when the featured photo is empty.
+## 12. Node History (`src/data/nodes.json`)
+Studio photos for each management Node, shown on the Tentang Kami page as a year-by-year archive. The newest node renders as the large photo with a "Node terbaru" tag; earlier years follow as a card grid under "Node sebelumnya". The whole section hides itself until at least one node has a photo.
 
 ### Fields Explanation
-* **`featured`** (Object): The special studio portrait.
-  * **`image`** (String): Photo path. Upload through Keystatic; files are written to `public/image/gallery/`.
+* **`list`** (Array): The nodes. Entry order is free — the page always renders the highest year first.
+  * **`year`** (Integer): Management year, for example `2026`.
+  * **`label`** (String): Node name, for example `Node 2026`. When the label already contains the year, the year is not printed twice.
+  * **`image`** (String): Studio photo path. Upload through Keystatic; files are written to `public/image/nodes/`.
   * **`alt`** (String): Alt text for screen readers. Required.
-  * **`caption`** (String): Caption shown under the band.
-* **`photos`** (Array): Activity photos, each with `image`, `alt`, and `caption`. Three across at desktop, two at tablet, one at phone. The first six are shown; any extras wait behind a "Lihat semua foto" control that expands them in place.
+
+### Node Template
+```json
+{
+  "list": [
+    {
+      "year": 2026,
+      "label": "Node 2026",
+      "image": "/image/nodes/2026-studio.avif",
+      "alt": "Foto studio Node 2026"
+    }
+  ]
+}
+```
 
 ### Notes
-* The shipped entry points at `public/image/gallery/placeholder.svg` so the layout is visible. Replace it with the real portrait and activity photos in Keystatic; the placeholder can stay in the repo.
-* Images are referenced by path, like member photos and news images, so keep files reasonably sized (roughly 1600px wide, under 400 KB) before uploading.
+* One studio photo per node. A row saved before its upload lands is skipped rather than rendered as a broken image.
+* Export photos at most 1200 px wide, WebP or AVIF, roughly 300 KB or less before uploading.

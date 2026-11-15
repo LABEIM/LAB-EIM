@@ -15,14 +15,15 @@ const count =
   node.count > 0
     ? (content.positionCount ?? '').replaceAll('{n}', String(node.count))
     : content.emptyPosition;
+const Head = node.href ? 'a' : 'div';
 ---
 
 <li class="chart-node">
-  <div class="chart-node-head">
+  <Head class="chart-node-head" {...(node.href ? { href: node.href } : {})}>
     <span class="chart-kicker">{labels[node.group]}</span>
     <span class="chart-label">{node.label}</span>
     <span class="chart-count">{count}</span>
-  </div>
+  </Head>
   {node.note && <p class="chart-note">{node.note}</p>}
   {node.children.length > 0 && (
     <ol class="chart-children" role="list">

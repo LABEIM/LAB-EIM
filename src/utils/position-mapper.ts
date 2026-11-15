@@ -83,6 +83,8 @@ export interface ChartNode {
   group: PositionGroup;
   count: number;
   note?: string;
+  /** In-page anchor to the role section; absent when the role has no section. */
+  href?: string;
   children: ChartNode[];
 }
 

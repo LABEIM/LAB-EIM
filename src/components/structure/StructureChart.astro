@@ -70,6 +70,7 @@ const buildNode = (id: string): ChartNode | null => {
     group: position.group,
     count: id === 'dosen-anggota' ? dosenSummary.total : holders.get(id) ?? 0,
     note: notesFor(id),
+    href: holders.has(id) ? `#pos-${id}` : undefined,
     children,
   };
 };

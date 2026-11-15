@@ -1,5 +1,6 @@
 ---
-import { getLocaleFromUrl, getLocalizedPath } from '../../utils/i18n';
+import { getLocaleFromUrl, getLocalizedJsonData, getLocalizedPath } from '../../utils/i18n';
+import type { ChromeData } from '../../utils/types';
 
 interface Props {
   initialStage: string;
@@ -12,6 +13,7 @@ interface Props {
 }
 
 const locale = getLocaleFromUrl(Astro.url);
+const chrome = getLocalizedJsonData<ChromeData>('chrome', locale);
 const { initialStage, closedCfg } = Astro.props;
 ---
 
@@ -30,7 +32,7 @@ const { initialStage, closedCfg } = Astro.props;
 
     <div class="reg-btn-group">
       <a href={getLocalizedPath('/', locale)} class="btn btn-primary reg-btn-padded">
-        <i class="fa-solid fa-house reg-btn-icon-left"></i>Kembali ke Beranda
+        <i class="fa-solid fa-house reg-btn-icon-left"></i>{chrome.ui.backToHome}
       </a>
       <a href={getLocalizedPath('/news', locale)} class="btn btn-secondary reg-btn-px">
         <i class="fa-solid fa-newspaper"></i> Artikel & Pengumuman

@@ -2,6 +2,42 @@ import sharp from 'sharp';
 import fs from 'fs';
 import path from 'path';
 
+
+/**
+ * Member portraits ship as full-resolution originals, so every tile would pull
+ * megabytes. Mirror them into a 640px thumbnail tree; MemberTile prefers the
+ * thumbnail and falls back to the original when one has not been generated.
+ */
+async function generateMemberThumbs() {
+  const srcDir = path.join(process.cwd(), 'public/image/division');
+  if (!fs.existsSync(srcDir)) return;
+
+  const exts = new Set(['.avif', '.webp', '.jpg', '.jpeg', '.png']);
+  const files: string[] = [];
+  const walk = (dir: string) => {
+    for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+      if (entry.name === 'thumbs') continue;
+      const full = path.join(dir, entry.name);
+      if (entry.isDirectory()) walk(full);
+      else if (exts.has(path.extname(entry.name).toLowerCase())) files.push(full);
+    }
+  };
+  walk(srcDir);
+
+  let written = 0;
+  for (const file of files) {
+    const rel = path.relative(srcDir, file).replace(/\.[^.]+$/, '.avif');
+    const out = path.join(srcDir, 'thumbs', rel);
+    fs.mkdirSync(path.dirname(out), { recursive: true });
+    await sharp(file)
+      .resize({ width: 640, withoutEnlargement: true })
+      .avif({ quality: 55 })
+      .toFile(out);
+    written += 1;
+  }
+  console.log(`Member thumbnails: ${written} written.`);
+}
+
 export async function generateAssets() {
   const rootDir = process.cwd();
   const brandDir = path.join(rootDir, 'public/assets/brand');
@@ -138,7 +174,7 @@ export async function generateAssets() {
   // Primary logo default
   fs.copyFileSync(path.join(brandDir, 'eim-logo-horizontal.png'), path.join(brandDir, 'eim-logo.png'));
 
-  // 7. Compact "EIM RESEARCH LAB" Lockup
+  // 7. Compact "EIM LAB" Lockup
   const compactEmblem = await sharp(emblemBuffer)
     .resize(300, 344)
     .toBuffer({ resolveWithObject: true });
@@ -146,7 +182,7 @@ export async function generateAssets() {
   const svgTextDark = `
     <svg width="650" height="344" viewBox="0 0 650 344" xmlns="http://www.w3.org/2000/svg">
       <text x="0" y="200" font-family="'Montserrat', 'Segoe UI', Arial, sans-serif" font-size="160" font-weight="900" fill="#0c535d" letter-spacing="2">EIM</text>
-      <text x="5" y="270" font-family="'Montserrat', 'Segoe UI', Arial, sans-serif" font-size="48" font-weight="700" fill="#06b6d4" letter-spacing="6">RESEARCH LAB</text>
+      <text x="5" y="270" font-family="'Montserrat', 'Segoe UI', Arial, sans-serif" font-size="48" font-weight="700" fill="#06b6d4" letter-spacing="6">LAB</text>
       <text x="6" y="320" font-family="'Montserrat', 'Segoe UI', Arial, sans-serif" font-size="28" font-weight="500" fill="#64748b" letter-spacing="3">TELKOM UNIVERSITY</text>
     </svg>
   `;
@@ -154,7 +190,7 @@ export async function generateAssets() {
   const svgTextWhite = `
     <svg width="650" height="344" viewBox="0 0 650 344" xmlns="http://www.w3.org/2000/svg">
       <text x="0" y="200" font-family="'Montserrat', 'Segoe UI', Arial, sans-serif" font-size="160" font-weight="900" fill="#ffffff" letter-spacing="2">EIM</text>
-      <text x="5" y="270" font-family="'Montserrat', 'Segoe UI', Arial, sans-serif" font-size="48" font-weight="700" fill="#38bdf8" letter-spacing="6">RESEARCH LAB</text>
+      <text x="5" y="270" font-family="'Montserrat', 'Segoe UI', Arial, sans-serif" font-size="48" font-weight="700" fill="#38bdf8" letter-spacing="6">LAB</text>
       <text x="6" y="320" font-family="'Montserrat', 'Segoe UI', Arial, sans-serif" font-size="28" font-weight="500" fill="#94a3b8" letter-spacing="3">TELKOM UNIVERSITY</text>
     </svg>
   `;
@@ -343,6 +379,8 @@ export async function generateAssets() {
       .png()
       .toFile(path.join(emailIconsDir, `${icon.name}.png`));
   }
+
+  await generateMemberThumbs();
 
   console.log('Asset generation completed successfully!');
 }

@@ -1,46 +1,105 @@
 ---
+import { getCollection } from 'astro:content';
 import Layout from '../layouts/Layout.astro';
 import '../styles/pages/home-eim.css';
-import { getLocaleFromUrl, getLocalizedJsonData, t } from '../utils/i18n';
-import { parseDivisions } from '../utils/division-mapper';
-import type { AboutData, DivisionConfig, Member } from '../utils/types';
+import { getLocaleFromUrl, getLocalizedJsonData } from '../utils/i18n';
+import { countPeopleByGroup, parsePositions } from '../utils/position-mapper';
+import { getCurrentRecruitmentStage } from '../utils/recruitment';
+import type { AboutData, ChromeData, GalleryData, Lecturer, Member, RecruitmentConfig, SiteData } from '../utils/types';
 import AboutHero from '../components/about/AboutHero.astro';
 import AboutProfile from '../components/about/AboutProfile.astro';
-import AboutStats from '../components/about/AboutStats.astro';
 import EimVisiMisi from '../components/home/EimVisiMisi.astro';
-import AboutTeam from '../components/about/AboutTeam.astro';
+import EimLabNumbers from '../components/home/EimLabNumbers.astro';
 import EimCTA from '../components/home/EimCTA.astro';
+import GalleryBand from '../components/about/GalleryBand.astro';
+import AboutGallery from '../components/about/AboutGallery.astro';
 import EimSectionNav from '../components/home/EimSectionNav.astro';
+import { sectionOn } from '../utils/page-content';
 
 const locale = getLocaleFromUrl(Astro.url);
 const aboutData = getLocalizedJsonData<AboutData>('about', locale);
-const siteData = getLocalizedJsonData<any>('site', locale);
+const siteData = getLocalizedJsonData<SiteData>('site', locale);
+const chrome = getLocalizedJsonData<ChromeData>('chrome', locale);
 const membersData = getLocalizedJsonData<{ list: Member[] }>('members', locale);
-const divisionsData = getLocalizedJsonData<any>('divisions', locale);
+const lecturersData = getLocalizedJsonData<{ list: Lecturer[] }>('lecturers', locale);
+const positionsData = getLocalizedJsonData<{ list: unknown }>('positions', locale);
+const registrationConfig = getLocalizedJsonData<Partial<RecruitmentConfig>>('registration', locale);
+const gallery = getLocalizedJsonData<GalleryData>('gallery', locale);
+const recruitmentStage = getCurrentRecruitmentStage(registrationConfig);
 
-const divisions: DivisionConfig[] = parseDivisions(divisionsData);
+const positions = parsePositions(positionsData);
 const members: Member[] = membersData?.list ?? [];
-const coordinators: Member[] = members
-  .filter((member) => member.division === 'core' || member.role.includes('Coordinator'))
-  .sort((a, b) => a.id - b.id);
+const lecturers: Lecturer[] = lecturersData?.list ?? [];
+const people = [...lecturers, ...members];
+const groupCounts = countPeopleByGroup(people, positions);
+const courses = await getCollection('courses');
 
+const sections = aboutData.sections;
+
+// Stat values stay derived from the data unless the editor pins a manual value.
+// Labels are shared chrome copy, so they are not duplicated in the page file.
+const stats = [
+  { label: chrome.labels.statsMembers, value: sections.stats.membersValue ?? members.length },
+  { label: chrome.labels.statsCourses, value: sections.stats.coursesValue ?? courses.length },
+  { label: chrome.labels.statsDosen, value: sections.stats.dosenValue ?? groupCounts.dosen },
+];
+
+// The dots read the same flags as the sections, so a hidden section drops its dot.
 const sectionItems = [
-  { id: 'profil', label: t('about.navDotProfile', locale) },
-  { id: 'angka', label: t('about.navDotStats', locale) },
-  { id: 'visi-misi', label: t('home.navDotVision', locale) },
-  { id: 'koordinator', label: t('about.navDotTeam', locale) },
-  { id: 'gabung', label: t('about.navDotCta', locale) },
+  ...(sectionOn(sections.profile) ? [{ id: 'profil', label: aboutData.navDots.profile }] : []),
+  ...(sectionOn(sections.stats) ? [{ id: 'angka', label: aboutData.navDots.stats }] : []),
+  ...(sectionOn(sections.visiMisi) ? [{ id: 'visi-misi', label: aboutData.navDots.vision }] : []),
+  ...(sectionOn(sections.gallery) && gallery.photos?.length
+    ? [{ id: 'galeri', label: aboutData.navDots.gallery }]
+    : []),
+  ...(sectionOn(sections.cta) ? [{ id: 'gabung', label: aboutData.navDots.cta }] : []),
 ];
 ---
 
-<Layout title={`${t('nav.about', locale)} - EIM Research Lab`} description={aboutData.description} homeSkin skipLink>
+<Layout title={aboutData.meta.title} description={aboutData.description} homeSkin skipLink>
   <main id="main-content" tabindex="-1">
-    <EimSectionNav items={sectionItems} label={t('about.sectionNavLabel', locale)} />
-    <AboutHero />
-    <AboutProfile about={aboutData} site={siteData} />
-    <AboutStats membersCount={members.length} divisionsCount={divisions.length} focusCount={4} />
-    <EimVisiMisi about={aboutData} />
-    <AboutTeam coordinators={coordinators} divisions={divisions} />
-    <EimCTA site={siteData} />
+    <EimSectionNav items={sectionItems} label={chrome.labels.sectionNav} />
+    <AboutHero content={sections.hero} showPrimary={sectionOn(sections.profile)} />
+    {sectionOn(sections.profile) && (
+      <AboutProfile about={aboutData} content={sections.profile} site={siteData} />
+    )}
+    {sectionOn(sections.stats) && (
+      <EimLabNumbers id="angka" content={sections.stats} stats={stats} />
+    )}
+    {sectionOn(sections.teamLink) && (
+      <div class="mx-auto max-w-[1200px] px-[clamp(1.25rem,4vw,4rem)]">
+        <a
+          href="/structure"
+          class="e-reveal inline-flex items-center gap-2 pb-[clamp(2rem,4vh,3rem)] font-mono text-xs uppercase tracking-[0.08em] text-brand"
+        >
+          {sections.teamLink.label} <span aria-hidden="true">→</span>
+        </a>
+      </div>
+    )}
+    {sectionOn(sections.galleryBand) && gallery.featured?.image && (
+      <GalleryBand
+        image={gallery.featured.image}
+        alt={gallery.featured.alt}
+        caption={gallery.featured.caption}
+        label={sections.galleryBand.label}
+      />
+    )}
+    {sectionOn(sections.visiMisi) && (
+      <EimVisiMisi
+        content={{
+          title: sections.visiMisi.heading,
+          visionLabel: chrome.labels.vision,
+          missionLabel: chrome.labels.mission,
+          valuesLabel: chrome.labels.values,
+        }}
+        about={aboutData}
+      />
+    )}
+    {sectionOn(sections.gallery) && (
+      <AboutGallery photos={gallery.photos ?? []} content={sections.gallery} />
+    )}
+    {sectionOn(sections.cta) && (
+      <EimCTA content={chrome.cta} contact={siteData.contact} stage={recruitmentStage} />
+    )}
   </main>
 </Layout>

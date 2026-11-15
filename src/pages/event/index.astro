@@ -3,7 +3,6 @@ import { getCollection } from 'astro:content';
 import Layout from '../../layouts/Layout.astro';
 import '../../styles/pages/home-eim.css';
 import '../../styles/pages/kegiatan-eim.css';
-import EimCTA from '../../components/home/EimCTA.astro';
 import EimSectionNav from '../../components/home/EimSectionNav.astro';
 import KegiatanHero from '../../components/kegiatan/KegiatanHero.astro';
 import KegiatanList from '../../components/kegiatan/KegiatanList.astro';
@@ -11,13 +10,15 @@ import {
   getCollectionEntriesForLocale,
   getLocaleFromUrl,
   getLocalizedJsonData,
-  t,
 } from '../../utils/i18n';
 import { filterAuditContent } from '../../utils/content-helpers';
 import { compareEventDates, getEventDateMs } from '../../utils/event-helpers';
+import { sectionOn } from '../../utils/page-content';
+import type { ChromeData, EventsPageData } from '../../utils/types';
 
 const locale = getLocaleFromUrl(Astro.url);
-const siteData = getLocalizedJsonData<any>('site', locale);
+const page = getLocalizedJsonData<EventsPageData>('pages/events', locale);
+const chrome = getLocalizedJsonData<ChromeData>('chrome', locale);
 
 const rawEvents = await getCollection('events');
 const events = filterAuditContent(getCollectionEntriesForLocale(rawEvents, locale))
@@ -33,27 +34,27 @@ const latestYear =
     .map((ms) => String(new Date(ms).getUTCFullYear()))
     .sort((a, b) => b.localeCompare(a))[0] ?? null;
 
+// The hero dot has no toggle of its own; the list dot reads the same flag as the section.
+// The eyebrow doubles as the hero dot label, so it falls back to the page title.
+const eyebrow = page.hero.eyebrow || page.meta.title;
 const sectionItems = [
-  { id: 'kegiatan', label: t('nav.event', locale) },
-  { id: 'daftar', label: t('events.navDotList', locale) },
-  { id: 'gabung', label: t('events.navDotJoin', locale) },
+  { id: 'kegiatan', label: eyebrow },
+  ...(sectionOn(page.list) ? [{ id: 'daftar', label: page.navDots.list }] : []),
 ];
 ---
 
-<Layout
-  title={`${t('nav.event', locale)} - EIM Research Lab`}
-  description={t('events.metaDescription', locale)}
-  homeSkin
-  skipLink
->
+<Layout title={page.meta.title} description={page.meta.description} homeSkin skipLink>
   <main id="main-content" tabindex="-1">
-    <EimSectionNav items={sectionItems} label={t('events.sectionNavLabel', locale)} />
+    <EimSectionNav items={sectionItems} label={chrome.labels.sectionNav} />
     <KegiatanHero
+      content={page.hero}
       totalCount={events.length}
       categoryCount={categories.length}
       latestYear={latestYear}
+      showPrimary={sectionOn(page.list)}
     />
-    <KegiatanList events={events} locale={locale} />
-    <EimCTA site={siteData} />
+    {sectionOn(page.list) && (
+      <KegiatanList content={page.list} events={events} locale={locale} secondaryLabel={page.hero.secondaryLabel} />
+    )}
   </main>
 </Layout>

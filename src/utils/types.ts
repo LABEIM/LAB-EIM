@@ -144,6 +144,53 @@ export interface FieldStates {
   portofolio?: PortfolioFieldState;
 }
 
+export interface RecruitmentLabels {
+  fullName: string;
+  fullNamePlaceholder: string;
+  nim: string;
+  nimPlaceholder: string;
+  email: string;
+  emailPlaceholder: string;
+  phone: string;
+  phonePlaceholder: string;
+  classYear: string;
+  selectClassYear: string;
+  div1: string;
+  selectDiv1: string;
+  div2: string;
+  selectDiv2: string;
+  reason: string;
+  reasonPlaceholder: string;
+  portfolioLink: string;
+  portfolioPlaceholder: string;
+  ksm: string;
+  khs: string;
+  ml: string;
+  cv: string;
+  pi: string;
+  downloadPiTemplate: string;
+  chooseFile: string;
+  noFile: string;
+  requirementsTitle: string;
+  dataUse: string;
+  submit: string;
+  submitting: string;
+  sendingTitle: string;
+  closeError: string;
+  done: string;
+  saveDraft: string;
+  draftSaved: string;
+  draftRestored: string;
+  clearDraft: string;
+  legendPersonal: string;
+  legendDivision: string;
+  timerDays: string;
+  timerHours: string;
+  timerMinutes: string;
+  timerSeconds: string;
+  resultsPlaceholder: string;
+}
+
 export interface RecruitmentConfig {
   status?: string;
   autoCloseAfterDeadline?: boolean;
@@ -162,6 +209,7 @@ export interface RecruitmentConfig {
   formDescriptionTitle?: string;
   formDescription?: string;
   formDescriptionItems?: string[];
+  labels: RecruitmentLabels;
   studentYears?: string[];
   fieldStates?: FieldStates;
   documentLimits?: DocumentLimits;
@@ -260,12 +308,49 @@ export interface CandidateResult {
 
 /** Homepage v2 — Antigravity Light */
 
+export type PositionGroup = 'dosen' | 'asisten' | 'mahasiswa';
+
+export interface Position {
+  id: string;
+  label: string;
+  group: PositionGroup;
+  order: number;
+}
+
+export interface PositionSection<T> {
+  position: Position;
+  people: T[];
+}
+
+export interface CourseModule {
+  title: string;
+  topics: string;
+}
+
+export interface CourseData {
+  title: string;
+  code: string;
+  sks: number;
+  semester?: number;
+  hasPracticum: boolean;
+  modules: CourseModule[];
+  coordinatorId: string;
+  assistantIds: number[];
+  order: number;
+}
+
+export interface CourseView extends CourseData {
+  id: string;
+  coordinator: Lecturer | null;
+  assistants: Member[];
+}
+
 export interface Member {
   id: number;
   name: string;
   role: string;
-  division: string;
-  image: string;
+  // Optional fields serialize to an omitted key once an editor clears them.
+  image?: string;
   scale?: string;
   position?: string;
 }
@@ -274,7 +359,7 @@ export interface Lecturer {
   id: string;
   name: string;
   role: string;
-  image: string;
+  image?: string;
   scale?: string;
   position?: string;
 }
@@ -284,31 +369,565 @@ export interface HeroPortrait {
   image: string;
 }
 
-export interface DivisionPanel {
-  id: string;
-  displayName: string;
-  description: string;
-  memberCount: number;
-  coordinator: Member | null;
-  href: string;
-}
-
 export interface DivisionSection {
   division: DivisionConfig;
   coordinator: Member | null;
   staff: Member[];
 }
 
-export interface AboutData {
+export interface GalleryItem {
+  image: string;
+  alt: string;
+  caption: string;
+}
+
+export interface GalleryData {
+  featured?: GalleryItem;
+  photos?: GalleryItem[];
+}
+
+export interface SiteData {
+  name: string;
+  subName: string;
+  fullName: string;
+  defaultTitle: string;
+  defaultDescription: string;
+  defaultKeywords: string;
+  favicon: string;
+  timezone: string;
+  timezoneOffset: string;
+  contact: {
+    location: string;
+    university: string;
+    email: string;
+  };
+  socials: {
+    instagram: string;
+    linkedin: string;
+    github: string;
+  };
+}
+
+export interface ChromeData {
+  nav: {
+    home: string;
+    about: string;
+    structure: string;
+    courses: string;
+    event: string;
+    news: string;
+    register: string;
+    contact: string;
+    joinUs: string;
+  };
+  footer: {
+    description: string;
+    quickLinks: string;
+    contact: string;
+    resources: string;
+    assets: string;
+    linkHub: string;
+    rights: string;
+    backToTop: string;
+  };
+  cta: {
+    title: string;
+    description: string;
+    contactLabel: string;
+  };
+  brand: {
+    logoHorizontal: string;
+    logoIcon: string;
+  };
+  labels: {
+    upcoming: string;
+    details: string;
+    statsDosen: string;
+    statsMembers: string;
+    statsCourses: string;
+    organizerFallback: string;
+    sectionNav: string;
+    coordinator: string;
+    sks: string;
+    practicumYes: string;
+    practicumNo: string;
+    featured: string;
+    search: string;
+    close: string;
+    vision: string;
+    mission: string;
+    values: string;
+  };
+  ui: {
+    backToHome: string;
+    titleSuffix: string;
+    revealPlay: string;
+    pagination: {
+      previous: string;
+      previousAria: string;
+      next: string;
+      nextAria: string;
+      info: string;
+    };
+    filter: {
+      clearSearch: string;
+      resultsCount: string;
+      searchPlaceholder: string;
+      sortLabel: string;
+      sortNewest: string;
+      sortOldest: string;
+      statusLabel: string;
+      allStatuses: string;
+      categoryLabel: string;
+      allCategories: string;
+      reset: string;
+    };
+    contentFilter: {
+      noResults: string;
+      resultsRange: string;
+    };
+    registration: {
+      optional: string;
+      wordCount: string;
+    };
+    aria: {
+      mainNav: string;
+      openMenu: string;
+      closeMenu: string;
+      homeLink: string;
+      mediaIntro: string;
+      closeAnnouncement: string;
+      closeModal: string;
+      previousEvent: string;
+      nextEvent: string;
+      slideDot: string;
+      zoomIn: string;
+      zoomOut: string;
+      zoomReset: string;
+    };
+  };
+}
+
+export interface HomePageData {
+  meta: {
+    title: string;
+    description?: string;
+  };
+  navDots: {
+    reveal: string;
+    focus: string;
+    vision: string;
+    courses: string;
+    events: string;
+    articles: string;
+  };
+  hero: {
+    kicker: string;
+    lines: string[];
+    description: string;
+    primaryLabel: string;
+    secondaryLabel: string;
+  };
+  reveal: {
+    enabled: boolean;
+    caption: string;
+    pending: string;
+    pendingCta: string;
+    mediaKind?: 'none' | 'image' | 'video';
+    image?: string;
+    /** Background-only link; wins over `videoUrl`. */
+    backgroundUrl?: string;
+    /** Pasted player link; a direct file also serves as a fallback background. */
+    videoUrl?: string;
+    imageUrl?: string;
+    poster?: string;
+    mediaAlt?: string;
+  };
+  focus: {
+    enabled: boolean;
+    title: string;
+    intro: string;
+    rows: { title: string; description: string }[];
+  };
+  visiMisi: {
+    enabled: boolean;
+    title: string;
+  };
+  numbers: {
+    enabled: boolean;
+    label: string;
+    dosenValue?: number | null;
+    membersValue?: number | null;
+    coursesValue?: number | null;
+  };
+  courses: {
+    enabled: boolean;
+    eyebrow: string;
+    title: string;
+    intro: string;
+    link: string;
+  };
+  events: {
+    enabled: boolean;
+    title: string;
+    intro: string;
+    empty: string;
+    viewAll: string;
+  };
+  news: {
+    enabled: boolean;
+    title: string;
+    intro: string;
+    empty: string;
+    viewAll: string;
+  };
+  cta: {
+    enabled: boolean;
+  };
+}
+
+export interface StructurePageData {
+  meta: {
+    title: string;
+    description: string;
+  };
+  navDots: {
+    chart: string;
+    join: string;
+  };
+  groups: {
+    dosen: string;
+    asisten: string;
+    mahasiswa: string;
+  };
+  hero: {
+    eyebrow: string;
+    lines: string[];
+    description: string;
+    meta: string;
+    primaryLabel: string;
+    secondaryLabel: string;
+  };
+  chart: {
+    enabled: boolean;
+    title: string;
+    intro: string;
+    ariaLabel: string;
+    memberAssistantNote: string;
+    practicumAssistant: string;
+    emptyPosition: string;
+    positionCount: string;
+  };
+  roles: {
+    enabled: boolean;
+    positionIntro: string;
+  };
+  cta: {
+    enabled: boolean;
+  };
+}
+
+export interface CoursesPageData {
+  meta: {
+    title: string;
+    description: string;
+  };
+  navDots: {
+    list: string;
+  };
+  hero: {
+    eyebrow: string;
+    lines: string[];
+    description: string;
+    summary: string;
+    primaryLabel: string;
+    secondaryLabel: string;
+  };
+  list: {
+    enabled: boolean;
+    eyebrow: string;
+    title: string;
+    intro: string;
+    emptyTitle: string;
+    empty: string;
+  };
+}
+
+export interface NewsPageData {
+  meta: {
+    title: string;
+    description: string;
+  };
+  navDots: {
+    list: string;
+  };
+  hero: {
+    eyebrow: string;
+    lines: string[];
+    description: string;
+    meta: string;
+    metaEmpty: string;
+    primaryLabel: string;
+    secondaryLabel: string;
+  };
+  list: {
+    enabled: boolean;
+    eyebrow: string;
+    title: string;
+    intro: string;
+    emptyTitle: string;
+    emptyDesc: string;
+    noMatchTitle: string;
+    noMatchDesc: string;
+    searchPlaceholder: string;
+    contactLabel: string;
+    item: string;
+  };
+}
+
+export interface EventsPageData {
+  meta: {
+    title: string;
+    description: string;
+  };
+  navDots: {
+    list: string;
+  };
+  hero: {
+    eyebrow: string;
+    lines: string[];
+    description: string;
+    meta: string;
+    metaEmpty: string;
+    primaryLabel: string;
+    secondaryLabel: string;
+  };
+  list: {
+    enabled: boolean;
+    eyebrow: string;
+    title: string;
+    intro: string;
+    emptyTitle: string;
+    emptyDesc: string;
+    noMatchTitle: string;
+    noMatchDesc: string;
+    searchPlaceholder: string;
+    contactLabel: string;
+    item: string;
+  };
+}
+
+export interface CourseDetailPageData {
+  meta: {
+    title: string;
+    description: string;
+  };
+  description: {
+    enabled: boolean;
+  };
+  modules: {
+    enabled: boolean;
+    heading: string;
+  };
+  assistants: {
+    enabled: boolean;
+    heading: string;
+    note: string;
+  };
+  backLink: {
+    enabled: boolean;
+    label: string;
+  };
+}
+
+export interface NewsDetailPageData {
+  meta: {
+    title: string;
+    description: string;
+  };
+  hero: {
+    backLabel: string;
+  };
+  author: string;
+  topics: string;
+  body: {
+    enabled: boolean;
+  };
+  gallery: {
+    enabled: boolean;
+    eyebrow: string;
+    title: string;
+  };
+  related: {
+    enabled: boolean;
+    eyebrow: string;
+    title: string;
+    intro: string;
+  };
+  backLink: {
+    enabled: boolean;
+    label: string;
+  };
+  share: {
+    enabled: boolean;
+    label: string;
+  };
+}
+
+export interface EventDetailPageData {
+  meta: {
+    title: string;
+  };
+  hero: {
+    backLabel: string;
+  };
+  story: {
+    enabled: boolean;
+  };
+  gallery: {
+    enabled: boolean;
+    eyebrow: string;
+    title: string;
+    empty: string;
+  };
+  related: {
+    enabled: boolean;
+    eyebrow: string;
+    title: string;
+    intro: string;
+  };
+  backLink: {
+    enabled: boolean;
+    label: string;
+  };
+  share: {
+    enabled: boolean;
+    label: string;
+  };
+}
+
+export interface ContactData {
+  meta: {
+    title: string;
+    description: string;
+  };
+  navDots: {
+    detail: string;
+    social: string;
+  };
+  hero: {
+    eyebrow: string;
+    primaryLabel: string;
+    secondaryLabel: string;
+  };
+  details: {
+    enabled: boolean;
+    eyebrow: string;
+    title: string;
+    intro: string;
+    emailAction: string;
+    copyEmail: string;
+    copied: string;
+    copyFailed: string;
+    copySuccessStatus: string;
+    copyFailedStatus: string;
+    routingNote: string;
+    picsTitle: string;
+    picsSubtitle: string;
+  };
+  map: {
+    enabled: boolean;
+    title: string;
+    subtitle: string;
+    navDot: string;
+  };
+  socials: {
+    enabled: boolean;
+    eyebrow: string;
+    title: string;
+    intro: string;
+  };
   title: string;
+  heroDescription: string;
+  locationTitle: string;
+  mapsEmbedUrl: string;
+  emailTitle: string;
+  hoursTitle: string;
+  hoursText: string;
+  hoursSubtext: string;
+  contactPersons: ContactPerson[];
+}
+
+export interface AboutData {
   description: string;
   overviewTitle: string;
   overviewContent1: string;
   overviewContent2: string;
-  overviewImage: string;
   vision: string;
   missions: string[];
   values: { title: string; description: string; icon: string; isAccent?: boolean }[];
+  meta: {
+    title: string;
+  };
+  navDots: {
+    profile: string;
+    stats: string;
+    vision: string;
+    cta: string;
+    gallery: string;
+  };
+  sections: {
+    hero: {
+      eyebrow: string;
+      lines: string[];
+      description: string;
+      meta: string;
+      primaryLabel: string;
+      secondaryLabel: string;
+    };
+    profile: {
+      enabled: boolean;
+      eyebrow: string;
+      factsLabel: string;
+      factName: string;
+      factFaculty: string;
+      factFacultyValue: string;
+      factProgram: string;
+      factProgramValue: string;
+      factLocation: string;
+      factEmail: string;
+    };
+    stats: {
+      enabled: boolean;
+      label: string;
+      dosenValue?: number | null;
+      membersValue?: number | null;
+      coursesValue?: number | null;
+    };
+    teamLink: {
+      enabled: boolean;
+      label: string;
+    };
+    galleryBand: {
+      enabled: boolean;
+      label: string;
+    };
+    visiMisi: {
+      enabled: boolean;
+      heading: string;
+    };
+    gallery: {
+      enabled: boolean;
+      eyebrow: string;
+      intro: string;
+      title: string;
+      showAll: string;
+      hideAll: string;
+    };
+    cta: {
+      enabled: boolean;
+    };
+  };
 }
 
 

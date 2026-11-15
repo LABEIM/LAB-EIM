@@ -1,17 +1,77 @@
 {
-  "title": "Tentang EIM Research Lab",
-  "description": "Mengenal lebih dekat laboratorium riset Enterprise Infrastructure Management Telkom University.",
+  "meta": {
+    "title": "Tentang Kami · EIM Lab"
+  },
+  "navDots": {
+    "profile": "Profil",
+    "stats": "Angka",
+    "vision": "Visi & Misi",
+    "gallery": "Galeri",
+    "cta": "Gabung"
+  },
+  "sections": {
+    "hero": {
+      "eyebrow": "Tentang Kami",
+      "lines": [
+        "Architecting Resilient Infrastructure & ",
+        "Advanced Network Systems"
+      ],
+      "description": "Laboratorium Enterprise Infrastructure Management Telkom University — tempat riset, pembelajaran, dan kolaborasi di bidang infrastruktur enterprise.",
+      "meta": "Telkom University · Fakultas Rekayasa Industri · S1 Sistem Informasi",
+      "primaryLabel": "Profil lab",
+      "secondaryLabel": "Struktur"
+    },
+    "profile": {
+      "enabled": true,
+      "eyebrow": "Profil",
+      "factsLabel": "Identitas",
+      "factName": "Nama resmi",
+      "factFaculty": "Fakultas",
+      "factFacultyValue": "Fakultas Rekayasa Industri",
+      "factProgram": "Program studi",
+      "factProgramValue": "S1 Sistem Informasi",
+      "factLocation": "Lokasi",
+      "factEmail": "Email"
+    },
+    "stats": {
+      "enabled": true,
+      "label": "EIM dalam angka"
+    },
+    "teamLink": {
+      "enabled": true,
+      "label": "Lihat seluruh struktur"
+    },
+    "galleryBand": {
+      "enabled": true,
+      "label": "Foto studio tim"
+    },
+    "visiMisi": {
+      "enabled": true,
+      "heading": "Visi & Misi"
+    },
+    "gallery": {
+      "enabled": true,
+      "eyebrow": "Galeri",
+      "title": "Galeri kegiatan.",
+      "intro": "Suasana praktikum, kunjungan, abdimas dan kegiatan lain di lab.",
+      "showAll": "Lihat semua foto",
+      "hideAll": "Sembunyikan foto"
+    },
+    "cta": {
+      "enabled": true
+    }
+  },
+  "description": "Mengenal lebih dekat laboratorium Enterprise Infrastructure Management Telkom University.",
   "overviewTitle": "Laboratorium Enterprise Infrastructure Management",
-  "overviewContent1": "EIM (Enterprise Infrastructure Management) adalah laboratorium riset di bawah naungan Program Studi S1 Sistem Informasi, Kelompok Keahlian Rekayasa Industri dan Sistem Informasi, Fakultas Rekayasa Industri, Telkom University.",
-  "overviewContent2": "Kami berfokus pada pemahaman dan pengembangan infrastruktur digital seperti jaringan komputer, sistem operasi, cloud computing, dan keamanan siber. Kami melakukan riset, studi mendalam, dan pelatihan teknologi skala besar untuk mempersiapkan talenta digital masa depan.",
-  "overviewImage": "/image/eim/EIM.avif",
-  "vision": "Mewujudkan Laboratorium Riset Enterprise Infrastructure Management (EIM) sebagai wadah pengembangan potensi asisten yang optimal, menciptakan laboratorium riset yang unggul, kolaboratif, dan berdaya saing tinggi yang mampu menghasilkan SDM yang inovatif dan profesional serta siap berkontribusi secara akademis maupun industri.",
+  "overviewContent1": "EIM merupakan salah satu Laboratorium pada Program Studi S1 Sistem Informasi Telkom University di bawah Kelompok Keahlian Digital Enterprise System and Technology (DEST).",
+  "overviewContent2": "Kami berfokus pada pemahaman dan pengembangan arsitektur jaringan skala enterprise, komputasi awan, administrasi server, dan sistem pertahanan siber. ",
+  "vision": "Terwujudnya Laboratorium Enterprise Infrastructure Management (EIM) sebagai wadah pengembangan potensi para asisten secara optimal, sehingga terbentuk laboratorium yang unggul, kolaboratif, dan berdaya saing, serta mampu mencetak sumber daya manusia yang inovatif, profesional, dan siap berkontribusi di tingkat akademik maupun industri.",
   "missions": [
-    "Penguatan iman dan takwa sebagai landasan moral dalam setiap kegiatan Laboratorium Riset EIM.",
-    "Membina asisten yang cerdas, profesional, dan bertanggung jawab dalam bidang akademis, riset, serta pengabdian masyarakat.",
-    "Menciptakan lingkungan laboratorium yang kondusif dan produktif dengan menjunjung tinggi nilai EIM Work.",
-    "Mengembangkan program kerja yang berkelanjutan melalui inovasi dan peningkatan kualitas secara bertahap.",
-    "Mempererat komunikasi dan kolaborasi dengan seluruh pemangku kepentingan."
+    "Meningkatkan keimanan dan ketakwaan kepada Tuhan Yang Maha Esa sebagai landasan moral dan etika dalam setiap aktivitas Laboratorium Enterprise Infrastructure Management (EIM).",
+    "Membentuk karakter asisten Laboratorium EIM yang cerdas, profesional, dan bertanggung jawab, baik dalam bidang akademik, riset, maupun pengabdian.",
+    "Mewujudkan Laboratorium EIM sebagai lingkungan yang kondusif, nyaman, dan produktif, dengan menjunjung tinggi nilai EIM Kerja: kerja keras, ikhlas, cerdas, dan tuntas.",
+    "Menjalankan serta mengembangkan program kerja Laboratorium EIM secara berkelanjutan melalui inovasi, kreativitas, dan kerja keras guna meningkatkan kualitas laboratorium.",
+    "Menjalin komunikasi dan kolaborasi yang efektif antara asisten, dosen, laboratorium lain, serta pihak terkait untuk mendukung keberlangsungan dan kemajuan Laboratorium EIM."
   ],
   "values": [
     {

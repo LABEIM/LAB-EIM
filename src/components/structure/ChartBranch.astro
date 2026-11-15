@@ -1,0 +1,34 @@
+---
+import type { ChartNode } from '../../utils/position-mapper';
+import type { StructurePageData } from '../../utils/types';
+import ChartBranch from './ChartBranch.astro';
+
+interface Props {
+  node: ChartNode;
+  content: StructurePageData['chart'];
+  labels: StructurePageData['groups'];
+}
+
+const { node, content, labels } = Astro.props;
+
+const count =
+  node.count > 0
+    ? (content.positionCount ?? '').replaceAll('{n}', String(node.count))
+    : content.emptyPosition;
+---
+
+<li class="chart-node">
+  <div class="chart-node-head">
+    <span class="chart-kicker">{labels[node.group]}</span>
+    <span class="chart-label">{node.label}</span>
+    <span class="chart-count">{count}</span>
+  </div>
+  {node.note && <p class="chart-note">{node.note}</p>}
+  {node.children.length > 0 && (
+    <ol class="chart-children" role="list">
+      {node.children.map((child) => (
+        <ChartBranch node={child} content={content} labels={labels} />
+      ))}
+    </ol>
+  )}
+</li>

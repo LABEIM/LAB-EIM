@@ -1,32 +1,40 @@
 ---
 import type { EventEntry } from '../../utils/event-helpers';
 import type { Locale } from '../../utils/i18n';
-import { t } from '../../utils/i18n';
 import { getEventDateLabel, getEventDateMs, getEventStoryCover } from '../../utils/event-helpers';
+import type { EventDetailPageData } from '../../utils/types';
 
 interface Props {
   event: EventEntry;
   locale: Locale;
+  content: EventDetailPageData['hero'];
+  share: EventDetailPageData['share'];
+  organizerFallback: string;
 }
 
-const { event, locale } = Astro.props;
+const { event, locale, content, share, organizerFallback } = Astro.props;
 
 const cover = getEventStoryCover(event);
 const dateMs = getEventDateMs(event);
 const dateLabel = getEventDateLabel(event, locale).trim();
 const category = event.data.category.trim();
-const organizer = (event.data.organizer ?? '').trim() || t('events.organizerFallback', locale);
+const organizer = (event.data.organizer ?? '').trim() || organizerFallback;
 const hasStandfirst = event.data.description.trim().length > 0;
-const metaParts = [dateLabel, category, organizer].filter(Boolean);
+// The eyebrow already carries the date and category; keep the meta line for the organiser only.
+const metaParts = [organizer].filter(Boolean);
+const poster = (event.data.poster ?? '').trim();
+const coverIsPoster = poster !== '' && cover === poster;
 ---
 
 <section id="kegiatan-detail" class="kegiatan-recap-hero" aria-labelledby="kegiatan-detail-title">
   <div class="mx-auto max-w-[1200px] px-[clamp(1.25rem,4vw,4rem)]">
     <div class="kegiatan-recap-top">
       <a class="kegiatan-back" href="/event">
-        <span aria-hidden="true">←</span> {t('events.backToList', locale)}
+        <span aria-hidden="true">←</span> {content.backLabel}
       </a>
-      <button type="button" class="share-btn kegiatan-share">{t('events.share', locale)}</button>
+      {share.enabled && (
+        <button type="button" class="share-btn kegiatan-share">{share.label}</button>
+      )}
     </div>
 
     <div class="kegiatan-recap-eyebrow e-reveal">
@@ -67,6 +75,7 @@ const metaParts = [dateLabel, category, organizer].filter(Boolean);
           loading="eager"
           fetchpriority="high"
           decoding="async"
+          class:list={[coverIsPoster && 'kegiatan-recap-cover-poster']}
         />
       ) : (
         <span class="kegiatan-recap-fallback">

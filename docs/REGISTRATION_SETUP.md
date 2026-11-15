@@ -1,4 +1,4 @@
-# Complete Registration Setup & Operations Guide (EIM Research Lab)
+# Complete Registration Setup & Operations Guide (EIM Lab)
 
 This document is a step-by-step guide for setting up, configuring, and operating the assistant recruitment registration system from start to finish.
 

@@ -1,0 +1,87 @@
+{
+  "meta": {
+    "title": "EIM Lab · Infrastruktur untuk dunia nyata"
+  },
+  "navDots": {
+    "reveal": "Media",
+    "focus": "Pilar",
+    "vision": "Visi & Misi",
+    "courses": "Mata Kuliah",
+    "events": "Kegiatan",
+    "articles": "Artikel"
+  },
+  "hero": {
+    "kicker": "EIM Lab",
+    "lines": [
+      "NO DRAMA",
+      "JUST EXECUTION!"
+    ],
+    "description": "Architecting Resilient Infrastructure & Advanced Network Systems",
+    "primaryLabel": "Jelajahi lab",
+    "secondaryLabel": "Tentang Kami"
+  },
+  "reveal": {
+    "enabled": true,
+    "pending": "Video pengantar sedang disiapkan.",
+    "pendingCta": "Kenali lab kami",
+    "mediaKind": "video",
+    "backgroundUrl": "/assets/video/intro-test-11-2026.mp4",
+    "videoUrl": "https://youtu.be/A5N3GOMHZyU",
+    "mediaAlt": "Video pengantar EIM"
+  },
+  "focus": {
+    "enabled": true,
+    "title": "Pilar Keilmuan & Riset",
+    "intro": "Fokus riset infrastruktur dan jaringan di Laboratorium EIM",
+    "rows": [
+      {
+        "title": "Enterprise Networking",
+        "description": "Routing & Switching tingkat lanjut, implementasi protokol jaringan enterprise, virtual network topology, dan sertifikasi industri."
+      },
+      {
+        "title": "Cloud & Virtualization",
+        "description": "Arsitektur cloud computing publik & privat, server virtualization VMware/Proxmox, container orchestration Docker/Kubernetes."
+      },
+      {
+        "title": "Server Administration",
+        "description": "Manajemen Linux/Windows server tingkat tinggi, high-availability clustering, distributed storage systems, automasi Ansible, dan server monitoring."
+      },
+      {
+        "title": "Cybersecurity & Defense",
+        "description": "Pertahanan perimeter jaringan, firewall Next-Gen, Intrusion Detection System (IDS/IPS), audit kerentanan infrastruktur, dan SOC operations."
+      }
+    ]
+  },
+  "visiMisi": {
+    "enabled": true,
+    "title": "Visi & Misi"
+  },
+  "numbers": {
+    "enabled": true,
+    "label": "Laboratorium dalam angka"
+  },
+  "courses": {
+    "enabled": true,
+    "eyebrow": "Pengajaran",
+    "title": "Mata kuliah & praktikum.",
+    "intro": "Mata kuliah di bidang studi lab yang punya praktikum, beserta dosen koordinatornya.",
+    "link": "Lihat semua mata kuliah"
+  },
+  "events": {
+    "enabled": true,
+    "title": "Kegiatan Terkini",
+    "intro": "Workshop, seminar, kompetisi, dan pengabdian yang kami jalankan.",
+    "empty": "Belum ada kegiatan yang dipublikasikan.",
+    "viewAll": "Lihat Semua Kegiatan"
+  },
+  "news": {
+    "enabled": true,
+    "title": "Artikel Terkini",
+    "intro": "Tulisan riset dan catatan terbaru dari lab.",
+    "empty": "Belum ada artikel terkini.",
+    "viewAll": "Lihat Semua Artikel"
+  },
+  "cta": {
+    "enabled": true
+  }
+}

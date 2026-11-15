@@ -101,8 +101,6 @@ Values are reproduced as written in `variables.css`; aliases appear as `var(--â€
 
 | Token | Value | Token | Value | Token | Value |
 | --- | --- | --- | --- | --- | --- |
-| `--space-neg-36` | `-2.25rem` | `--space-neg-32` | `-2rem` | `--space-neg-10` | `-0.625rem` |
-| `--space-neg-8` | `-0.5rem` | `--space-1-6` | `0.1rem` | `--space-2` | `0.125rem` |
 | `--space-2-4` | `0.15rem` | `--space-3` | `0.1875rem` | `--space-3-2` | `0.2rem` |
 | `--space-4` | `0.25rem` | `--space-4-8` | `0.3rem` | `--space-5` | `0.3125rem` |
 | `--space-5-6` | `0.35rem` | `--space-6` | `0.375rem` | `--space-6-4` | `0.4rem` |

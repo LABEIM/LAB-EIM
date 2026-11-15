@@ -1,7 +1,7 @@
 ---
 import BackToHomeButton from './BackToHomeButton.astro';
-import { getLocaleFromUrl, t } from '../../utils/i18n';
-import type { FieldStates } from '../../utils/types';
+import { getLocaleFromUrl, getLocalizedJsonData } from '../../utils/i18n';
+import type { ChromeData, FieldStates, RecruitmentLabels } from '../../utils/types';
 import FormDescriptionCard from './FormDescriptionCard.astro';
 
 interface Props {
@@ -22,13 +22,13 @@ interface Props {
   studentYears: string[];
   piTemplateUrl?: string;
   fieldStates?: FieldStates;
+  labels: RecruitmentLabels;
   allowedFileExtensions?: Record<string, string>;
   formDescriptionTitle?: string;
   formDescription?: string;
   formDescriptionItems?: string[];
 }
 
-const locale = getLocaleFromUrl(Astro.url);
 const { 
   initialStage, 
   upcomingCfg, 
@@ -36,11 +36,14 @@ const {
   studentYears, 
   piTemplateUrl, 
   fieldStates = {}, 
+  labels,
   allowedFileExtensions = {},
   formDescriptionTitle,
   formDescription,
   formDescriptionItems,
 } = Astro.props;
+
+const ui = getLocalizedJsonData<ChromeData>('chrome', getLocaleFromUrl(Astro.url)).ui.registration;
 
 const formatExtsLabel = (extsStr?: string) => (extsStr || "pdf, png, jpg, jpeg")
   .split(',')
@@ -76,19 +79,19 @@ const isAngkatanEnabled = fieldStates.angkatan !== 'disabled';
   <div class="registration-timer reg-timer-mb" id="upcoming-timer">
     <div class="timer-block">
       <div id="u-timer-days" class="reg-timer-days">0</div>
-      <div class="reg-timer-label">Hari</div>
+      <div class="reg-timer-label">{labels.timerDays}</div>
     </div>
     <div class="timer-block">
       <div id="u-timer-hours" class="reg-timer-val">0</div>
-      <div class="reg-timer-label">Jam</div>
+      <div class="reg-timer-label">{labels.timerHours}</div>
     </div>
     <div class="timer-block">
       <div id="u-timer-minutes" class="reg-timer-val">0</div>
-      <div class="reg-timer-label">Menit</div>
+      <div class="reg-timer-label">{labels.timerMinutes}</div>
     </div>
     <div class="timer-block">
       <div id="u-timer-seconds" class="reg-timer-val-red">0</div>
-      <div class="reg-timer-label">Detik</div>
+      <div class="reg-timer-label">{labels.timerSeconds}</div>
     </div>
   </div>
 
@@ -101,35 +104,35 @@ const isAngkatanEnabled = fieldStates.angkatan !== 'disabled';
       {isKsmEnabled && (
         <li>
           <i class="fa-solid fa-check reg-checklist-icon"></i>
-          <span><strong>{t('form.ksm', locale)}</strong> ({ksmExtsDisplay}) {fieldStates.ksm === 'optional' ? '(Opsional)' : ''} - Max {docLimits.ksmMb}MB</span>
+          <span><strong>{labels.ksm}</strong> ({ksmExtsDisplay}) {fieldStates.ksm === 'optional' ? ui.optional : ''} - Max {docLimits.ksmMb}MB</span>
         </li>
       )}
       {isKhsEnabled && (
         <li>
           <i class="fa-solid fa-check reg-checklist-icon"></i>
-          <span><strong>{t('form.khs', locale)}</strong> ({khsExtsDisplay}) {fieldStates.khs === 'optional' ? '(Opsional)' : ''} - Max {docLimits.khsMb}MB</span>
+          <span><strong>{labels.khs}</strong> ({khsExtsDisplay}) {fieldStates.khs === 'optional' ? ui.optional : ''} - Max {docLimits.khsMb}MB</span>
         </li>
       )}
       {isMlEnabled && (
         <li>
           <i class="fa-solid fa-check reg-checklist-icon"></i>
-          <span><strong>{t('form.motivationLetter', locale)}</strong> ({mlExtsDisplay}) {fieldStates.ml === 'optional' ? '(Opsional)' : ''} - Max {docLimits.mlMb}MB</span>
+          <span><strong>{labels.ml}</strong> ({mlExtsDisplay}) {fieldStates.ml === 'optional' ? ui.optional : ''} - Max {docLimits.mlMb}MB</span>
         </li>
       )}
       {isCvEnabled && (
         <li>
           <i class="fa-solid fa-check reg-checklist-icon"></i>
-          <span><strong>{t('form.cv', locale)}</strong> ({cvExtsDisplay}) {fieldStates.cv === 'optional' ? '(Opsional)' : ''} - Max {docLimits.cvMb}MB</span>
+          <span><strong>{labels.cv}</strong> ({cvExtsDisplay}) {fieldStates.cv === 'optional' ? ui.optional : ''} - Max {docLimits.cvMb}MB</span>
         </li>
       )}
       {isPiEnabled && (
         <li>
           <i class="fa-solid fa-check reg-checklist-icon"></i>
-          <span><strong>{t('form.pi', locale)}</strong> ({piExtsDisplay}) {fieldStates.pi === 'optional' ? '(Opsional)' : ''} - Max {docLimits.piMb}MB</span>
+          <span><strong>{labels.pi}</strong> ({piExtsDisplay}) {fieldStates.pi === 'optional' ? ui.optional : ''} - Max {docLimits.piMb}MB</span>
           {piTemplateUrl && (
             <a href={piTemplateUrl} target="_blank" rel="noopener noreferrer" class="checklist-download-btn">
               <i class="fa-solid fa-file-arrow-down"></i>
-              <span>{t('form.downloadPiTemplate', locale)}</span>
+              <span>{labels.downloadPiTemplate}</span>
             </a>
           )}
         </li>
@@ -137,7 +140,7 @@ const isAngkatanEnabled = fieldStates.angkatan !== 'disabled';
       {isAngkatanEnabled && (
         <li>
           <i class="fa-solid fa-user-graduate reg-checklist-icon"></i>
-          <span><strong>Angkatan Mahasiswa:</strong> {studentYears.join(", ")} {fieldStates.angkatan === 'optional' ? '(Opsional)' : ''}</span>
+          <span><strong>Angkatan Mahasiswa:</strong> {studentYears.join(", ")} {fieldStates.angkatan === 'optional' ? ui.optional : ''}</span>
         </li>
       )}
     </ul>

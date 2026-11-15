@@ -1,14 +1,15 @@
 ---
-import { getLocaleFromUrl, t } from '../../utils/i18n';
+import type { HomePageData } from '../../utils/types';
 
 interface Props {
-  primaryLabel: string;
+  content: HomePageData['hero'];
+  logo: string;
   primaryHref: string;
+  secondaryHref: string;
+  showPrimary?: boolean;
 }
 
-const { primaryLabel, primaryHref } = Astro.props;
-const locale = getLocaleFromUrl(Astro.url);
-const titleLines = t('home.heroTitle', locale).split('\n');
+const { content, logo, primaryHref, secondaryHref, showPrimary = true } = Astro.props;
 ---
 
 <section id="hero" class="eim-hero" aria-labelledby="eim-hero-title">
@@ -17,28 +18,28 @@ const titleLines = t('home.heroTitle', locale).split('\n');
   <div class="eim-hero-inner">
     <img
       class="eim-hero-logo"
-      src="/assets/brand/eim-logo-horizontal-640.avif"
-      alt={t('home.heroKicker', locale)}
+      src={logo}
+      alt={content.kicker}
       width="640"
       height="116"
       decoding="async"
     />
 
     <h1 id="eim-hero-title" class="eim-hero-title">
-      {titleLines.map((line) => <span class="eim-hero-title-line">{line}</span>)}
+      {content.lines.map((line, index) => (
+        <>
+          <span class="eim-hero-title-line">{line}</span>{index < content.lines.length - 1 ? ' ' : ''}
+        </>
+      ))}
     </h1>
 
-    <p class="eim-hero-desc">{t('home.heroDesc', locale)}</p>
+    <p class="eim-hero-desc">{content.description}</p>
 
     <div class="eim-hero-actions">
-      <a
-        id="hero-recruitment-btn"
-        class="eim-hero-cta"
-        href={primaryHref}
-      ><span class="hero-btn-text">{primaryLabel}</span></a>
+      {showPrimary && <a class="eim-hero-cta" href={primaryHref}>{content.primaryLabel || 'Jelajahi lab'}</a>}
 
-      <a class="eim-hero-secondary" href="#fokus">
-        {t('home.heroSecondary', locale)} <span aria-hidden="true">→</span>
+      <a class="eim-hero-secondary" href={secondaryHref}>
+        {content.secondaryLabel || 'Tentang Kami'} <span aria-hidden="true">→</span>
       </a>
     </div>
   </div>

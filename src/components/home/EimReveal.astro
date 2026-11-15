@@ -1,53 +1,93 @@
 ---
 import { Image } from 'astro:assets';
 import emblem from '../../../public/assets/brand/eim-emblem.png';
-import { t } from '../../utils/i18n';
+import { getLocaleFromUrl, getLocalizedJsonData } from '../../utils/i18n';
+import { planRevealVideo, resolveExternalImageUrl } from '../../utils/media';
+import type { ChromeData, HomePageData } from '../../utils/types';
 
 /**
- * Asset swap point — the only thing to edit when the intro media arrives.
+ * Intro media comes from the Beranda singleton (`reveal` section):
  *
- *   kind: 'video' → set `src` (video file) and `poster` (poster image)
- *   kind: 'image' → set `src` (public URL path, e.g. `/assets/...`) and `alt` (image description)
- *   kind: 'pending' → the placeholder below, no other edits
+ *   mediaKind: 'video' → `backgroundUrl` link as the background loop,
+ *                        `videoUrl` provider link as the click-to-open player
+ *   mediaKind: 'image' → pasted `imageUrl`, else uploaded `image`
+ *   mediaKind: 'none'  → the placeholder below
  *
- * Set those values and change nothing else in this file.
+ * The background prefers `backgroundUrl` and falls back to a direct-file
+ * `videoUrl`. A provider link (YouTube/Vimeo/Drive) in `videoUrl` adds an
+ * overlay that opens a sound-on player in a modal; with no background link or
+ * direct file, that link's embed is the background too.
  */
-const MEDIA: { kind: 'pending' | 'image' | 'video'; src: string; poster?: string; caption: string; alt: string } = {
-  kind: 'pending',
-  src: '',
-  caption: t('home.revealCaption'),
-  alt: '',
-};
+interface Props {
+  content: HomePageData['reveal'];
+}
+
+const { content } = Astro.props;
+const mediaKind = content.mediaKind ?? 'none';
+const videoPlan = mediaKind === 'video' ? planRevealVideo(content.backgroundUrl, content.videoUrl) : null;
+const nativeVideo = videoPlan?.nativeSrc ?? null;
+const backgroundSrc = videoPlan?.backgroundSrc ?? null;
+const playerSrc = videoPlan?.playerSrc ?? null;
+const imageSrc = mediaKind === 'image' ? resolveExternalImageUrl(content.imageUrl) ?? content.image : null;
+const showPlaceholder = !nativeVideo && !backgroundSrc && !imageSrc;
+const chrome = getLocalizedJsonData<ChromeData>('chrome', getLocaleFromUrl(Astro.url));
 ---
 
-<section id="reveal" class="e-reveal-stage" aria-label="Media pengantar">
-  <figure class="e-reveal-stage-figure">
-    {MEDIA.kind === 'video' && (
+<section id="reveal" class:list={['e-reveal-stage', mediaKind === 'none' && 'is-pending']} aria-label={chrome.ui.aria.mediaIntro}>
+  <figure class:list={['e-reveal-stage-figure', playerSrc && 'has-player']}>
+    {backgroundSrc && (
+      <iframe
+        class="e-reveal-stage-media e-reveal-embed"
+        src={backgroundSrc}
+        title={content.mediaAlt}
+        loading="lazy"
+        allow="autoplay; encrypted-media; picture-in-picture; fullscreen"
+        allowfullscreen
+        sandbox="allow-scripts allow-same-origin allow-presentation allow-popups"
+        referrerpolicy="strict-origin-when-cross-origin"
+      ></iframe>
+    )}
+
+    {nativeVideo && (
       <video
-        class="e-reveal-stage-media"
-        src={MEDIA.src}
-        poster={MEDIA.poster}
+        class:list={['e-reveal-stage-media', playerSrc && 'e-reveal-passive']}
+        src={nativeVideo}
+        poster={content.poster}
         muted
         loop
         playsinline
         autoplay
+        controls={videoPlan?.controls}
         preload="metadata"
+        aria-label={content.mediaAlt}
       ></video>
     )}
 
-    {MEDIA.kind === 'image' && (
-      <Image
+    {imageSrc && (
+      <img
         class="e-reveal-stage-media"
-        src={MEDIA.src}
-        alt={MEDIA.alt}
-        width={1600}
-        height={900}
+        src={imageSrc}
+        alt={content.mediaAlt}
         loading="lazy"
         decoding="async"
+        referrerpolicy="no-referrer"
       />
     )}
 
-    {MEDIA.kind === 'pending' && (
+    {playerSrc && (
+      <button type="button" class="e-reveal-open" aria-label={chrome.ui.revealPlay}>
+        <span class="e-reveal-open-pill">
+          <span class="e-reveal-open-glyph" aria-hidden="true">
+            <svg viewBox="0 0 24 24" focusable="false">
+              <path d="M8 5v14l11-7z" fill="currentColor"></path>
+            </svg>
+          </span>
+          <span class="e-reveal-open-label">{chrome.ui.revealPlay}</span>
+        </span>
+      </button>
+    )}
+
+    {showPlaceholder && (
       <div class="e-reveal-stage-pending">
         <Image
           class="e-reveal-stage-emblem"
@@ -58,16 +98,166 @@ const MEDIA: { kind: 'pending' | 'image' | 'video'; src: string; poster?: string
           loading="lazy"
           decoding="async"
         />
-        <p class="e-reveal-stage-note">{t('home.revealPending')}</p>
+        <p class="e-reveal-stage-note">{content.pending}</p>
+        <a class="e-reveal-stage-link" href="/about">
+          {content.pendingCta || 'Kenali lab kami'} <span aria-hidden="true">→</span>
+        </a>
       </div>
     )}
 
-    <figcaption class="e-reveal-stage-caption">{MEDIA.caption}</figcaption>
+    <figcaption class="e-reveal-stage-caption">{content.caption}</figcaption>
   </figure>
 </section>
+
+{playerSrc && (
+  <div
+    class="e-reveal-modal"
+    id="e-reveal-modal"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="e-reveal-modal-title"
+    hidden
+    data-player-src={playerSrc}
+    data-player-title={content.mediaAlt}
+  >
+    <div class="e-reveal-modal-dialog">
+      <div class="e-reveal-modal-bar">
+        <h2 class="e-reveal-modal-title" id="e-reveal-modal-title">{content.mediaAlt}</h2>
+        <button type="button" class="e-reveal-modal-close" aria-label="Tutup video">
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path>
+          </svg>
+        </button>
+      </div>
+      <div class="e-reveal-modal-player"></div>
+    </div>
+  </div>
+)}
 
 <script>
   import { initMediaReveal } from '../../scripts/media-reveal';
 
   initMediaReveal();
+
+  // The stage media (native loop or embed) only paints the muted background;
+  // this overlay opens the sound-on player in a dialog whose iframe is built on
+  // demand (and removed on close, which stops playback).
+  const modal = document.getElementById('e-reveal-modal');
+  const trigger = document.querySelector<HTMLButtonElement>('.e-reveal-open');
+  const closeBtn = modal?.querySelector<HTMLButtonElement>('.e-reveal-modal-close');
+  const playerHost = modal?.querySelector<HTMLElement>('.e-reveal-modal-player');
+  const playerSrc = modal?.dataset.playerSrc;
+
+  if (modal && trigger && closeBtn && playerHost && playerSrc) {
+    let previousOverflow = '';
+
+    const open = () => {
+      const iframe = document.createElement('iframe');
+      iframe.src = playerSrc;
+      iframe.title = modal.dataset.playerTitle ?? '';
+      iframe.className = 'e-reveal-modal-frame';
+      iframe.allow = 'autoplay; encrypted-media; picture-in-picture; fullscreen';
+      iframe.allowFullscreen = true;
+      iframe.referrerPolicy = 'strict-origin-when-cross-origin';
+      iframe.setAttribute('sandbox', 'allow-scripts allow-same-origin allow-presentation allow-popups');
+      playerHost.replaceChildren(iframe);
+      modal.hidden = false;
+      previousOverflow = document.body.style.overflow;
+      document.body.style.overflow = 'hidden';
+      closeBtn.focus();
+    };
+
+    const close = () => {
+      if (modal.hidden) return;
+      playerHost.replaceChildren();
+      modal.hidden = true;
+      document.body.style.overflow = previousOverflow;
+      trigger.focus();
+    };
+
+    trigger.addEventListener('click', open);
+    closeBtn.addEventListener('click', close);
+    modal.addEventListener('click', (event) => {
+      if (event.target === modal) close();
+    });
+    document.addEventListener('keydown', (event) => {
+      if (modal.hidden) return;
+      if (event.key === 'Escape') {
+        close();
+        return;
+      }
+      if (event.key !== 'Tab') return;
+      const focusable = Array.from(
+        modal.querySelectorAll<HTMLElement>('button, iframe, a[href], [tabindex]:not([tabindex="-1"])')
+      ).filter((element) => !element.hasAttribute('disabled'));
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (!first || !last) return;
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
+    });
+  }
+
+  // The pill trails the pointer so the whole stage reads as clickable. Fine
+  // pointers only, and only when motion is allowed; otherwise it stays parked.
+  const pill = document.querySelector<HTMLElement>('.e-reveal-open-pill');
+  const followsPointer =
+    window.matchMedia('(pointer: fine)').matches &&
+    !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  if (pill && trigger && followsPointer) {
+    const PAD = 12;
+    let frame = 0;
+    let pointer = { x: 0, y: 0 };
+    let stage = { width: 0, height: 0 };
+    let size = { width: 0, height: 0 };
+    let origin = { x: 0, y: 0 };
+
+    // Layout metrics ignore ancestor transforms, so they stay valid while the
+    // figure scales during the reveal animation.
+    const measure = () => {
+      stage = { width: trigger.offsetWidth, height: trigger.offsetHeight };
+      size = { width: pill.offsetWidth, height: pill.offsetHeight };
+      origin = { x: pill.offsetLeft, y: pill.offsetTop };
+    };
+
+    const apply = () => {
+      frame = 0;
+      const rect = trigger.getBoundingClientRect();
+      if (!rect.width || !stage.width) return;
+      // Convert screen pixels to the stage's local pixels.
+      const scale = stage.width / rect.width;
+      const maxX = Math.max(PAD, stage.width - size.width - PAD);
+      const maxY = Math.max(PAD, stage.height - size.height - PAD);
+      const x = Math.min(Math.max((pointer.x - rect.left) / scale - size.width / 2, PAD), maxX);
+      const y = Math.min(Math.max((pointer.y - rect.top) / scale - size.height / 2, PAD), maxY);
+      pill.style.transform = `translate3d(${(x - origin.x).toFixed(1)}px, ${(y - origin.y).toFixed(1)}px, 0)`;
+    };
+
+    const park = () => {
+      if (frame) cancelAnimationFrame(frame);
+      frame = 0;
+      pill.style.transform = '';
+    };
+
+    measure();
+    trigger.addEventListener('pointermove', (event) => {
+      pointer = { x: event.clientX, y: event.clientY };
+      if (!frame) frame = requestAnimationFrame(apply);
+    });
+    trigger.addEventListener('pointerleave', park);
+    // Keyboard focus needs the ring at the parked position, not under the mouse.
+    trigger.addEventListener('focus', () => {
+      if (trigger.matches(':focus-visible')) park();
+    });
+    window.addEventListener('resize', () => {
+      measure();
+      park();
+    });
+  }
 </script>

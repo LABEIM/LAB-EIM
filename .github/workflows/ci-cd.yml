@@ -34,8 +34,10 @@ jobs:
       # Runtime & Build
       node_version: '22'
       package_manager: 'auto'
+      # `check_command` runs before the build; the copy-render guard needs the
+      # built HTML, so the suite runs after the build in `build_command`.
       check_command: 'pnpm exec astro check'
-      build_command: 'pnpm run build'
+      build_command: 'pnpm run build && pnpm test'
       dist_dir: 'dist'
 
       # Platforms

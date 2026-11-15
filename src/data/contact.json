@@ -1,32 +1,64 @@
 {
+  "meta": {
+    "title": "Hubungi Kami · EIM Lab",
+    "description": "{location}, {university}, dan saluran komunikasi Laboratorium Enterprise Infrastructure Management (EIM) Telkom University."
+  },
+  "navDots": {
+    "detail": "Detail",
+    "social": "Sosial"
+  },
+  "hero": {
+    "eyebrow": "Kontak",
+    "primaryLabel": "Detail kontak",
+    "secondaryLabel": "Daftar asisten"
+  },
+  "details": {
+    "enabled": true,
+    "eyebrow": "Detail kontak",
+    "title": "Kanal komunikasi.",
+    "intro": "Pertanyaan riset, media partner, kolaborasi, kunjungan, atau informasi rekrutmen — mulai dari salah satu kanal berikut.",
+    "emailAction": "Kirim email",
+    "copyEmail": "Salin email",
+    "copied": "Tersalin!",
+    "copyFailed": "Gagal menyalin",
+    "copySuccessStatus": "Email disalin ke papan klip.",
+    "copyFailedStatus": "Email gagal disalin.",
+    "routingNote": "Rekrutmen, media partner, riset, kolaborasi, dan dokumen administrasi → email.",
+    "picsTitle": "Hubungi PIC kami.",
+    "picsSubtitle": "Kebutuhan media partner dan kerja sama lainnya bisa menghubungi nomor berikut."
+  },
+  "map": {
+    "enabled": true,
+    "title": "Peta Lokasi Laboratorium",
+    "subtitle": "Temukan lokasi Gedung C Pascasarjana (Karang) di kampus Telkom University Bandung.",
+    "navDot": "Lokasi"
+  },
+  "socials": {
+    "enabled": true,
+    "eyebrow": "Media sosial",
+    "title": "Ikuti kami.",
+    "intro": "Perkembangan kegiatan riset, pelatihan, dan pengumuman rekrutmen terbaru di media sosial EIM."
+  },
   "title": "Hubungi Kami",
-  "heroDescription": "Laboratorium Riset Enterprise Infrastructure Management Telkom University siap melayani pertanyaan, kolaborasi riset, dan informasi kegiatan.",
+  "heroDescription": "Laboratorium Enterprise Infrastructure Management Telkom University siap melayani pertanyaan, kolaborasi riset, dan informasi kegiatan.",
   "locationTitle": "Lokasi Laboratorium",
-  "location": "Gedung TULT Lantai 8, Ruang TULT.08.09",
-  "university": "Telkom University, Bandung, Indonesia",
-  "mapsUrl": "https://maps.app.goo.gl/46PFVjLD67EKPTCE6",
-  "mapsEmbedUrl": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d5197.5293935088985!2d107.62852556415795!3d-6.97225582714071!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e68e9bc3974981d%3A0x613eec0feec9fcf7!2sTelkom%20University%20Landmark%20Tower%20(TULT)!5e1!3m2!1sen!2sid!4v1785749161642!5m2!1sen!2sid",
+  "mapsEmbedUrl": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d5208.188405140726!2d107.63129954513435!3d-6.975549904114349!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e68e9ae45048be3%3A0x13e3f012d801d7c6!2sPascasarjana%20Universitas%20Telkom!5e1!3m2!1sen!2ssg!4v1794728414888!5m2!1sen!2ssg",
   "emailTitle": "Email Resmi",
-  "email": "lab@eimlab.org",
   "hoursTitle": "Jam Operasional Lab",
   "hoursText": "Senin - Jumat: 08.00 - 17.00 WIB",
   "hoursSubtext": "Kunjungan offline dapat disesuaikan dengan janji perizinan atau jadwal kegiatan laboratorium.",
-  "mapSectionTitle": "Peta Lokasi Laboratorium",
-  "mapSectionSubtitle": "Temukan lokasi Gedung Telkom University Landmark Tower (TULT) di kampus Telkom University Bandung.",
   "contactPersons": [
     {
-      "name": "PIC 1",
-      "role": "CP Rekrutmen",
+      "name": "Wildan Zaaqi",
       "platform": "whatsapp",
-      "contactId": "08xx-xxxx-xxxx",
-      "link": ""
+      "contactId": "6285813620161",
+      "link": "https://wa.me/6285813620161"
     },
     {
-      "name": "PIC 2",
-      "role": "CP Riset",
+      "name": "Aditya Daffa Kurniawan ",
       "platform": "whatsapp",
-      "contactId": "08xx-xxxx-xxxx",
-      "link": ""
+      "contactId": "6281328127733",
+      "link": "https://wa.me/6281328127733"
     }
   ]
 }

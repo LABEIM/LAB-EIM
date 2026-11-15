@@ -1,0 +1,34 @@
+{
+  "meta": {
+    "title": "Artikel · EIM Lab",
+    "description": "Artikel, publikasi, dan pengumuman dari EIM Lab."
+  },
+  "navDots": {
+    "list": "Daftar"
+  },
+  "hero": {
+    "eyebrow": "Artikel",
+    "lines": [
+      "Catatan",
+      "dari lab."
+    ],
+    "description": "Tulisan riset, publikasi, dan pengumuman dari EIM Lab.",
+    "meta": "{articles} artikel · {categories} kategori · terbaru {year}",
+    "metaEmpty": "Belum ada artikel yang dipublikasikan.",
+    "primaryLabel": "Telusuri artikel",
+    "secondaryLabel": "Kegiatan"
+  },
+  "list": {
+    "enabled": true,
+    "eyebrow": "Daftar",
+    "title": "Semua artikel.",
+    "intro": "Telusuri tulisan, publikasi, dan pengumuman EIM berdasarkan judul atau kategori.",
+    "emptyTitle": "Belum ada artikel yang dipublikasikan.",
+    "emptyDesc": "Artikel akan tampil di sini setelah dipublikasikan.",
+    "noMatchTitle": "Artikel tidak ditemukan.",
+    "noMatchDesc": "Tidak ada artikel yang cocok dengan pencarian atau filter Anda. Coba kata kunci lain atau reset filter.",
+    "searchPlaceholder": "Cari judul artikel, penulis, atau kata kunci...",
+    "contactLabel": "Hubungi kami",
+    "item": "Artikel"
+  }
+}

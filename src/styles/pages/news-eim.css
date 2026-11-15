@@ -1,5 +1,6 @@
 /* Article pages — Antigravity Light variants. Import AFTER home-eim.css. */
 @import '../components/prose.css';
+@import '../components/photo-gallery.css';
 @import '../components/content-filter-eim.css';
 
 .article-detail-hero {
@@ -67,6 +68,10 @@
 /* Mono meta row: eyebrow, byline and related rows share one voice. */
 .article-eyebrow,
 .article-meta,
+.article-related-category::before {
+  content: "· ";
+}
+
 .article-related-meta {
   display: flex;
   flex-wrap: wrap;
@@ -134,13 +139,15 @@
 }
 
 .article-story {
+  /* Same content column as the masthead so the body starts under the title. */
+  max-width: 1200px;
+  margin-inline: auto;
   padding-block: clamp(2.5rem, 6vh, 4rem) clamp(4.5rem, 10vh, 8.75rem);
   padding-inline: clamp(1.25rem, 4vw, 4rem);
 }
 
 .article-story-inner {
   max-width: 68ch;
-  margin-inline: auto;
 }
 
 .article-tags {
@@ -310,6 +317,32 @@
   border: 1px solid var(--color-line);
   border-radius: var(--radius-card);
   background: var(--color-surface-strong);
+}
+
+.news-list-fallback {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 100%;
+  height: 100%;
+  padding: var(--space-20);
+  background: var(--color-surface-strong);
+}
+
+.news-list-fallback-category {
+  font-family: var(--font-mono);
+  font-size: var(--text-12);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-brand);
+}
+
+.news-list-fallback-title {
+  font-family: var(--font-display);
+  font-size: clamp(1.25rem, 2.4vw, 1.6rem);
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+  color: var(--color-foreground);
 }
 
 .news-list-media img {

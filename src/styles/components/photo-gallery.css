@@ -1,0 +1,61 @@
+/* Shared photo gallery used by the article and event detail pages. */
+
+.photo-gallery {
+  /* The story above already closes with the page's section gap. */
+  padding-block: 0 clamp(4.5rem, 10vh, 8.75rem);
+}
+
+.photo-gallery-head {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-12);
+  margin-bottom: clamp(1.5rem, 4vh, 2.5rem);
+}
+
+.photo-gallery-title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(1.5rem, 2.4vw, 2rem);
+  font-weight: 400;
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+  color: var(--color-foreground);
+}
+
+.photo-gallery-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-items: start;
+  gap: var(--space-16);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.photo-gallery-item {
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-card);
+  background: var(--color-surface-strong);
+}
+
+.photo-gallery-item img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform var(--dur-reveal) var(--ease);
+}
+
+@media (min-width: 640px) {
+  .photo-gallery-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1024px) {
+  .photo-gallery-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}

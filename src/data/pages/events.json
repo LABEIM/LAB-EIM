@@ -1,0 +1,34 @@
+{
+  "meta": {
+    "title": "Kegiatan · EIM Lab",
+    "description": "Kegiatan EIM Lab — workshop, seminar, studi banding, dan program laboratorium."
+  },
+  "navDots": {
+    "list": "Daftar"
+  },
+  "hero": {
+    "eyebrow": "Kegiatan",
+    "lines": [
+      "Kegiatan",
+      "laboratorium."
+    ],
+    "description": "Workshop, seminar, studi banding, dan program EIM Lab — lengkap dengan dokumentasinya.",
+    "meta": "{events} kegiatan · {categories} kategori · terbaru {year}",
+    "metaEmpty": "Belum ada kegiatan yang dipublikasikan.",
+    "primaryLabel": "Lihat kegiatan",
+    "secondaryLabel": "Artikel"
+  },
+  "list": {
+    "enabled": true,
+    "eyebrow": "Daftar",
+    "title": "Kegiatan kami.",
+    "intro": "Telusuri kegiatan EIM berdasarkan nama atau kategori, lalu buka detailnya untuk melihat dokumentasi.",
+    "emptyTitle": "Belum ada kegiatan yang dipublikasikan.",
+    "emptyDesc": "Kegiatan akan tampil di sini setelah dipublikasikan.",
+    "noMatchTitle": "Kegiatan tidak ditemukan.",
+    "noMatchDesc": "Tidak ada kegiatan yang cocok dengan pencarian atau filter Anda. Coba kata kunci lain atau reset filter.",
+    "searchPlaceholder": "Cari nama kegiatan, kategori, atau penyelenggara...",
+    "contactLabel": "Hubungi kami",
+    "item": "Kegiatan"
+  }
+}

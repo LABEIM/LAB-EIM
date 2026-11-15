@@ -73,7 +73,7 @@
 .eim-prose blockquote {
   margin-block: var(--space-32);
   padding-left: clamp(1rem, 2.5vw, 1.5rem);
-  border-left: 3px solid var(--color-brand-bright);
+  border-left: 1px solid var(--color-brand-bright);
   font-family: var(--font-display);
   font-size: clamp(1.35rem, 2.4vw, 1.75rem);
   line-height: 1.3;

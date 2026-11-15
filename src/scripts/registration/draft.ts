@@ -51,6 +51,7 @@ export function initRegistrationDraft(
   const confirmClearDraftBtn = document.getElementById('confirm-clear-draft-btn');
 
   const updateWordCounters = () => {
+    const submitAttempted = formElement?.dataset.submitAttempted === 'true';
     const alasan1Input = document.getElementById('alasan_divisi_1') as HTMLTextAreaElement | null;
     const alasan2Input = document.getElementById('alasan_divisi_2') as HTMLTextAreaElement | null;
 
@@ -68,7 +69,7 @@ export function initRegistrationDraft(
         counter1El.classList.add('word-count-valid');
       } else {
         counter1El.classList.remove('word-count-valid');
-        counter1El.classList.add('word-count-invalid');
+        counter1El.classList.toggle('word-count-invalid', submitAttempted);
       }
     }
 
@@ -80,7 +81,7 @@ export function initRegistrationDraft(
         counter2El.classList.add('word-count-valid');
       } else {
         counter2El.classList.remove('word-count-valid');
-        counter2El.classList.add('word-count-invalid');
+        counter2El.classList.toggle('word-count-invalid', submitAttempted);
       }
     }
   };
@@ -95,6 +96,16 @@ export function initRegistrationDraft(
     const portoState = medhumPortoContainer?.getAttribute('data-porto-state') || 'required';
     const reqIndicator = document.getElementById('porto-required-indicator');
     const helpText = document.getElementById('porto-help-text');
+    // The suffix is editable copy; read it from the rendered element so a CMS
+    // change is not reverted here.
+    const optionalLabel = reqIndicator?.getAttribute('data-optional-label') || '(Opsional)';
+    const showOptional = () => {
+      if (!reqIndicator) return;
+      const span = document.createElement('span');
+      span.className = 'reg-file-label-small';
+      span.textContent = optionalLabel;
+      reqIndicator.replaceChildren(span);
+    };
 
     if (portoState === 'disabled') {
       if (medhumPortoContainer) medhumPortoContainer.style.display = 'none';
@@ -125,7 +136,7 @@ export function initRegistrationDraft(
     if (portoState === 'optional') {
       if (medhumPortoContainer) medhumPortoContainer.style.display = 'block';
       if (medhumPortoInput) medhumPortoInput.required = false;
-      if (reqIndicator) reqIndicator.innerHTML = ' <span class="reg-file-label-small">(Opsional)</span>';
+      showOptional();
       if (helpText) {
         helpText.textContent = isEn
           ? 'Include a link to your public portfolio, best work, or certificates.'
@@ -139,9 +150,11 @@ export function initRegistrationDraft(
     if (medhumPortoInput) medhumPortoInput.required = isTriggerDiv;
 
     if (reqIndicator) {
-      reqIndicator.innerHTML = isTriggerDiv
-        ? '<span class="required-asterisk">*</span>'
-        : ' <span class="reg-file-label-small">(Opsional)</span>';
+      if (isTriggerDiv) {
+        reqIndicator.innerHTML = '<span class="required-asterisk">*</span>';
+      } else {
+        showOptional();
+      }
     }
 
     if (helpText) {
@@ -236,8 +249,18 @@ export function initRegistrationDraft(
     } catch (e) { }
   };
 
+  const syncFileNames = () => {
+    if (!formElement) return;
+    formElement.querySelectorAll<HTMLInputElement>('input[type="file"]').forEach((input) => {
+      const out = formElement.querySelector<HTMLElement>(`[data-file-name="${input.id}"]`);
+      if (!out) return;
+      out.textContent = input.files?.[0]?.name || out.dataset.emptyLabel || '';
+    });
+  };
+
   const handleFormInput = () => {
     saveDraft();
+    syncFileNames();
     updateWordCounters();
   };
 
@@ -294,6 +317,7 @@ export function initRegistrationDraft(
       formElement.setAttribute('data-draft-bound', 'true');
       formElement.addEventListener('input', handleFormInput);
       formElement.addEventListener('change', handleFormInput);
+      formElement.addEventListener('eim:submit-attempted', updateWordCounters);
     }
   }
 

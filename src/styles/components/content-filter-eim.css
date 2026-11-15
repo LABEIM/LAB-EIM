@@ -25,7 +25,7 @@
   min-height: 44px;
   border: 1px solid var(--color-line);
   border-radius: var(--radius-pill);
-  background: var(--color-background);
+  background-color: var(--color-background);
   color: var(--color-foreground);
   font-family: var(--font-body);
   box-shadow: none;

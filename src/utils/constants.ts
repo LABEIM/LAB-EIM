@@ -26,7 +26,6 @@ export const DEFAULT_RECRUITMENT_DATES = {
 /**
  * Default fallback cover image for events and news items when no specific image is provided.
  */
-export const DEFAULT_COVER_IMAGE = "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&q=80&w=600";
 
 /**
  * Action button configuration for hero section based on current recruitment stage.
@@ -50,9 +49,8 @@ export const DEFAULT_ACTION_BTN: StageActionConfig = {
 };
 
 /**
- * Homepage v2 hero CTA copy per recruitment stage.
- * Single source shared by `EimHero` (rendered as `data-stage-labels`) and the
- * homepage stage sync (`initHomeCTA`). Unknown stage ids fall back to `selection`.
+ * Recruitment CTA copy per stage, used by the navbar and section CTAs.
+ * Unknown stage ids fall back to `closed`.
  */
 export const STAGE_LABELS: Record<string, { label: string; href: string }> = {
   open: { label: 'Gabung EIM', href: '/registration' },
@@ -64,5 +62,10 @@ export const STAGE_LABELS: Record<string, { label: string; href: string }> = {
   technical_test: { label: 'Cek Status Seleksi', href: '/registration' },
   technical_test_results: { label: 'Cek Status Seleksi', href: '/registration' },
   interview: { label: 'Cek Status Seleksi', href: '/registration' },
-  closed: { label: 'Hubungi Kami', href: '/contact' },
+  closed: { label: 'Kontak', href: '/contact' },
 };
+
+/** Primary action for a recruitment stage; unknown stages fall back to closed. */
+export function resolveStageCta(stage: string): { label: string; href: string } {
+  return STAGE_LABELS[stage] ?? STAGE_LABELS.closed;
+}

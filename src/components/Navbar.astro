@@ -1,19 +1,19 @@
 ---
-import { Image } from 'astro:assets';
-import logoImg from '../../public/image/eim/logo_EIM_crop.avif';
-import { getLocaleFromUrl, getLocalizedPath, getLocalizedJsonData, t } from '../utils/i18n';
+import { getLocaleFromUrl, getLocalizedPath, getLocalizedJsonData } from '../utils/i18n';
 import { getCurrentRecruitmentStage } from '../utils/recruitment';
+import type { ChromeData, SiteData } from '../utils/types';
 
 const locale = getLocaleFromUrl(Astro.url);
-const siteData = await getLocalizedJsonData<any>('site', locale);
+const siteData = getLocalizedJsonData<SiteData>('site', locale);
+const chrome = getLocalizedJsonData<ChromeData>('chrome', locale);
 const registrationData = await getLocalizedJsonData<any>('registration', locale);
 
 const recruitmentStage = getCurrentRecruitmentStage(registrationData || {});
 const isRecruitmentActive = recruitmentStage === 'open' || recruitmentStage === 'extended';
 
 const ctaConfig = isRecruitmentActive
-  ? { href: getLocalizedPath('/registration', locale), rawHref: '/registration', label: t('nav.joinUs', locale), isJoinUs: true }
-  : { href: getLocalizedPath('/contact', locale), rawHref: '/contact', label: t('nav.contact', locale), isJoinUs: false };
+  ? { href: getLocalizedPath('/registration', locale), rawHref: '/registration', label: chrome.nav.joinUs, isJoinUs: true }
+  : { href: getLocalizedPath('/contact', locale), rawHref: '/contact', label: chrome.nav.contact, isJoinUs: false };
 
 const pathname = Astro.url.pathname;
 let baseCleanPath = pathname;
@@ -25,17 +25,18 @@ if (baseCleanPath.endsWith('/') && baseCleanPath.length > 1) {
 }
 
 const rawLinks = [
-  { href: '/', key: 'nav.home' },
-  { href: '/about', key: 'nav.about' },
-  { href: '/structure', key: 'nav.structure' },
-  { href: '/event', key: 'nav.event' },
-  { href: '/news', key: 'nav.news' },
+  { href: '/', label: chrome.nav.home },
+  { href: '/about', label: chrome.nav.about },
+  { href: '/structure', label: chrome.nav.structure },
+  { href: '/courses', label: chrome.nav.courses },
+  { href: '/event', label: chrome.nav.event },
+  { href: '/news', label: chrome.nav.news },
 ];
 
 const links = rawLinks.map((link) => ({
   href: getLocalizedPath(link.href, locale),
   rawHref: link.href,
-  label: t(link.key, locale),
+  label: link.label,
 }));
 
 const isActive = (rawHref: string) => {
@@ -49,7 +50,7 @@ const isActive = (rawHref: string) => {
 <nav
   class="navbar"
   id="navbar"
-  aria-label="Navigasi utama"
+  aria-label={chrome.ui.aria.mainNav}
   data-status={registrationData?.status || 'auto'}
   data-auto-close-after-deadline={String(registrationData?.autoCloseAfterDeadline ?? true)}
   data-timezone-offset={registrationData?.timezoneOffset || '+07:00'}
@@ -59,18 +60,29 @@ const isActive = (rawHref: string) => {
   data-extended-deadline={registrationData?.extendedDeadline || ''}
   data-announcement-date={registrationData?.announcementDate || ''}
   data-selection-steps={JSON.stringify(registrationData?.selectionSteps || [])}
-  data-join-label={t('nav.joinUs', locale)}
-  data-contact-label={t('nav.contact', locale)}
+  data-join-label={chrome.nav.joinUs}
+  data-contact-label={chrome.nav.contact}
+  data-label-menu-open={chrome.ui.aria.openMenu}
+  data-label-menu-close={chrome.ui.aria.closeMenu}
 >
-  <div class="container">
+  <div class="site-container">
     <a href={getLocalizedPath('/', locale)} class="logo-container">
-      <div class="logo-icon">
-        <Image src={logoImg} alt={`${siteData.name} Logo`} width={62} height={70} />
-      </div>
-      <div class="logo-text">
-        <span class="logo-name">{siteData.name}</span>
-        <span class="logo-sub">{siteData.subName}</span>
-      </div>
+      <img
+        class="logo-brand"
+        src={chrome.brand.logoHorizontal}
+        alt={`${siteData.name} ${siteData.subName}`}
+        width="221"
+        height="40"
+        decoding="async"
+      />
+      <img
+        class="logo-mark"
+        src={chrome.brand.logoIcon}
+        alt={`${siteData.name} ${siteData.subName}`}
+        width="40"
+        height="40"
+        decoding="async"
+      />
     </a>
 
     <ul class="nav-links" id="nav-links">
@@ -96,7 +108,7 @@ const isActive = (rawHref: string) => {
       type="button"
       class="nav-toggle"
       id="nav-toggle"
-      aria-label="Buka menu"
+      aria-label={chrome.ui.aria.openMenu}
       aria-expanded="false"
       aria-controls="nav-links"
     >

@@ -5,20 +5,12 @@
 @import "@fontsource/ibm-plex-mono/400.css";
 @import "@fontsource/ibm-plex-mono/500.css";
 
-@import "@fontsource/inter/300.css";
-@import "@fontsource/inter/400.css";
-@import "@fontsource/inter/500.css";
-@import "@fontsource/inter/600.css";
-@import "@fontsource/inter/700.css";
-
-@import "@fontsource/montserrat/300.css";
 @import "@fontsource/montserrat/400.css";
 @import "@fontsource/montserrat/500.css";
 @import "@fontsource/montserrat/600.css";
 @import "@fontsource/montserrat/700.css";
 @import "@fontsource/montserrat/800.css";
 
-@import "@fontsource/poppins/300.css";
 @import "@fontsource/poppins/400.css";
 @import "@fontsource/poppins/500.css";
 @import "@fontsource/poppins/600.css";
@@ -32,6 +24,7 @@
 @import "./components/footer.css";
 @import "./components/event-card.css";
 @import "./components/contact-person.css";
+@import "./components/share.css";
 @import "./components/event-poster-modal.css";
 @import "./components/announcement.css";
 @import "./pages/hero.css";

@@ -1,4 +1,5 @@
 /* --- ABOUT SECTION --- */
+
 .focus-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
@@ -44,42 +45,3 @@
     color: var(--text-secondary);
     font-size: var(--text-15-2);
 }
-
-/* About Section Layouts */
-.about-overview-grid {
-    display: grid;
-    grid-template-columns: 1.2fr 0.8fr;
-    gap: var(--space-40);
-    align-items: center;
-}
-
-.about-visionmission-grid {
-    border-top: 3px solid var(--accent-red);
-    padding: var(--space-40);
-}
-
-.about-image img {
-    max-width: 100%;
-    height: auto;
-    border-radius: var(--border-radius-md);
-    box-shadow: var(--shadow-md);
-    max-height: 280px;
-    object-fit: contain;
-    padding: var(--space-50);
-    background: var(--white);
-}
-
-.mb-80 { margin-bottom: 80px; }
-.mb-20 { margin-bottom: 20px; }
-.max-w-full { max-width: 100%; }
-.text-secondary { color: var(--text-secondary); }
-.text-accent-red { color: var(--accent-red); }
-.flex-center { display: flex; align-items: center; justify-content: center; }
-.overview-heading { font-size: 2rem; margin-bottom: 20px; }
-.vm-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 40px; }
-.vision-heading { font-size: 1.8rem; margin-bottom: 16px; color: var(--accent-red); display: flex; align-items: center; gap: 8px; }
-.mission-heading { font-size: 1.8rem; margin-bottom: 16px; color: var(--accent-cyan); display: flex; align-items: center; gap: 8px; }
-.vm-text { color: var(--text-secondary); font-size: 1rem; line-height: 1.6; }
-.mission-list { color: var(--text-secondary); font-size: 0.95rem; line-height: 1.6; padding-left: 20px; }
-.mission-item { margin-bottom: 8px; }
-

@@ -4,34 +4,37 @@ import '../styles/pages/home-eim.css';
 import '../styles/pages/contact-eim.css';
 import EimSectionNav from '../components/home/EimSectionNav.astro';
 import ContactPersonBox from '../components/registration/ContactPersonBox.astro';
-import { getLocaleFromUrl, getLocalizedJsonData, t } from '../utils/i18n';
-import type { ContactPerson } from '../utils/types';
+import { getLocaleFromUrl, getLocalizedJsonData } from '../utils/i18n';
+import { sectionNumber, sectionOn } from '../utils/page-content';
+import type { ChromeData, ContactData, ContactPerson, SiteData } from '../utils/types';
 
 const locale = getLocaleFromUrl(Astro.url);
-const siteData = await getLocalizedJsonData<any>('site', locale);
-const contactPageData = await getLocalizedJsonData<any>('contact', locale);
+const siteData = getLocalizedJsonData<SiteData>('site', locale);
+const page = getLocalizedJsonData<ContactData>('contact', locale);
+const chrome = getLocalizedJsonData<ChromeData>('chrome', locale);
 
-const contactInfo = siteData.contact || {};
 const socials = siteData.socials || {};
-const contactPersons: ContactPerson[] = Array.isArray(contactPageData.contactPersons) ? contactPageData.contactPersons : [];
+const siteContact = siteData.contact || {};
+const contactPersons: ContactPerson[] = Array.isArray(page.contactPersons) ? page.contactPersons : [];
 
-const title = contactPageData.title || 'Hubungi Kami';
-const heroDescription = contactPageData.heroDescription || 'Laboratorium Riset Enterprise Infrastructure Management Telkom University siap melayani pertanyaan, kolaborasi riset, dan informasi kegiatan.';
-const locationTitle = contactPageData.locationTitle || 'Lokasi Laboratorium';
-const locationText = contactPageData.location || contactInfo.location || 'Gedung TULT Lantai 8, Ruang TULT.08.09';
-const universityText = contactPageData.university || contactInfo.university || 'Telkom University, Bandung, Indonesia';
-const mapsUrl = contactPageData.mapsUrl || 'https://maps.google.com/?q=Telkom+University+Bandung';
-const mapsEmbedUrl = contactPageData.mapsEmbedUrl || 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3960.3074993116813!2d107.63168547587637!3d-6.973007068278278!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e68e9ad770c0c75%3A0xb35183efb1c099c2!2sTelkom%20University%20Landmark%20Tower%20(TULT)!5e0!3m2!1sid!2sid!4v1710000000000!5m2!1sid!2sid';
-const emailTitle = contactPageData.emailTitle || 'Email Resmi';
-const emailText = contactPageData.email || contactInfo.email || 'eimlab@telkomuniversity.ac.id';
-const hoursTitle = contactPageData.hoursTitle || 'Jam Operasional Lab';
-const hoursText = contactPageData.hoursText || 'Senin - Jumat: 08.00 - 17.00 WIB';
-const hoursSubtext = contactPageData.hoursSubtext || 'Kunjungan offline dapat disesuaikan dengan janji perizinan atau jadwal kegiatan laboratorium.';
-const mapSectionTitle = contactPageData.mapSectionTitle || 'Peta Lokasi Laboratorium';
-const mapSectionSubtitle = contactPageData.mapSectionSubtitle || 'Temukan lokasi Gedung Telkom University Landmark Tower (TULT) di kampus Telkom University Bandung.';
+// site.json is the single home for these three facts; the literals only cover a
+// hand-edited site.json that lost them.
+const location = siteContact.location || 'Gedung TULT Lantai 8, Ruang TULT.08.09';
+const university = siteContact.university || 'Telkom University, Bandung, Indonesia';
+const email = siteContact.email || 'lab@eimlab.org';
 
-const pageTitle = `${title} - ${siteData.fullName || 'EIM Research Lab'}`;
-const pageDescription = `${locationText}, ${universityText}, dan saluran komunikasi Enterprise Infrastructure Management (EIM) Research Lab Telkom University.`;
+const pageTitle = page.meta.title;
+// The literal stays a fallback for a hand-edited contact.json that lost the field.
+const pageDescription = (
+  page.meta.description ||
+  '{location}, {university}, dan saluran komunikasi Laboratorium Enterprise Infrastructure Management (EIM) Telkom University.'
+)
+  .replaceAll('{location}', location)
+  .replaceAll('{university}', university);
+
+// Only a real Google Maps embed URL may reach the iframe src.
+const googleMapsEmbed = /^https:\/\/((www\.)?google\.com|maps\.google\.com)\/maps\/embed(\?|\/v1\/)/;
+const mapsEmbedSrc = googleMapsEmbed.test(page.mapsEmbedUrl) ? page.mapsEmbedUrl : '';
 
 const socialEntries = [
   { name: 'Instagram', url: socials.instagram, icon: 'fa-brands fa-instagram' },
@@ -39,7 +42,7 @@ const socialEntries = [
   { name: 'GitHub', url: socials.github, icon: 'fa-brands fa-github' },
 ].filter((entry) => Boolean(entry.url));
 
-const labName = [siteData.name, siteData.subName].filter(Boolean).join(' ') || siteData.fullName || 'EIM Research Lab';
+const labName = [siteData.name, siteData.subName].filter(Boolean).join(' ') || siteData.fullName || 'EIM Lab';
 
 function getSocialHandle(url: string): string {
   try {
@@ -56,82 +59,89 @@ function getSocialHandle(url: string): string {
   }
 }
 
+const showSocials = sectionOn(page.socials) && socialEntries.length > 0;
+// Numbered sections in render order; each ordinal counts only the visible ones before it.
+const numberableSections = [sectionOn(page.details), sectionOn(page.map), showSocials];
+// The hero dot has no toggle of its own; the other dots follow their section flags.
 const sectionItems = [
-  { id: 'kontak', label: t('contact.heroEyebrow', locale) },
-  { id: 'detail', label: t('contact.navDotDetail', locale) },
-  { id: 'lokasi', label: t('contact.navDotMap', locale) },
-  { id: 'sosial', label: t('contact.navDotSocial', locale) },
+  { id: 'kontak', label: page.hero.eyebrow },
+  ...(sectionOn(page.details) ? [{ id: 'detail', label: page.navDots.detail }] : []),
+  ...(sectionOn(page.map) ? [{ id: 'lokasi', label: page.map.navDot }] : []),
+  ...(showSocials ? [{ id: 'sosial', label: page.navDots.social }] : []),
 ];
 ---
 
 <Layout title={pageTitle} description={pageDescription} homeSkin skipLink>
   <main id="main-content" tabindex="-1">
-    <EimSectionNav items={sectionItems} label={t('contact.sectionNavLabel', locale)} />
+    <EimSectionNav items={sectionItems} label={chrome.labels.sectionNav} />
 
     <section id="kontak" class="eim-hero eim-subhero" aria-labelledby="contact-hero-title">
       <canvas class="eim-hero-canvas" aria-hidden="true"></canvas>
       <div class="eim-hero-inner">
-        <p class="eim-eyebrow">{t('contact.heroEyebrow', locale)}</p>
-        <h1 id="contact-hero-title" class="eim-hero-title">{title}</h1>
-        <p class="eim-hero-desc">{heroDescription}</p>
+        <p class="eim-eyebrow">{page.hero.eyebrow}</p>
+        <h1 id="contact-hero-title" class="eim-hero-title">{page.title}</h1>
+        <p class="eim-hero-desc">{page.heroDescription}</p>
         <div class="eim-hero-actions">
-          <a class="eim-hero-cta" href={`mailto:${emailText}`}>{t('contact.heroPrimary', locale)}</a>
-          <a class="eim-hero-secondary" href={mapsUrl} target="_blank" rel="noopener noreferrer">
-            {t('contact.heroSecondary', locale)} <span aria-hidden="true">↗</span>
+          {sectionOn(page.details) && (
+            <a class="eim-hero-cta" href="#detail">{page.hero.primaryLabel}</a>
+          )}
+          <a class="eim-hero-secondary" href="/registration">
+            {page.hero.secondaryLabel} <span aria-hidden="true">→</span>
           </a>
         </div>
-        <p class="eim-subhero-meta">{locationText} · {universityText}</p>
+        <p class="eim-subhero-meta">{location} · {university}</p>
       </div>
     </section>
 
+    {sectionOn(page.details) && (
     <section id="detail" class="py-[clamp(4.5rem,10vh,8.75rem)]" aria-labelledby="contact-detail-title">
       <div class="mx-auto max-w-[1200px] px-[clamp(1.25rem,4vw,4rem)]">
         <div class="grid gap-[clamp(2.5rem,5vw,5rem)] lg:grid-cols-[minmax(0,4fr)_minmax(0,7fr)]">
           <div class="e-reveal lg:sticky lg:top-[calc(var(--site-header-height)+1.5rem)] lg:self-start">
-            <p class="font-mono text-xs uppercase tracking-[0.08em] text-brand">01 — {t('contact.detailsEyebrow', locale)}</p>
+            <p class="font-mono text-xs uppercase tracking-[0.08em] text-brand">{sectionNumber(numberableSections, 0)} — {page.details.eyebrow}</p>
             <h2
               id="contact-detail-title"
               class="mt-4 font-display text-[clamp(2rem,4vw,3.5rem)] leading-[1.05] tracking-[-0.01em]"
             >
-              {t('contact.detailsTitle', locale)}
+              {page.details.title}
             </h2>
             <p class="mt-6 max-w-[42ch] text-[15px] leading-[1.6] text-muted-ink">
-              {t('contact.detailsIntro', locale)}
+              {page.details.intro}
             </p>
             <p class="mt-4 max-w-[42ch] text-[14px] leading-[1.6] text-muted-ink">
-              {t('contact.routingNote', locale)}
+              {page.details.routingNote}
             </p>
           </div>
 
           <div>
             <dl class="border-t border-line">
               <div class="grid gap-3 border-b border-line py-6 sm:grid-cols-[10rem_minmax(0,1fr)] sm:gap-8">
-                <dt class="font-mono text-[11px] uppercase tracking-[0.08em] text-muted-ink">{locationTitle}</dt>
+                <dt class="font-mono text-[11px] uppercase tracking-[0.08em] text-muted-ink">{page.locationTitle}</dt>
                 <dd class="text-[15px] leading-[1.6]">
-                  <p>{locationText}</p>
-                  <p class="mt-1 text-muted-ink">{universityText}</p>
+                  <p>{location}</p>
+                  <p class="mt-1 text-muted-ink">{university}</p>
                 </dd>
               </div>
 
               <div class="grid gap-3 border-b border-line py-6 sm:grid-cols-[10rem_minmax(0,1fr)] sm:gap-8">
-                <dt class="font-mono text-[11px] uppercase tracking-[0.08em] text-muted-ink">{emailTitle}</dt>
+                <dt class="font-mono text-[11px] uppercase tracking-[0.08em] text-muted-ink">{page.emailTitle}</dt>
                 <dd class="text-[15px] leading-[1.6]">
-                  <a class="text-brand underline underline-offset-4" href={`mailto:${emailText}`}>{emailText}</a>
+                  <a class="text-brand underline underline-offset-4" href={`mailto:${email}`}>{email}</a>
                   <div class="contact-action-row">
-                    <a class="contact-action" href={`mailto:${emailText}`}>
-                      {t('contact.emailAction', locale)} <span aria-hidden="true">→</span>
+                    <a class="contact-action" href={`mailto:${email}`}>
+                      {page.details.emailAction} <span aria-hidden="true">→</span>
                     </a>
                     <button
                       type="button"
                       class="contact-action contact-copy"
                       id="copy-email-btn"
-                      data-email={emailText}
-                      data-copied={t('contact.copied', locale)}
-                      data-failed={t('contact.copyFailed', locale)}
-                      data-status-copied={t('contact.copySuccessStatus', locale)}
-                      data-status-failed={t('contact.copyFailedStatus', locale)}
+                      data-email={email}
+                      data-copied={page.details.copied}
+                      data-failed={page.details.copyFailed}
+                      data-status-copied={page.details.copySuccessStatus}
+                      data-status-failed={page.details.copyFailedStatus}
                     >
-                      {t('contact.copyEmail', locale)}
+                      {page.details.copyEmail}
                     </button>
                     <span id="copy-email-status" class="sr-only" role="status" aria-live="polite"></span>
                   </div>
@@ -139,10 +149,10 @@ const sectionItems = [
               </div>
 
               <div class="grid gap-3 border-b border-line py-6 sm:grid-cols-[10rem_minmax(0,1fr)] sm:gap-8">
-                <dt class="font-mono text-[11px] uppercase tracking-[0.08em] text-muted-ink">{hoursTitle}</dt>
+                <dt class="font-mono text-[11px] uppercase tracking-[0.08em] text-muted-ink">{page.hoursTitle}</dt>
                 <dd class="text-[15px] leading-[1.6]">
-                  <p>{hoursText}</p>
-                  <p class="mt-1 text-muted-ink">{hoursSubtext}</p>
+                  <p>{page.hoursText}</p>
+                  <p class="mt-1 text-muted-ink">{page.hoursSubtext}</p>
                 </dd>
               </div>
             </dl>
@@ -150,58 +160,64 @@ const sectionItems = [
             <ContactPersonBox
               contactPersons={contactPersons}
               compact
-              title={t('contact.picsTitle', locale)}
-              subtitle={t('contact.picsSubtitle', locale)}
+              title={page.details.picsTitle}
+              subtitle={page.details.picsSubtitle}
             />
           </div>
         </div>
       </div>
     </section>
+    )}
 
+    {sectionOn(page.map) && (
     <section id="lokasi" class="border-t border-line py-[clamp(4.5rem,10vh,8.75rem)]" aria-labelledby="contact-map-title">
       <div class="mx-auto max-w-[1200px] px-[clamp(1.25rem,4vw,4rem)]">
         <div class="grid gap-6 lg:grid-cols-2 lg:items-end">
           <div>
-            <p class="e-reveal font-mono text-xs uppercase tracking-[0.08em] text-brand">02 — {t('contact.navDotMap', locale)}</p>
+            <p class="e-reveal font-mono text-xs uppercase tracking-[0.08em] text-brand">{sectionNumber(numberableSections, 1)} — {page.map.navDot}</p>
             <h2
               id="contact-map-title"
               class="e-reveal mt-4 font-display text-[clamp(2rem,4vw,3.5rem)] leading-[1.05] tracking-[-0.01em]"
             >
-              {mapSectionTitle}
+              {page.map.title}
             </h2>
           </div>
           <p class="e-reveal max-w-[52ch] text-[15px] leading-[1.55] text-muted-ink lg:justify-self-end">
-            {mapSectionSubtitle}
+            {page.map.subtitle}
           </p>
         </div>
 
-        <div class="contact-map-frame e-reveal mt-[clamp(2.5rem,6vh,4rem)]">
-          <iframe
-            src={mapsEmbedUrl}
-            title={mapSectionTitle}
-            allowfullscreen=""
-            loading="lazy"
-            referrerpolicy="no-referrer-when-downgrade"
-          ></iframe>
-        </div>
+        {mapsEmbedSrc && (
+          <div class="contact-map-frame e-reveal mt-[clamp(2.5rem,6vh,4rem)]">
+            <iframe
+              src={mapsEmbedSrc}
+              title={page.map.title}
+              allowfullscreen=""
+              loading="lazy"
+              sandbox="allow-scripts allow-same-origin allow-popups"
+              referrerpolicy="no-referrer-when-downgrade"
+            ></iframe>
+          </div>
+        )}
       </div>
     </section>
+    )}
 
-    {socialEntries.length > 0 && (
+    {showSocials && (
       <section id="sosial" class="border-t border-line py-[clamp(4.5rem,10vh,8.75rem)]" aria-labelledby="contact-social-title">
         <div class="mx-auto max-w-[1200px] px-[clamp(1.25rem,4vw,4rem)]">
           <div class="grid gap-6 lg:grid-cols-2 lg:items-end">
             <div>
-              <p class="e-reveal font-mono text-xs uppercase tracking-[0.08em] text-brand">03 — {t('contact.socialsEyebrow', locale)}</p>
+              <p class="e-reveal font-mono text-xs uppercase tracking-[0.08em] text-brand">{sectionNumber(numberableSections, 2)} — {page.socials.eyebrow}</p>
               <h2
                 id="contact-social-title"
                 class="e-reveal mt-4 font-display text-[clamp(2rem,4vw,3.5rem)] leading-[1.05] tracking-[-0.01em]"
               >
-                {t('contact.socialsTitle', locale)}
+                {page.socials.title}
               </h2>
             </div>
             <p class="e-reveal max-w-[52ch] text-[15px] leading-[1.55] text-muted-ink lg:justify-self-end">
-              {t('contact.socialsIntro', locale)}
+              {page.socials.intro}
             </p>
           </div>
 

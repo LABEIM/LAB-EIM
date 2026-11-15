@@ -69,7 +69,7 @@
     }
 
     /* The container element will fill the screen width */
-    .container {
+    .site-container {
         width: 100%;
         padding: var(--space-15);
     }

@@ -97,10 +97,15 @@
 }
 
 .filter-sort-select {
-  padding: var(--space-10) var(--space-16);
+  -webkit-appearance: none;
+  appearance: none;
+  padding: var(--space-10) 38px var(--space-10) var(--space-16);
+  background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8' fill='none'%3E%3Cpath d='M1 1.5 6 6.5l5-5' stroke='%2352686B' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
   border-radius: var(--border-radius-sm);
   border: 1px solid var(--border-color);
-  background: var(--white);
+  background-color: var(--white);
   color: var(--text-primary);
   font-size: var(--text-14-4);
   font-family: inherit;

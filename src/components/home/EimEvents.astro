@@ -2,18 +2,23 @@
 import { Image } from 'astro:assets';
 import type { CollectionEntry } from 'astro:content';
 import type { Locale } from '../../utils/i18n';
-import { getCleanSlug, getLocalizedPath, t } from '../../utils/i18n';
+import type { HomePageData } from '../../utils/types';
+import { getCleanSlug, getLocalizedPath } from '../../utils/i18n';
 import { formatGlobalDate } from '../../utils/date';
 
 interface Props {
   events: CollectionEntry<'events'>[];
   locale: Locale;
+  content: HomePageData['events'];
+  fallbackLabel: string;
 }
 
-const { events = [], locale } = Astro.props;
+const { events = [], locale, content, fallbackLabel } = Astro.props;
 
 const items = events.slice(0, 2);
 const eventsIndexHref = getLocalizedPath('/event', locale);
+// The link label is the only visible text in the anchor, so it must never be empty.
+const viewAllLabel = content.viewAll || fallbackLabel;
 ---
 
 <section id="kegiatan" class="py-[clamp(4.5rem,10vh,8.75rem)]" aria-labelledby="eim-events-title">
@@ -23,15 +28,15 @@ const eventsIndexHref = getLocalizedPath('/event', locale);
         id="eim-events-title"
         class="e-reveal font-display text-[clamp(2rem,4vw,3.5rem)] leading-[1.05] tracking-[-0.01em]"
       >
-        {t('home.eventsTitle', locale)}
+        {content.title}
       </h2>
       <div class="e-reveal lg:justify-self-end lg:text-right">
         <p class="max-w-[52ch] text-[15px] leading-[1.55] text-muted-ink">
-          {t('home.eventsIntro', locale)}
+          {content.intro}
         </p>
         {items.length > 0 && (
           <a href={eventsIndexHref} class="mt-4 inline-flex items-center gap-2 font-mono text-xs uppercase tracking-[0.08em]">
-            <span class="text-brand">{t('home.viewAllEvents', locale)}</span>
+            <span class="text-brand">{viewAllLabel}</span>
             <span class="text-brand" aria-hidden="true">→</span>
           </a>
         )}
@@ -57,15 +62,15 @@ const eventsIndexHref = getLocalizedPath('/event', locale);
                       height={1000}
                       loading="lazy"
                       decoding="async"
-                      class="aspect-[4/5] w-full object-cover"
+                      class={`aspect-[4/5] w-full ${item.data.poster ? 'object-contain' : 'object-cover'}`}
                     />
                   ) : (
                     <span class="flex aspect-[4/5] w-full flex-col justify-between bg-surface-strong p-5">
                       <span class="font-mono text-xs uppercase tracking-[0.08em] text-brand">
                         {item.data.category}
                       </span>
-                      <span class="font-mono text-xs uppercase tracking-[0.08em] text-muted-ink">
-                        {formatGlobalDate(item.data.event_date)}
+                      <span class="font-display text-[clamp(1.25rem,2.2vw,1.6rem)] leading-[1.1]">
+                        {item.data.title}
                       </span>
                     </span>
                   )}
@@ -84,10 +89,10 @@ const eventsIndexHref = getLocalizedPath('/event', locale);
     ) : (
       <div class="e-reveal mt-[clamp(2.5rem,6vh,4.5rem)] border-t border-line pt-10">
         <p class="font-display text-[clamp(1.5rem,2.2vw,2rem)] leading-[1.2] text-muted-ink">
-          {t('home.eventsEmpty', locale)}
+          {content.empty}
         </p>
         <a href={eventsIndexHref} class="mt-5 inline-flex items-center gap-2 font-mono text-xs uppercase tracking-[0.08em]">
-          <span class="text-brand">{t('home.viewAllEvents', locale)}</span>
+          <span class="text-brand">{viewAllLabel}</span>
           <span class="text-brand" aria-hidden="true">→</span>
         </a>
       </div>

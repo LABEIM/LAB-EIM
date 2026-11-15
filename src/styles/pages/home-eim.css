@@ -156,6 +156,7 @@ html {
   line-height: 0.98;
   letter-spacing: -0.01em;
   color: var(--color-foreground);
+  text-wrap: balance;
 }
 
 .eim-hero-title-line {
@@ -167,7 +168,8 @@ html {
   margin-top: clamp(1.25rem, 3vh, 2rem);
   font-size: clamp(1rem, 1.2vw, 1.125rem);
   line-height: 1.55;
-  color: var(--color-muted-ink);
+  /* Dark enough to hold 4.5:1 where the canvas paints behind the text. */
+  color: var(--color-foreground);
 }
 
 .eim-hero-actions {
@@ -275,10 +277,6 @@ html {
   );
 }
 
-.eim-subhero .eim-hero-title {
-  max-width: 20ch;
-}
-
 .eim-subhero .eim-hero-desc {
   max-width: 56ch;
 }
@@ -336,6 +334,10 @@ html {
   transform: translateY(-2px);
 }
 
+.eim-cta-secondary[hidden] {
+  display: none;
+}
+
 .eim-cta-secondary {
   display: inline-flex;
   align-items: center;
@@ -374,12 +376,18 @@ html {
   position: sticky;
   /* Never tuck under the fixed header (it grows with the announcement bar). */
   top: max(12vh, calc(var(--site-header-height, 5rem) + 0.75rem));
-  height: 76vh;
+  /* Fix the box to the video's ratio. A viewport-height box changed its ratio
+     per screen, so the same clip was cropped differently everywhere. */
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  height: auto;
   max-width: 1200px;
   margin: 0 auto;
   overflow: hidden;
   border-radius: var(--radius-media);
-  background-color: var(--color-black);
+  /* No dark fill behind the media: during the scale transition its
+     anti-aliased edge blended with the dark colour and drew a hairline. */
+  background-color: transparent;
   /* Pre-script state; the scroll script takes over from here. */
   transform: scale(0.62);
   transform-origin: center center;
@@ -392,6 +400,166 @@ html {
   width: 100%;
   height: 100%;
   object-fit: cover;
+}
+
+.e-reveal-embed {
+  border: 0;
+  /* The overlay button owns the click; the background player stays passive. */
+  pointer-events: none;
+}
+
+/* Hybrid intro: the native loop sits behind the overlay button, so it is inert
+   too. An upload-only video never gets this class and stays clickable. */
+.e-reveal-passive {
+  pointer-events: none;
+}
+
+.e-reveal-open {
+  position: absolute;
+  inset: 0;
+  z-index: var(--z-raised);
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  text-align: left;
+}
+
+.e-reveal-open:focus-visible {
+  outline: 3px solid var(--color-brand-bright);
+  outline-offset: -3px;
+}
+
+/* The whole stage is the hit area; the pill only makes the affordance visible. */
+.e-reveal-open-pill {
+  position: absolute;
+  bottom: clamp(1rem, 3vw, 1.75rem);
+  left: clamp(1rem, 3vw, 1.75rem);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-8);
+  min-height: 44px;
+  padding: 0 var(--space-20);
+  border-radius: var(--radius-pill);
+  background: var(--color-background);
+  color: var(--color-foreground);
+  box-shadow: var(--shadow-md);
+  font-family: var(--font-mono);
+  font-size: var(--text-12);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  transition: background 0.2s ease, transform 0.16s ease-out;
+  will-change: transform;
+}
+
+.e-reveal-open:hover .e-reveal-open-pill {
+  background: var(--color-brand-soft);
+}
+
+.e-reveal-open:focus-visible .e-reveal-open-pill {
+  outline: 3px solid var(--color-brand-bright);
+  outline-offset: 3px;
+}
+
+.e-reveal-open-glyph {
+  display: grid;
+  place-items: center;
+}
+
+.e-reveal-open-glyph svg {
+  width: 1rem;
+  height: 1rem;
+}
+
+/* Lift the caption clear of the pill instead of hiding either at narrow widths. */
+.e-reveal-stage-figure.has-player .e-reveal-stage-caption {
+  bottom: calc(clamp(1rem, 3vw, 1.75rem) + 44px + var(--space-12));
+}
+
+/* == Intro player modal == */
+
+.e-reveal-modal {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-modal);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-20);
+  overflow: auto;
+  background: rgba(var(--color-scrim-rgb), 0.75);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.e-reveal-modal[hidden] {
+  display: none;
+}
+
+.e-reveal-modal-dialog {
+  width: 100%;
+  max-width: 960px;
+  border-radius: var(--radius-media);
+  background: var(--color-black);
+  overflow: hidden;
+}
+
+.e-reveal-modal-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-16);
+  padding: var(--space-12) var(--space-16);
+}
+
+.e-reveal-modal-title {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: var(--text-14);
+  letter-spacing: 0.08em;
+  color: var(--color-background);
+}
+
+.e-reveal-modal-close {
+  display: grid;
+  place-items: center;
+  min-width: 44px;
+  min-height: 44px;
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: transparent;
+  color: var(--color-background);
+  cursor: pointer;
+}
+
+.e-reveal-modal-close:hover {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.e-reveal-modal-close:focus-visible {
+  outline: 3px solid var(--color-brand-bright);
+  outline-offset: 2px;
+}
+
+.e-reveal-modal-close svg {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+.e-reveal-modal-player {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  background: var(--color-black);
+}
+
+.e-reveal-modal-frame {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
 }
 
 .e-reveal-stage-pending {
@@ -421,6 +589,17 @@ html {
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--color-surface-strong);
+}
+
+.e-reveal-stage-link {
+  margin-top: var(--space-16);
+  font-family: var(--font-mono);
+  font-size: var(--text-12);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-brand-bright);
+  text-decoration: underline;
+  text-underline-offset: 4px;
 }
 
 .e-reveal-stage-caption {
@@ -568,7 +747,9 @@ body.home-skin :is(a, button):focus-visible {
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  /* 24x24 minimum target (WCAG 2.2); the visual dot stays 8px. */
+  /* 44px target; the visual dot stays 8px. */
+  min-width: 44px;
+  min-height: 44px;
   padding: var(--space-8);
 }
 
@@ -692,4 +873,41 @@ body.home-skin :is(a, button):focus-visible {
   body.home-skin .nav-cta.nav-cta-contact:hover {
     transform: none;
   }
+}
+
+/* Compact pending state: the media slot is not a promise of future content. */
+.e-reveal-stage.is-pending {
+  height: auto;
+}
+
+.e-reveal-stage.is-pending .e-reveal-stage-figure {
+  position: static;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.75rem;
+  aspect-ratio: auto;
+  height: auto;
+  min-height: 9rem;
+  background-color: var(--color-black);
+  padding: clamp(1.25rem, 3vw, 2rem);
+  transform: none;
+}
+
+.e-reveal-stage.is-pending .e-reveal-stage-pending {
+  position: static;
+  flex-direction: row;
+  justify-content: flex-start;
+  padding: 0;
+  text-align: left;
+}
+
+.e-reveal-stage.is-pending .e-reveal-stage-emblem {
+  width: 3rem;
+}
+
+.e-reveal-stage.is-pending .e-reveal-stage-caption {
+  position: static;
+  bottom: auto;
+  left: auto;
 }

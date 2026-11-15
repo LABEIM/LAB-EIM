@@ -6,6 +6,7 @@ import AnnouncementBanner from '../components/common/AnnouncementBanner.astro';
 import { getLocaleFromUrl, getLocalizedJsonData } from '../utils/i18n';
 import { getCurrentRecruitmentStage } from '../utils/recruitment';
 import { applySimulationToConfig } from '../utils/simulation';
+import type { SiteData } from '../utils/types';
 
 interface Props {
   title?: string;
@@ -13,10 +14,11 @@ interface Props {
   keywords?: string;
   homeSkin?: boolean;
   skipLink?: boolean;
+  noindex?: boolean;
 }
 
 const locale = getLocaleFromUrl(Astro.url);
-const siteData = await getLocalizedJsonData<any>('site', locale);
+const siteData = getLocalizedJsonData<SiteData>('site', locale);
 
 const {
   title = siteData.defaultTitle,
@@ -24,6 +26,7 @@ const {
   keywords = siteData.defaultKeywords,
   homeSkin = false,
   skipLink = false,
+  noindex = false,
 } = Astro.props;
 let hasAnnouncement = false;
 try {
@@ -60,6 +63,7 @@ try {
     <title>{title}</title>
     <meta name="description" content={description} />
     <meta name="keywords" content={keywords} />
+    {noindex && <meta name="robots" content="noindex, follow" />}
 
     {/* Dynamic favicon type helper */}
     {(() => {

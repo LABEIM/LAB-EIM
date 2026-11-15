@@ -2,36 +2,39 @@
 import { getCollection } from 'astro:content';
 import Layout from '../layouts/Layout.astro';
 import '../styles/pages/home-eim.css';
-import { getCurrentRecruitmentStage } from '../utils/recruitment';
-import { parseDivisions, toDivisionPanels } from '../utils/division-mapper';
-import { STAGE_LABELS } from '../utils/constants';
-import type { AboutData, Member } from '../utils/types';
+import type { AboutData, ChromeData, HomePageData, Lecturer, Member, RecruitmentConfig, SiteData } from '../utils/types';
 import EventPosterModal from '../components/events/EventPosterModal.astro';
 import EimHero from '../components/home/EimHero.astro';
 import EimReveal from '../components/home/EimReveal.astro';
 import EimFocus from '../components/home/EimFocus.astro';
 import EimVisiMisi from '../components/home/EimVisiMisi.astro';
-import EimDivisions from '../components/home/EimDivisions.astro';
 import EimNews from '../components/home/EimNews.astro';
 import EimEvents from '../components/home/EimEvents.astro';
+import EimCourses from '../components/home/EimCourses.astro';
+import EimLabNumbers from '../components/home/EimLabNumbers.astro';
 import EimSectionNav from '../components/home/EimSectionNav.astro';
+import EimCTA from '../components/home/EimCTA.astro';
 import {
   getLocaleFromUrl,
   getLocalizedJsonData,
-  getCollectionEntriesForLocale,
-  t
+  getCollectionEntriesForLocale
 } from '../utils/i18n';
+import { sectionOn } from '../utils/page-content';
 import { filterAuditContent } from '../utils/content-helpers';
+import { resolveCourses } from '../utils/course-helpers';
+import { countPeopleByGroup, parsePositions } from '../utils/position-mapper';
+import { getCurrentRecruitmentStage } from '../utils/recruitment';
 
 const locale = getLocaleFromUrl(Astro.url);
-const divisionsData = await getLocalizedJsonData<any>('divisions', locale);
-const registrationConfig = await getLocalizedJsonData<any>('registration', locale);
+const page = getLocalizedJsonData<HomePageData>('pages/home', locale);
+const siteData = getLocalizedJsonData<SiteData>('site', locale);
+const chrome = getLocalizedJsonData<ChromeData>('chrome', locale);
+const registrationConfig = getLocalizedJsonData<Partial<RecruitmentConfig>>('registration', locale);
+const recruitmentStage = getCurrentRecruitmentStage(registrationConfig);
+const lecturersData = getLocalizedJsonData<{ list: Lecturer[] }>('lecturers', locale);
+const membersData = getLocalizedJsonData<{ list: Member[] }>('members', locale);
+const positionsData = getLocalizedJsonData<{ list: unknown }>('positions', locale);
 const about = await getLocalizedJsonData<AboutData>('about', locale);
-const membersData = await getLocalizedJsonData<{ list: Member[] }>('members', locale);
-
-const divisions = parseDivisions(divisionsData);
-const members = membersData?.list ?? [];
-const divisionPanels = toDivisionPanels(divisions, members);
 
 // Fetch and filter news for active locale
 const rawNews = await getCollection('news');
@@ -44,7 +47,7 @@ const latestNews = filterAuditContent(localizedNews)
     }
     return new Date(b.data.news_date).getTime() - new Date(a.data.news_date).getTime();
   })
-  .slice(0, 3);
+  .slice(0, 5);
 
 // Events: upcoming first, then most recent — the section shows the next two as large poster tiles.
 const rawEvents = await getCollection('events');
@@ -62,34 +65,81 @@ const events = filterAuditContent(rawEvents)
 
 const upcomingEvents = events.filter((event) => event.data.status === 'upcoming');
 
-// Hero CTA: server-rendered Indonesian label; initHomeCTA keeps it fresh at runtime.
-const currentStage = getCurrentRecruitmentStage(registrationConfig);
-const stageEntry =
-  currentStage === 'closed'
-    ? STAGE_LABELS.closed
-    : STAGE_LABELS[currentStage] ?? STAGE_LABELS.selection;
-const primaryLabel = stageEntry?.label ?? 'Gabung EIM';
-const primaryHref = stageEntry?.href ?? '/registration';
+// Lab numbers, derived — never typed in.
+const positions = parsePositions(positionsData);
+const members = membersData?.list ?? [];
+const people = [...(lecturersData?.list ?? []), ...members];
+const groupCounts = countPeopleByGroup(people, positions);
+
+// Beranda course band: first three courses that actually run a practicum.
+const courseEntries = await getCollection('courses');
+const allCourses = resolveCourses(courseEntries, lecturersData?.list ?? [], members);
+const bandCourses = allCourses.filter((course) => course.hasPracticum).slice(0, 3);
+
+// Stat values stay derived from the data unless the editor pins a manual value.
+// Labels are shared chrome copy, so they are not duplicated in the page file.
+const numberStats = [
+  { label: chrome.labels.statsDosen, value: page.numbers.dosenValue ?? groupCounts.dosen },
+  { label: chrome.labels.statsMembers, value: page.numbers.membersValue ?? members.length },
+  { label: chrome.labels.statsCourses, value: page.numbers.coursesValue ?? allCourses.length },
+];
+
+// The dots read the same flags as the sections, so a hidden section drops its dot.
+const sectionItems = [
+  ...(sectionOn(page.reveal) ? [{ id: 'reveal', label: page.navDots.reveal }] : []),
+  ...(sectionOn(page.focus) ? [{ id: 'fokus', label: page.navDots.focus }] : []),
+  ...(sectionOn(page.visiMisi) ? [{ id: 'visi-misi', label: page.navDots.vision }] : []),
+  ...(sectionOn(page.courses) && bandCourses.length > 0
+    ? [{ id: 'mata-kuliah', label: page.navDots.courses }]
+    : []),
+  ...(sectionOn(page.events) ? [{ id: 'kegiatan', label: page.navDots.events }] : []),
+  ...(sectionOn(page.news) ? [{ id: 'berita', label: page.navDots.articles }] : []),
+];
 ---
 
-<Layout title={`EIM Research Lab - ${t('home.heroTag', locale)}`} homeSkin skipLink>
+<Layout
+  title={page.meta.title}
+  description={page.meta.description || undefined}
+  homeSkin
+  skipLink
+>
   <EventPosterModal upcomingEvents={upcomingEvents} locale={locale} />
   <main id="main-content" tabindex="-1">
-    <EimSectionNav />
-    <EimHero primaryLabel={primaryLabel} primaryHref={primaryHref} />
-    <EimReveal />
-    <EimFocus />
-    <EimVisiMisi about={about} />
-    <EimDivisions panels={divisionPanels} />
-    <EimEvents events={events} locale={locale} />
-    <EimNews news={latestNews} locale={locale} />
+    <EimSectionNav items={sectionItems} label={chrome.labels.sectionNav} />
+    <EimHero
+      content={page.hero}
+      logo={chrome.brand.logoHorizontal}
+      primaryHref="#reveal"
+      secondaryHref="/about"
+      showPrimary={sectionOn(page.reveal)}
+    />
+    {sectionOn(page.reveal) && <EimReveal content={page.reveal} />}
+    {sectionOn(page.focus) && <EimFocus content={page.focus} />}
+    {sectionOn(page.visiMisi) && (
+      <EimVisiMisi
+        content={{
+          title: page.visiMisi.title,
+          visionLabel: chrome.labels.vision,
+          missionLabel: chrome.labels.mission,
+          valuesLabel: chrome.labels.values,
+        }}
+        about={about}
+      />
+    )}
+    {sectionOn(page.numbers) && <EimLabNumbers content={page.numbers} stats={numberStats} />}
+    {sectionOn(page.courses) && bandCourses.length > 0 && (
+      <EimCourses courses={bandCourses} content={page.courses} />
+    )}
+    {sectionOn(page.events) && <EimEvents events={events} locale={locale} content={page.events} fallbackLabel={chrome.nav.event} />}
+    {sectionOn(page.news) && <EimNews news={latestNews} locale={locale} content={page.news} fallbackLabel={chrome.nav.news} />}
+    {sectionOn(page.cta) && (
+      <EimCTA content={chrome.cta} contact={siteData.contact} stage={recruitmentStage} />
+    )}
   </main>
 </Layout>
 
 <script>
   import { initGlobalStageSync } from '../scripts/global-stage-sync';
-  import { initHomeCTA } from '../scripts/home-eim';
 
-  const stage = initGlobalStageSync();
-  initHomeCTA(stage);
+  initGlobalStageSync();
 </script>

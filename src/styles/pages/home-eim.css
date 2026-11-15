@@ -385,7 +385,9 @@ html {
   margin: 0 auto;
   overflow: hidden;
   border-radius: var(--radius-media);
-  background-color: var(--color-black);
+  /* No dark fill behind the media: during the scale transition its
+     anti-aliased edge blended with the dark colour and drew a hairline. */
+  background-color: transparent;
   /* Pre-script state; the scroll script takes over from here. */
   transform: scale(0.62);
   transform-origin: center center;
@@ -887,6 +889,7 @@ body.home-skin :is(a, button):focus-visible {
   aspect-ratio: auto;
   height: auto;
   min-height: 9rem;
+  background-color: var(--color-black);
   padding: clamp(1.25rem, 3vw, 2rem);
   transform: none;
 }

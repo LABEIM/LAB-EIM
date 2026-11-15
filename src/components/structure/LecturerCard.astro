@@ -28,6 +28,6 @@ const label = positionLabel(positionIndex, lecturer.role);
   </span>
   <span class="lecturer-card-body">
     <h3 class="lecturer-card-name">{hasName ? lecturer.name : label}</h3>
-    {hasName && <p class="lecturer-card-role">{label}</p>}
+    {hasName && <p class="lecturer-card-role">{lecturer.id} · {label}</p>}
   </span>
 </article>

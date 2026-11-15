@@ -92,7 +92,7 @@ const pageDescription = (page.meta.description ?? '').replaceAll('{title}', cour
             </span>
             {course.coordinator && (
               <span class="font-mono text-[11px] uppercase tracking-[0.08em] text-muted-ink">
-                {positionLabel(positionIndex, course.coordinator.role)}
+                {course.coordinator.id} · {positionLabel(positionIndex, course.coordinator.role)}
               </span>
             )}
           </span>
@@ -154,7 +154,10 @@ const pageDescription = (page.meta.description ?? '').replaceAll('{title}', cour
                     </span>
                   )}
                 </span>
-                <span class="text-[15px] leading-[1.4]">{assistant.name}</span>
+                <span class="text-[15px] leading-[1.4]">
+                  {assistant.name}
+                  <span class="font-mono text-[11px] tracking-[0.08em] text-muted-ink">· {assistant.id}</span>
+                </span>
               </li>
             ))}
           </ul>

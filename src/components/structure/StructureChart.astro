@@ -3,6 +3,8 @@ import type { CourseView, Lecturer, Member, Position, StructurePageData } from '
 import {
   PRACTICUM_ASSISTANT_ID,
   STRUCTURE_TREE,
+  positionLabel,
+  summarizeDosenMembers,
   type ChartNode,
 } from '../../utils/position-mapper';
 import { summarizePracticumAssistants } from '../../utils/course-helpers';
@@ -29,13 +31,16 @@ for (const person of [...lecturers, ...members]) {
 
 const students = holders.get('mahasiswa-anggota') ?? 0;
 const assistantSummary = summarizePracticumAssistants(courses, members);
+const dosenSummary = summarizeDosenMembers([...lecturers, ...members]);
 
 const notesFor = (id: string): string | undefined => {
-  if (assistantSummary.memberCount === 0) return undefined;
-  if (id === 'mahasiswa-anggota') {
+  if (id === 'mahasiswa-anggota' && assistantSummary.memberCount > 0) {
     return (content.memberAssistantNote ?? '')
       .replaceAll('{n}', String(assistantSummary.memberCount))
       .replaceAll('{total}', String(students));
+  }
+  if (id === 'dosen-anggota' && dosenSummary.coordinators > 0) {
+    return `${dosenSummary.coordinators} dari ${dosenSummary.total} juga ${positionLabel(byId, 'koordinator-matkul')}`;
   }
   return undefined;
 };
@@ -63,7 +68,7 @@ const buildNode = (id: string): ChartNode | null => {
   return {
     label: position.label,
     group: position.group,
-    count: holders.get(id) ?? 0,
+    count: id === 'dosen-anggota' ? dosenSummary.total : holders.get(id) ?? 0,
     note: notesFor(id),
     children,
   };

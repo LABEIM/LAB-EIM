@@ -1,11 +1,14 @@
 ---
 import { getLocaleFromUrl, getLocalizedPath, getLocalizedJsonData } from '../utils/i18n';
 import { getCurrentRecruitmentStage } from '../utils/recruitment';
+import { resolveMediaSrc } from '../utils/media';
 import type { ChromeData, SiteData } from '../utils/types';
 
 const locale = getLocaleFromUrl(Astro.url);
 const siteData = getLocalizedJsonData<SiteData>('site', locale);
 const chrome = getLocalizedJsonData<ChromeData>('chrome', locale);
+const logoBrand = resolveMediaSrc(chrome.brand.logoHorizontal);
+const logoMark = resolveMediaSrc(chrome.brand.logoIcon);
 const registrationData = await getLocalizedJsonData<any>('registration', locale);
 
 const recruitmentStage = getCurrentRecruitmentStage(registrationData || {});
@@ -66,23 +69,29 @@ const isActive = (rawHref: string) => {
   data-label-menu-close={chrome.ui.aria.closeMenu}
 >
   <div class="site-container">
-    <a href={getLocalizedPath('/', locale)} class="logo-container">
-      <img
-        class="logo-brand"
-        src={chrome.brand.logoHorizontal}
-        alt={`${siteData.name} ${siteData.subName}`}
-        width="221"
-        height="40"
-        decoding="async"
-      />
-      <img
-        class="logo-mark"
-        src={chrome.brand.logoIcon}
-        alt={`${siteData.name} ${siteData.subName}`}
-        width="40"
-        height="40"
-        decoding="async"
-      />
+    <a href={getLocalizedPath('/', locale)} class="logo-container" aria-label={`${siteData.name} ${siteData.subName}`}>
+      {logoBrand && (
+        <img
+          class="logo-brand"
+          src={logoBrand}
+          alt={`${siteData.name} ${siteData.subName}`}
+          width="221"
+          height="40"
+          decoding="async"
+          referrerpolicy="no-referrer"
+        />
+      )}
+      {logoMark && (
+        <img
+          class="logo-mark"
+          src={logoMark}
+          alt={`${siteData.name} ${siteData.subName}`}
+          width="40"
+          height="40"
+          decoding="async"
+          referrerpolicy="no-referrer"
+        />
+      )}
     </a>
 
     <ul class="nav-links" id="nav-links">

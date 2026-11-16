@@ -335,7 +335,7 @@ export interface CourseData {
   hasPracticum: boolean;
   modules: CourseModule[];
   coordinatorId: string;
-  assistantIds: number[];
+  assistantIds: string[];
   order: number;
 }
 
@@ -346,7 +346,7 @@ export interface CourseView extends CourseData {
 }
 
 export interface Member {
-  id: number;
+  id: string;
   name: string;
   role: string;
   // Optional fields serialize to an omitted key once an editor clears them.
@@ -375,15 +375,22 @@ export interface DivisionSection {
   staff: Member[];
 }
 
-export interface GalleryItem {
+export interface NodeItem {
+  year: number;
+  label: string;
+  image: string;
+  alt: string;
+}
+
+export interface NodeData {
+  list: NodeItem[];
+}
+
+export interface FeaturedPhotoData {
   image: string;
   alt: string;
   caption: string;
-}
-
-export interface GalleryData {
-  featured?: GalleryItem;
-  photos?: GalleryItem[];
+  height: number;
 }
 
 export interface SiteData {
@@ -534,7 +541,6 @@ export interface HomePageData {
     pending: string;
     pendingCta: string;
     mediaKind?: 'none' | 'image' | 'video';
-    image?: string;
     /** Background-only link; wins over `videoUrl`. */
     backgroundUrl?: string;
     /** Pasted player link; a direct file also serves as a fallback background. */
@@ -874,7 +880,7 @@ export interface AboutData {
     stats: string;
     vision: string;
     cta: string;
-    gallery: string;
+    nodes: string;
   };
   sections: {
     hero: {
@@ -908,7 +914,7 @@ export interface AboutData {
       enabled: boolean;
       label: string;
     };
-    galleryBand: {
+    featuredPhoto: {
       enabled: boolean;
       label: string;
     };
@@ -916,13 +922,13 @@ export interface AboutData {
       enabled: boolean;
       heading: string;
     };
-    gallery: {
+    nodes: {
       enabled: boolean;
       eyebrow: string;
-      intro: string;
       title: string;
-      showAll: string;
-      hideAll: string;
+      intro: string;
+      latestLabel: string;
+      archiveLabel: string;
     };
     cta: {
       enabled: boolean;

@@ -16,14 +16,17 @@ const { content, logo, primaryHref, secondaryHref, showPrimary = true } = Astro.
   <canvas class="eim-hero-canvas" aria-hidden="true"></canvas>
 
   <div class="eim-hero-inner">
-    <img
-      class="eim-hero-logo"
-      src={logo}
-      alt={content.kicker}
-      width="640"
-      height="116"
-      decoding="async"
-    />
+    {logo && (
+      <img
+        class="eim-hero-logo"
+        src={logo}
+        alt={content.kicker}
+        width="640"
+        height="116"
+        decoding="async"
+        referrerpolicy="no-referrer"
+      />
+    )}
 
     <h1 id="eim-hero-title" class="eim-hero-title">
       {content.lines.map((line, index) => (

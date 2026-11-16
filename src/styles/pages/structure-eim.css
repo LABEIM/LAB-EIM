@@ -127,6 +127,15 @@
   margin: var(--space-16) 0 0;
 }
 
+/* Cards fill their grid row, so a wrapped name cannot leave one card shorter. */
+.staff-grid > li {
+  display: flex;
+}
+
+.staff-grid > li > :is(.member-tile, .lecturer-card) {
+  flex: 1;
+}
+
 @media (min-width: 640px) {
   .staff-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -142,6 +151,8 @@
 /* Every role except the member roster reads as portrait cards, centred. */
 .staff-grid--lead {
   grid-template-columns: minmax(0, 1fr);
+  /* One height for every card in the section, not just per row. */
+  grid-auto-rows: 1fr;
 }
 
 @media (min-width: 640px) {
@@ -198,6 +209,18 @@
   border: 1px solid var(--color-line);
   border-radius: var(--radius-card);
   background: var(--color-background);
+}
+
+a.chart-node-head {
+  color: inherit;
+  text-decoration: none;
+  transition: border-color 160ms ease, background-color 160ms ease;
+}
+
+a.chart-node-head:hover,
+a.chart-node-head:focus-visible {
+  border-color: var(--color-brand);
+  background: color-mix(in srgb, var(--color-brand) 4%, var(--color-background));
 }
 
 .chart-kicker {
@@ -313,5 +336,8 @@
 
   .chart-node-head {
     width: min(100%, 18rem);
+    /* Fits the tallest two-line label (e.g. "Dosen PIC / Koordinator Mata
+       Kuliah") so every card in the chart reads at one height. */
+    min-height: 7.5rem;
   }
 }

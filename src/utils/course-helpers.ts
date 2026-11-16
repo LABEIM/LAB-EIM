@@ -44,7 +44,7 @@ export function summarizePracticumAssistants(
   courses: CourseData[],
   members: Member[],
 ): { distinctCount: number; memberCount: number } {
-  const assistantIds = new Set<number>();
+  const assistantIds = new Set<string>();
   for (const course of courses) {
     if (!course.hasPracticum) continue;
     for (const assistantId of course.assistantIds ?? []) assistantIds.add(assistantId);

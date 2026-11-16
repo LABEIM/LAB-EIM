@@ -1,0 +1,35 @@
+---
+import type { AboutData, FeaturedPhotoData } from '../../utils/types';
+import { resolveMediaSrc } from '../../utils/media';
+
+interface Props {
+  photo: FeaturedPhotoData;
+  content: AboutData['sections']['featuredPhoto'];
+}
+
+const { photo, content } = Astro.props;
+// The CMS stores a percent; clamp so a stale or hand-edited value cannot break the layout.
+const scale = Math.min(150, Math.max(50, Math.round(photo.height) || 100)) / 100;
+const src = resolveMediaSrc(photo.image);
+---
+
+{src && (
+<section aria-label={content.label} class="mt-[clamp(1.5rem,4.5vh,2.5rem)]">
+  <figure class="e-reveal">
+    <img
+      class="eim-photo-band w-full object-cover"
+      style={`--photo-scale:${scale}`}
+      src={src}
+      alt={photo.alt || photo.caption}
+      loading="lazy"
+      decoding="async"
+      referrerpolicy="no-referrer"
+    />
+    <figcaption
+      class="mx-auto mt-4 max-w-[1200px] px-[clamp(1.25rem,4vw,4rem)] font-mono text-xs uppercase tracking-[0.08em] text-muted-ink"
+    >
+      {photo.caption}
+    </figcaption>
+  </figure>
+</section>
+)}

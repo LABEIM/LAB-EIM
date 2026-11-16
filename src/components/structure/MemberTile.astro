@@ -2,6 +2,7 @@
 import fs from 'node:fs';
 import { positionLabel } from '../../utils/position-mapper';
 import { getInitials } from '../../utils/initials';
+import { divisionThumbPath, resolveMediaSrc } from '../../utils/media';
 import type { Member, Position } from '../../utils/types';
 
 interface Props {
@@ -12,10 +13,10 @@ interface Props {
 
 const { member, positionIndex, index } = Astro.props;
 
-// Full-resolution originals are multi-megabyte; prefer the generated thumbnail.
-const thumb = member.image?.replace('/image/division/', '/image/division/thumbs/') ?? '';
-const mediaSrc =
-  thumb && thumb !== member.image && fs.existsSync(`public${thumb}`) ? thumb : member.image;
+// Thumbnails exist only for local uploads; a CDN URL passes through untouched.
+const src = resolveMediaSrc(member.image);
+const thumb = divisionThumbPath(src);
+const mediaSrc = thumb && fs.existsSync(`public${thumb}`) ? thumb : src;
 
 ---
 
@@ -31,6 +32,7 @@ const mediaSrc =
         alt=""
         loading="lazy"
         decoding="async"
+        referrerpolicy="no-referrer"
         style={`transform: scale(${member.scale ?? '1'}); transform-origin: ${member.position ?? 'center'};`}
       />
     ) : (
@@ -39,6 +41,6 @@ const mediaSrc =
   </div>
   <div class="member-tile-body">
     <h3 class="member-tile-name">{member.name}</h3>
-    <p class="member-tile-role">{positionLabel(positionIndex, member.role)}</p>
+    <p class="member-tile-role">{member.id} · {positionLabel(positionIndex, member.role)}</p>
   </div>
 </article>

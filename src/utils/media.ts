@@ -180,3 +180,29 @@ export function resolveExternalImageUrl(raw: string | undefined | null): string 
   if (UNSAFE_IMAGE_EXTENSIONS.test(url.pathname)) return null;
   return url.href;
 }
+
+// Site media is either an upload under public/ referenced by a root-relative
+// path, or any https image host. A bare host, a protocol-relative URL, or a
+// data: URI would fetch from the wrong origin, so only those two shapes reach a
+// built src. Spaces are allowed because committed files such as "EIM 2.png"
+// carry one.
+const LOCAL_MEDIA_PATH = /^\/(?!\/)[A-Za-z0-9._% /-]+$/;
+
+export function resolveMediaSrc(raw: string | undefined | null): string | null {
+  const external = resolveExternalImageUrl(raw);
+  if (external) return external;
+  if (typeof raw !== 'string') return null;
+  const value = raw.trim();
+  if (!LOCAL_MEDIA_PATH.test(value) || value.includes('..')) return null;
+  return value;
+}
+
+const DIVISION_IMAGE = '/image/division/';
+
+// Portraits uploaded under public/image/division/ have a generated 640px mirror
+// under thumbs/. A CDN URL has none, so only a local path yields a candidate.
+export function divisionThumbPath(src: string | null): string | null {
+  return src?.startsWith(DIVISION_IMAGE)
+    ? src.replace(DIVISION_IMAGE, `${DIVISION_IMAGE}thumbs/`)
+    : null;
+}

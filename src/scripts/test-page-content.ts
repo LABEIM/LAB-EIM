@@ -1,10 +1,10 @@
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { dirname, join, resolve, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { buildBackgroundEmbed, buildPlayerEmbed, planRevealVideo, resolveExternalImageUrl, resolveVideoUrl } from '../utils/media';
+import { buildBackgroundEmbed, buildPlayerEmbed, divisionThumbPath, planRevealVideo, resolveExternalImageUrl, resolveMediaSrc, resolveVideoUrl } from '../utils/media';
 import { sectionNumber, sectionOn, splitWordCount } from '../utils/page-content';
 import type { RecruitmentConfig } from '../utils/types';
-import type { AboutData, ChromeData, ContactData, CourseDetailPageData, CoursesPageData, EventDetailPageData, EventsPageData, GalleryData, HomePageData, Lecturer, Member, NewsDetailPageData, NewsPageData, StructurePageData } from '../utils/types';
+import type { AboutData, ChromeData, ContactData, CourseDetailPageData, CoursesPageData, EventDetailPageData, EventsPageData, FeaturedPhotoData, HomePageData, Lecturer, Member, NewsDetailPageData, NewsPageData, NodeData, StructurePageData } from '../utils/types';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '../..');
 const dataDir = join(root, 'src/data');
@@ -15,6 +15,13 @@ function publicFile(value: unknown): string {
   if (typeof value !== 'string') return '';
   const file = resolve(publicDir, value.replace(/^\//, ''));
   return file.startsWith(publicDir + sep) ? file : '';
+}
+
+// Media is an https URL or a file shipped under public/; both must resolve.
+function assertMedia(value: string | undefined | null, label: string) {
+  const src = resolveMediaSrc(value);
+  assert(src !== null, `${label} is an https URL or a root-relative path`);
+  if (src?.startsWith('/')) assert(existsSync(publicFile(src)), `${label} resolves under public/`);
 }
 
 let passed = 0;
@@ -199,28 +206,61 @@ assert(
 
 console.log('\n3️⃣ Testing chrome.brand files:');
 for (const key of chromeGroups.brand) {
-  const file = publicFile(chrome.brand?.[key]);
-  assert(Boolean(file) && existsSync(file), `chrome.brand.${key} resolves under public/`);
+  const value = chrome.brand?.[key];
+  assert(typeof value === 'string' && value.trim().length > 0, `chrome.brand.${key} is set`);
+  if (typeof value === 'string') assertMedia(value, `chrome.brand.${key}`);
 }
-
-console.log('\n3️⃣b Testing uploaded images resolve under public/:');
-const siteData = JSON.parse(readFileSync(join(dataDir, 'site.json'), 'utf8')) as { favicon?: string };
-assert(typeof siteData.favicon === 'string' && siteData.favicon.trim().length > 0, 'site.favicon is set');
+const homeHtmlPath = join(root, 'dist/client/index.html');
+const brandHorizontal = chrome.brand?.logoHorizontal;
+if (typeof brandHorizontal === 'string' && existsSync(homeHtmlPath)) {
+  assert(
+    readFileSync(homeHtmlPath, 'utf8').includes(`class="logo-brand" src="${resolveMediaSrc(brandHorizontal)}"`),
+    'home page renders the brand logo through the media resolver'
+  );
+}
+const layoutSource = readFileSync(join(root, 'src/layouts/Layout.astro'), 'utf8');
 assert(
-  existsSync(publicFile(siteData.favicon)),
-  'site.favicon resolves under public/'
+  layoutSource.includes('fav.split(/[?#]/)[0].toLowerCase()'),
+  'favicon type detection ignores a query string, a fragment, and case'
 );
 
-const galleryData = JSON.parse(readFileSync(join(dataDir, 'gallery.json'), 'utf8')) as GalleryData;
-const galleryImages = [galleryData.featured?.image, ...(galleryData.photos ?? []).map((photo) => photo.image)];
-assert(galleryImages.length > 0, 'gallery.json has at least one image');
-galleryImages.forEach((image, index) => {
-  assert(typeof image === 'string' && image.trim().length > 0, `gallery image ${index} is a non-empty string`);
+console.log('\n3️⃣b Testing site favicon:');
+const siteData = JSON.parse(readFileSync(join(dataDir, 'site.json'), 'utf8')) as { favicon?: string };
+assert(typeof siteData.favicon === 'string' && siteData.favicon.trim().length > 0, 'site.favicon is set');
+assertMedia(siteData.favicon, 'site.favicon');
+
+console.log('\n3️⃣d Testing src/data/nodes.json:');
+const nodesPath = join(dataDir, 'nodes.json');
+assert(existsSync(nodesPath), 'nodes.json exists');
+const nodesData = JSON.parse(readFileSync(nodesPath, 'utf8')) as NodeData;
+assert(Array.isArray(nodesData.list), 'nodes.list is an array');
+assert(
+  new Set(nodesData.list.map((node) => node.year)).size === nodesData.list.length,
+  'node years are unique'
+);
+for (const [index, node] of nodesData.list.entries()) {
   assert(
-    existsSync(publicFile(image)),
-    `gallery image ${index} resolves under public/`
+    Number.isInteger(node.year) && node.year >= 2000 && node.year <= 2100,
+    `node ${index} year is between 2000 and 2100`
   );
-});
+  assert(typeof node.label === 'string' && node.label.trim().length > 0, `node ${index} label is a non-empty string`);
+  assert(typeof node.image === 'string' && node.image.trim().length > 0, `node ${index} image is a non-empty string`);
+  assert(typeof node.alt === 'string' && node.alt.trim().length > 0, `node ${index} alt is a non-empty string`);
+  assertMedia(node.image, `node ${index} image`);
+}
+
+console.log('\n3️⃣e Testing src/data/featured.json:');
+const featuredPath = join(dataDir, 'featured.json');
+assert(existsSync(featuredPath), 'featured.json exists');
+const featuredData = JSON.parse(readFileSync(featuredPath, 'utf8')) as FeaturedPhotoData;
+assert(typeof featuredData.image === 'string' && featuredData.image.trim().length > 0, 'featured.image is a non-empty string');
+assertMedia(featuredData.image, 'featured.image');
+assert(typeof featuredData.alt === 'string' && featuredData.alt.trim().length > 0, 'featured.alt is a non-empty string');
+assert(typeof featuredData.caption === 'string' && featuredData.caption.trim().length > 0, 'featured.caption is a non-empty string');
+assert(
+  Number.isInteger(featuredData.height) && featuredData.height >= 50 && featuredData.height <= 150,
+  'featured.height is an integer between 50 and 150'
+);
 
 console.log('\n3️⃣c Testing member and lecturer portraits:');
 // Placeholder rows ("Nama Asisten" / "Nama Dosen") ship with an empty image and
@@ -231,7 +271,7 @@ membersData.list.forEach((member, index) => {
   const label = `member ${index} (${member.name || member.id})`;
   assert(member.image == null || typeof member.image === 'string', `${label} image is a string when present`);
   if (member.image?.trim()) {
-    assert(existsSync(publicFile(member.image)), `${label} image resolves under public/`);
+    assertMedia(member.image, `${label} image`);
   }
 });
 
@@ -241,9 +281,49 @@ lecturersData.list.forEach((lecturer, index) => {
   const label = `lecturer ${index} (${lecturer.id})`;
   assert(lecturer.image == null || typeof lecturer.image === 'string', `${label} image is a string when present`);
   if (lecturer.image?.trim()) {
-    assert(existsSync(publicFile(lecturer.image)), `${label} image resolves under public/`);
+    assertMedia(lecturer.image, `${label} image`);
   }
 });
+
+const MEMBER_CODE = /^[A-Z]{4}$/;
+const LECTURER_CODE = /^[A-Z]{3}$/;
+const memberIds = membersData.list.map((member) => String(member.id));
+assert(membersData.list.length === 46, 'members.json lists 46 people');
+assert(memberIds.every((id) => MEMBER_CODE.test(id)), 'every member id is a 4-letter code');
+assert(new Set(memberIds).size === memberIds.length, 'member ids are unique');
+
+const lecturerIds = lecturersData.list.map((lecturer) => String(lecturer.id));
+assert(lecturerIds.every((id) => LECTURER_CODE.test(id)), 'every lecturer id is a 3-letter code');
+assert(new Set(lecturerIds).size === lecturerIds.length, 'lecturer ids are unique');
+
+const positionsData = JSON.parse(readFileSync(join(dataDir, 'positions.json'), 'utf8')) as { list: { id: string; group: string }[] };
+const positionIds = new Set(positionsData.list.map((position) => position.id));
+assert(membersData.list.every((member) => positionIds.has(member.role)), 'every member role resolves to a position');
+assert(lecturersData.list.every((lecturer) => positionIds.has(lecturer.role)), 'every lecturer role resolves to a position');
+
+// Lecturers render as cards and members as tiles, split by the position group.
+const positionGroups = new Map(positionsData.list.map((position) => [position.id, position.group]));
+assert(lecturersData.list.every((lecturer) => positionGroups.get(lecturer.role) === 'dosen'), 'every lecturer sits in a dosen position');
+assert(membersData.list.every((member) => positionGroups.get(member.role) !== 'dosen'), 'no member sits in a dosen position');
+
+// A renamed or mistyped code would silently drop the person from a course.
+for (const file of collectFiles(join(root, 'src/content/courses'), ['.md'])) {
+  const source = readFileSync(file, 'utf8');
+  const name = file.slice(root.length + 1);
+  const coordinator = /^coordinatorId:\s*(\S+)\s*$/m.exec(source)?.[1] ?? '';
+  assert(lecturerIds.includes(coordinator), `${name} coordinatorId resolves to a lecturer`);
+
+  const inline = /^assistantIds:\s*\[(.*)\]\s*$/m.exec(source)?.[1];
+  const block = /^assistantIds:\s*\n((?:\s+-\s+.*\n?)+)/m.exec(source)?.[1];
+  assert(inline !== undefined || block !== undefined, `${name} assistantIds is parseable`);
+  const assistantIds = inline !== undefined
+    ? inline.split(',').map((id) => id.trim().replace(/^['"]|['"]$/g, '')).filter(Boolean)
+    : [...(block ?? '').matchAll(/^\s*-\s*(\S+)\s*$/gm)].map((match) => match[1]);
+  assert(
+    assistantIds.every((id) => memberIds.includes(id)),
+    `${name} assistantIds resolve to members`,
+  );
+}
 
 console.log('\n4️⃣ Testing pages/home.json:');
 const homePath = join(dataDir, 'pages/home.json');
@@ -292,17 +372,15 @@ assert(
   'home.reveal.mediaKind is none, image, or video'
 );
 
-// The pasted image link wins over the upload, and video comes from links only,
-// so a file is only required when the matching URL is empty. The URL itself is
-// checked further down.
-type RevealMedia = Pick<HomePageData['reveal'], 'mediaKind' | 'mediaAlt' | 'image' | 'poster' | 'imageUrl' | 'backgroundUrl' | 'videoUrl'>;
+// The pasted image link is the only image source, and video comes from links
+// only. The URL itself is checked further down.
+type RevealMedia = Pick<HomePageData['reveal'], 'mediaKind' | 'mediaAlt' | 'poster' | 'imageUrl' | 'backgroundUrl' | 'videoUrl'>;
 function assertRevealMedia(value: RevealMedia | undefined) {
   if (value?.mediaKind === 'image' || value?.mediaKind === 'video') {
     assert(Boolean(value.mediaAlt?.trim()), `home.reveal.mediaAlt is set for ${value.mediaKind} media`);
   }
-  if (value?.mediaKind === 'image' && !value.imageUrl?.trim()) {
-    assert(typeof value.image === 'string' && value.image.trim().length > 0, 'home.reveal.image is a non-empty string');
-    assert(existsSync(publicFile(value.image)), 'home.reveal.image resolves under public/');
+  if (value?.mediaKind === 'image') {
+    assertMedia(value.imageUrl, 'home.reveal.imageUrl');
   }
   if (value?.mediaKind === 'video') {
     assert(
@@ -311,11 +389,11 @@ function assertRevealMedia(value: RevealMedia | undefined) {
     );
   }
   if (value?.poster) {
-    assert(existsSync(publicFile(value.poster)), 'home.reveal.poster resolves under public/');
+    assertMedia(value.poster, 'home.reveal.poster');
   }
 }
 assertRevealMedia(reveal);
-// A page using only the pasted link must pass; this is the documented precedence.
+// A page carrying only the image link must pass.
 assertRevealMedia({ mediaKind: 'image', mediaAlt: 'intro', imageUrl: 'https://cdn.example.com/intro.jpg' });
 assertRevealMedia({ mediaKind: 'video', mediaAlt: 'intro', videoUrl: 'https://youtu.be/dQw4w9WgXcQ' });
 assertRevealMedia({ mediaKind: 'video', mediaAlt: 'intro', backgroundUrl: 'https://youtu.be/dQw4w9WgXcQ' });
@@ -326,6 +404,10 @@ const revealComponent = readFileSync(join(root, 'src/components/home/EimReveal.a
 assert(
   revealComponent.includes("content.mediaKind ?? 'none'"),
   "EimReveal treats a missing mediaKind as 'none'"
+);
+assert(
+  !/content\.image\b/.test(revealComponent),
+  'EimReveal no longer reads the removed reveal.image upload'
 );
 assert(
   revealComponent.includes('allow="autoplay; encrypted-media; picture-in-picture; fullscreen"'),
@@ -492,7 +574,7 @@ if (reveal?.backgroundUrl) {
   );
 }
 if (reveal?.imageUrl) {
-  assert(resolveExternalImageUrl(reveal.imageUrl) !== null, 'home.reveal.imageUrl resolves to an https image');
+  assertMedia(reveal.imageUrl, 'home.reveal.imageUrl');
 }
 
 console.log('\n4️⃣c Testing external media URL resolution:');
@@ -644,6 +726,47 @@ for (const [input, expected] of [
   assert(!threw && resolved === expected, `image URL with quotes or line breaks is handled: ${JSON.stringify(input)}`);
 }
 
+console.log('\n4️⃣d Testing media source resolution:');
+const mediaHttps = 'https://cdn.eimlab.org/brand/logo.png';
+assert(resolveMediaSrc(mediaHttps) === mediaHttps, 'https media URL accepted unchanged');
+assert(
+  resolveMediaSrc('https://cdn.eimlab.org/logo.png?v=2') === 'https://cdn.eimlab.org/logo.png?v=2',
+  'https media URL keeps its query string'
+);
+assert(
+  resolveMediaSrc(' /image/division/list/0/image.avif ') === '/image/division/list/0/image.avif',
+  'root-relative path trimmed and accepted'
+);
+assertMedia('https://cdn.eimlab.org/media/probe.webp', 'assertMedia accepts an https media URL');
+assert(
+  resolveMediaSrc('/image/eim/EIM 2.png') === '/image/eim/EIM 2.png',
+  'root-relative path with a space is accepted'
+);
+assert(divisionThumbPath('https://cdn.eimlab.org/division/foto.webp') === null, 'a CDN portrait gets no thumbnail path');
+assert(
+  divisionThumbPath('/image/division/list/0/image.avif') === '/image/division/thumbs/list/0/image.avif',
+  'a local portrait maps to the thumbnail tree'
+);
+assert(divisionThumbPath(null) === null, 'a missing portrait gets no thumbnail path');
+for (const rejected of [
+  'image/x.avif',
+  './image/x.avif',
+  'example.com/x.png',
+  '//cdn.eimlab.org/x.png',
+  '/\\cdn.eimlab.org/x.png',
+  '/image/../../.env',
+  'http://cdn.eimlab.org/x.png',
+  'javascript:alert(1)',
+  'data:image/png;base64,AAAA',
+  'https://cdn.eimlab.org/x.svg',
+  'https://192.168.1.10/a.png',
+  '',
+  '   ',
+]) {
+  assert(resolveMediaSrc(rejected) === null, `media source rejected: ${JSON.stringify(rejected)}`);
+}
+assert(resolveMediaSrc(undefined) === null && resolveMediaSrc(null) === null, 'missing media source resolves to null');
+
 console.log('\n5️⃣ Testing about.json:');
 const aboutPath = join(dataDir, 'about.json');
 const aboutExists = existsSync(aboutPath);
@@ -666,13 +789,13 @@ assert(!Object.prototype.hasOwnProperty.call(about, 'title'), 'about carries no 
 
 assert(Boolean(about.meta?.title?.trim()), 'about.meta.title is a non-empty string');
 
-const aboutSections = ['hero', 'profile', 'stats', 'teamLink', 'galleryBand', 'visiMisi', 'gallery', 'cta'] as const;
+const aboutSections = ['hero', 'profile', 'stats', 'teamLink', 'featuredPhoto', 'visiMisi', 'nodes', 'cta'] as const;
 for (const key of aboutSections) {
   const section = about.sections?.[key];
   assert(Boolean(section) && typeof section === 'object', `about.sections.${key} exists`);
 }
 
-for (const key of ['profile', 'stats', 'teamLink', 'galleryBand', 'visiMisi', 'gallery', 'cta'] as const) {
+for (const key of ['profile', 'stats', 'teamLink', 'featuredPhoto', 'visiMisi', 'nodes', 'cta'] as const) {
   assert(typeof about.sections?.[key]?.enabled === 'boolean', `about.sections.${key}.enabled is a boolean`);
 }
 const aboutHero = about.sections?.hero;
@@ -709,20 +832,20 @@ assert(
   'about.sections.stats carries no stats array'
 );
 
-for (const key of ['teamLink', 'galleryBand'] as const) {
+for (const key of ['teamLink', 'featuredPhoto'] as const) {
   const value = about.sections?.[key]?.label;
   assert(typeof value === 'string' && value.trim().length > 0, `about.sections.${key}.label is a non-empty string`);
 }
 
 assert(Boolean(about.sections?.visiMisi?.heading?.trim()), 'about.sections.visiMisi.heading is a non-empty string');
 
-const aboutGallery = about.sections?.gallery;
-for (const key of ['eyebrow', 'intro', 'title', 'showAll', 'hideAll'] as const) {
-  const value = aboutGallery?.[key];
-  assert(typeof value === 'string' && value.trim().length > 0, `about.sections.gallery.${key} is a non-empty string`);
+const aboutNodes = about.sections?.nodes;
+for (const key of ['eyebrow', 'intro', 'title', 'latestLabel', 'archiveLabel'] as const) {
+  const value = aboutNodes?.[key];
+  assert(typeof value === 'string' && value.trim().length > 0, `about.sections.nodes.${key} is a non-empty string`);
 }
 
-for (const key of ['profile', 'stats', 'vision', 'cta', 'gallery'] as const) {
+for (const key of ['profile', 'stats', 'vision', 'cta', 'nodes'] as const) {
   const value = about.navDots?.[key];
   assert(typeof value === 'string' && value.trim().length > 0, `about.navDots.${key} is a non-empty string`);
 }
@@ -1274,7 +1397,7 @@ const renderTargets: [string, string[]][] = [
 // Copy that only renders in a state the sample content does not reach: empty lists,
 // collapsed gallery controls, disabled upload fields, or candidate-specific messages.
 const stateDependent: Record<string, RegExp[]> = {
-  'about.json': [/^sections\.gallery\.(showAll|hideAll)$/],
+  'about.json': [/^sections\.nodes\./],
   'contact.json': [/^details\.pics(Title|Subtitle)$/],
   'registration.json': [
     /^labels\.ksm$/,
@@ -1301,6 +1424,26 @@ const stateDependent: Record<string, RegExp[]> = {
 if (!existsSync(clientDir)) {
   console.log('  ⚠️ SKIPPED: dist/client is missing. Run `PUBLIC_SHOW_AUDIT_CONTENT=true pnpm run build` first to enable this guard.');
 } else {
+  const aboutHtml = readFileSync(join(clientDir, 'about/index.html'), 'utf8');
+  const featuredScale = String(featuredData.height / 100);
+  assert(
+    aboutHtml.includes(`--photo-scale:${featuredScale}`),
+    'about page renders the featured photo band at the configured height'
+  );
+  // Compare the resolved value: a CDN URL is normalized by the URL parser.
+  assert(
+    aboutHtml.includes(`src="${resolveMediaSrc(featuredData.image)}"`),
+    'about page renders the configured featured photo'
+  );
+  assert(
+    /class="eim-photo-band[^"]*"[^>]*referrerpolicy="no-referrer"/.test(aboutHtml),
+    'about page serves the featured photo without a referrer'
+  );
+  assert(
+    /class="lecturer-card-media"><img src="(?!\/image\/placeholder-avatar\.svg")[^"]+"[^>]*referrerpolicy="no-referrer"/.test(readFileSync(join(clientDir, 'structure/index.html'), 'utf8')),
+    'structure page serves portraits without a referrer'
+  );
+
   // Production builds hide the audit sample content, so list pages only render their
   // empty state; skip the copy that belongs to the other branch of that same page.
   const contentBranch: Record<string, { marker: string; content: RegExp }> = {

@@ -6,7 +6,7 @@
     "profile": "Profil",
     "stats": "Angka",
     "vision": "Visi & Misi",
-    "gallery": "Galeri",
+    "nodes": "Sejarah",
     "cta": "Gabung"
   },
   "sections": {
@@ -41,7 +41,7 @@
       "enabled": true,
       "label": "Lihat seluruh struktur"
     },
-    "galleryBand": {
+    "featuredPhoto": {
       "enabled": true,
       "label": "Foto studio tim"
     },
@@ -49,13 +49,13 @@
       "enabled": true,
       "heading": "Visi & Misi"
     },
-    "gallery": {
+    "nodes": {
       "enabled": true,
-      "eyebrow": "Galeri",
-      "title": "Galeri kegiatan.",
-      "intro": "Suasana praktikum, kunjungan, abdimas dan kegiatan lain di lab.",
-      "showAll": "Lihat semua foto",
-      "hideAll": "Sembunyikan foto"
+      "eyebrow": "Sejarah",
+      "title": "Node dari tahun ke tahun.",
+      "intro": "Satu foto studio untuk setiap Node yang pernah mengurus lab.",
+      "latestLabel": "Node terbaru",
+      "archiveLabel": "Node sebelumnya"
     },
     "cta": {
       "enabled": true

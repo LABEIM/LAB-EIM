@@ -4,7 +4,7 @@ sks: 3
 title: Mata Kuliah Contoh 3
 hasPracticum: false
 modules: []
-coordinatorId: dosen-koordinator-matkul-1
+coordinatorId: AWJ
 assistantIds: []
 order: 3
 ---

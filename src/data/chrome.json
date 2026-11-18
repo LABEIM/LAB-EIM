@@ -26,8 +26,8 @@
     "contactLabel": "Hubungi Kami"
   },
   "brand": {
-    "logoHorizontal": "/assets/brand/brand/logoHorizontal.avif",
-    "logoIcon": "/assets/brand/brand/logoIcon.png"
+    "logoHorizontal": "https://cdn.eimlab.org/1795012243714_eim-logo-horizontal.webp",
+    "logoIcon": "https://cdn.eimlab.org/1795012243734_eim-emblem.webp"
   },
   "labels": {
     "upcoming": "Mendatang",

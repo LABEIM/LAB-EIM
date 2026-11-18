@@ -5,7 +5,7 @@
   "defaultTitle": "EIM Lab - Enterprise Infrastructure Management",
   "defaultDescription": "Website Resmi Laboratorium Enterprise Infrastructure Management (EIM) Telkom University.",
   "defaultKeywords": "EIM, EIM Lab, Telkom University, Fakultas Rekayasa Industri, S1 Sistem Informasi, Sistem Informasi, Enterprise Infrastructure Management, Laboratorium Jaringan, Cloud Computing, Riset Jaringan, Praktikum Jaringan",
-  "favicon": "/image/eim/favicon.png",
+  "favicon": "https://cdn.eimlab.org/1795012244480_logo-vertical.webp",
   "timezone": "Asia/Jakarta",
   "timezoneOffset": "+07:00",
   "contact": {

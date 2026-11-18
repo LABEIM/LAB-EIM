@@ -9,13 +9,13 @@
   "orientation": "portrait-primary",
   "icons": [
     {
-      "src": "https://eimlab.org/assets/brand/eim-favicon.png",
+      "src": "https://cdn.eimlab.org/1795019783409_logo-icon.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any maskable"
     },
     {
-      "src": "https://eimlab.org/assets/logo.png",
+      "src": "https://cdn.eimlab.org/1795019783409_logo-icon.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"

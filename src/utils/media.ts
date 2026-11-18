@@ -196,13 +196,3 @@ export function resolveMediaSrc(raw: string | undefined | null): string | null {
   if (!LOCAL_MEDIA_PATH.test(value) || value.includes('..')) return null;
   return value;
 }
-
-const DIVISION_IMAGE = '/image/division/';
-
-// Portraits uploaded under public/image/division/ have a generated 640px mirror
-// under thumbs/. A CDN URL has none, so only a local path yields a candidate.
-export function divisionThumbPath(src: string | null): string | null {
-  return src?.startsWith(DIVISION_IMAGE)
-    ? src.replace(DIVISION_IMAGE, `${DIVISION_IMAGE}thumbs/`)
-    : null;
-}

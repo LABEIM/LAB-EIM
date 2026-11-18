@@ -81,7 +81,7 @@ Do not delete this file without also changing the registration form.
 ---
 
 ## 2. Members Directory (`src/data/members.json`)
-This file lists student members and assistants. On `/structure` each person renders under their position section. Photos still live in `/image/division/...`; those folder names are historical and unrelated to the current structure.
+This file lists student members and assistants. On `/structure` each person renders under their position section. Photos are CDN URLs pasted per member.
 
 ### Fields Explanation
 * **`id`** (String): The member's unique 4-letter assistant code (uppercase, e.g. `DAYY`). Course assistant lists reference these codes, and the code appears next to the role on `/structure` and the course detail page.
@@ -97,13 +97,13 @@ This file lists student members and assistants. On `/structure` each person rend
     "id": "DAYY",
     "name": "Nama Anggota",
     "role": "mahasiswa-anggota",
-    "image": "/image/division/research/RESEARCH_Member_JDOE_Jane-Doe_00.avif",
-    "scale": "2.8",
-    "position": "50% 25%"
+    "image": "https://cdn.eimlab.org/division/jane-doe.webp",
+    "scale": "1",
+    "position": "center"
   }
 ```
 
-Portraits under `public/image/division/` are full-resolution originals. `pnpm run generate:assets` mirrors them into `public/image/division/thumbs/` at 640px, and the Struktur page serves those thumbnails; add a member's portrait, then re-run the command so the page never ships the multi-megabyte original. A CDN URL is served as-is and skips this step, so size it before uploading.
+Portraits are CDN URLs. Export a pre-cropped 640 px square (1:1) WebP or AVIF, paste its URL into the **Foto (URL)** field, and the Struktur page serves it as-is. An empty field renders the member's initials; `scale` and `position` only matter for an un-cropped photo.
 
 ---
 

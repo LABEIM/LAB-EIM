@@ -94,7 +94,7 @@ function containsText(haystack: string, needle: string): boolean {
 
 const chromeGroups: Record<Exclude<keyof ChromeData, 'ui'>, string[]> = {
   nav: ['home', 'about', 'structure', 'courses', 'event', 'news', 'register', 'contact', 'joinUs'],
-  footer: ['description', 'quickLinks', 'contact', 'resources', 'assets', 'linkHub', 'rights', 'backToTop'],
+  footer: ['description', 'quickLinks', 'contact', 'resources', 'linkHub', 'rights', 'backToTop'],
   cta: ['title', 'description', 'contactLabel'],
   brand: ['logoHorizontal', 'logoIcon'],
   labels: ['upcoming', 'details', 'statsDosen', 'statsMembers', 'statsCourses', 'organizerFallback', 'sectionNav', 'coordinator', 'sks', 'practicumYes', 'practicumNo', 'featured', 'search', 'close', 'vision', 'mission', 'values'],

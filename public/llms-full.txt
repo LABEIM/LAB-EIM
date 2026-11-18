@@ -78,7 +78,6 @@ The EIM Lab Website is the official public site of the Enterprise Infrastructure
 | :--- | :--- | :--- | :---: |
 | `GET` | `/` | Home page | No |
 | `GET` | `/about` | Laboratory profile and history | No |
-| `GET` | `/assets` | Brand and email asset hub | No |
 | `GET` | `/contact` | Contact information | No |
 | `GET` | `/structure` | Laboratory role hierarchy and staff profiles | No |
 | `GET` | `/courses` | Courses with code, SKS, practicum status, coordinator | No |

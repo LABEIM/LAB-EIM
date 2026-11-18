@@ -1253,7 +1253,6 @@ export default config({
             quickLinks: fields.text({ label: 'Judul tautan cepat', validation: { isRequired: true } }),
             contact: fields.text({ label: 'Judul kontak', validation: { isRequired: true } }),
             resources: fields.text({ label: 'Judul tautan', validation: { isRequired: true } }),
-            assets: fields.text({ label: 'Teks aset brand', validation: { isRequired: true } }),
             linkHub: fields.text({ label: 'Teks EIM Link Hub', validation: { isRequired: true } }),
             rights: fields.text({ label: 'Teks hak cipta', validation: { isRequired: true } }),
             backToTop: fields.text({ label: 'Teks kembali ke atas', validation: { isRequired: true } }),

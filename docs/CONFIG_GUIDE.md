@@ -7,7 +7,7 @@ Admin Portal: https://lab-eim.vercel.app/keystatic
 ---
 
 ## Halaman (page copy)
-Every page's visible copy lives in JSON, editable under **Halaman** in Keystatic. Shared UI strings — pagination, the whole filter bar (sort, status, category, reset copy), screen-reader labels, back links, and the registration tab suffix — live in `src/data/chrome.json` under `ui`, editable under **Navbar, Footer & Brand**; registration copy lives in `src/data/registration.json`, including the form labels (fieldset legends, countdown units, draft banner). Edit the files directly only when Keystatic is unavailable. Still code-only: the remaining registration form internals (the upload legend, modal bodies, upload hints, validation messages), the poster modal's slide-dot and zoom labels, `ViewClosed`'s "Artikel & Pengumuman" link, and the `/assets` reference page.
+Every page's visible copy lives in JSON, editable under **Halaman** in Keystatic. Shared UI strings — pagination, the whole filter bar (sort, status, category, reset copy), screen-reader labels, back links, and the registration tab suffix — live in `src/data/chrome.json` under `ui`, editable under **Navbar, Footer & Brand**; registration copy lives in `src/data/registration.json`, including the form labels (fieldset legends, countdown units, draft banner). Edit the files directly only when Keystatic is unavailable. Still code-only: the remaining registration form internals (the upload legend, modal bodies, upload hints, validation messages), the poster modal's slide-dot and zoom labels, `ViewClosed`'s "Artikel & Pengumuman" link.
 
 | Page | File |
 | --- | --- |

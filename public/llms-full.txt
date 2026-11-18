@@ -65,7 +65,7 @@ The EIM Lab Website is the official public site of the Enterprise Infrastructure
 ├── AGENTS.md                  # AI coding agent workflow and rules
 ├── CLAUDE.md                  # Claude Code operational instructions
 ├── GEMINI.md                  # Gemini CLI / Antigravity pointer to AGENTS.md
-├── docs/                      # Guides: contributing, security, deployment, assets,
+├── docs/                      # Guides: contributing, security, deployment,
 │                              #   registration setup, data config, design tokens
 └── README.md                  # Main repository README
 ```
@@ -78,7 +78,6 @@ The EIM Lab Website is the official public site of the Enterprise Infrastructure
 | :--- | :--- | :--- | :---: |
 | `GET` | `/` | Home page | No |
 | `GET` | `/about` | Laboratory profile and history | No |
-| `GET` | `/assets` | Brand and email asset hub | No |
 | `GET` | `/contact` | Contact information | No |
 | `GET` | `/structure` | Laboratory role hierarchy and staff profiles | No |
 | `GET` | `/courses` | Courses with code, SKS, practicum status, coordinator | No |

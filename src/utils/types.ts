@@ -432,7 +432,6 @@ export interface ChromeData {
     quickLinks: string;
     contact: string;
     resources: string;
-    assets: string;
     linkHub: string;
     rights: string;
     backToTop: string;

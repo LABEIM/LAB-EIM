@@ -3,26 +3,17 @@
     {
       "id": "DAYY",
       "name": "Ferdiansyah Adi Saputra",
-      "role": "koordinator-asisten",
-      "image": "/image/division/list/0/image.avif",
-      "scale": "3",
-      "position": "center 32%"
+      "role": "koordinator-asisten"
     },
     {
       "id": "KSAZ",
       "name": "Kania Shafa Az Zahra",
-      "role": "mahasiswa-anggota",
-      "image": "/image/division/list/2/image.avif",
-      "scale": "2.7",
-      "position": "45% 52%"
+      "role": "mahasiswa-anggota"
     },
     {
       "id": "WOKY",
       "name": "Raffi Raditya Sofwan",
-      "role": "mahasiswa-anggota",
-      "image": "/image/division/list/1/image.avif",
-      "scale": "2.8",
-      "position": "55% 35%"
+      "role": "mahasiswa-anggota"
     },
     {
       "id": "REAN",
@@ -42,26 +33,17 @@
     {
       "id": "VAND",
       "name": "Winsenlaus Alfero Krisna Ivander Lael",
-      "role": "mahasiswa-anggota",
-      "image": "/image/division/list/8/image.avif",
-      "scale": "2.8",
-      "position": "50% 13%"
+      "role": "mahasiswa-anggota"
     },
     {
       "id": "FADH",
       "name": "Faiz Dhya Muhamad Rahmantyo",
-      "role": "mahasiswa-anggota",
-      "image": "/image/division/list/10/image.avif",
-      "scale": "2.8",
-      "position": "50% 15%"
+      "role": "mahasiswa-anggota"
     },
     {
       "id": "KANG",
       "name": "Fakhri Muhammad Habibi",
-      "role": "mahasiswa-anggota",
-      "image": "/image/division/list/9/image.avif",
-      "scale": "2.8",
-      "position": "50% 15%"
+      "role": "mahasiswa-anggota"
     },
     {
       "id": "YAYA",
@@ -86,34 +68,22 @@
     {
       "id": "JAAA",
       "name": "Akchmad Reza Zandri",
-      "role": "mahasiswa-anggota",
-      "image": "/image/division/list/11/image.avif",
-      "scale": "2.8",
-      "position": "49% 35%"
+      "role": "mahasiswa-anggota"
     },
     {
       "id": "FACL",
       "name": "Frixtho Alex Credorius Latumahina",
-      "role": "mahasiswa-anggota",
-      "image": "/image/division/list/13/image.avif",
-      "scale": "2.8",
-      "position": "48% 25%"
+      "role": "mahasiswa-anggota"
     },
     {
       "id": "NDAA",
       "name": "Ganda Dwiyana",
-      "role": "mahasiswa-anggota",
-      "image": "/image/division/list/12/image.avif",
-      "scale": "2.8",
-      "position": "50% 31%"
+      "role": "mahasiswa-anggota"
     },
     {
       "id": "FZRY",
       "name": "Muhammad Fizry Alifta",
-      "role": "mahasiswa-anggota",
-      "image": "/image/division/list/14/image.avif",
-      "scale": "2.8",
-      "position": "50% 36%"
+      "role": "mahasiswa-anggota"
     },
     {
       "id": "PRTZ",
@@ -138,34 +108,22 @@
     {
       "id": "ASAP",
       "name": "Bagas Haris Saputro",
-      "role": "mahasiswa-anggota",
-      "image": "/image/division/list/19/image.avif",
-      "scale": "3",
-      "position": "50% 20%"
+      "role": "mahasiswa-anggota"
     },
     {
       "id": "RYLA",
       "name": "Levi Soraya",
-      "role": "mahasiswa-anggota",
-      "image": "/image/division/list/20/image.avif",
-      "scale": "2",
-      "position": "50% 18%"
+      "role": "mahasiswa-anggota"
     },
     {
       "id": "KAYS",
       "name": "Deidanisa Aulia Pradina Kya",
-      "role": "mahasiswa-anggota",
-      "image": "/image/division/list/22/image.avif",
-      "scale": "3.3",
-      "position": "50% 45%"
+      "role": "mahasiswa-anggota"
     },
     {
       "id": "SLMN",
       "name": "Salman Alfarisy",
-      "role": "mahasiswa-anggota",
-      "image": "/image/division/list/21/image.avif",
-      "scale": "2.3",
-      "position": "50% 43%"
+      "role": "mahasiswa-anggota"
     },
     {
       "id": "HANZ",
@@ -190,42 +148,27 @@
     {
       "id": "NYTM",
       "name": "Ardy Maulana Nayottama Nugroho",
-      "role": "mahasiswa-anggota",
-      "image": "/image/division/list/3/image.avif",
-      "scale": "2.3",
-      "position": "53% 15%"
+      "role": "mahasiswa-anggota"
     },
     {
       "id": "DSFA",
       "name": "Dara Saifa Mahiroh",
-      "role": "mahasiswa-anggota",
-      "image": "/image/division/list/7/image.avif",
-      "scale": "2.5",
-      "position": "48% 34%"
+      "role": "mahasiswa-anggota"
     },
     {
       "id": "NAYL",
       "name": "Nayla Aulia Rusyda",
-      "role": "mahasiswa-anggota",
-      "image": "/image/division/list/5/image.avif",
-      "scale": "3",
-      "position": "52% 43%"
+      "role": "mahasiswa-anggota"
     },
     {
       "id": "ALTA",
       "name": "Tb. Alta Ulil Abshor",
-      "role": "mahasiswa-anggota",
-      "image": "/image/division/list/4/image.avif",
-      "scale": "3",
-      "position": "49% 35%"
+      "role": "mahasiswa-anggota"
     },
     {
       "id": "NARA",
       "name": "Hana Humaira",
-      "role": "mahasiswa-anggota",
-      "image": "/image/division/list/6/image.avif",
-      "scale": "3",
-      "position": "center 40%"
+      "role": "mahasiswa-anggota"
     },
     {
       "id": "SHAA",
@@ -250,34 +193,22 @@
     {
       "id": "AUZA",
       "name": "Aura Haya Azka",
-      "role": "mahasiswa-anggota",
-      "image": "/image/division/list/15/image.avif",
-      "scale": "2.2",
-      "position": "50% 40%"
+      "role": "mahasiswa-anggota"
     },
     {
       "id": "WILD",
       "name": "Wildan Zaaqi",
-      "role": "mahasiswa-anggota",
-      "image": "/image/division/list/18/image.avif",
-      "scale": "2.4",
-      "position": "51% 45%"
+      "role": "mahasiswa-anggota"
     },
     {
       "id": "AFMR",
       "name": "Affan Maulana Raffi",
-      "role": "mahasiswa-anggota",
-      "image": "/image/division/list/17/image.avif",
-      "scale": "2.4",
-      "position": "48% 19%"
+      "role": "mahasiswa-anggota"
     },
     {
       "id": "FIZI",
       "name": "Firman Zuhdi Affandi",
-      "role": "mahasiswa-anggota",
-      "image": "/image/division/list/16/image.avif",
-      "scale": "2.8",
-      "position": "50% 33%"
+      "role": "mahasiswa-anggota"
     },
     {
       "id": "IZRA",

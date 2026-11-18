@@ -1,7 +1,7 @@
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { dirname, join, resolve, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { buildBackgroundEmbed, buildPlayerEmbed, divisionThumbPath, planRevealVideo, resolveExternalImageUrl, resolveMediaSrc, resolveVideoUrl } from '../utils/media';
+import { buildBackgroundEmbed, buildPlayerEmbed, planRevealVideo, resolveExternalImageUrl, resolveMediaSrc, resolveVideoUrl } from '../utils/media';
 import { sectionNumber, sectionOn, splitWordCount } from '../utils/page-content';
 import type { RecruitmentConfig } from '../utils/types';
 import type { AboutData, ChromeData, ContactData, CourseDetailPageData, CoursesPageData, EventDetailPageData, EventsPageData, FeaturedPhotoData, HomePageData, Lecturer, Member, NewsDetailPageData, NewsPageData, NodeData, StructurePageData } from '../utils/types';
@@ -94,7 +94,7 @@ function containsText(haystack: string, needle: string): boolean {
 
 const chromeGroups: Record<Exclude<keyof ChromeData, 'ui'>, string[]> = {
   nav: ['home', 'about', 'structure', 'courses', 'event', 'news', 'register', 'contact', 'joinUs'],
-  footer: ['description', 'quickLinks', 'contact', 'resources', 'assets', 'linkHub', 'rights', 'backToTop'],
+  footer: ['description', 'quickLinks', 'contact', 'resources', 'linkHub', 'rights', 'backToTop'],
   cta: ['title', 'description', 'contactLabel'],
   brand: ['logoHorizontal', 'logoIcon'],
   labels: ['upcoming', 'details', 'statsDosen', 'statsMembers', 'statsCourses', 'organizerFallback', 'sectionNav', 'coordinator', 'sks', 'practicumYes', 'practicumNo', 'featured', 'search', 'close', 'vision', 'mission', 'values'],
@@ -742,12 +742,6 @@ assert(
   resolveMediaSrc('/image/eim/EIM 2.png') === '/image/eim/EIM 2.png',
   'root-relative path with a space is accepted'
 );
-assert(divisionThumbPath('https://cdn.eimlab.org/division/foto.webp') === null, 'a CDN portrait gets no thumbnail path');
-assert(
-  divisionThumbPath('/image/division/list/0/image.avif') === '/image/division/thumbs/list/0/image.avif',
-  'a local portrait maps to the thumbnail tree'
-);
-assert(divisionThumbPath(null) === null, 'a missing portrait gets no thumbnail path');
 for (const rejected of [
   'image/x.avif',
   './image/x.avif',

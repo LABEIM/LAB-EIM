@@ -1,6 +1,4 @@
 ---
-import { Image } from 'astro:assets';
-import emblem from '../../../public/assets/brand/eim-emblem.png';
 import { getLocaleFromUrl, getLocalizedJsonData } from '../../utils/i18n';
 import { planRevealVideo, resolveMediaSrc } from '../../utils/media';
 import type { ChromeData, HomePageData } from '../../utils/types';
@@ -90,14 +88,15 @@ const chrome = getLocalizedJsonData<ChromeData>('chrome', getLocaleFromUrl(Astro
 
     {showPlaceholder && (
       <div class="e-reveal-stage-pending">
-        <Image
+        <img
           class="e-reveal-stage-emblem"
-          src={emblem}
+          src="https://cdn.eimlab.org/1795019777355_eim-emblem.png"
           alt=""
           width={220}
           height={252}
           loading="lazy"
           decoding="async"
+          referrerpolicy="no-referrer"
         />
         <p class="e-reveal-stage-note">{content.pending}</p>
         <a class="e-reveal-stage-link" href="/about">

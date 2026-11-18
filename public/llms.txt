@@ -20,7 +20,6 @@
 ## Key Endpoints & Routes
 - `/` : Home page
 - `/about` : Laboratory profile and history
-- `/assets` : Brand and email asset hub
 - `/contact` : Contact information
 - `/structure` : Laboratory role hierarchy (lecturers, assistants, student members, adhoc roles) and staff profiles
 - `/courses` : Courses in the lab's field of study with code and SKS

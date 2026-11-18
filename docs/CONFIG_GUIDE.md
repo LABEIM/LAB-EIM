@@ -7,7 +7,7 @@ Admin Portal: https://lab-eim.vercel.app/keystatic
 ---
 
 ## Halaman (page copy)
-Every page's visible copy lives in JSON, editable under **Halaman** in Keystatic. Shared UI strings — pagination, the whole filter bar (sort, status, category, reset copy), screen-reader labels, back links, and the registration tab suffix — live in `src/data/chrome.json` under `ui`, editable under **Navbar, Footer & Brand**; registration copy lives in `src/data/registration.json`, including the form labels (fieldset legends, countdown units, draft banner). Edit the files directly only when Keystatic is unavailable. Still code-only: the remaining registration form internals (the upload legend, modal bodies, upload hints, validation messages), the poster modal's slide-dot and zoom labels, `ViewClosed`'s "Artikel & Pengumuman" link, and the `/assets` reference page.
+Every page's visible copy lives in JSON, editable under **Halaman** in Keystatic. Shared UI strings — pagination, the whole filter bar (sort, status, category, reset copy), screen-reader labels, back links, and the registration tab suffix — live in `src/data/chrome.json` under `ui`, editable under **Navbar, Footer & Brand**; registration copy lives in `src/data/registration.json`, including the form labels (fieldset legends, countdown units, draft banner). Edit the files directly only when Keystatic is unavailable. Still code-only: the remaining registration form internals (the upload legend, modal bodies, upload hints, validation messages), the poster modal's slide-dot and zoom labels, `ViewClosed`'s "Artikel & Pengumuman" link.
 
 | Page | File |
 | --- | --- |
@@ -26,9 +26,9 @@ Every page's visible copy lives in JSON, editable under **Halaman** in Keystatic
 
 **Hiding a section:** every non-hero section object has an `enabled` boolean. Set it to `false` in Keystatic to remove the section from the page; section nav dots read the same flag, so the dot disappears too. Numbered sections (`01 — …`) count only the visible sections, so hiding one leaves no gap in the sequence. Hero sections have no toggle because they hold the page `<h1>`. Upload fields on detail pages are collection fields, not page copy; only their headings and enabled switches live in the `*-detail.json` files.
 
-**Media fields:** every media field listed here (brand logos, favicon, member and lecturer photos, featured and node photos, intro image and poster) accepts either an https URL — for example `https://cdn.eimlab.org/…` — or a root-relative path for a file committed under `public/`, such as `/image/featured/image.avif`. Values are resolved by `resolveMediaSrc`; a bare host (`cdn.eimlab.org/x.png`), a protocol-relative `//host` URL, or a `data:` URI renders no image instead of loading from another origin. Remote SVG is rejected — use PNG, WebP, or AVIF — while a committed local SVG still works. Remote media renders with `referrerpolicy="no-referrer"`, so the image host does not learn which page a visitor came from. The copy guard in `pnpm test` accepts either form and still checks that a root-relative path exists under `public/`.
+**Media fields:** every media field listed here (brand logos, favicon, member and lecturer photos, featured and node photos, intro image and poster) accepts either an https URL — for example `https://cdn.eimlab.org/…` — or a root-relative path for a file committed under `public/`. Values are resolved by `resolveMediaSrc`; a bare host (`cdn.eimlab.org/x.png`), a protocol-relative `//host` URL, or a `data:` URI renders no image instead of loading from another origin. Remote SVG is rejected — use PNG, WebP, or AVIF — while a committed local SVG still works. Remote media renders with `referrerpolicy="no-referrer"`, so the image host does not learn which page a visitor came from. The copy guard in `pnpm test` accepts either form and still checks that a root-relative path exists under `public/`.
 
-**Intro media (Beranda):** the `reveal` section shows one of three states chosen by `mediaKind` — `none` keeps the placeholder text, `image` shows an image, `video` shows a video. The `video` state takes links only, with a fixed precedence for the background: `backgroundUrl` (YouTube, Vimeo, Google Drive, a direct `.mp4`/`.webm`/`.ogv` file such as an R2/CDN URL, or a root-relative path such as `/assets/media/intro.mp4` for a file committed under `public/`), then a direct file in `videoUrl`. The optional `backgroundUrl` is the way to pair a native or provider background with a separate provider player — for example a short YouTube loop behind a different full YouTube video. A `videoUrl` link to YouTube, Vimeo, or Google Drive is the player opened by the overlay, and only a provider link produces the overlay and modal; `backgroundUrl` never opens a modal. If no background link is set, a provider `videoUrl` serves as both the background and the player; if only a direct file is set, the native player stays inline with its own controls and no modal. `poster` is the still frame shown before a direct-file background starts. In short: **isi `backgroundUrl` untuk latar berjalan otomatis; tempel tautan YouTube/Vimeo/Drive di `videoUrl` untuk pemutar saat diklik; jika hanya `videoUrl`, tautan itu menjadi latar sekaligus pemutar.** An external image may come from any https host at the editor's choice (the editor is trusted with all copy) and is served with `referrerpolicy="no-referrer"`; video links are restricted to those providers or a direct video file, and IP-literal hosts are rejected. `imageUrl` is the only image source — there is no upload field for the intro image — and it and `poster` accept the same https-or-path form as every other media field. A pasted embed (YouTube or Vimeo) autoplays muted and looping inside the section; clicking it opens a full player with sound and normal controls in a modal, which stops playback when closed. Google Drive previews cannot autoplay or loop, so they show their own preview player in the section and in the modal. An absent `mediaKind` falls back to `none`, and the copy guard (`pnpm test`) requires a non-empty `mediaAlt` whenever `mediaKind` is `image` or `video`, plus a resolvable URL whenever `imageUrl`, `backgroundUrl`, or `videoUrl` is set (Keystatic itself does not mark these fields required).
+**Intro media (Beranda):** the `reveal` section shows one of three states chosen by `mediaKind` — `none` keeps the placeholder text, `image` shows an image, `video` shows a video. The `video` state takes links only, with a fixed precedence for the background: `backgroundUrl` (YouTube, Vimeo, Google Drive, a direct `.mp4`/`.webm`/`.ogv` file such as an R2/CDN URL, or a root-relative path for a file committed under `public/`), then a direct file in `videoUrl`. The optional `backgroundUrl` is the way to pair a native or provider background with a separate provider player — for example a short YouTube loop behind a different full YouTube video. A `videoUrl` link to YouTube, Vimeo, or Google Drive is the player opened by the overlay, and only a provider link produces the overlay and modal; `backgroundUrl` never opens a modal. If no background link is set, a provider `videoUrl` serves as both the background and the player; if only a direct file is set, the native player stays inline with its own controls and no modal. `poster` is the still frame shown before a direct-file background starts. In short: **isi `backgroundUrl` untuk latar berjalan otomatis; tempel tautan YouTube/Vimeo/Drive di `videoUrl` untuk pemutar saat diklik; jika hanya `videoUrl`, tautan itu menjadi latar sekaligus pemutar.** An external image may come from any https host at the editor's choice (the editor is trusted with all copy) and is served with `referrerpolicy="no-referrer"`; video links are restricted to those providers or a direct video file, and IP-literal hosts are rejected. `imageUrl` is the only image source — there is no upload field for the intro image — and it and `poster` accept the same https-or-path form as every other media field. A pasted embed (YouTube or Vimeo) autoplays muted and looping inside the section; clicking it opens a full player with sound and normal controls in a modal, which stops playback when closed. Google Drive previews cannot autoplay or loop, so they show their own preview player in the section and in the modal. An absent `mediaKind` falls back to `none`, and the copy guard (`pnpm test`) requires a non-empty `mediaAlt` whenever `mediaKind` is `image` or `video`, plus a resolvable URL whenever `imageUrl`, `backgroundUrl`, or `videoUrl` is set (Keystatic itself does not mark these fields required).
 
 **Preparing the background loop:** re-encode before committing — `ffmpeg -i raw.mp4 -an -vf "scale=1920:-2" -c:v libx264 -crf 23 -preset slow -movflags +faststart intro.mp4`. `-an` drops the audio track (the loop plays muted), `+faststart` moves the index to the front so playback can begin before the download finishes, and `-crf 23` is a good quality/size point for a background. Target 6–10 seconds and 2–4 MB; keep the clip short rather than lowering quality further. Cut the clip so its last frame flows into its first, otherwise the native `<video loop>` restart will still show a jump.
 
@@ -81,7 +81,7 @@ Do not delete this file without also changing the registration form.
 ---
 
 ## 2. Members Directory (`src/data/members.json`)
-This file lists student members and assistants. On `/structure` each person renders under their position section. Photos still live in `/image/division/...`; those folder names are historical and unrelated to the current structure.
+This file lists student members and assistants. On `/structure` each person renders under their position section. Photos are CDN URLs pasted per member.
 
 ### Fields Explanation
 * **`id`** (String): The member's unique 4-letter assistant code (uppercase, e.g. `DAYY`). Course assistant lists reference these codes, and the code appears next to the role on `/structure` and the course detail page.
@@ -97,13 +97,13 @@ This file lists student members and assistants. On `/structure` each person rend
     "id": "DAYY",
     "name": "Nama Anggota",
     "role": "mahasiswa-anggota",
-    "image": "/image/division/research/RESEARCH_Member_JDOE_Jane-Doe_00.avif",
-    "scale": "2.8",
-    "position": "50% 25%"
+    "image": "https://cdn.eimlab.org/division/jane-doe.webp",
+    "scale": "1",
+    "position": "center"
   }
 ```
 
-Portraits under `public/image/division/` are full-resolution originals. `pnpm run generate:assets` mirrors them into `public/image/division/thumbs/` at 640px, and the Struktur page serves those thumbnails; add a member's portrait, then re-run the command so the page never ships the multi-megabyte original. A CDN URL is served as-is and skips this step, so size it before uploading.
+Portraits are CDN URLs. Export a pre-cropped 640 px square (1:1) WebP or AVIF, paste its URL into the **Foto (URL)** field, and the Struktur page serves it as-is. An empty field renders the member's initials; `scale` and `position` only matter for an un-cropped photo.
 
 ---
 
@@ -262,7 +262,7 @@ This file configures the global branding, tab information, and social links of t
   "defaultTitle": "EIM Lab - Enterprise Infrastructure Management",
   "defaultDescription": "Website Resmi Laboratorium Enterprise Infrastructure Management (EIM) Telkom University.",
   "defaultKeywords": "EIM, EIM Lab, Telkom University, Enterprise Infrastructure Management, Laboratorium Jaringan, Cloud Computing, Praktikum Jaringan",
-  "favicon": "/image/eim/favicon.png",
+  "favicon": "https://cdn.eimlab.org/1795012246321_eim-favicon.webp",
   "timezone": "Asia/Jakarta",
   "timezoneOffset": "+07:00",
   "contact": {
@@ -467,7 +467,7 @@ The full-bleed photo band on the Tentang Kami page, between the structure link a
 ### Featured Photo Template
 ```json
 {
-  "image": "/image/featured/image.avif",
+  "image": "https://cdn.eimlab.org/1795009493610_0M4A9119.webp",
   "alt": "Foto Company Visit EIM to Huawei 2026",
   "caption": "Company Visit EIM to Huawei 2026",
   "height": 100

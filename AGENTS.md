@@ -1,5 +1,8 @@
 # AGENTS.md
 
+> Single source of truth for AI assistants. `CLAUDE.md` and `GEMINI.md` only point here;
+> do not add project rules to them.
+
 ## Section 1: Agent Operational Workflow
 
 ### 1.1 Startup Workflow

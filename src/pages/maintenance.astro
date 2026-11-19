@@ -31,3 +31,12 @@ const siteName = [site.name, site.subName].filter(Boolean).join(' ') || 'EIM Lab
     </a>
   </StatusPage>
 </Layout>
+
+<style is:global>
+  /* The decorative 700px body::after glow starts at 40% and extends past a
+     single-screen page, adding a phantom 160px scroll. Keep it in the box. */
+  body:has(.status-standalone)::after {
+    top: auto;
+    bottom: 0;
+  }
+</style>

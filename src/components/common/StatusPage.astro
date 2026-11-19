@@ -27,9 +27,10 @@ const { code, eyebrow, title, description, primary, secondary, standalone = fals
     standalone ? 'min-h-dvh py-16' : 'pt-[max(clamp(4.5rem,12vh,9rem),calc(var(--site-header-height)_+_2.5rem))] pb-[clamp(4.5rem,12vh,9rem)]',
   ]}
 >
+  <slot name="lead" />
   <p class="font-mono text-xs uppercase tracking-[0.08em] text-brand">{code} — {eyebrow}</p>
   <h1
-    class="mt-4 max-w-[20ch] text-balance font-display text-[clamp(2rem,5vw,3.75rem)] font-normal leading-[1.05] tracking-[-0.01em]"
+    class="mt-4 max-w-[20ch] text-balance font-display text-[clamp(2rem,5vw,3.75rem)] font-normal leading-[1.05] tracking-[-0.01em] text-foreground"
   >
     {title}
   </h1>

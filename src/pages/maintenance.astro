@@ -3,6 +3,7 @@ import Layout from '../layouts/Layout.astro';
 import StatusPage from '../components/common/StatusPage.astro';
 import '../styles/pages/home-eim.css';
 import { getLocaleFromUrl, getLocalizedJsonData } from '../utils/i18n';
+import { resolveMediaSrc } from '../utils/media';
 import type { ChromeData, SiteData } from '../utils/types';
 
 const locale = getLocaleFromUrl(Astro.url);
@@ -10,6 +11,7 @@ const site = getLocalizedJsonData<SiteData>('site', locale);
 const chrome = getLocalizedJsonData<ChromeData>('chrome', locale);
 const email = site.contact?.email || 'lab@eimlab.org';
 const siteName = [site.name, site.subName].filter(Boolean).join(' ') || site.fullName || 'EIM Lab';
+const emblem = resolveMediaSrc(chrome.brand.logoIcon);
 ---
 
 <Layout
@@ -26,7 +28,18 @@ const siteName = [site.name, site.subName].filter(Boolean).join(' ') || site.ful
     description="Kami sedang memperbarui layanan. Silakan kembali beberapa saat lagi."
     standalone
   >
-    <a class="mt-6 inline-block py-2.5 text-[15px] text-brand underline underline-offset-4" href={`mailto:${email}`}>
+    {emblem && (
+      <img
+        slot="lead"
+        class="mb-6 h-12 w-auto"
+        src={emblem}
+        alt={`${siteName} logo`}
+        loading="eager"
+        decoding="async"
+      />
+    )}
+    <p class="mt-8 text-[13px] text-muted-ink">Untuk pertanyaan mendesak, hubungi:</p>
+    <a class="mt-2 inline-block py-2.5 text-[15px] text-brand underline underline-offset-4" href={`mailto:${email}`}>
       {email}
     </a>
   </StatusPage>

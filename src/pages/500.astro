@@ -11,7 +11,7 @@ const chrome = getLocalizedJsonData<ChromeData>('chrome', locale);
 
 <Layout
   title={`Terjadi kesalahan ${chrome.ui.titleSuffix}`}
-  description="Permintaan tidak bisa diproses saat ini. Coba lagi beberapa saat lagi."
+  description="Permintaan tidak bisa diproses saat ini. Coba beberapa saat lagi."
   homeSkin
   skipLink
   noindex
@@ -20,8 +20,8 @@ const chrome = getLocalizedJsonData<ChromeData>('chrome', locale);
     code="500"
     eyebrow="Kesalahan server"
     title="Ada yang gagal di sisi kami."
-    description="Permintaanmu tidak bisa diproses saat ini. Coba lagi beberapa saat lagi; kalau masih gagal, hubungi kami."
-    primary={{ label: chrome.ui.backToHome, href: '/' }}
+    description="Permintaan tidak bisa diproses saat ini. Coba beberapa saat lagi; jika masih gagal, hubungi kami."
+    primary={{ label: 'Coba lagi', href: '' }}
     secondary={{ label: 'Hubungi Kami', href: '/contact' }}
   />
 </Layout>

@@ -86,16 +86,24 @@ assert(escapeXml(`a&b<c>d"e'f`) === 'a&amp;b&lt;c&gt;d&quot;e&apos;f', 'escapeXm
 // Status pages: built, noindex, one landmark each, and never in the sitemap.
 for (const rel of ['404.html', '500.html', 'maintenance/index.html']) {
   const file = join(distDir, rel);
-  assert(existsSync(file), `${rel} is built`);
-  if (!existsSync(file)) continue;
+  const built = existsSync(file);
+  assert(built, `${rel} is built`);
+  if (!built) continue;
   const html = readFileSync(file, 'utf8');
-  const bodyTag = html.match(/<body[^>]*>/)?.[0] ?? '';
-  assert(/<meta name="robots"[^>]*noindex/.test(html), `${rel} is noindex`);
+  const head = html.slice(0, html.indexOf('</head>'));
+  assert(/<meta name="robots"[^>]*noindex/.test(head), `${rel} is noindex`);
   assert((html.match(/<main[\s>]/g) ?? []).length === 1, `${rel} has one <main>`);
   assert((html.match(/<h1[\s>]/g) ?? []).length === 1, `${rel} has one <h1>`);
+  if (rel === '500.html') {
+    assert(!/<pre[\s>]/.test(html), `${rel} has no stack block`);
+  }
   if (rel.startsWith('maintenance/')) {
+    const bodyTag = html.match(/<body[^>]*>/)?.[0] ?? '';
     const noChrome =
-      !/<header[\s>]/.test(html) && !/<footer[\s>]/.test(html) && !/class="skip-link"/.test(html);
+      !/<header[\s>]/.test(html) &&
+      !/<footer[\s>]/.test(html) &&
+      !/class="skip-link"/.test(html) &&
+      !/id="global-announcement-banner"/.test(html);
     assert(noChrome, `${rel} renders without site chrome`);
     assert(!bodyTag.includes('has-announcement-banner'), `${rel} has no announcement body class`);
   }

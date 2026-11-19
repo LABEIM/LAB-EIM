@@ -1,0 +1,27 @@
+---
+import Layout from '../layouts/Layout.astro';
+import StatusPage from '../components/common/StatusPage.astro';
+import '../styles/pages/home-eim.css';
+import { getLocaleFromUrl, getLocalizedJsonData } from '../utils/i18n';
+import type { ChromeData } from '../utils/types';
+
+const locale = getLocaleFromUrl(Astro.url);
+const chrome = getLocalizedJsonData<ChromeData>('chrome', locale);
+---
+
+<Layout
+  title={`Halaman tidak ditemukan ${chrome.ui.titleSuffix}`}
+  description="Alamat yang kamu buka mungkin salah ketik, sudah dipindahkan, atau tidak pernah ada."
+  homeSkin
+  skipLink
+  noindex
+>
+  <StatusPage
+    code="404"
+    eyebrow="Tidak ditemukan"
+    title="Halaman ini tidak ada."
+    description="Alamat yang kamu buka mungkin salah ketik, sudah dipindahkan, atau tidak pernah ada."
+    primary={{ label: chrome.ui.backToHome, href: '/' }}
+    secondary={{ label: 'Lihat Kegiatan', href: '/event' }}
+  />
+</Layout>

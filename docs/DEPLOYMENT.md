@@ -107,7 +107,7 @@ Content entries marked with `audit: true` (e.g. `src/content/news/audit-benchmar
 **Zero Manual Worker Creation Required**:
 The Shared-CICD `deploy-cloudflare` action (`cloudflare_mode: 'ssr'`) creates the Worker (`lab-eim`) on its first deploy using `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID`. `wrangler.json` supplies the Worker name and compatibility flags; the adapter generates `main` and `assets` into `dist/server/wrangler.json`.
 
-The account's `workers.dev` subdomain must be registered: Dashboard > **Workers & Pages** > **Your subdomain**. Direct uploads always expose `workers_dev` and preview URLs. Each deployment version also gets a public preview URL (`preview_urls: true`); treat those URLs as public.
+The account's `workers.dev` subdomain must be registered: Dashboard > **Workers & Pages** > **Your subdomain**. Production traffic is served only from the custom domain attached to the Worker in the dashboard (`cloudflare_workers_dev: false` in `ci-cd.yml`). workers.dev is used only for branch Preview and Version URLs, which stay public (`cloudflare_preview_urls: 'true'`, `preview_urls: true` in `wrangler.json`); treat those preview URLs as public.
 
 ### 2.2 Obtaining Cloudflare Credentials
 
@@ -252,13 +252,13 @@ The Vercel backup deployment is enabled automatically when both Vercel variables
 ```
 
 1. **`validate-and-build`**: Installs dependencies with `pnpm install --frozen-lockfile`, exports `PUBLIC_*` values (variables win over secrets) to the build environment, runs `pnpm exec astro check && pnpm test` and `pnpm run build`, and uploads the compiled artifact. The build emits prerendered pages in `dist/client/` and the Worker (`dist/server/entry.mjs` plus the adapter-generated `dist/server/wrangler.json`) in `dist/server/`. With `cloudflare_mode: 'ssr'`, the deploy job uploads the Worker and its assets, so `/keystatic` and `/api/keystatic/*` run in the Worker.
-2. **`deploy-cloudflare` & `deploy-vercel`**: Deploys the Worker plus assets to Cloudflare Workers (Primary) and, when the Vercel variables are configured, the prerendered `dist/client` output to Vercel (Backup) **in parallel** with **retry logic** (3 attempts, exponential backoff). `deploy-cloudflare` reads the Production URL from the deploy log on `main` (normally `https://lab-eim.<subdomain>.workers.dev`) and takes a preview's URL from Wrangler's `--json` output (normally `https://<branch>-lab-eim.<subdomain>.workers.dev`). Since Shared-CICD v2.3.1 a constructed alias is published only after it answers, so a preview URL can be empty rather than a dead link. Both jobs register GitHub Deployment environments for deploy tracking.
+2. **`deploy-cloudflare` & `deploy-vercel`**: Deploys the Worker plus assets to Cloudflare Workers (Primary) and, when the Vercel variables are configured, the prerendered `dist/client` output to Vercel (Backup) **in parallel** with **retry logic** (3 attempts, exponential backoff). Because `workers_dev` is off for production, `deploy-cloudflare` resolves the Production URL from the Worker's attached custom domain through the Cloudflare API; a preview's URL comes from Wrangler's `--json` output (normally `https://<branch>-lab-eim.<subdomain>.workers.dev`). Since Shared-CICD v2.3.1 a constructed alias is published only after it answers, so a preview URL can be empty rather than a dead link. Both jobs register GitHub Deployment environments for deploy tracking.
 3. **`comment-pr` (Post PR Preview Comment)**: Posts or updates a formatted table with the live Cloudflare and Vercel preview deployment URLs, commit SHA, and workflow run link on Pull Requests.
 4. **`lighthouse`**: Audits the routes listed in `lighthouse_routes` with **3 runs** each (representative median score) against the live Cloudflare URL, and appends parsed scores to `$GITHUB_STEP_SUMMARY` and the PR preview comment. Since Shared-CICD v2.4.0 a `cloudflare_mode: 'ssr'` run fails when no live URL resolves instead of auditing the Vercel backup or the static `dist/client` build, and a bootstrap placeholder is refused; non-SSR projects still fall back to the static build. On **Pull Requests**, a failing Lighthouse score marks the PR check failed. On **push to `main`**, it serves as post-deploy monitoring. Score thresholds:
    - Performance: ≥ 60% (warn only)
    - Accessibility: ≥ 90% (error — blocks PR merge)
    - Best Practices: ≥ 90% (error — blocks PR merge)
-   - SEO: ≥ 90% (error on `main`, warn on pull requests; `is-crawlable` check turned off so platform `X-Robots-Tag: noindex` headers on preview builds do not skew score calculations)
+   - SEO: ≥ 90% (error on `main`, warn on pull requests). The `is-crawlable` audit is skipped via `settings.skipAudits` because preview builds carry platform `X-Robots-Tag: noindex` headers and the `audit: true` fixtures are intentionally `noindex`.
 
 ### 5.3 Pipeline Security & Reliability Features
 
@@ -283,6 +283,39 @@ If Cloudflare Workers experiences an outage:
 
 - **Option A (GitHub Actions)**: Ensure `VERCEL_PROJECT_ID` and `VERCEL_ORG_ID` are set as repository variables, then run the **CI/CD Pipeline** workflow. Vercel deploys in parallel with Cloudflare.
 - **Option B (DNS Switch)**: In Cloudflare DNS management, update your main domain (`eim-lab.org`) CNAME target from the Worker hostname to `cname.vercel-dns.com` (or the Vercel CNAME IP).
+
+### 5.6 Maintenance Mode & Error Pages
+
+The site ships three static status pages:
+
+| Route | Served when | Status |
+| --- | --- | --- |
+| `/404` | no route matches | 404 |
+| `/500` | the Worker throws while rendering a server route | 500 |
+| `/maintenance/` | an operator enables the redirect rule | 200 |
+
+All three are `noindex` and excluded from `sitemap.xml`. The no-slash `/maintenance` responds with a 307 to `/maintenance/`.
+
+**Activating maintenance mode (Cloudflare):**
+
+1. Cloudflare dashboard → the site's zone → Rules → Redirect Rules.
+2. Create a rule with this expression, replacing the hosts with the production host from **Domains & Routes**:
+
+   ```text
+   (http.host eq "eimlab.org" or http.host eq "www.eimlab.org")
+   and not starts_with(http.request.uri.path, "/_astro/")
+   and not starts_with(http.request.uri.path, "/keystatic")
+   and not starts_with(http.request.uri.path, "/api/keystatic")
+   and http.request.uri.path ne "/maintenance"
+   and http.request.uri.path ne "/maintenance/"
+   ```
+
+   Redirect to `/maintenance/` (trailing slash included), status `302`. The host condition keeps the rule off `cdn.eimlab.org`; `/_astro/` keeps the page's fonts, CSS, and JS loading; the Keystatic paths stay reachable for editors.
+3. Enable the rule. Disable it to end maintenance.
+
+The page is a static asset, so it stays reachable while everything else is redirected. The Vercel backup host has no equivalent rule; activate it there separately if that host serves traffic.
+
+**What this does not cover:** Cloudflare generates `502`, `503`, and `504` at the edge, outside the Worker, so those cannot be styled from this repository. `/500` only catches errors thrown by the Worker's server-rendered routes (Keystatic's admin and API routes); `src/pages/api/save-recruitment-results.ts` is prerendered and served as a static asset.
 
 ---
 

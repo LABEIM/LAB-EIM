@@ -1,0 +1,27 @@
+---
+import Layout from '../layouts/Layout.astro';
+import StatusPage from '../components/common/StatusPage.astro';
+import '../styles/pages/home-eim.css';
+import { getLocaleFromUrl, getLocalizedJsonData } from '../utils/i18n';
+import type { ChromeData } from '../utils/types';
+
+const locale = getLocaleFromUrl(Astro.url);
+const chrome = getLocalizedJsonData<ChromeData>('chrome', locale);
+---
+
+<Layout
+  title={`Terjadi kesalahan ${chrome.ui.titleSuffix}`}
+  description="Permintaan tidak bisa diproses saat ini. Coba beberapa saat lagi."
+  homeSkin
+  skipLink
+  noindex
+>
+  <StatusPage
+    code="500"
+    eyebrow="Kesalahan server"
+    title="Ada yang gagal di sisi kami."
+    description="Permintaan tidak bisa diproses saat ini. Coba beberapa saat lagi; jika masih gagal, hubungi kami."
+    primary={{ label: 'Coba lagi', href: '' }}
+    secondary={{ label: 'Hubungi Kami', href: '/contact' }}
+  />
+</Layout>

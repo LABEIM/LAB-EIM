@@ -204,7 +204,7 @@ The rest of `variables.css` is deliberately not projected:
    (`--color-brand`, `--font-body`, …); the later declaration wins, which is why `--font-body`
    resolves to IBM Plex Sans everywhere. Never add a same-named literal there — edit the
    primitive in `variables.css` and let the alias follow. One `--color-*` role lives only in
-   that block: `--color-black` (`#050B0D`), consumed by the registration and assets pages.
+   that block: `--color-black` (`#050B0D`), consumed by the registration and home pages.
 
 The existing `--eim-*` -> `--color-*` mapping is safe because the names differ: the theme
 key is `--color-brand`, the source is `--eim-brand`, so no key references itself.

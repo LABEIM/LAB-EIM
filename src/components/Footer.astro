@@ -93,7 +93,7 @@ const navLinks = [
       </div>
 
       <nav class="footer-col" aria-label={chrome.footer.quickLinks}>
-        <h3 class="footer-title">{chrome.footer.quickLinks}</h3>
+        <h2 class="footer-title">{chrome.footer.quickLinks}</h2>
         <ul class="footer-links">
           {navLinks.map((link) => (
             <li>
@@ -104,7 +104,7 @@ const navLinks = [
       </nav>
 
       <div class="footer-col">
-        <h3 class="footer-title">{chrome.footer.contact}</h3>
+        <h2 class="footer-title">{chrome.footer.contact}</h2>
         <ul class="footer-links footer-contact-list">
           <li><i class="fa-solid fa-location-dot" aria-hidden="true"></i><span>{siteData.contact.location}</span></li>
           <li><i class="fa-solid fa-university" aria-hidden="true"></i><span>{siteData.contact.university}</span></li>
@@ -113,11 +113,8 @@ const navLinks = [
       </div>
 
       <nav class="footer-col" aria-label={chrome.footer.resources}>
-        <h3 class="footer-title">{chrome.footer.resources}</h3>
+        <h2 class="footer-title">{chrome.footer.resources}</h2>
         <ul class="footer-links">
-          <li>
-            <a href={getLocalizedPath('/assets', locale)}>{chrome.footer.assets}</a>
-          </li>
           <li>
             <a href="https://link.eimlab.org" target="_blank" rel="noopener noreferrer">
               {chrome.footer.linkHub} <span aria-hidden="true">↗</span>

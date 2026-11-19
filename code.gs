@@ -314,7 +314,7 @@ function sendConfirmationEmail(data, isRevision) {
   const linkCv = data['Link CV'] ? escapeHtml(data['Link CV']) : '';
   const linkPi = data['Link PI (Pakta Integritas)'] ? escapeHtml(data['Link PI (Pakta Integritas)']) : '';
   const safeWaUrl = getSafeWhatsAppUrl();
-  const logoUrl = (scriptProp.getProperty('LOGO_URL') || 'https://eimlab.org/assets/email/logo.png').trim();
+  const logoUrl = (scriptProp.getProperty('LOGO_URL') || 'https://cdn.eimlab.org/1795019784364_logo.png').trim();
 
   const subjectPrefix = isRevision ? '[REVISI] ' : '';
   const subject = `${subjectPrefix}[EIM Research Lab] Konfirmasi Pendaftaran Calon Asisten - ${safeNama}`;

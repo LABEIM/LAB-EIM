@@ -60,12 +60,12 @@ The EIM Lab Website is the official public site of the Enterprise Infrastructure
 │   ├── pages/                 # File-system routes
 │   ├── styles/                # Modular CSS and design tokens
 │   └── utils/                 # i18n, content helpers, registration logic, types
-├── public/                    # Static assets, robots.txt, sitemap.xml, llms files
+├── public/                    # Static assets, robots.txt, llms files
 │   └── .well-known/           # RFC 9116 security.txt
 ├── AGENTS.md                  # AI coding agent workflow and rules
 ├── CLAUDE.md                  # Claude Code operational instructions
 ├── GEMINI.md                  # Gemini CLI / Antigravity pointer to AGENTS.md
-├── docs/                      # Guides: contributing, security, deployment, assets,
+├── docs/                      # Guides: contributing, security, deployment,
 │                              #   registration setup, data config, design tokens
 └── README.md                  # Main repository README
 ```
@@ -78,7 +78,6 @@ The EIM Lab Website is the official public site of the Enterprise Infrastructure
 | :--- | :--- | :--- | :---: |
 | `GET` | `/` | Home page | No |
 | `GET` | `/about` | Laboratory profile and history | No |
-| `GET` | `/assets` | Brand and email asset hub | No |
 | `GET` | `/contact` | Contact information | No |
 | `GET` | `/structure` | Laboratory role hierarchy and staff profiles | No |
 | `GET` | `/courses` | Courses with code, SKS, practicum status, coordinator | No |
@@ -90,6 +89,7 @@ The EIM Lab Website is the official public site of the Enterprise Infrastructure
 | `GET` | `/registration` | Recruitment registration form | No |
 | `POST` | `/api/save-recruitment-results` | Persists recruitment results | No |
 | `GET` | `/.well-known/security.txt` | RFC 9116 security disclosure | No |
+| `GET` | `/sitemap.xml` | Generated XML sitemap (indexable routes only) | No |
 | `GET` | `/llms.txt` | Concise AI context document | No |
 
 ---

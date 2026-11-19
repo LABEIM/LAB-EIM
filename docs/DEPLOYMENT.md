@@ -284,6 +284,39 @@ If Cloudflare Workers experiences an outage:
 - **Option A (GitHub Actions)**: Ensure `VERCEL_PROJECT_ID` and `VERCEL_ORG_ID` are set as repository variables, then run the **CI/CD Pipeline** workflow. Vercel deploys in parallel with Cloudflare.
 - **Option B (DNS Switch)**: In Cloudflare DNS management, update your main domain (`eim-lab.org`) CNAME target from the Worker hostname to `cname.vercel-dns.com` (or the Vercel CNAME IP).
 
+### 5.6 Maintenance Mode & Error Pages
+
+The site ships three static status pages:
+
+| Route | Served when | Status |
+| --- | --- | --- |
+| `/404` | no route matches | 404 |
+| `/500` | the Worker throws while rendering a server route | 500 |
+| `/maintenance/` | an operator enables the redirect rule | 200 |
+
+All three are `noindex` and excluded from `sitemap.xml`. The no-slash `/maintenance` responds with a 307 to `/maintenance/`.
+
+**Activating maintenance mode (Cloudflare):**
+
+1. Cloudflare dashboard → the site's zone → Rules → Redirect Rules.
+2. Create a rule with this expression, replacing the hosts with the production host from **Domains & Routes**:
+
+   ```text
+   (http.host eq "eimlab.org" or http.host eq "www.eimlab.org")
+   and not starts_with(http.request.uri.path, "/_astro/")
+   and not starts_with(http.request.uri.path, "/keystatic")
+   and not starts_with(http.request.uri.path, "/api/keystatic")
+   and http.request.uri.path ne "/maintenance"
+   and http.request.uri.path ne "/maintenance/"
+   ```
+
+   Redirect to `/maintenance/` (trailing slash included), status `302`. The host condition keeps the rule off `cdn.eimlab.org`; `/_astro/` keeps the page's fonts, CSS, and JS loading; the Keystatic paths stay reachable for editors.
+3. Enable the rule. Disable it to end maintenance.
+
+The page is a static asset, so it stays reachable while everything else is redirected. The Vercel backup host has no equivalent rule; activate it there separately if that host serves traffic.
+
+**What this does not cover:** Cloudflare generates `502`, `503`, and `504` at the edge, outside the Worker, so those cannot be styled from this repository. `/500` only catches errors thrown by the Worker's server-rendered routes (Keystatic's admin and API routes); `src/pages/api/save-recruitment-results.ts` is prerendered and served as a static asset.
+
 ---
 
 ## 6. Automation Workflows

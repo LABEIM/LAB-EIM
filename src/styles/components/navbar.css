@@ -262,16 +262,22 @@ html.nav-open {
         opacity: 0;
         visibility: hidden;
         transform: translateY(-8px);
+        /* Visibility waits for the fade-out to finish, but flips instantly on
+           open so the first link can take focus. */
         transition:
             opacity var(--transition-normal),
             transform var(--transition-normal),
-            visibility var(--transition-normal);
+            visibility 0s linear var(--transition-normal);
     }
 
     .nav-links.active {
         opacity: 1;
         visibility: visible;
         transform: translateY(0);
+        transition:
+            opacity var(--transition-normal),
+            transform var(--transition-normal),
+            visibility 0s;
     }
 
     .nav-links li {

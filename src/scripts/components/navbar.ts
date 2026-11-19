@@ -51,7 +51,7 @@ export function initNavbar(): void {
     }
     document.documentElement.classList.toggle('nav-open', open);
     document
-      .querySelectorAll<HTMLElement>('main, footer, #global-announcement-banner')
+      .querySelectorAll<HTMLElement>('main, footer, #global-announcement-banner, .logo-container')
       .forEach((el) => {
         el.inert = open;
       });
@@ -70,9 +70,28 @@ export function initNavbar(): void {
   });
 
   document.addEventListener('keydown', (event) => {
-    if (event.key === 'Escape' && isOpen()) {
+    if (!isOpen()) return;
+
+    if (event.key === 'Escape') {
       event.preventDefault();
       setOpen(false);
+      return;
+    }
+
+    if (event.key !== 'Tab') return;
+
+    // Keep focus between the sheet links and the close button; everything
+    // else on the page is inert while the sheet is open.
+    const stops: HTMLElement[] = Array.from(links.querySelectorAll<HTMLElement>('a'));
+    stops.push(toggle);
+    const first = stops[0];
+    const last = stops[stops.length - 1];
+    if (event.shiftKey && document.activeElement === first) {
+      event.preventDefault();
+      last.focus();
+    } else if (!event.shiftKey && document.activeElement === last) {
+      event.preventDefault();
+      first.focus();
     }
   });
 

@@ -1,4 +1,4 @@
-import { readFileSync, readdirSync } from 'node:fs';
+import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { dirname, join, relative, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -50,6 +50,18 @@ for (const file of htmlFiles) {
     assert(head.includes(`name="${tag}"`), `${rel} has ${tag}`);
   }
 }
+
+const sitemapFile = join(distDir, 'sitemap.xml');
+assert(existsSync(sitemapFile), 'sitemap.xml is generated during build');
+const sitemap = existsSync(sitemapFile) ? readFileSync(sitemapFile, 'utf8') : '';
+const locs = [...sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)].map((match) => match[1]);
+assert(locs.length >= 8, 'sitemap lists the static routes');
+assert(locs.some((loc) => /\/courses\/$/.test(loc)), 'sitemap lists /courses/');
+assert(locs.some((loc) => /\/courses\/[^/]+\/$/.test(loc)), 'sitemap lists a course detail page');
+assert(!locs.some((loc) => loc.includes('audit-benchmark')), 'sitemap excludes noindex audit content');
+assert(locs.every((loc) => /^https?:\/\//.test(loc)), 'sitemap URLs are absolute');
+assert(new Set(locs).size === locs.length, 'sitemap URLs are unique');
+assert(!/&(?!amp;|lt;|gt;|quot;|apos;)/.test(sitemap), 'sitemap XML escapes ampersands');
 
 console.log(`\n${passed} passed, ${failed} failed`);
 if (failed > 0) process.exitCode = 1;

@@ -299,7 +299,7 @@ All three are `noindex` and excluded from `sitemap.xml`.
 **Activating maintenance mode (Cloudflare):**
 
 1. Cloudflare dashboard → the site's zone → Rules → Redirect Rules.
-2. Create a rule with the expression `http.request.uri.path ne "/maintenance"`, a static redirect to `/maintenance`, and status `302`.
+2. Create a rule with the expression `http.request.uri.path ne "/maintenance" and http.request.uri.path ne "/maintenance/"`, a static redirect to `/maintenance/` (trailing slash included; Astro 307s the no-slash form), and status `302`.
 3. Enable the rule. Disable it to end maintenance.
 
 The page is a static asset, so it stays reachable while everything else is redirected. The Vercel backup host has no equivalent rule; activate it there separately if that host serves traffic.

@@ -292,14 +292,25 @@ The site ships three static status pages:
 | --- | --- | --- |
 | `/404` | no route matches | 404 |
 | `/500` | the Worker throws while rendering a server route | 500 |
-| `/maintenance` | an operator enables the redirect rule | 200 |
+| `/maintenance/` | an operator enables the redirect rule | 200 |
 
-All three are `noindex` and excluded from `sitemap.xml`.
+All three are `noindex` and excluded from `sitemap.xml`. The no-slash `/maintenance` responds with a 307 to `/maintenance/`.
 
 **Activating maintenance mode (Cloudflare):**
 
 1. Cloudflare dashboard → the site's zone → Rules → Redirect Rules.
-2. Create a rule scoped to the site host, e.g. `(http.host eq "eimlab.org" or http.host eq "www.eimlab.org") and not starts_with(http.request.uri.path, "/_astro/") and not starts_with(http.request.uri.path, "/keystatic") and not starts_with(http.request.uri.path, "/api/keystatic") and http.request.uri.path ne "/maintenance" and http.request.uri.path ne "/maintenance/"`, a static redirect to `/maintenance/` (trailing slash included; Astro 307s the no-slash form), and status `302`. The host condition keeps the rule off `cdn.eimlab.org` and the `/_astro/` exclusion keeps the page's own fonts, CSS, and JS loading; the Keystatic exclusions keep the CMS reachable for editors.
+2. Create a rule with this expression, replacing the hosts with the production host from **Domains & Routes**:
+
+   ```text
+   (http.host eq "eimlab.org" or http.host eq "www.eimlab.org")
+   and not starts_with(http.request.uri.path, "/_astro/")
+   and not starts_with(http.request.uri.path, "/keystatic")
+   and not starts_with(http.request.uri.path, "/api/keystatic")
+   and http.request.uri.path ne "/maintenance"
+   and http.request.uri.path ne "/maintenance/"
+   ```
+
+   Redirect to `/maintenance/` (trailing slash included), status `302`. The host condition keeps the rule off `cdn.eimlab.org`; `/_astro/` keeps the page's fonts, CSS, and JS loading; the Keystatic paths stay reachable for editors.
 3. Enable the rule. Disable it to end maintenance.
 
 The page is a static asset, so it stays reachable while everything else is redirected. The Vercel backup host has no equivalent rule; activate it there separately if that host serves traffic.

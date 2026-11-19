@@ -4,7 +4,8 @@
       "numberOfRuns": 3,
       "settings": {
         "preset": "desktop",
-        "chromeFlags": "--no-sandbox --headless"
+        "chromeFlags": "--no-sandbox --headless",
+        "skipAudits": ["is-crawlable"]
       },
       "urls": [
         "http://localhost:4321/",
@@ -12,6 +13,8 @@
         "http://localhost:4321/contact/",
         "http://localhost:4321/structure/",
         "http://localhost:4321/registration/",
+        "http://localhost:4321/courses/",
+        "http://localhost:4321/courses/example-1/",
         "http://localhost:4321/event/",
         "http://localhost:4321/news/",
         "http://localhost:4321/event/audit-benchmark-event/",

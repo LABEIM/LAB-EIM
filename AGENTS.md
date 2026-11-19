@@ -1,5 +1,8 @@
 # AGENTS.md
 
+> Single source of truth for AI assistants. `CLAUDE.md` and `GEMINI.md` only point here;
+> do not add project rules to them.
+
 ## Section 1: Agent Operational Workflow
 
 ### 1.1 Startup Workflow
@@ -15,8 +18,9 @@ Before writing any code, the agent must complete these steps:
 3. Adhere to `.editorconfig` and project linter/formatter conventions.
 4. Keep all changes within the selected task scope unless a critical blocker forces a narrow supporting fix.
 5. Do not silently alter verification rules or relax tests during implementation.
-6. Prefer durable repository artifacts and updated documentation over transient chat summaries.
-7. When making structural updates, dependency version bumps, framework configuration changes, schema updates, or directory layout shifts, the agent must update corresponding repository documentation (`AGENTS.md`, `README.md`, `docs/DEPLOYMENT.md`, `docs/REGISTRATION_SETUP.md`) and TypeScript interfaces / data models (`src/utils/types.ts`) to reflect the new state.
+6. Never run `git stash`; replicate this ban verbatim in the prompt of every subagent that touches git.
+7. Prefer durable repository artifacts and updated documentation over transient chat summaries.
+8. When making structural updates, dependency version bumps, framework configuration changes, schema updates, or directory layout shifts, the agent must update corresponding repository documentation (`AGENTS.md`, `README.md`, `docs/DEPLOYMENT.md`, `docs/REGISTRATION_SETUP.md`) and TypeScript interfaces / data models (`src/utils/types.ts`) to reflect the new state.
 
 ### 1.3 Required Artifacts & Key Files
 1. `package.json`: Main repository dependencies, runtime constraints (`node >=22.12.0`), and script targets.
@@ -64,12 +68,12 @@ Before ending a session, the agent must perform these tasks:
 - `src/content/`: Static Markdown content files (`news/`, `events/`, `courses/`).
 - `src/data/`: JSON configuration (`site.json`, `chrome.json`, `contact.json`, `members.json`, `lecturers.json`, `positions.json`, `divisions.json`, `registration.json`, `nodes.json`, `featured.json`, per-page copy under `pages/`) and the guide in `docs/CONFIG_GUIDE.md`.
 - `src/components/`: Reusable Astro and React UI components (Navbar, Footer, cards, forms, plus homepage, about-page, structure-page, and event-page sections under `home/`, `about/`, `structure/`, and `kegiatan/`).
-- `src/pages/`: File-system routes (including `/courses` and `/courses/[id]`), the `/keystatic` admin, and API endpoints.
+- `src/pages/`: File-system routes (including `/courses` and `/courses/[id]`), the generated `sitemap.xml.ts` endpoint, the `/keystatic` admin, and API endpoints.
 - `src/layouts/Layout.astro`: Base wrapper page layout.
 - `src/styles/`: Modular design system and stylesheets (`variables.css`, `base.css`, `globals.css`, `mobile.css`, `icons.css`, plus `components/` and `pages/`).
 - `src/utils/`: Business logic, i18n helpers, content filtering, event helpers, registration logic, and interfaces (`i18n.ts`, `content-helpers.ts`, `event-helpers.ts`, `registration-config.ts`, `recruitment.ts`, `division-mapper.ts`, `position-mapper.ts`, `course-helpers.ts`, `safe-link.ts`, `types.ts`, `constants.ts`).
 - `docs/`: Project guides (`DEPLOYMENT.md`, `REGISTRATION_SETUP.md`, `CONFIG_GUIDE.md`) and the design token reference (`DESIGN_TOKENS.md`). `CONTRIBUTING.md`, `SECURITY.md`, and `CODE_OF_CONDUCT.md` stay at the root so GitHub's community tabs and direct links keep their canonical paths.
-- `public/`: Static assets, `robots.txt`, `sitemap.xml`, `manifest.webmanifest`, `llms.txt`, `llms-full.txt`, and `.well-known/security.txt`.
+- `public/`: Static assets, `robots.txt`, `manifest.webmanifest`, `llms.txt`, `llms-full.txt`, and `.well-known/security.txt`.
 
 ### 2.3 Role-Based Access Control & Scoping
 - **Authentication**: None. The EIM Lab website is a fully public, static application.

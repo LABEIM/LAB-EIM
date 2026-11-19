@@ -1,0 +1,6 @@
+/* The legacy 700px body::after glow starts at 40% and can extend past a short
+   page, adding a phantom scroll below the footer. Keep it inside the body box. */
+body:has(.status-page)::after {
+  top: auto;
+  bottom: 0;
+}

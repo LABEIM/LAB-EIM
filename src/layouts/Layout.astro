@@ -72,7 +72,7 @@ try {
     {noindex && <meta name="robots" content="noindex, follow" />}
     <link rel="canonical" href={canonical} />
     <meta property="og:type" content={ogType} />
-    <meta property="og:site_name" content={siteData.name} />
+    <meta property="og:site_name" content={`${siteData.name} ${siteData.subName}`} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical} />

@@ -1,19 +1,11 @@
 import type { APIRoute } from 'astro';
 import { getCollection } from 'astro:content';
 import { getCleanSlug } from '../utils/i18n';
+import { escapeXml } from '../utils/sitemap';
 
 export const prerender = true;
 
 const STATIC_PATHS = ['/', '/about/', '/structure/', '/courses/', '/event/', '/news/', '/registration/', '/contact/'];
-
-function escapeXml(value: string) {
-  return value
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&apos;');
-}
 
 export const GET: APIRoute = async ({ site, url }) => {
   const base = site ?? url;

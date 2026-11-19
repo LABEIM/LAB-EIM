@@ -18,8 +18,9 @@ Before writing any code, the agent must complete these steps:
 3. Adhere to `.editorconfig` and project linter/formatter conventions.
 4. Keep all changes within the selected task scope unless a critical blocker forces a narrow supporting fix.
 5. Do not silently alter verification rules or relax tests during implementation.
-6. Prefer durable repository artifacts and updated documentation over transient chat summaries.
-7. When making structural updates, dependency version bumps, framework configuration changes, schema updates, or directory layout shifts, the agent must update corresponding repository documentation (`AGENTS.md`, `README.md`, `docs/DEPLOYMENT.md`, `docs/REGISTRATION_SETUP.md`) and TypeScript interfaces / data models (`src/utils/types.ts`) to reflect the new state.
+6. Never run `git stash`; replicate this ban verbatim in the prompt of every subagent that touches git.
+7. Prefer durable repository artifacts and updated documentation over transient chat summaries.
+8. When making structural updates, dependency version bumps, framework configuration changes, schema updates, or directory layout shifts, the agent must update corresponding repository documentation (`AGENTS.md`, `README.md`, `docs/DEPLOYMENT.md`, `docs/REGISTRATION_SETUP.md`) and TypeScript interfaces / data models (`src/utils/types.ts`) to reflect the new state.
 
 ### 1.3 Required Artifacts & Key Files
 1. `package.json`: Main repository dependencies, runtime constraints (`node >=22.12.0`), and script targets.

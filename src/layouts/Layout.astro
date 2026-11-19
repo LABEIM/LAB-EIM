@@ -7,7 +7,7 @@ import { getLocaleFromUrl, getLocalizedJsonData } from '../utils/i18n';
 import { getCurrentRecruitmentStage } from '../utils/recruitment';
 import { applySimulationToConfig } from '../utils/simulation';
 import { resolveMediaSrc } from '../utils/media';
-import type { SiteData } from '../utils/types';
+import type { ChromeData, SiteData } from '../utils/types';
 
 interface Props {
   title?: string;
@@ -16,10 +16,14 @@ interface Props {
   homeSkin?: boolean;
   skipLink?: boolean;
   noindex?: boolean;
+  ogType?: 'website' | 'article';
 }
 
 const locale = getLocaleFromUrl(Astro.url);
 const siteData = getLocalizedJsonData<SiteData>('site', locale);
+const chrome = getLocalizedJsonData<ChromeData>('chrome', locale);
+const canonical = new URL(Astro.url.pathname, Astro.site ?? Astro.url).href;
+const ogImage = resolveMediaSrc(chrome.brand.logoHorizontal) ?? resolveMediaSrc(siteData.favicon);
 
 const {
   title = siteData.defaultTitle,
@@ -28,6 +32,7 @@ const {
   homeSkin = false,
   skipLink = false,
   noindex = false,
+  ogType = 'website',
 } = Astro.props;
 let hasAnnouncement = false;
 try {
@@ -65,6 +70,18 @@ try {
     <meta name="description" content={description} />
     <meta name="keywords" content={keywords} />
     {noindex && <meta name="robots" content="noindex, follow" />}
+    <link rel="canonical" href={canonical} />
+    <meta property="og:type" content={ogType} />
+    <meta property="og:site_name" content={siteData.name} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:locale" content="id_ID" />
+    {ogImage && <meta property="og:image" content={ogImage} />}
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    {ogImage && <meta name="twitter:image" content={ogImage} />}
 
     {/* Dynamic favicon type helper */}
     {(() => {

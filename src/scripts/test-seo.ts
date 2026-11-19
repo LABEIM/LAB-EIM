@@ -83,6 +83,28 @@ assert(locs.every((loc) => /^https?:\/\//.test(loc)), 'sitemap URLs are absolute
 assert(new Set(locs).size === locs.length, 'sitemap URLs are unique');
 assert(escapeXml(`a&b<c>d"e'f`) === 'a&amp;b&lt;c&gt;d&quot;e&apos;f', 'escapeXml escapes XML entities');
 
+// Status pages: built, noindex, one landmark each, and never in the sitemap.
+for (const rel of ['404.html', '500.html', 'maintenance/index.html']) {
+  const file = join(distDir, rel);
+  assert(existsSync(file), `${rel} is built`);
+  if (!existsSync(file)) continue;
+  const html = readFileSync(file, 'utf8');
+  const bodyTag = html.match(/<body[^>]*>/)?.[0] ?? '';
+  assert(/<meta name="robots"[^>]*noindex/.test(html), `${rel} is noindex`);
+  assert((html.match(/<main[\s>]/g) ?? []).length === 1, `${rel} has one <main>`);
+  assert((html.match(/<h1[\s>]/g) ?? []).length === 1, `${rel} has one <h1>`);
+  if (rel.startsWith('maintenance/')) {
+    const noChrome =
+      !/<header[\s>]/.test(html) && !/<footer[\s>]/.test(html) && !/class="skip-link"/.test(html);
+    assert(noChrome, `${rel} renders without site chrome`);
+    assert(!bodyTag.includes('has-announcement-banner'), `${rel} has no announcement body class`);
+  }
+}
+assert(
+  !locs.some((loc) => /\/(404|500|maintenance)\/?$/.test(new URL(loc).pathname)),
+  'sitemap excludes status pages'
+);
+
 // Every indexable built page must be listed; nothing noindex may be listed.
 const sitemapPaths = new Set(locs.map((loc) => new URL(loc).pathname));
 for (const file of htmlFiles) {

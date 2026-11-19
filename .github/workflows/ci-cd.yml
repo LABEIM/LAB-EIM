@@ -69,6 +69,8 @@ jobs:
         /contact/
         /structure/
         /registration/
+        /courses/
+        /courses/example-1/
         /event/
         /news/
         /event/audit-benchmark-event/

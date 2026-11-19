@@ -258,7 +258,7 @@ The Vercel backup deployment is enabled automatically when both Vercel variables
    - Performance: ≥ 60% (warn only)
    - Accessibility: ≥ 90% (error — blocks PR merge)
    - Best Practices: ≥ 90% (error — blocks PR merge)
-   - SEO: ≥ 90% (error on `main`, warn on pull requests; `is-crawlable` check turned off so platform `X-Robots-Tag: noindex` headers on preview builds do not skew score calculations)
+   - SEO: ≥ 90% (error on `main`, warn on pull requests). The `is-crawlable` audit is skipped via `settings.skipAudits` because preview builds carry platform `X-Robots-Tag: noindex` headers and the `audit: true` fixtures are intentionally `noindex`.
 
 ### 5.3 Pipeline Security & Reliability Features
 

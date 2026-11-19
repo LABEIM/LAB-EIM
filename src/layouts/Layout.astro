@@ -15,6 +15,7 @@ interface Props {
   keywords?: string;
   homeSkin?: boolean;
   skipLink?: boolean;
+  minimal?: boolean;
   noindex?: boolean;
   ogType?: 'website' | 'article';
 }
@@ -31,34 +32,37 @@ const {
   keywords = siteData.defaultKeywords,
   homeSkin = false,
   skipLink = false,
+  minimal = false,
   noindex = false,
   ogType = 'website',
 } = Astro.props;
 let hasAnnouncement = false;
-try {
-  const announcementConfig = await getLocalizedJsonData<any>('announcement', locale);
-  if (announcementConfig?.enabled !== false) {
-    if (announcementConfig?.mode === 'auto_recruitment') {
-      // Mirror AnnouncementBanner: a closed recruitment stage suppresses the
-      // banner, so the body class (and its 122px header offset) must follow.
-      let registrationConfig = await getLocalizedJsonData<any>('registration', locale);
-      const simQueryParam = Astro.url.searchParams.get('sim');
-      const stageQueryParam =
-        Astro.url.searchParams.get('stage') || Astro.url.searchParams.get('sim_stage');
-      if ((simQueryParam || stageQueryParam) && registrationConfig) {
-        registrationConfig = applySimulationToConfig(
-          registrationConfig,
-          simQueryParam ? parseInt(simQueryParam, 10) || 30 : 30,
-          Date.now(),
-          stageQueryParam
-        );
+if (!minimal) {
+  try {
+    const announcementConfig = await getLocalizedJsonData<any>('announcement', locale);
+    if (announcementConfig?.enabled !== false) {
+      if (announcementConfig?.mode === 'auto_recruitment') {
+        // Mirror AnnouncementBanner: a closed recruitment stage suppresses the
+        // banner, so the body class (and its 122px header offset) must follow.
+        let registrationConfig = await getLocalizedJsonData<any>('registration', locale);
+        const simQueryParam = Astro.url.searchParams.get('sim');
+        const stageQueryParam =
+          Astro.url.searchParams.get('stage') || Astro.url.searchParams.get('sim_stage');
+        if ((simQueryParam || stageQueryParam) && registrationConfig) {
+          registrationConfig = applySimulationToConfig(
+            registrationConfig,
+            simQueryParam ? parseInt(simQueryParam, 10) || 30 : 30,
+            Date.now(),
+            stageQueryParam
+          );
+        }
+        hasAnnouncement = getCurrentRecruitmentStage(registrationConfig) !== 'closed';
+      } else {
+        hasAnnouncement = true;
       }
-      hasAnnouncement = getCurrentRecruitmentStage(registrationConfig) !== 'closed';
-    } else {
-      hasAnnouncement = true;
     }
-  }
-} catch (e) {}
+  } catch (e) {}
+}
 ---
 
 <!DOCTYPE html>
@@ -104,14 +108,16 @@ try {
   </head>
   <body
     id="top"
-    class:list={[hasAnnouncement && 'has-announcement-banner', homeSkin && 'home-skin']}
+    class:list={[!minimal && hasAnnouncement && 'has-announcement-banner', homeSkin && 'home-skin']}
   >
-    {skipLink && <a class="skip-link" href="#main-content">Lewati ke konten</a>}
-    <header class="site-header" id="site-header">
-      <AnnouncementBanner />
-      <Navbar />
-    </header>
+    {!minimal && skipLink && <a class="skip-link" href="#main-content">Lewati ke konten</a>}
+    {!minimal && (
+      <header class="site-header" id="site-header">
+        <AnnouncementBanner />
+        <Navbar />
+      </header>
+    )}
     <slot />
-    <Footer />
+    {!minimal && <Footer />}
   </body>
 </html>

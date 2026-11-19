@@ -1,0 +1,33 @@
+---
+import Layout from '../layouts/Layout.astro';
+import StatusPage from '../components/common/StatusPage.astro';
+import '../styles/pages/home-eim.css';
+import { getLocaleFromUrl, getLocalizedJsonData } from '../utils/i18n';
+import type { ChromeData, SiteData } from '../utils/types';
+
+const locale = getLocaleFromUrl(Astro.url);
+const site = getLocalizedJsonData<SiteData>('site', locale);
+const chrome = getLocalizedJsonData<ChromeData>('chrome', locale);
+const email = site.contact?.email || 'lab@eimlab.org';
+const siteName = [site.name, site.subName].filter(Boolean).join(' ') || 'EIM Lab';
+---
+
+<Layout
+  title={`Pemeliharaan ${chrome.ui.titleSuffix}`}
+  description="Situs EIM Lab sedang dalam pemeliharaan."
+  homeSkin
+  minimal
+  noindex
+>
+  <StatusPage
+    code="Pemeliharaan"
+    eyebrow={siteName}
+    title="Situs sedang dalam pemeliharaan."
+    description="Kami sedang memperbarui layanan. Silakan kembali beberapa saat lagi."
+    standalone
+  >
+    <a class="mt-6 text-[15px] text-brand underline underline-offset-4" href={`mailto:${email}`}>
+      {email}
+    </a>
+  </StatusPage>
+</Layout>

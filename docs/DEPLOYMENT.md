@@ -284,6 +284,28 @@ If Cloudflare Workers experiences an outage:
 - **Option A (GitHub Actions)**: Ensure `VERCEL_PROJECT_ID` and `VERCEL_ORG_ID` are set as repository variables, then run the **CI/CD Pipeline** workflow. Vercel deploys in parallel with Cloudflare.
 - **Option B (DNS Switch)**: In Cloudflare DNS management, update your main domain (`eim-lab.org`) CNAME target from the Worker hostname to `cname.vercel-dns.com` (or the Vercel CNAME IP).
 
+### 5.6 Maintenance Mode & Error Pages
+
+The site ships three static status pages:
+
+| Route | Served when | Status |
+| --- | --- | --- |
+| `/404` | no route matches | 404 |
+| `/500` | the Worker throws while rendering a server route | 500 |
+| `/maintenance` | an operator enables the redirect rule | 200 |
+
+All three are `noindex` and excluded from `sitemap.xml`.
+
+**Activating maintenance mode (Cloudflare):**
+
+1. Cloudflare dashboard → the site's zone → Rules → Redirect Rules.
+2. Create a rule with the expression `http.request.uri.path ne "/maintenance"`, a static redirect to `/maintenance`, and status `302`.
+3. Enable the rule. Disable it to end maintenance.
+
+The page is a static asset, so it stays reachable while everything else is redirected. The Vercel backup host has no equivalent rule; activate it there separately if that host serves traffic.
+
+**What this does not cover:** Cloudflare generates `502`, `503`, and `504` at the edge, outside the Worker, so those cannot be styled from this repository. `/500` only catches errors thrown by the Worker, which in this site means `src/pages/api/save-recruitment-results.ts`.
+
 ---
 
 ## 6. Automation Workflows

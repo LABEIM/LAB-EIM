@@ -35,8 +35,9 @@ function collectHtml(dir: string): string[] {
 
 console.log('🧪 Running SEO Metadata & Sitemap Tests...\n');
 
-assert(existsSync(distDir), 'dist/client exists (run pnpm run build first)');
-if (!existsSync(distDir)) {
+const hasDist = existsSync(distDir);
+assert(hasDist, 'dist/client exists (run pnpm run build first)');
+if (!hasDist) {
   console.log(`\n${passed} passed, ${failed} failed`);
   process.exit(1);
 }

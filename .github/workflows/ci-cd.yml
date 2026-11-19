@@ -44,6 +44,10 @@ jobs:
       enable_cloudflare: true
       cloudflare_project_name: 'lab-eim'
       cloudflare_mode: 'ssr'
+      # Production is served from the custom domain only; branch previews keep
+      # their workers.dev Preview URLs.
+      cloudflare_workers_dev: false
+      cloudflare_preview_urls: 'true'
       # Non-secret account ID; falls back to the CLOUDFLARE_ACCOUNT_ID secret when empty.
       cloudflare_account_id: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
       production_branch: 'main'
